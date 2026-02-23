@@ -21,6 +21,7 @@
             <option value="appstatus.yaml">Application Status API</option>
             <option value="producertraining.yaml">Producer Training Update</option>
             <option value="policyincome.yaml">Policy Income API</option>
+            <option value="systematicprogram.yaml">Policy Income API</option>
             <!-- Add more options as you add more APIs -->
             <!-- <option value="another-api/openapi.yaml">Another API</option> -->
           </select>
@@ -72,6 +73,15 @@
         versions: {
           "v1": {
             path: "policyincomev1.yaml",
+            displayName: "v1.0.0"
+          }
+        }
+      },
+      "systematicprogram.yaml": {
+        name: "Policy Income API",
+        versions: {
+          "v1": {
+            path: "systematicprogramv1.yaml",
             displayName: "v1.0.0"
           }
         }
