@@ -21,6 +21,7 @@
             <option value="appstatus.yaml">Application Status API</option>
             <option value="producertraining.yaml">Producer Training Update</option>
             <option value="policyincome.yaml">Policy Income API</option>
+            <option value="withdrawalquotev1.yaml">Withdrawal Quote API</option>
             <!-- Add more options as you add more APIs -->
             <!-- <option value="another-api/openapi.yaml">Another API</option> -->
           </select>
@@ -72,6 +73,15 @@
         versions: {
           "v1": {
             path: "policyincomev1.yaml",
+            displayName: "v1.0.0"
+          }
+        }
+      },
+      "withdrawalquotev1.yaml": {
+        name: "Withdrawal Quote API",
+        versions: {
+          "v1": {
+            path: "withdrawalquotev1.yaml",
             displayName: "v1.0.0"
           }
         }
