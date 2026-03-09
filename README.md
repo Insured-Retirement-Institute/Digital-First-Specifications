@@ -151,7 +151,6 @@ Include assets if relevant—binaries, installable packages, archives, etc. (Git
 ### Versioning
 
 - Individual firms decide the versions they will support.
-- The [IRI registry](https://www.irionline.org/operations-and-technology/article/digital-first-for-annuities-dashboard/) lists which firms support which API versions. 
 - Firms can support multiple versions if they choose.
 
 ### Extending the specification
