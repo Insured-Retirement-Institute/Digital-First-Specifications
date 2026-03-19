@@ -581,8 +581,8 @@ components:
         name:
           type: string
           minLength: 1
-          maxLength: 180
-          pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,180}$'
+          maxLength: 100
+          pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,100}$'
         taxId:
           type: string
           maxLength: 9
@@ -1196,34 +1196,17 @@ components:
           description: Time when the error occurred
         message:
           type: string
-          description: Technical message with specific error details for developers identify the type of error quickly.
-        userMessage:
-          type: string
-          description: End-user readable message to describe the error in simple terms.
+          description: Message with specific error details.
         validationErrors:
           type: array
-          items:
-            type: object
-            properties:
-              field:
-                type: string
-                description: Name of the field on which error has occurred
-              location:
-                type: string
-                description: The specific location where the error occured.
-              reason:
-                type: string
-                description: Details about why the error occurred
-        businessErrors:
-          type: array
-          description: Logical business rule violations or decision failures related to business logic or rules
+          description: Logical rule violations or decision failures related to business logic or rules
           items:
             type: object
             properties:
               code:
                 type: string
-                description: Code to classify the business error & Identifies the type of business rule or decision failure.
+                description: Code to classify the error & Identifies the type of business rule or decision failure.
               message:
                 type: string
-                description: Why the business error occurred / Specific business rule violation
+                description: Why the error occurred / Specific business rule violation
       required: [code, message]
