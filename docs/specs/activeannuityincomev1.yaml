@@ -1,27 +1,27 @@
 openapi: 3.1.0
 info:
-  title: Annuity Policy Income Activation APIs
+  title: Active Annuity Income API
   version: "1.0.0"
   description: APIs for managing income activation of policies
 paths:
-  /v1/policies/{policyNumber}/income-activation:      
+  /v1/policies/{policyNumber}/income-activation:
     get:
-      operationId: getPolicyIncomeActivationByPolicyNumber
-      summary: Get Policy Income Activation By PolicyNumber.
-      description: Get Policy Income Activation By PolicyNumber.
+      operationId: getAnnuityIncomeActivationByPolicyNumber
+      summary: Get Annuity Income Activation By PolicyNumber.
+      description: Get Annuity Income Activation By PolicyNumber.
       tags:
-        - Policy Income Activation
+        - Annuity Income Activation
       parameters:
         - $ref: '#/components/parameters/policyNumber'
         - $ref: '#/components/parameters/cusip'
         - $ref: '#/components/parameters/correlationId'
       responses:
           "200":
-            description: Policy Income Activation retrieved successfully.
+            description: Annuity Income Activation retrieved successfully.
             content:
               application/json:
                 schema:
-                     $ref: '#/components/schemas/PolicyIncomeActivationResponse'
+                     $ref: '#/components/schemas/AnnuityIncomeActivationResponse'
           "400":
             description: Bad Request
           "401":
@@ -39,26 +39,21 @@ paths:
 
   /v1/income-activation/searches: 
     post:
-      operationId: getBulkPolicyIncome
-      summary: Bulk Policy Income.
-      description: Policy Income by firmId and/or npn.
+      operationId: getBulkActiveAnnuityIncomeSearch
+      summary: Bulk Active Annuity Income Search
+      description: Bulk Active Annuity Income Search by firmId and/or npn.
       tags:
-        - Bulk Policy Income
+        - Bulk Active Annuity Income Search
       parameters:
         - $ref: '#/components/parameters/correlationId'
       requestBody:
         content:
               application/json:
                 schema:
-                  $ref: '#/components/schemas/IncomeActivationRequest'
+                  $ref: '#/components/schemas/BulkAnnuityIncomeRequest'
       responses:
-          "200":
-            description: Bulk Policy Income retrieved successfully.
-            content:
-              application/json:
-                schema:
-                    $ref: '#/components/schemas/IncomeActivationResponse'
-
+          "202":
+            description: Bulk Annuity Income request is accepted.
           "400":
             description: Bad Request
           "401":
@@ -74,6 +69,62 @@ paths:
           "504":
             description: Gateway Timeout.
 
+  /v1/income-activation/event-notification:
+    post:
+      operationId: postBulkActiveAnnuityIncomeSearchStatus
+      summary: Bulk Active Annuity Income Search Status Notification
+      description: Bulk Active Annuity Income Search Status Notification
+      tags:
+        - Bulk Active Annuity Income Search Status Notification
+      parameters:
+        - $ref: '#/components/parameters/correlationId'
+      requestBody:
+        content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BulkAnnuityIncomeNotificationRequest'
+      responses:
+          "200":
+            description: Bulk Annuity Income Search Status
+          "503":
+            description: Service Unavailable
+
+
+  /v1/income-activation/results: 
+    post:
+      operationId: gettBulkActiveAnnuityIncomeResults
+      summary: Bulk Active Annuity Income Results
+      description: Bulk Annuity Income Results
+      tags:
+        - Bulk Annuity Income Results
+      parameters:
+        - $ref: '#/components/parameters/correlationId'
+      requestBody:
+        content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BulkAnnuityIncomeRequest'
+      responses:
+          "200":
+            description: Bulk Annuity Incomes retrieved successfully.
+            content:
+              application/json:
+                schema:
+                    $ref: '#/components/schemas/BulkAnnuityIncomeResponse'
+          "400":
+            description: Bad Request
+          "401":
+            description: Unauthorized 
+          "404":
+            description: Not Found
+          "405":
+            description: Method Not Allowed
+          "500":
+            description: Internal Server Error
+          "503":
+            description: Service Unavailable
+          "504":
+            description: Gateway Timeout.
 components:
   parameters:
     policyNumber:
@@ -97,6 +148,7 @@ components:
       required: false
       schema:
         type: string
+
   schemas:
     cusip:
       type: string
@@ -116,8 +168,8 @@ components:
     totalAvailableItemsCount:
       type: integer
 
-    PolicyIncomeActivationResponse:
-      description: Schema for policy income activation data
+    AnnuityIncomeActivationResponse:
+      description: Schema for annuity income activation data
       type: object
       required: [policyNumber, isIncomeRiderActivated]
       properties:
@@ -158,7 +210,7 @@ components:
             - scheduledPayments
             - rmd
 
-    IncomeActivationRequest:
+    BulkAnnuityIncomeRequest:
       description: Schema for policy income activation data
       type: object
       required: [firmId]
@@ -172,7 +224,7 @@ components:
           examples: 
             - "257893456"
 
-    IncomeActivationResponse:
+    BulkAnnuityIncomeResponse:
       description: Schema for bulk policy income response
       type: object
       properties:
@@ -182,11 +234,29 @@ components:
           $ref: '#/components/schemas/itemsCount'
         totalAvailableItemsCount:  
           $ref: '#/components/schemas/totalAvailableItemsCount'
-        policyIncomes:
-          $ref: '#/components/schemas/policyIncomes'
+        annuityIncomes:
+          $ref: '#/components/schemas/annuityIncomes'
 
-    policyIncomes:
-      description: Schema for bulk policy income response
+    annuityIncomes:
+      description: Schema for bulk annuity income response
       type: array
       items:
-        $ref: '#/components/schemas/PolicyIncomeActivationResponse'
+        $ref: '#/components/schemas/AnnuityIncomeActivationResponse'
+
+    BulkAnnuityIncomeNotificationRequest:
+      description: Schema for annuity income activation data
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          examples: 
+            - "complete"
+        firmId:
+          type: string
+          examples: 
+            - "12345"
+        npn:
+          type: string
+          examples: 
+            - "257893456"
