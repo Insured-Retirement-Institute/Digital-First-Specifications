@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRI API Documentation Portal</title>
+    <link rel="stylesheet" href="./css/custom.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#" class="active">API Documentation</a></li>
+                    <li><a href="data-dictionary.html">Data Dictionary</a></li>
+                    <li class="nav-dropdown">
+                        <a href="#" class="nav-dropdown-toggle">Working Groups</a>
+                        <ul class="nav-dropdown-menu">
+                            <li><a href="https://github.com/Insured-Retirement-Institute/Application-Status" target="_blank">Application Status</a></li>
+                            <li><a href="https://github.com/Insured-Retirement-Institute/Producer-Training" target="_blank">Producer Training</a></li>
+                            <li><a href="https://github.com/Insured-Retirement-Institute/Activated-Annuity-Income" target="_blank">Policy Income</a></li>
+                            <li><a href="https://github.com/Insured-Retirement-Institute/One-Time-Withdrawals" target="_blank">One-Time Withdrawals</a></li>
+                            <li><a href="https://github.com/Insured-Retirement-Institute/One-Time-Withdrawal-Quote" target="_blank">One-Time Withdrawal Quote</a></li>
+                            <li><a href="https://github.com/Insured-Retirement-Institute/Systematic-Program" target="_blank">Systematic Program</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>API Documentation</h1>
+            <p>Explore APIs</p>
+        </div>
+    </section>
+
+    <section class="api-directory">
+        <div class="container">
+            <h2>Available APIs</h2>
+            <!--
+            <div class="api-intro">
+              <p>No available APIs at this time.</p>
+            </div>
+            -->
+            <div class="api-grid">
+                <!-- Application Status API Card -->
+                <div class="api-card">
+                    <div class="api-card-header">
+                        <h3>Application Status</h3>
+                    </div>
+                    <p>Series of APIs used for obtaining application status data.</p>
+                    <div class="api-versions-container">
+                        <div class="api-versions">
+                            <span>Active Version:</span>
+                            <ul>
+                                <li><a href="api-viewer.html?api=appstatus.yaml&version=v2">v2.0.0</a></li>
+                            </ul>
+                            <span>Previous Versions:</span>
+                            <ul>
+                                <li><a href="api-viewer.html?api=appstatus.yaml&version=v1">v1.0.0</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <a href="api-viewer.html?api=appstatus.yaml&version=v2" class="btn btn-primary">View Documentation</a>
+                </div>
+                <!-- Producer Training Card -->
+                <div class="api-card">
+                    <div class="api-card-header">
+                        <h3>Producer Training</h3>
+                    </div>
+                    <p>APIs enabling training vendors, carriers, and distributors to transmit producer training completion information.</p>
+                    <div class="api-versions-container">
+                        <div class="api-versions">
+                            <span>Active Version:</span>
+                            <ul>
+                                <li><a href="api-viewer.html?api=producertraining.yaml&version=v1">v1.0.0</a></li>
+                            </ul>
+                            <span>Previous Versions:</span>
+                        </div>
+                    </div>
+                    <a href="api-viewer.html?api=producertraining.yaml&version=v1" class="btn btn-primary">View Documentation</a>
+                </div>
+                <!-- Policy Income API Card -->
+                <div class="api-card">
+                    <div class="api-card-header">
+                        <h3>Policy Income</h3>
+                    </div>
+                    <p>This API is to get the policy income details based on policy number</p>
+                    <div class="api-versions-container">
+                        <div class="api-versions">
+                            <span>Active Version:</span>
+                            <ul>
+                                <li><a href="api-viewer.html?api=policyincome.yaml&version=v1">v1.0.0</a></li>
+                            </ul>
+                            <span>Previous Versions:</span>
+                        </div>
+                    </div>
+                    <a href="api-viewer.html?api=policyincome.yaml&version=v1" class="btn btn-primary">View Documentation</a>
+                </div>
+                <!-- One-Time Withdrawals API Card -->
+                <div class="api-card">
+                    <div class="api-card-header">
+                        <h3>One-Time Withdrawals</h3>
+                    </div>
+                    <p>APIs for withdrawal transactions for annuities.</p>
+                    <div class="api-versions-container">
+                        <div class="api-versions">
+                            <span>Active Version:</span>
+                            <ul>
+                                <li><a href="api-viewer.html?api=onetimewithdrawal1.yaml&version=v1">v1.0.0</a></li>
+                            </ul>
+                            <span>Previous Versions:</span>
+                        </div>
+                    </div>
+                    <a href="api-viewer.html?api=onetimewithdrawal1.yaml&version=v1" class="btn btn-primary">View Documentation</a>
+                </div>
+                <!-- One-Time Withdrawal Quote API Card -->
+                <div class="api-card">
+                    <div class="api-card-header">
+                        <h3>One-Time Withdrawal Quote</h3>
+                    </div>
+                    <p>This API supports inquiry requests related to withdrawal eligibility, available amounts, tax considerations, and supporting data required prior to performing a withdrawal transaction.</p>
+                    <div class="api-versions-container">
+                        <div class="api-versions">
+                            <span>Active Version:</span>
+                            <ul>
+                                <li><a href="api-viewer.html?api=onetimewithdrawalquote1.yaml&version=v1">v1.0.0</a></li>
+                            </ul>
+                            <span>Previous Versions:</span>
+                        </div>
+                    </div>
+                    <a href="api-viewer.html?api=onetimewithdrawalquote1.yaml&version=v1" class="btn btn-primary">View Documentation</a>
+                </div>
+                <!-- Systematic Withdrawal Program Setup Card -->
+                <div class="api-card">
+                    <div class="api-card-header">
+                        <h3>Systematic Withdrawal Program Setup</h3>
+                    </div>
+                    <p>This API creates a new systematic withdrawal arrangement for an active policy.</p>
+                    <div class="api-versions-container">
+                        <div class="api-versions">
+                            <span>Active Version:</span>
+                            <ul>
+                                <li><a href="api-viewer.html?api=systematicwithdrawalprogramsetup.yaml&version=v1">v1.0.0</a></li>
+                            </ul>
+                            <span>Previous Versions:</span>
+                        </div>
+                    </div>
+                    <a href="api-viewer.html?api=systematicwithdrawalprogramsetup.yaml&version=v1" class="btn btn-primary">View Documentation</a>
+                </div>
+                <!-- Systematic Withdrawal Program Update Card -->
+                <div class="api-card">
+                    <div class="api-card-header">
+                        <h3>Systematic Withdrawal Program Update</h3>
+                    </div>
+                    <p>This API modifies an existing systematic withdrawal arrangement identified by arrangementId.</p>
+                    <div class="api-versions-container">
+                        <div class="api-versions">
+                            <span>Active Version:</span>
+                            <ul>
+                                <li><a href="api-viewer.html?api=systematicwithdrawalprogramupdate.yaml&version=v1">v1.0.0</a></li>
+                            </ul>
+                            <span>Previous Versions:</span>
+                        </div>
+                    </div>
+                    <a href="api-viewer.html?api=systematicwithdrawalprogramupdate.yaml&version=v1" class="btn btn-primary">View Documentation</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="api-directory">
+        <div class="container">
+            <h2>Pending APIs</h2>
+            <div class="api-intro">
+                <p>Under Development</p>
+                <ul>
+                    <li><a href="https://github.com/Insured-Retirement-Institute/Beneficiary-Management" target="_blank">Beneficiary Management</a></li>
+                    <li><a href="https://github.com/Insured-Retirement-Institute/Ceding-Carrier-Data" target="_blank">Ceding Carrier Data</a></li>
+                    <li><a href="https://github.com/Insured-Retirement-Institute/Visualizing-Annuity-Income" target="_blank">Visualizing Annuity Income</a></li>
+                    <li><a href="https://github.com/Insured-Retirement-Institute/Digital-Submission-Only" target="_blank">Digital Submission Only</a></li>
+                    <li><a href="https://github.com/Insured-Retirement-Institute/Producer-Inquiry" target="_blank">Producer Inquiry</a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="getting-started">
+        <div class="container">
+            <h2>Getting Started</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Choose an API</h3>
+                    <p>Select the API that fits your integration needs from our catalog above.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Explore Documentation</h3>
+                    <p>Review endpoints, parameters, and response schemas in our interactive documentation.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Test Requests</h3>
+                    <p>Try out API requests directly from the documentation interface.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Implement</h3>
+                    <p>Integrate the API into your application using our examples and guides.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#">API Status</a></li>
+                        <li><a href="#">Change Log</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggle = document.querySelector('.nav-dropdown-toggle');
+            const menu = document.querySelector('.nav-dropdown-menu');
+
+            toggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                menu.classList.toggle('open');
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!e.target.closest('.nav-dropdown')) {
+                    menu.classList.remove('open');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

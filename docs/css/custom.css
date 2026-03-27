@@ -134,7 +134,7 @@
     color: var(--primary-color);
   }
 
-  .main-nav ul {
+  .main-nav > ul {
     display: flex;
     list-style: none;
     margin: 0;
@@ -165,6 +165,54 @@
     bottom: 0;
     height: 2px;
     background-color: var(--primary-color);
+  }
+
+  /* Nav Dropdown */
+  .nav-dropdown {
+    position: relative;
+  }
+
+  .nav-dropdown-toggle::after {
+    content: ' ▾';
+    font-size: 0.7rem;
+  }
+
+  .nav-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    background-color: white;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    min-width: 200px;
+    z-index: 200;
+    padding: 0.5rem 0;
+    list-style: none;
+    margin: 0;
+    flex-direction: column;
+  }
+
+  .nav-dropdown-menu.open {
+    display: flex;
+  }
+
+  .nav-dropdown-menu li {
+    margin: 0;
+  }
+
+  .nav-dropdown-menu a {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: var(--text-color);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .nav-dropdown-menu a:hover {
+    background-color: var(--background-color);
+    color: var(--primary-color);
   }
 
   /* Hero Section */

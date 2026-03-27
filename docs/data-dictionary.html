@@ -3,9 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Data Dictionary - Annuity Application Status APIs</title>
+  <title>API Data Dictionary</title>
   <link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/custom.css">
+  <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
   <style>
     :root {
       --navy: #001a3e;
@@ -49,7 +52,7 @@
     }
 
     /* Header */
-    header {
+    .page-wrapper header {
       background: var(--navy);
       color: var(--white);
       padding: 48px;
@@ -58,7 +61,7 @@
       overflow: hidden;
     }
 
-    header::before {
+    .page-wrapper header::before {
       content: '';
       position: absolute;
       top: 0;
@@ -122,6 +125,31 @@
       font-weight: 600;
       color: var(--white);
       font-size: 0.95rem;
+    }
+
+    .spec-selector-select {
+      background: rgba(255, 255, 255, 0.15) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") no-repeat right 10px center;
+      background-size: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: var(--radius-sm);
+      color: var(--white);
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 6px 32px 6px 12px;
+      cursor: pointer;
+      appearance: none;
+      min-width: 220px;
+    }
+
+    .spec-selector-select:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.7);
+    }
+
+    .spec-selector-select option {
+      background: var(--navy-dark);
+      color: var(--white);
     }
 
     /* Main card */
@@ -416,10 +444,20 @@
 
     .tabulator-row:hover {
       background: var(--blue-light) !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      position: relative;
+      z-index: 1;
     }
 
     .tabulator-row.tabulator-row-even {
       background: var(--gray-50) !important;
+    }
+
+    .tabulator-row.tabulator-row-even:hover {
+      background: var(--blue-light) !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      position: relative;
+      z-index: 1;
     }
 
     .tabulator-row .tabulator-cell {
@@ -519,7 +557,7 @@
         padding: 24px;
       }
 
-      header {
+      .page-wrapper header {
         padding: 32px;
       }
 
@@ -542,7 +580,7 @@
         padding: 16px;
       }
 
-      header {
+      .page-wrapper header {
         padding: 24px;
         border-radius: var(--radius-md) var(--radius-md) 0 0;
       }
@@ -584,6 +622,28 @@
   </style>
 </head>
 <body>
+  <header class="site-header">
+    <div class="container">
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html">API Documentation</a></li>
+          <li><a href="data-dictionary.html" class="active">Data Dictionary</a></li>
+          <li class="nav-dropdown">
+            <a href="#" class="nav-dropdown-toggle">Working Groups</a>
+            <ul class="nav-dropdown-menu">
+              <li><a href="https://github.com/Insured-Retirement-Institute/Application-Status" target="_blank">Application Status</a></li>
+              <li><a href="https://github.com/Insured-Retirement-Institute/Producer-Training" target="_blank">Producer Training</a></li>
+              <li><a href="https://github.com/Insured-Retirement-Institute/Activated-Annuity-Income" target="_blank">Policy Income</a></li>
+              <li><a href="https://github.com/Insured-Retirement-Institute/One-Time-Withdrawals" target="_blank">One-Time Withdrawals</a></li>
+              <li><a href="https://github.com/Insured-Retirement-Institute/One-Time-Withdrawal-Quote" target="_blank">One-Time Withdrawal Quote</a></li>
+              <li><a href="https://github.com/Insured-Retirement-Institute/Systematic-Program" target="_blank">Systematic Program</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
   <div class="page-wrapper">
     <header>
       <div class="header-content">
@@ -593,8 +653,10 @@
             <div class="meta-item">
               <div class="icon">&#128203;</div>
               <div>
-                <div class="label">API</div>
-                <div class="value" id="api-info">Loading...</div>
+                <div class="label">Specification</div>
+                <select id="spec-selector" class="spec-selector-select">
+                  <option value="">Loading specs...</option>
+                </select>
               </div>
             </div>
             <div class="meta-item">
@@ -639,7 +701,7 @@
         <select id="filter-status">
           <option value="">All Status Codes</option>
         </select>
-        <a href="./data-dictionary.xlsx" class="download-btn" download>Download Excel</a>
+        <a href="#" class="download-btn" download>Download Excel</a>
       </div>
 
       <div class="stats-row">
@@ -658,6 +720,10 @@
     let data = null;
     let table = null;
     let currentTab = 'fields';
+    let currentManifest = [];
+    let isAllSpecs = false;
+
+    const specColumn = {title: "Specification", field: "specification", headerFilter: true, width: 220};
 
     const fieldColumns = [
       {title: "Operation ID", field: "operationId", headerFilter: true, width: 180},
@@ -705,23 +771,117 @@
       {title: "Required Fields", field: "required", width: 300}
     ];
 
-    async function loadData() {
+    async function loadManifest() {
       try {
-        const response = await fetch('./data-dictionary.json');
-        if (!response.ok) throw new Error('Failed to load data dictionary');
-        data = await response.json();
+        const response = await fetch('./data-dictionary-manifest.json');
+        if (!response.ok) throw new Error('Failed to load spec manifest');
+        const manifest = await response.json();
+
+        currentManifest = manifest;
+        const selector = document.getElementById('spec-selector');
+        selector.innerHTML = '';
+
+        const allOption = document.createElement('option');
+        allOption.value = '__all__';
+        allOption.textContent = 'All Specifications';
+        selector.appendChild(allOption);
+
+        manifest.forEach(spec => {
+          const option = document.createElement('option');
+          option.value = spec.key;
+          option.textContent = `${spec.title} v${spec.version}`;
+          selector.appendChild(option);
+        });
+
+        // Apply URL param if present
+        const urlParams = new URLSearchParams(window.location.search);
+        const specParam = urlParams.get('spec');
+        if (specParam === '__all__' || (specParam && manifest.find(s => s.key === specParam))) {
+          selector.value = specParam;
+        }
+
+        selector.addEventListener('change', () => {
+          const key = selector.value;
+          const url = new URL(window.location);
+          url.searchParams.set('spec', key);
+          window.history.pushState({}, '', url);
+          loadData(key);
+        });
+
+        if (manifest.length > 0) {
+          loadData(selector.value);
+        }
+      } catch (error) {
+        document.getElementById('data-table').innerHTML =
+          `<div class="error">Error loading manifest: ${error.message}</div>`;
+      }
+    }
+
+    async function loadData(key) {
+      try {
+        if (key === '__all__') {
+          isAllSpecs = true;
+          const allFieldInstances = [];
+          const allEndpoints = [];
+          const allSchemas = [];
+          let latestDate = null;
+
+          await Promise.all(currentManifest.map(async (spec) => {
+            const response = await fetch(`./data-dictionary-${spec.key}.json`);
+            if (!response.ok) return;
+            const specData = await response.json();
+            const specLabel = `${spec.title} v${spec.version}`;
+
+            if (specData.generatedAt) {
+              const d = new Date(specData.generatedAt);
+              if (!latestDate || d > latestDate) latestDate = d;
+            }
+
+            specData.fieldInstances.forEach(row => {
+              allFieldInstances.push({...row, specification: specLabel});
+            });
+            specData.endpoints.forEach(row => {
+              allEndpoints.push({...row, specification: specLabel});
+            });
+            specData.schemas.forEach(row => {
+              allSchemas.push({...row, specification: specLabel});
+            });
+          }));
+
+          data = {
+            fieldInstances: allFieldInstances,
+            endpoints: allEndpoints,
+            schemas: allSchemas,
+            generatedAt: latestDate ? latestDate.toISOString() : null
+          };
+
+          // Hide download button for "All"
+          const downloadBtn = document.querySelector('.download-btn');
+          if (downloadBtn) downloadBtn.style.display = 'none';
+        } else {
+          isAllSpecs = false;
+          const response = await fetch(`./data-dictionary-${key}.json`);
+          if (!response.ok) throw new Error('Failed to load data dictionary');
+          data = await response.json();
+
+          // Show download button
+          const downloadBtn = document.querySelector('.download-btn');
+          if (downloadBtn) {
+            downloadBtn.style.display = '';
+            downloadBtn.href = `./data-dictionary-${key}.xlsx`;
+          }
+        }
 
         // Update header
-        document.getElementById('api-info').textContent =
-          `${data.apiInfo.title} v${data.apiInfo.version}`;
         document.getElementById('generated-at').textContent =
-          `Generated: ${new Date(data.generatedAt).toLocaleString()}`;
+          data.generatedAt ? `Generated: ${new Date(data.generatedAt).toLocaleString()}` : '—';
 
-        // Populate status filter
+        // Repopulate status filter
+        const statusSelect = document.getElementById('filter-status');
+        statusSelect.innerHTML = '<option value="">All Status Codes</option>';
         const statusCodes = [...new Set(data.fieldInstances
           .map(f => f.httpStatus)
           .filter(s => s))];
-        const statusSelect = document.getElementById('filter-status');
         statusCodes.sort().forEach(code => {
           const option = document.createElement('option');
           option.value = code;
@@ -743,15 +903,15 @@
       switch (currentTab) {
         case 'fields':
           tableData = data.fieldInstances;
-          columns = fieldColumns;
+          columns = isAllSpecs ? [specColumn, ...fieldColumns] : fieldColumns;
           break;
         case 'endpoints':
           tableData = data.endpoints;
-          columns = endpointColumns;
+          columns = isAllSpecs ? [specColumn, ...endpointColumns] : endpointColumns;
           break;
         case 'schemas':
           tableData = data.schemas;
-          columns = schemaColumns;
+          columns = isAllSpecs ? [specColumn, ...schemaColumns] : schemaColumns;
           break;
       }
 
@@ -848,8 +1008,23 @@
       });
     });
 
-    // Load data on page load
-    loadData();
+    // Load manifest and data on page load
+    loadManifest();
+
+    // Working Groups dropdown
+    const toggle = document.querySelector('.nav-dropdown-toggle');
+    const menu = document.querySelector('.nav-dropdown-menu');
+    if (toggle && menu) {
+      toggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        menu.classList.toggle('open');
+      });
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.nav-dropdown')) {
+          menu.classList.remove('open');
+        }
+      });
+    }
   </script>
 </body>
 </html>
