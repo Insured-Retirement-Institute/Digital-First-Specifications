@@ -36,18 +36,13 @@ jobs:
       - name: Build data dictionary
         run: npm run build:dictionary
 
-      - name: Copy existing docs to public
-        run: |
-          # Copy all files from docs/ to public/, letting docs/index.html be the main landing page
-          cp -r docs/* public/
-
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './public'
+          path: './docs'
 
   deploy:
     environment:
