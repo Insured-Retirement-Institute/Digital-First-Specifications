@@ -1,198 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>IRI API Documentation</title>
-  <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@4.5.0/swagger-ui.css" />
-  <link rel="stylesheet" type="text/css" href="./css/custom.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
-  <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
+    <meta charset="UTF-8">
+    <title>IRI API Documentation</title>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@4.5.0/swagger-ui.css" />
+    <link rel="stylesheet" type="text/css" href="./css/custom.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
 </head>
 <body class="api-viewer-page">
-  <header class="site-header">
-    <div class="container">
-      <nav class="api-selector-nav">
-        <div class="selector-group">
-          <label for="api-selector">API:</label>
-          <select id="api-selector" onchange="loadSelectedAPI()">
-            <option value="appstatus.yaml">Application Status API</option>
-            <option value="producertraining.yaml">Producer Training Update</option>
-            <option value="policyincome.yaml">Policy Income API</option>
-            <option value="onetimewithdrawal1.yaml">One-Time Withdrawals API</option>
-            <option value="onetimewithdrawalquote1.yaml">One-Time Withdrawal Quote API</option>
-            <option value="systematicwithdrawalprogramsetup.yaml">Systematic Withdrawal Program Setup API</option>
-            <option value="systematicwithdrawalprogramupdate.yaml">Systematic Withdrawal Program Update API</option>
-            <!-- Add more options as you add more APIs -->
-            <!-- <option value="another-api/openapi.yaml">Another API</option> -->
-          </select>
+    <header class="site-header">
+        <div class="container">
+            <nav class="api-selector-nav">
+                <div class="selector-group">
+                    <label for="api-selector">API:</label>
+                    <select id="api-selector" onchange="loadSelectedAPI()">
+                        <option value="appstatus.yaml">Application Status API</option>
+                        <option value="producertraining.yaml">Producer Training Update</option>
+                        <option value="policyincome.yaml">Policy Income API</option>
+                        <option value="onetimewithdrawal1.yaml">One-Time Withdrawals API</option>
+                        <option value="onetimewithdrawalquote1.yaml">One-Time Withdrawal Quote API</option>
+                        <option value="systematicwithdrawalprogramsetup.yaml">Systematic Withdrawal Program Setup API</option>
+                        <option value="systematicwithdrawalprogramupdate.yaml">Systematic Withdrawal Program Update API</option>
+                        <!-- Add more options as you add more APIs -->
+                        <!-- <option value="another-api/openapi.yaml">Another API</option> -->
+                    </select>
+                </div>
+                <div class="selector-group">
+                    <label for="version-selector">Version:</label>
+                    <select id="version-selector" class="version-selector" onchange="loadSelectedAPI()">
+                        <!-- Versions will be populated dynamically if available -->
+                        <option value="v1">v1.0.0</option>
+                    </select>
+                </div>
+                <a href="index.html" class="btn btn-secondary">Back to API Catalog</a>
+            </nav>
         </div>
-        <div class="selector-group">
-          <label for="version-selector">Version:</label>
-          <select id="version-selector" class="version-selector" onchange="loadSelectedAPI()">
-            <!-- Versions will be populated dynamically if available -->
-            <option value="v1">v1.0.0</option>
-          </select>
-        </div>
-        <a href="index.html" class="btn btn-secondary">Back to API Catalog</a>
-      </nav>
-    </div>
-  </header>
+    </header>
 
-  <div id="swagger-ui"></div>
+    <div id="swagger-ui"></div>
 
-  <!-- Swagger UI Bundle -->
-   <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-bundle.js" charset="UTF-8"></script>
-  <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-standalone-preset.js" charset="UTF-8"></script>
-  <script>
-    // Define available APIs and their versions
-    const apiDefinitions = {
-      "appstatus.yaml": {
-        name: "Application Status API",
-        versions: {
-          "v1": {
-            path: "appstatusv1.yaml",
-            displayName: "v1.0.0"
-          },
-          "v2": {
-            path: "appstatusv2.yaml",
-            displayName: "v2.0.0"
-          }
+    <!-- Swagger UI Bundle -->
+    <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-bundle.js" charset="UTF-8"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-standalone-preset.js" charset="UTF-8"></script>
+    <script>
+        // Define available APIs and their versions
+        const apiDefinitions = {
+            "appstatus.yaml": {
+                name: "Application Status API",
+                versions: {
+                    "v1": {
+                        path: "specs/appstatusv1.yaml",
+                        displayName: "v1.0.0"
+                    },
+                    "v2": {
+                        path: "specs/appstatusv2.yaml",
+                        displayName: "v2.0.0"
+                    }
+                }
+            },
+            "producertraining.yaml": {
+                name: "Producer Training Update",
+                versions: {
+                    "v1": {
+                        path: "specs/producertrainingv1.yaml",
+                        displayName: "v1.0.0"
+                    }
+                }
+            },
+            "policyincome.yaml": {
+                name: "Policy Income API",
+                versions: {
+                    "v1": {
+                        path: "specs/activeannuityincomev1.yaml",
+                        displayName: "v1.0.0"
+                    }
+                }
+            },
+            "onetimewithdrawal1.yaml": {
+                name: "One-Time Withdrawals API",
+                versions: {
+                    "v1": {
+                        path: "specs/onetimewithdrawal1.yaml",
+                        displayName: "v1.0.0"
+                    }
+                }
+            },
+            "onetimewithdrawalquote1.yaml": {
+                name: "One-Time Withdrawal Quote API",
+                versions: {
+                    "v1": {
+                        path: "specs/onetimewithdrawalquote1.yaml",
+                        displayName: "v1.0.0"
+                    }
+                }
+            },
+            "systematicwithdrawalprogramsetup.yaml": {
+                name: "Systematic Withdrawal Program Setup API",
+                versions: {
+                    "v1": {
+                        path: "specs/systematicwithdrawalprogramsetup.yaml",
+                        displayName: "v1.0.0"
+                    }
+                }
+            },
+            "systematicwithdrawalprogramupdate.yaml": {
+                name: "Systematic Withdrawal Program Update API",
+                versions: {
+                    "v1": {
+                        path: "specs/systematicwithdrawalprogramupdate.yaml",
+                        displayName: "v1.0.0"
+                    }
+                }
+            }
+        };
+
+        function populateVersionSelector(apiKey) {
+            const versionSelector = document.getElementById('version-selector');
+            versionSelector.innerHTML = '';
+
+            const api = apiDefinitions[apiKey];
+            if (api && api.versions) {
+                const versions = api.versions;
+                Object.keys(versions).forEach(versionKey => {
+                    const option = document.createElement('option');
+                    option.value = versionKey;
+                    option.textContent = versions[versionKey].displayName;
+                    versionSelector.appendChild(option);
+                });
+                const versionSelectorGroup = versionSelector.closest('.selector-group');
+                versionSelectorGroup.style.display = Object.keys(versions).length > 1 ? 'flex' : 'none';
+            }
         }
-      },
-      "producertraining.yaml": {
-        name: "Producer Training Update",
-        versions: {
-          "v1": {
-            path: "producertrainingv1.yaml",
-            displayName: "v1.0.0"
-          }
+
+        function loadSelectedAPI() {
+            const apiSelector = document.getElementById('api-selector');
+            const versionSelector = document.getElementById('version-selector');
+            const selectedAPI = apiSelector.value;
+            const selectedVersion = versionSelector.value;
+
+            const apiPath = apiDefinitions[selectedAPI]?.versions[selectedVersion]?.path || selectedAPI;
+
+            // Update URL for bookmarking/sharing
+            const url = new URL(window.location);
+            url.searchParams.set('api', selectedAPI);
+            url.searchParams.set('version', selectedVersion);
+            window.history.pushState({}, '', url);
+
+            window.ui = SwaggerUIBundle({
+                url: apiPath,
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "StandaloneLayout",
+                displayRequestDuration: true,
+                defaultModelsExpandDepth: -1,
+                filter: true
+            });
         }
-      },
-      "policyincome.yaml": {
-        name: "Policy Income API",
-        versions: {
-          "v1": {
-            path: "policyincomev1.yaml",
-            displayName: "v1.0.0"
-          }
-        }
-      },
-      "onetimewithdrawal1.yaml": {
-        name: "One-Time Withdrawals API",
-        versions: {
-          "v1": {
-            path: "onetimewithdrawal1.yaml",
-            displayName: "v1.0.0"
-          }
-        }
-      },
-      "onetimewithdrawalquote1.yaml": {
-        name: "One-Time Withdrawal Quote API",
-        versions: {
-          "v1": {
-            path: "onetimewithdrawalquote1.yaml",
-            displayName: "v1.0.0"
-          }
-        }
-      },
-      "systematicwithdrawalprogramsetup.yaml": {
-        name: "Systematic Withdrawal Program Setup API",
-        versions: {
-          "v1": {
-            path: "systematicwithdrawalprogramsetup.yaml",
-            displayName: "v1.0.0"
-          }
-        }
-      },
-      "systematicwithdrawalprogramupdate.yaml": {
-        name: "Systematic Withdrawal Program Update API",
-        versions: {
-          "v1": {
-            path: "systematicwithdrawalprogramupdate.yaml",
-            displayName: "v1.0.0"
-          }
-        }
-      }
-    };
 
-    function populateVersionSelector(apiKey) {
-      const versionSelector = document.getElementById('version-selector');
-      versionSelector.innerHTML = '';
+        // Initial setup
+        window.onload = function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const apiParam = urlParams.get('api');
+            const versionParam = urlParams.get('version');
 
-      const api = apiDefinitions[apiKey];
-      if (api && api.versions) {
-        const versions = api.versions;
-        Object.keys(versions).forEach(versionKey => {
-          const option = document.createElement('option');
-          option.value = versionKey;
-          option.textContent = versions[versionKey].displayName;
-          versionSelector.appendChild(option);
-        });
-        const versionSelectorGroup = versionSelector.closest('.selector-group');
-        versionSelectorGroup.style.display = Object.keys(versions).length > 1 ? 'flex' : 'none';
-      }
-    }
+            const apiSelector = document.getElementById('api-selector');
 
-    function loadSelectedAPI() {
-      const apiSelector = document.getElementById('api-selector');
-      const versionSelector = document.getElementById('version-selector');
-      const selectedAPI = apiSelector.value;
-      const selectedVersion = versionSelector.value;
+            // If API is specified in URL and exists in our definitions
+            if (apiParam && apiDefinitions[apiParam]) {
+                apiSelector.value = apiParam;
+            }
 
-      const apiPath = apiDefinitions[selectedAPI]?.versions[selectedVersion]?.path || selectedAPI;
+            const selectedAPI = apiSelector.value;
+            populateVersionSelector(selectedAPI);
 
-      // Update URL for bookmarking/sharing
-      const url = new URL(window.location);
-      url.searchParams.set('api', selectedAPI);
-      url.searchParams.set('version', selectedVersion);
-      window.history.pushState({}, '', url);
+            const versionSelector = document.getElementById('version-selector');
 
-      window.ui = SwaggerUIBundle({
-        url: apiPath,
-        dom_id: '#swagger-ui',
-        deepLinking: true,
-        presets: [
-          SwaggerUIBundle.presets.apis,
-          SwaggerUIStandalonePreset
-        ],
-        plugins: [
-          SwaggerUIBundle.plugins.DownloadUrl
-        ],
-        layout: "StandaloneLayout",
-        displayRequestDuration: true,
-        defaultModelsExpandDepth: -1,
-        filter: true
-      });
-    }
+            // If version is specified in URL and exists for the selected API
+            if (versionParam && apiDefinitions[selectedAPI]?.versions[versionParam]) {
+                versionSelector.value = versionParam;
+            }
 
-    // Initial setup
-    window.onload = function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const apiParam = urlParams.get('api');
-      const versionParam = urlParams.get('version');
-
-      const apiSelector = document.getElementById('api-selector');
-
-      // If API is specified in URL and exists in our definitions
-      if (apiParam && apiDefinitions[apiParam]) {
-        apiSelector.value = apiParam;
-      }
-
-      const selectedAPI = apiSelector.value;
-      populateVersionSelector(selectedAPI);
-
-      const versionSelector = document.getElementById('version-selector');
-
-      // If version is specified in URL and exists for the selected API
-      if (versionParam && apiDefinitions[selectedAPI]?.versions[versionParam]) {
-        versionSelector.value = versionParam;
-      }
-
-      loadSelectedAPI();
-    };
-  </script>
+            loadSelectedAPI();
+        };
+    </script>
 </body>
 </html>

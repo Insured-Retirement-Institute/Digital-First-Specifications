@@ -544,239 +544,248 @@ function sanitizeOperationId(method: string, path: string): string {
 }
 
 async function generateDataDictionary(): Promise<void> {
-  // Determine OpenAPI file path
-  console.log("Testing");
-  const defaultPath = path.join(__dirname, '..', 'docs', 'appstatusv2.yaml');
-  const openApiPath = process.env.OPENAPI_PATH || defaultPath;
+  const specsDir = path.join(__dirname, '..', 'docs', 'specs');
+  const publicDir = path.join(__dirname, '..', 'docs');
 
-  console.log(`Loading OpenAPI spec from: ${openApiPath}`);
+  if (!fs.existsSync(publicDir)) {
+    fs.mkdirSync(publicDir, { recursive: true });
+  }
 
-  // Parse and dereference the OpenAPI spec
-  const api = await SwaggerParser.dereference(openApiPath) as OpenAPISpec;
+  const specFiles = fs.readdirSync(specsDir)
+    .filter(f => f.endsWith('.yaml') || f.endsWith('.yml'))
+    .sort();
 
-  console.log(`Parsed: ${api.info.title} v${api.info.version}`);
+  if (specFiles.length === 0) {
+    console.error(`No YAML spec files found in ${specsDir}`);
+    process.exit(1);
+  }
 
-  const fieldInstances: FieldInstance[] = [];
-  const endpoints: EndpointSummary[] = [];
-  const schemas: SchemaSummary[] = [];
+  const manifest: Array<{ key: string; title: string; version: string }> = [];
 
-  // Process paths
-  for (const [pathUrl, pathItem] of Object.entries(api.paths)) {
-    const pathParams = pathItem.parameters || [];
+  for (const specFile of specFiles) {
+    const specPath = path.join(specsDir, specFile);
+    const key = path.basename(specFile, path.extname(specFile));
 
-    const methods = ['get', 'post', 'put', 'patch', 'delete'] as const;
+    console.log(`\nProcessing: ${specFile}`);
 
-    for (const method of methods) {
-      const operation = pathItem[method];
-      if (!operation) continue;
+    const api = await SwaggerParser.dereference(specPath) as OpenAPISpec;
+    console.log(`Parsed: ${api.info.title} v${api.info.version}`);
 
-      const operationId = operation.operationId || sanitizeOperationId(method, pathUrl);
-      const tags = (operation.tags || []).join(', ');
-      const summary = operation.summary || '';
-      const description = operation.description || '';
+    const fieldInstances: FieldInstance[] = [];
+    const endpoints: EndpointSummary[] = [];
+    const schemas: SchemaSummary[] = [];
 
-      // Collect request media types
-      const requestMediaTypes: string[] = [];
-      if (operation.requestBody?.content) {
-        requestMediaTypes.push(...Object.keys(operation.requestBody.content));
-      }
+    // Process paths
+    for (const [pathUrl, pathItem] of Object.entries(api.paths)) {
+      const pathParams = pathItem.parameters || [];
 
-      // Collect response codes and media types
-      const responseCodesAndMediaTypes: string[] = [];
-      if (operation.responses) {
-        for (const [code, response] of Object.entries(operation.responses)) {
-          const mediaTypes = response.content ? Object.keys(response.content) : [];
-          if (mediaTypes.length > 0) {
-            responseCodesAndMediaTypes.push(`${code}: ${mediaTypes.join(', ')}`);
-          } else {
-            responseCodesAndMediaTypes.push(code);
+      const methods = ['get', 'post', 'put', 'patch', 'delete'] as const;
+
+      for (const method of methods) {
+        const operation = pathItem[method];
+        if (!operation) continue;
+
+        const operationId = operation.operationId || sanitizeOperationId(method, pathUrl);
+        const tags = (operation.tags || []).join(', ');
+        const summary = operation.summary || '';
+        const description = operation.description || '';
+
+        // Collect request media types
+        const requestMediaTypes: string[] = [];
+        if (operation.requestBody?.content) {
+          requestMediaTypes.push(...Object.keys(operation.requestBody.content));
+        }
+
+        // Collect response codes and media types
+        const responseCodesAndMediaTypes: string[] = [];
+        if (operation.responses) {
+          for (const [code, response] of Object.entries(operation.responses)) {
+            const mediaTypes = response.content ? Object.keys(response.content) : [];
+            if (mediaTypes.length > 0) {
+              responseCodesAndMediaTypes.push(`${code}: ${mediaTypes.join(', ')}`);
+            } else {
+              responseCodesAndMediaTypes.push(code);
+            }
           }
         }
-      }
 
-      // Count parameters
-      const allParams = [...pathParams, ...(operation.parameters || [])];
+        // Count parameters
+        const allParams = [...pathParams, ...(operation.parameters || [])];
 
-      // Add endpoint summary
-      endpoints.push({
-        method: method.toUpperCase(),
-        path: pathUrl,
-        operationId,
-        tags,
-        summary,
-        description,
-        requestMediaTypes: requestMediaTypes.join(', '),
-        responseCodesAndMediaTypes: responseCodesAndMediaTypes.join('; '),
-        parameterCount: allParams.length
-      });
+        // Add endpoint summary
+        endpoints.push({
+          method: method.toUpperCase(),
+          path: pathUrl,
+          operationId,
+          tags,
+          summary,
+          description,
+          requestMediaTypes: requestMediaTypes.join(', '),
+          responseCodesAndMediaTypes: responseCodesAndMediaTypes.join('; '),
+          parameterCount: allParams.length
+        });
 
-      const baseCtx = {
-        operationId,
-        method: method.toUpperCase(),
-        path: pathUrl,
-        tags,
-        summary
-      };
+        const baseCtx = {
+          operationId,
+          method: method.toUpperCase(),
+          path: pathUrl,
+          tags,
+          summary
+        };
 
-      // Process parameters (path-level + operation-level)
-      for (const param of allParams) {
-        fieldInstances.push(...processParameter(param, baseCtx));
-      }
+        // Process parameters (path-level + operation-level)
+        for (const param of allParams) {
+          fieldInstances.push(...processParameter(param, baseCtx));
+        }
 
-      // Process request body
-      if (operation.requestBody?.content) {
-        for (const [mediaType, mediaTypeObj] of Object.entries(operation.requestBody.content)) {
-          if (mediaTypeObj.schema) {
-            const schemaName = getSchemaName(mediaTypeObj.schema);
-            const ctx: FlattenContext = {
-              ...baseCtx,
-              location: 'request_body',
-              httpStatus: '',
-              mediaType,
-              sourceRef: `requestBody.content.${mediaType}.schema`,
-              requiredFields: new Set(mediaTypeObj.schema.required || [])
-            };
+        // Process request body
+        if (operation.requestBody?.content) {
+          for (const [mediaType, mediaTypeObj] of Object.entries(operation.requestBody.content)) {
+            if (mediaTypeObj.schema) {
+              const schemaName = getSchemaName(mediaTypeObj.schema);
+              const ctx: FlattenContext = {
+                ...baseCtx,
+                location: 'request_body',
+                httpStatus: '',
+                mediaType,
+                sourceRef: `requestBody.content.${mediaType}.schema`,
+                requiredFields: new Set(mediaTypeObj.schema.required || [])
+              };
 
-            fieldInstances.push(...flattenSchema(mediaTypeObj.schema, '', ctx, schemaName));
+              fieldInstances.push(...flattenSchema(mediaTypeObj.schema, '', ctx, schemaName));
+            }
           }
         }
-      }
 
-      // Process responses
-      if (operation.responses) {
-        for (const [statusCode, response] of Object.entries(operation.responses)) {
-          if (response.content) {
-            for (const [mediaType, mediaTypeObj] of Object.entries(response.content)) {
-              if (mediaTypeObj.schema) {
-                const schemaName = getSchemaName(mediaTypeObj.schema);
-                const ctx: FlattenContext = {
-                  ...baseCtx,
-                  location: 'response_body',
-                  httpStatus: statusCode,
-                  mediaType,
-                  sourceRef: `responses.${statusCode}.content.${mediaType}.schema`,
-                  requiredFields: new Set(mediaTypeObj.schema.required || [])
-                };
+        // Process responses
+        if (operation.responses) {
+          for (const [statusCode, response] of Object.entries(operation.responses)) {
+            if (response.content) {
+              for (const [mediaType, mediaTypeObj] of Object.entries(response.content)) {
+                if (mediaTypeObj.schema) {
+                  const schemaName = getSchemaName(mediaTypeObj.schema);
+                  const ctx: FlattenContext = {
+                    ...baseCtx,
+                    location: 'response_body',
+                    httpStatus: statusCode,
+                    mediaType,
+                    sourceRef: `responses.${statusCode}.content.${mediaType}.schema`,
+                    requiredFields: new Set(mediaTypeObj.schema.required || [])
+                  };
 
-                fieldInstances.push(...flattenSchema(mediaTypeObj.schema, '', ctx, schemaName));
+                  fieldInstances.push(...flattenSchema(mediaTypeObj.schema, '', ctx, schemaName));
+                }
               }
             }
           }
         }
       }
     }
-  }
 
-  // Process component schemas for summary
-  if (api.components?.schemas) {
-    for (const [name, schema] of Object.entries(api.components.schemas)) {
-      const propCount = schema.properties ? Object.keys(schema.properties).length : 0;
-      schemas.push({
-        name,
-        type: schema.type || (schema.allOf ? 'allOf' : schema.oneOf ? 'oneOf' : schema.anyOf ? 'anyOf' : 'unknown'),
-        description: schema.description || '',
-        propertyCount: propCount,
-        required: (schema.required || []).join(', ')
-      });
+    // Process component schemas for summary
+    if (api.components?.schemas) {
+      for (const [name, schema] of Object.entries(api.components.schemas)) {
+        const propCount = schema.properties ? Object.keys(schema.properties).length : 0;
+        schemas.push({
+          name,
+          type: schema.type || (schema.allOf ? 'allOf' : schema.oneOf ? 'oneOf' : schema.anyOf ? 'anyOf' : 'unknown'),
+          description: schema.description || '',
+          propertyCount: propCount,
+          required: (schema.required || []).join(', ')
+        });
+      }
     }
+
+    // Sort field instances deterministically
+    fieldInstances.sort((a, b) => {
+      const pathCmp = a.path.localeCompare(b.path);
+      if (pathCmp !== 0) return pathCmp;
+
+      const methodCmp = a.method.localeCompare(b.method);
+      if (methodCmp !== 0) return methodCmp;
+
+      const locationOrder = ['path_param', 'query_param', 'header_param', 'cookie_param', 'request_body', 'response_body'];
+      const locCmp = locationOrder.indexOf(a.location) - locationOrder.indexOf(b.location);
+      if (locCmp !== 0) return locCmp;
+
+      const statusCmp = a.httpStatus.localeCompare(b.httpStatus);
+      if (statusCmp !== 0) return statusCmp;
+
+      return a.fieldPath.localeCompare(b.fieldPath);
+    });
+
+    // Sort endpoints
+    endpoints.sort((a, b) => {
+      const pathCmp = a.path.localeCompare(b.path);
+      if (pathCmp !== 0) return pathCmp;
+      return a.method.localeCompare(b.method);
+    });
+
+    // Sort schemas
+    schemas.sort((a, b) => a.name.localeCompare(b.name));
+
+    // Generate JSON output
+    const jsonOutput = {
+      generatedAt: new Date().toISOString(),
+      source: specPath,
+      apiInfo: {
+        title: api.info.title,
+        version: api.info.version,
+        description: api.info.description
+      },
+      fieldInstances,
+      endpoints,
+      schemas
+    };
+
+    const jsonPath = path.join(publicDir, `data-dictionary-${key}.json`);
+    fs.writeFileSync(jsonPath, JSON.stringify(jsonOutput, null, 2));
+    console.log(`Generated: ${jsonPath} (${fieldInstances.length} field instances)`);
+
+    // Generate Excel output
+    const workbook = XLSX.utils.book_new();
+
+    const fieldInstancesSheet = XLSX.utils.json_to_sheet(fieldInstances);
+    XLSX.utils.book_append_sheet(workbook, fieldInstancesSheet, 'Field Instances');
+
+    const endpointsSheet = XLSX.utils.json_to_sheet(endpoints);
+    XLSX.utils.book_append_sheet(workbook, endpointsSheet, 'Endpoints');
+
+    const schemasSheet = XLSX.utils.json_to_sheet(schemas);
+    XLSX.utils.book_append_sheet(workbook, schemasSheet, 'Schemas');
+
+    const xlsxPath = path.join(publicDir, `data-dictionary-${key}.xlsx`);
+    XLSX.writeFile(workbook, xlsxPath);
+    console.log(`Generated: ${xlsxPath}`);
+
+    manifest.push({ key, title: api.info.title, version: api.info.version });
   }
 
-  // Sort field instances deterministically
-  fieldInstances.sort((a, b) => {
-    const pathCmp = a.path.localeCompare(b.path);
-    if (pathCmp !== 0) return pathCmp;
+  // Write manifest
+  const manifestPath = path.join(publicDir, 'data-dictionary-manifest.json');
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+  console.log(`\nGenerated manifest: ${manifestPath} (${manifest.length} specs)`);
 
-    const methodCmp = a.method.localeCompare(b.method);
-    if (methodCmp !== 0) return methodCmp;
-
-    const locationOrder = ['path_param', 'query_param', 'header_param', 'cookie_param', 'request_body', 'response_body'];
-    const locCmp = locationOrder.indexOf(a.location) - locationOrder.indexOf(b.location);
-    if (locCmp !== 0) return locCmp;
-
-    const statusCmp = a.httpStatus.localeCompare(b.httpStatus);
-    if (statusCmp !== 0) return statusCmp;
-
-    return a.fieldPath.localeCompare(b.fieldPath);
-  });
-
-  // Sort endpoints
-  endpoints.sort((a, b) => {
-    const pathCmp = a.path.localeCompare(b.path);
-    if (pathCmp !== 0) return pathCmp;
-    return a.method.localeCompare(b.method);
-  });
-
-  // Sort schemas
-  schemas.sort((a, b) => a.name.localeCompare(b.name));
-
-  // Prepare output directory
-  const publicDir = path.join(__dirname, '..', 'public');
-  if (!fs.existsSync(publicDir)) {
-    fs.mkdirSync(publicDir, { recursive: true });
-  }
-
-  // Generate JSON output
-  const jsonOutput = {
-    generatedAt: new Date().toISOString(),
-    source: openApiPath,
-    apiInfo: {
-      title: api.info.title,
-      version: api.info.version,
-      description: api.info.description
-    },
-    fieldInstances,
-    endpoints,
-    schemas
-  };
-
-  const jsonPath = path.join(publicDir, 'data-dictionary.json');
-  fs.writeFileSync(jsonPath, JSON.stringify(jsonOutput, null, 2));
-  console.log(`Generated: ${jsonPath} (${fieldInstances.length} field instances)`);
-
-  // Generate Excel output
-  const workbook = XLSX.utils.book_new();
-
-  // Field Instances sheet
-  const fieldInstancesSheet = XLSX.utils.json_to_sheet(fieldInstances);
-  XLSX.utils.book_append_sheet(workbook, fieldInstancesSheet, 'Field Instances');
-
-  // Endpoints sheet
-  const endpointsSheet = XLSX.utils.json_to_sheet(endpoints);
-  XLSX.utils.book_append_sheet(workbook, endpointsSheet, 'Endpoints');
-
-  // Schemas sheet
-  const schemasSheet = XLSX.utils.json_to_sheet(schemas);
-  XLSX.utils.book_append_sheet(workbook, schemasSheet, 'Schemas');
-
-  const xlsxPath = path.join(publicDir, 'data-dictionary.xlsx');
-  XLSX.writeFile(workbook, xlsxPath);
-  console.log(`Generated: ${xlsxPath}`);
-
-  // Copy data-dictionary.html to public if it exists in templates
-  const templateHtmlPath = path.join(__dirname, 'templates', 'data-dictionary.html');
+  // Generate HTML
   const publicHtmlPath = path.join(publicDir, 'data-dictionary.html');
-
-  if (fs.existsSync(templateHtmlPath)) {
-    fs.copyFileSync(templateHtmlPath, publicHtmlPath);
-    console.log(`Copied: ${publicHtmlPath}`);
-  } else {
-    // Generate HTML inline
-    generateHtml(publicHtmlPath, api.info.title, api.info.version);
-    console.log(`Generated: ${publicHtmlPath}`);
-  }
+  generateHtml(publicHtmlPath);
+  console.log(`Generated: ${publicHtmlPath}`);
 
   console.log('\nData dictionary generation complete!');
 }
 
-function generateHtml(outputPath: string, title: string, version: string): void {
+function generateHtml(outputPath: string): void {
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Data Dictionary - ${title}</title>
+  <title>API Data Dictionary</title>
   <link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/custom.css">
+  <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
   <style>
     :root {
       --navy: #001a3e;
@@ -820,7 +829,7 @@ function generateHtml(outputPath: string, title: string, version: string): void 
     }
 
     /* Header */
-    header {
+    .page-wrapper header {
       background: var(--navy);
       color: var(--white);
       padding: 48px;
@@ -829,7 +838,7 @@ function generateHtml(outputPath: string, title: string, version: string): void 
       overflow: hidden;
     }
 
-    header::before {
+    .page-wrapper header::before {
       content: '';
       position: absolute;
       top: 0;
@@ -893,6 +902,31 @@ function generateHtml(outputPath: string, title: string, version: string): void 
       font-weight: 600;
       color: var(--white);
       font-size: 0.95rem;
+    }
+
+    .spec-selector-select {
+      background: rgba(255, 255, 255, 0.15) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") no-repeat right 10px center;
+      background-size: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: var(--radius-sm);
+      color: var(--white);
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 6px 32px 6px 12px;
+      cursor: pointer;
+      appearance: none;
+      min-width: 220px;
+    }
+
+    .spec-selector-select:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.7);
+    }
+
+    .spec-selector-select option {
+      background: var(--navy-dark);
+      color: var(--white);
     }
 
     /* Main card */
@@ -1187,10 +1221,20 @@ function generateHtml(outputPath: string, title: string, version: string): void 
 
     .tabulator-row:hover {
       background: var(--blue-light) !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      position: relative;
+      z-index: 1;
     }
 
     .tabulator-row.tabulator-row-even {
       background: var(--gray-50) !important;
+    }
+
+    .tabulator-row.tabulator-row-even:hover {
+      background: var(--blue-light) !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      position: relative;
+      z-index: 1;
     }
 
     .tabulator-row .tabulator-cell {
@@ -1290,7 +1334,7 @@ function generateHtml(outputPath: string, title: string, version: string): void 
         padding: 24px;
       }
 
-      header {
+      .page-wrapper header {
         padding: 32px;
       }
 
@@ -1313,7 +1357,7 @@ function generateHtml(outputPath: string, title: string, version: string): void 
         padding: 16px;
       }
 
-      header {
+      .page-wrapper header {
         padding: 24px;
         border-radius: var(--radius-md) var(--radius-md) 0 0;
       }
@@ -1355,6 +1399,28 @@ function generateHtml(outputPath: string, title: string, version: string): void 
   </style>
 </head>
 <body>
+  <header class="site-header">
+    <div class="container">
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html">API Documentation</a></li>
+          <li><a href="data-dictionary.html" class="active">Data Dictionary</a></li>
+          <li class="nav-dropdown">
+            <a href="#" class="nav-dropdown-toggle">Working Groups</a>
+            <ul class="nav-dropdown-menu">
+              <li><a href="https://github.com/Insured-Retirement-Institute/Application-Status" target="_blank">Application Status</a></li>
+              <li><a href="https://github.com/Insured-Retirement-Institute/Producer-Training" target="_blank">Producer Training</a></li>
+              <li><a href="https://github.com/Insured-Retirement-Institute/Activated-Annuity-Income" target="_blank">Policy Income</a></li>
+              <li><a href="https://github.com/Insured-Retirement-Institute/One-Time-Withdrawals" target="_blank">One-Time Withdrawals</a></li>
+              <li><a href="https://github.com/Insured-Retirement-Institute/One-Time-Withdrawal-Quote" target="_blank">One-Time Withdrawal Quote</a></li>
+              <li><a href="https://github.com/Insured-Retirement-Institute/Systematic-Program" target="_blank">Systematic Program</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
   <div class="page-wrapper">
     <header>
       <div class="header-content">
@@ -1364,8 +1430,10 @@ function generateHtml(outputPath: string, title: string, version: string): void 
             <div class="meta-item">
               <div class="icon">&#128203;</div>
               <div>
-                <div class="label">API</div>
-                <div class="value" id="api-info">Loading...</div>
+                <div class="label">Specification</div>
+                <select id="spec-selector" class="spec-selector-select">
+                  <option value="">Loading specs...</option>
+                </select>
               </div>
             </div>
             <div class="meta-item">
@@ -1410,7 +1478,7 @@ function generateHtml(outputPath: string, title: string, version: string): void 
         <select id="filter-status">
           <option value="">All Status Codes</option>
         </select>
-        <a href="./data-dictionary.xlsx" class="download-btn" download>Download Excel</a>
+        <a href="#" class="download-btn" download>Download Excel</a>
       </div>
 
       <div class="stats-row">
@@ -1429,6 +1497,10 @@ function generateHtml(outputPath: string, title: string, version: string): void 
     let data = null;
     let table = null;
     let currentTab = 'fields';
+    let currentManifest = [];
+    let isAllSpecs = false;
+
+    const specColumn = {title: "Specification", field: "specification", headerFilter: true, width: 220};
 
     const fieldColumns = [
       {title: "Operation ID", field: "operationId", headerFilter: true, width: 180},
@@ -1476,23 +1548,117 @@ function generateHtml(outputPath: string, title: string, version: string): void 
       {title: "Required Fields", field: "required", width: 300}
     ];
 
-    async function loadData() {
+    async function loadManifest() {
       try {
-        const response = await fetch('./data-dictionary.json');
-        if (!response.ok) throw new Error('Failed to load data dictionary');
-        data = await response.json();
+        const response = await fetch('./data-dictionary-manifest.json');
+        if (!response.ok) throw new Error('Failed to load spec manifest');
+        const manifest = await response.json();
+
+        currentManifest = manifest;
+        const selector = document.getElementById('spec-selector');
+        selector.innerHTML = '';
+
+        const allOption = document.createElement('option');
+        allOption.value = '__all__';
+        allOption.textContent = 'All Specifications';
+        selector.appendChild(allOption);
+
+        manifest.forEach(spec => {
+          const option = document.createElement('option');
+          option.value = spec.key;
+          option.textContent = \`\${spec.title} v\${spec.version}\`;
+          selector.appendChild(option);
+        });
+
+        // Apply URL param if present
+        const urlParams = new URLSearchParams(window.location.search);
+        const specParam = urlParams.get('spec');
+        if (specParam === '__all__' || (specParam && manifest.find(s => s.key === specParam))) {
+          selector.value = specParam;
+        }
+
+        selector.addEventListener('change', () => {
+          const key = selector.value;
+          const url = new URL(window.location);
+          url.searchParams.set('spec', key);
+          window.history.pushState({}, '', url);
+          loadData(key);
+        });
+
+        if (manifest.length > 0) {
+          loadData(selector.value);
+        }
+      } catch (error) {
+        document.getElementById('data-table').innerHTML =
+          \`<div class="error">Error loading manifest: \${error.message}</div>\`;
+      }
+    }
+
+    async function loadData(key) {
+      try {
+        if (key === '__all__') {
+          isAllSpecs = true;
+          const allFieldInstances = [];
+          const allEndpoints = [];
+          const allSchemas = [];
+          let latestDate = null;
+
+          await Promise.all(currentManifest.map(async (spec) => {
+            const response = await fetch(\`./data-dictionary-\${spec.key}.json\`);
+            if (!response.ok) return;
+            const specData = await response.json();
+            const specLabel = \`\${spec.title} v\${spec.version}\`;
+
+            if (specData.generatedAt) {
+              const d = new Date(specData.generatedAt);
+              if (!latestDate || d > latestDate) latestDate = d;
+            }
+
+            specData.fieldInstances.forEach(row => {
+              allFieldInstances.push({...row, specification: specLabel});
+            });
+            specData.endpoints.forEach(row => {
+              allEndpoints.push({...row, specification: specLabel});
+            });
+            specData.schemas.forEach(row => {
+              allSchemas.push({...row, specification: specLabel});
+            });
+          }));
+
+          data = {
+            fieldInstances: allFieldInstances,
+            endpoints: allEndpoints,
+            schemas: allSchemas,
+            generatedAt: latestDate ? latestDate.toISOString() : null
+          };
+
+          // Hide download button for "All"
+          const downloadBtn = document.querySelector('.download-btn');
+          if (downloadBtn) downloadBtn.style.display = 'none';
+        } else {
+          isAllSpecs = false;
+          const response = await fetch(\`./data-dictionary-\${key}.json\`);
+          if (!response.ok) throw new Error('Failed to load data dictionary');
+          data = await response.json();
+
+          // Show download button
+          const downloadBtn = document.querySelector('.download-btn');
+          if (downloadBtn) {
+            downloadBtn.style.display = '';
+            downloadBtn.href = \`./data-dictionary-\${key}.xlsx\`;
+          }
+        }
 
         // Update header
-        document.getElementById('api-info').textContent =
-          \`\${data.apiInfo.title} v\${data.apiInfo.version}\`;
         document.getElementById('generated-at').textContent =
-          \`Generated: \${new Date(data.generatedAt).toLocaleString()}\`;
+          data.generatedAt ? \`Generated: \${new Date(data.generatedAt).toLocaleString()}\` : '—';
 
-        // Populate status filter
+        // Repopulate status filter
+        const statusSelect = document.getElementById('filter-status');
+        statusSelect.innerHTML = '<option value="">All Status Codes</option>';
         const statusCodes = [...new Set(data.fieldInstances
           .map(f => f.httpStatus)
           .filter(s => s))];
-        const statusSelect = document.getElementById('filter-status');
         statusCodes.sort().forEach(code => {
           const option = document.createElement('option');
           option.value = code;
@@ -1514,15 +1680,15 @@ function generateHtml(outputPath: string, title: string, version: string): void 
       switch (currentTab) {
         case 'fields':
           tableData = data.fieldInstances;
-          columns = fieldColumns;
+          columns = isAllSpecs ? [specColumn, ...fieldColumns] : fieldColumns;
           break;
         case 'endpoints':
           tableData = data.endpoints;
-          columns = endpointColumns;
+          columns = isAllSpecs ? [specColumn, ...endpointColumns] : endpointColumns;
           break;
         case 'schemas':
           tableData = data.schemas;
-          columns = schemaColumns;
+          columns = isAllSpecs ? [specColumn, ...schemaColumns] : schemaColumns;
           break;
       }
 
@@ -1619,8 +1785,23 @@ function generateHtml(outputPath: string, title: string, version: string): void 
       });
     });
 
-    // Load data on page load
-    loadData();
+    // Load manifest and data on page load
+    loadManifest();
+
+    // Working Groups dropdown
+    const toggle = document.querySelector('.nav-dropdown-toggle');
+    const menu = document.querySelector('.nav-dropdown-menu');
+    if (toggle && menu) {
+      toggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        menu.classList.toggle('open');
+      });
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.nav-dropdown')) {
+          menu.classList.remove('open');
+        }
+      });
+    }
   </script>
 </body>
 </html>`;
