@@ -84,6 +84,7 @@ Response Body Standards
 </details>
 
 Standard Error Schema
+
 Every error response—regardless of transaction type—includes:
 - An HTTP status code in the **400–599** range
 - A structured and validated **error code**
