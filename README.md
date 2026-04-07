@@ -94,7 +94,7 @@ Every error response—regardless of transaction type—includes:
 - A **correlationId** for cross‑system tracing
 - A **field‑level** or **rule‑level** error collections
 
-**Key Fields**
+### Key Fields
 | Field | Description |
 |-------|-------------|
 | **httpStatus** | Numeric HTTP status code (400–599) representing the type and severity of the failure. |
