@@ -85,23 +85,23 @@ Response Body Standards
 
 Standard Error Schema
 
-Every error response—regardless of transaction type—includes:
-- An HTTP status code in the **400–599** range
-- A structured and validated **error code**
-- A **timestamp** of when the error was generated
-- A developer‑focused **technical message** (`message`)
-- A safe, user‑friendly **userMessage**
-- A **correlationId** for cross‑system tracing
-- A **field‑level** or **rule‑level** error collections
+- Every error response—regardless of transaction type—includes:
+  - An HTTP status code in the **400–599** range
+  - A structured and validated **error code**
+  - A **timestamp** of when the error was generated
+  - A developer‑focused **technical message** (`message`)
+  - A safe, user‑friendly **userMessage**
+  - A **correlationId** for cross‑system tracing
+  - A **field‑level** or **rule‑level** error collections
 
-### Key Fields
-| Field | Description |
-|-------|-------------|
-| **httpStatus** | Numeric HTTP status code (400–599) representing the type and severity of the failure. |
-| **code** | Structured identifier in the enforced format: `domain.category.subcategory`. Enables machine‑readable error handling. |
-| **correlationId** | Carries forward the inbound request’s correlation ID header to enable end‑to‑end traceability. |
-| **message** | End‑user‑friendly explanation, safe to show in portals or consumer‑facing apps. |
-| **validationErrors** | Array describing domain/business rule violations; each entry requires its own code and message. |
+- Key Fields
+  | Field | Description |
+  |-------|-------------|
+  | **httpStatus** | Numeric HTTP status code (400–599) representing the type and severity of the failure. |
+  | **code** | Structured identifier in the enforced format: `domain.category.subcategory`. Enables machine‑readable error handling. |
+  | **correlationId** | Carries forward the inbound request’s correlation ID header to enable end‑to‑end traceability. |
+  | **message** | End‑user‑friendly explanation, safe to show in portals or consumer‑facing apps. |
+  | **validationErrors** | Array describing domain/business rule violations; each entry requires its own code and message. |
 
 Data definitions  
 - **_policyNumber_** is the term used to describe the unique identifier of the policy.
