@@ -6,18 +6,18 @@ info:
 paths:
   /v1/policies/{policyNumber}/income-activation:
     get:
-      operationId: getAnnuityIncomeActivationByPolicyNumber
-      summary: Get Annuity Income Activation By PolicyNumber.
-      description: Get Annuity Income Activation By PolicyNumber.
+      operationId: getActivatedAnnuityIncomeByPolicyNumber
+      summary: Get Activated Annuity Income By PolicyNumber.
+      description: Get Activated Annuity Income By PolicyNumber.
       tags:
-        - Annuity Income Activation
+        - Activated Annuity Income
       parameters:
         - $ref: '#/components/parameters/policyNumber'
         - $ref: '#/components/parameters/cusip'
         - $ref: '#/components/parameters/correlationId'
       responses:
           "200":
-            description: Annuity Income Activation retrieved successfully.
+            description: Activated Annuity Income retrieved successfully.
             content:
               application/json:
                 schema:
@@ -39,11 +39,11 @@ paths:
 
   /v1/income-activation/searches: 
     post:
-      operationId: getBulkActiveAnnuityIncomeSearch
-      summary: Bulk Active Annuity Income Search
-      description: Bulk Active Annuity Income Search by firmId and/or npn.
+      operationId: getBulkActivatedAnnuityIncomeSearch
+      summary: Bulk Activated Annuity Income Search
+      description: Bulk Activated Annuity Income Search by firmId and/or npn.
       tags:
-        - Bulk Active Annuity Income Search
+        - Bulk Activated Annuity Income Search
       parameters:
         - $ref: '#/components/parameters/correlationId'
       requestBody:
@@ -53,7 +53,7 @@ paths:
                   $ref: '#/components/schemas/BulkActivatedAnnuityIncomeRequest'
       responses:
           "202":
-            description: Bulk Annuity Income request is accepted.
+            description: Bulk Activated Annuity Income request is accepted.
           "400":
             description: Bad Request
           "401":
@@ -71,11 +71,11 @@ paths:
 
   /v1/income-activation/event-notification:
     post:
-      operationId: postBulkActiveAnnuityIncomeSearchStatus
-      summary: Bulk Active Annuity Income Search Status Notification
-      description: Bulk Active Annuity Income Search Status Notification
+      operationId: postBulkActivatedAnnuityIncomeSearchStatus
+      summary: Bulk Activated Annuity Income Search Status Notification
+      description: Bulk Activated Annuity Income Search Status Notification
       tags:
-        - Bulk Active Annuity Income Search Status Notification
+        - Bulk Activated Annuity Income Search Status Notification
       parameters:
         - $ref: '#/components/parameters/correlationId'
       requestBody:
@@ -85,18 +85,18 @@ paths:
                   $ref: '#/components/schemas/BulkActivatedAnnuityIncomeNotificationRequest'
       responses:
           "200":
-            description: Bulk Annuity Income Search Status
+            description: Bulk Activated Annuity Income Search Status
           "503":
             description: Service Unavailable
 
 
   /v1/income-activation/results: 
     post:
-      operationId: gettBulkActiveAnnuityIncomeResults
-      summary: Bulk Active Annuity Income Results
-      description: Bulk Annuity Income Results
+      operationId: gettBulkActivatedAnnuityIncomeResults
+      summary: Bulk Activated Annuity Income Results
+      description: Bulk Activated Annuity Income Results
       tags:
-        - Bulk Annuity Income Results
+        - Bulk Activated Annuity Income Results
       parameters:
         - $ref: '#/components/parameters/correlationId'
       requestBody:
@@ -106,7 +106,7 @@ paths:
                   $ref: '#/components/schemas/BulkActivatedAnnuityIncomeRequest'
       responses:
           "200":
-            description: Bulk Annuity Incomes retrieved successfully.
+            description: Bulk Activated Annuity Incomes retrieved successfully.
             content:
               application/json:
                 schema:
