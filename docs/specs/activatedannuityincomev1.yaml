@@ -21,7 +21,7 @@ paths:
             content:
               application/json:
                 schema:
-                     $ref: '#/components/schemas/AnnuityIncomeActivationResponse'
+                     $ref: '#/components/schemas/ActivatedAnnuityIncomeResponse'
           "400":
             description: Bad Request
           "401":
@@ -50,7 +50,7 @@ paths:
         content:
               application/json:
                 schema:
-                  $ref: '#/components/schemas/BulkAnnuityIncomeRequest'
+                  $ref: '#/components/schemas/BulkActivatedAnnuityIncomeRequest'
       responses:
           "202":
             description: Bulk Annuity Income request is accepted.
@@ -82,7 +82,7 @@ paths:
         content:
               application/json:
                 schema:
-                  $ref: '#/components/schemas/BulkAnnuityIncomeNotificationRequest'
+                  $ref: '#/components/schemas/BulkActivatedAnnuityIncomeNotificationRequest'
       responses:
           "200":
             description: Bulk Annuity Income Search Status
@@ -103,14 +103,14 @@ paths:
         content:
               application/json:
                 schema:
-                  $ref: '#/components/schemas/BulkAnnuityIncomeRequest'
+                  $ref: '#/components/schemas/BulkActivatedAnnuityIncomeRequest'
       responses:
           "200":
             description: Bulk Annuity Incomes retrieved successfully.
             content:
               application/json:
                 schema:
-                    $ref: '#/components/schemas/BulkAnnuityIncomeResponse'
+                    $ref: '#/components/schemas/BulkActivatedAnnuityIncomeResponse'
           "400":
             description: Bad Request
           "401":
