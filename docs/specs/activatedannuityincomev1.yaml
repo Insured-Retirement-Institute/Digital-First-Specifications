@@ -241,7 +241,7 @@ components:
       description: Schema for bulk annuity income response
       type: array
       items:
-        $ref: '#/components/schemas/AnnuityIncomeActivationResponse'
+        $ref: '#/components/schemas/ActivatedAnnuityIncomeResponse'
 
     BulkActivatedAnnuityIncomeNotificationRequest:
       description: Schema for annuity income activation data
