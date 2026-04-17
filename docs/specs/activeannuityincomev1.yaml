@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: Active Annuity Income API
+  title: Activated Annuity Income API
   version: "1.0.0"
   description: APIs for managing income activation of policies
 paths:
@@ -168,7 +168,7 @@ components:
     totalAvailableItemsCount:
       type: integer
 
-    AnnuityIncomeActivationResponse:
+    ActivatedAnnuityIncomeResponse:
       description: Schema for annuity income activation data
       type: object
       required: [policyNumber, isIncomeRiderActivated]
@@ -210,7 +210,7 @@ components:
             - scheduledPayments
             - rmd
 
-    BulkAnnuityIncomeRequest:
+    BulkActivatedAnnuityIncomeRequest:
       description: Schema for policy income activation data
       type: object
       required: [firmId]
@@ -224,7 +224,7 @@ components:
           examples: 
             - "257893456"
 
-    BulkAnnuityIncomeResponse:
+    BulkActivatedAnnuityIncomeResponse:
       description: Schema for bulk policy income response
       type: object
       properties:
@@ -243,7 +243,7 @@ components:
       items:
         $ref: '#/components/schemas/AnnuityIncomeActivationResponse'
 
-    BulkAnnuityIncomeNotificationRequest:
+    BulkActivatedAnnuityIncomeNotificationRequest:
       description: Schema for annuity income activation data
       type: object
       required: [status]
