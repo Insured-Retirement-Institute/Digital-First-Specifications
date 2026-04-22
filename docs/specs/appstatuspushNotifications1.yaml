@@ -1,4 +1,3 @@
-
 openapi: 3.1.0
 info:
   title: Annuity Application Status Push Notifications
@@ -10,10 +9,10 @@ info:
 
 
 webhooks:
-  applicationRecieved:
+  applicationReceived:
     post:
-      summary: Initial Application Recieved Notification
-      description: Webhook fired when a new application is recieved and a policy number is assigned
+      summary: Initial Application Received Notification
+      description: Webhook fired when a new application is received and a policy number is assigned
       tags:
         - Application Notifications
       requestBody:
@@ -22,19 +21,15 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, status]
+              required: [notification]
+              allOf:
+                - $ref: '#/components/schemas/notificationMetadata'
               properties:
-                status:
-                  $ref: '#/components/schemas/notificationStatus'
                 eventType:
                   type: string
-                  const: applicationStatus.v1.applicationRecieved
-                policyNumber:
-                  type: string
-                associatedFirmId:
-                  type: string
+                  const: applicationStatus.v1.applicationReceived
                 notification:
-                  $ref: '#/components/schemas/ApplicationRecievedNotification'
+                  $ref: '#/components/schemas/ApplicationReceivedNotification'
       responses:
         "200":
           description: Notification received successfully
@@ -55,17 +50,13 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, status]
+              required: [notification, policyNumber]
+              allOf:
+                - $ref: '#/components/schemas/notificationMetadata'
               properties:
-                status:
-                  $ref: '#/components/schemas/notificationStatus'
                 eventType:
                   type: string
                   const: applicationStatus.v1.canSellActionNeeded
-                policyNumber:
-                  type: string
-                associatedFirmId:
-                  type: string
                 notification:
                   $ref: '#/components/schemas/CanSellNotification'
       responses:
@@ -88,17 +79,13 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, status]
+              required: [notification, policyNumber]
+              allOf:
+                - $ref: '#/components/schemas/notificationMetadata'
               properties:
-                status:
-                  $ref: '#/components/schemas/notificationStatus'
                 eventType:
                   type: string
                   const: applicationStatus.v1.suitabilityActionNeeded
-                policyNumber:
-                  type: string
-                associatedFirmId:
-                  type: string
                 notification:
                   $ref: '#/components/schemas/SuitabilityActionNotification'
       responses:
@@ -121,17 +108,13 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, status]
+              required: [notification, policyNumber]
+              allOf:
+                - $ref: '#/components/schemas/notificationMetadata'
               properties:
-                status:
-                  $ref: '#/components/schemas/notificationStatus'
                 eventType:
                   type: string
                   const: applicationStatus.v1.suitabilityApproved
-                policyNumber:
-                  type: string
-                associatedFirmId:
-                  type: string
                 notification:
                   $ref: '#/components/schemas/SuitabilityDecisionNotification'
       responses:
@@ -154,17 +137,13 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, status]
+              required: [notification, policyNumber]
+              allOf:
+                - $ref: '#/components/schemas/notificationMetadata'
               properties:
-                status:
-                  $ref: '#/components/schemas/notificationStatus'
                 eventType:
                   type: string
                   const: applicationStatus.v1.documentReviewActionNeeded
-                policyNumber:
-                  type: string
-                associatedFirmId:
-                  type: string
                 notification:
                   $ref: '#/components/schemas/DocReviewNotification'
       responses:
@@ -187,17 +166,13 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, status]
+              required: [notification, policyNumber]
+              allOf:
+                - $ref: '#/components/schemas/notificationMetadata'
               properties:
-                status:
-                  $ref: '#/components/schemas/notificationStatus'
                 eventType:
                   type: string
                   const: applicationStatus.v1.fundingActionNeeded
-                policyNumber:
-                  type: string
-                associatedFirmId:
-                  type: string
                 notification:
                   $ref: '#/components/schemas/FundingActionNotification'
       responses:
@@ -220,17 +195,13 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, status]
+              required: [notification, policyNumber]
+              allOf:
+                - $ref: '#/components/schemas/notificationMetadata'
               properties:
-                status:
-                  $ref: '#/components/schemas/notificationStatus'
                 eventType:
                   type: string
                   const: applicationStatus.v1.fundingTransferRequestSent
-                policyNumber:
-                  type: string
-                associatedFirmId:
-                  type: string
                 notification:
                   $ref: '#/components/schemas/TransferRequestNotification'
       responses:
@@ -253,17 +224,13 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, status]
+              required: [notification, policyNumber]
+              allOf:
+                - $ref: '#/components/schemas/notificationMetadata'
               properties:
-                status:
-                  $ref: '#/components/schemas/notificationStatus'
                 eventType:
                   type: string
                   const: applicationStatus.v1.fundingSourceTypeUpdated
-                policyNumber:
-                  type: string
-                associatedFirmId:
-                  type: string
                 notification:
                   $ref: '#/components/schemas/SourceTypeNotification'
       responses:
@@ -286,17 +253,13 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, status]
+              required: [notification, policyNumber]
+              allOf:
+                - $ref: '#/components/schemas/notificationMetadata'
               properties:
-                status:
-                  $ref: '#/components/schemas/notificationStatus'
                 eventType:
                   type: string
                   const: applicationStatus.v1.fundingTransferFollowUp
-                policyNumber:
-                  type: string
-                associatedFirmId:
-                  type: string
                 notification:
                   $ref: '#/components/schemas/NewFollowUpNotification'
       responses:
@@ -319,17 +282,13 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, status]
+              required: [notification, policyNumber]
+              allOf:
+                - $ref: '#/components/schemas/notificationMetadata'
               properties:
-                status:
-                  $ref: '#/components/schemas/notificationStatus'
                 eventType:
                   type: string
                   const: applicationStatus.v1.fundingReceived
-                policyNumber:
-                  type: string
-                associatedFirmId:
-                  type: string
                 notification:
                   $ref: '#/components/schemas/FundingReceivedNotification'
       responses:
@@ -352,17 +311,13 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, status]
+              required: [notification, policyNumber]
+              allOf:
+                - $ref: '#/components/schemas/notificationMetadata'
               properties:
-                status:
-                  $ref: '#/components/schemas/notificationStatus'
                 eventType:
                   type: string
                   const: applicationStatus.v1.applicationCompleted
-                policyNumber:
-                  type: string
-                associatedFirmId:
-                  type: string
                 notification:
                   $ref: '#/components/schemas/ApplicationCompletedNotification'
       responses:
@@ -385,17 +340,13 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, status]
+              required: [notification, policyNumber]
+              allOf:
+                - $ref: '#/components/schemas/notificationMetadata'
               properties:
-                status:
-                  $ref: '#/components/schemas/notificationStatus'
                 eventType:
                   type: string
                   const: applicationStatus.v1.applicationCancelled
-                policyNumber:
-                  type: string
-                associatedFirmId:
-                  type: string
                 notification:
                   $ref: '#/components/schemas/ApplicationCancelledNotification'
       responses:
@@ -412,10 +363,10 @@ components:
 
   ###### Payload schemas #######
   schemas:
-    ApplicationRecievedNotification:
-      description: Schema for application recieved notification data
+    ApplicationReceivedNotification:
+      description: Schema for application received notification data
       type: object
-      required: [policyNumber, applicationOrigin, cusip, status, statusDate]
+      required: [applicationOrigin, cusip]
       properties:
         cusip:
           $ref: '#/components/schemas/cusip'
@@ -453,16 +404,11 @@ components:
         fundsHeldUntilDate:
           type: string
           format: date
-      actionSections:
-        type: array
-        items:
-          type: string
-          enum: [suitability, cansellvalidation, documentReview, funding]
     actionSections:
       type: array
       items:
         type: string
-        enum: [suitability, cansellvalidation, documentReview, funding]
+        enum: [suitability, canSellValidation, documentReview, funding]
     notificationStatus:
       type: string
       enum: [received, inProgress, completed, cancelled]
@@ -526,7 +472,7 @@ components:
       properties:
         reason:
           type: string
-          enum: [awaitingFundsFromCediingCompany, contactThe Carrier, fundingDiscrepancy, nigoAtCedingCarrier, noFundsReceivedCash, pendingReg60, other]
+          enum: [awaitingFundsFromCedingCompany, contactTheCarrier, fundingDiscrepancy, nigoAtCedingCarrier, noFundsReceivedCash, pendingReg60, other]
     
     TransferRequestNotification:
       description: Schema for transfer notification data
@@ -1005,3 +951,30 @@ components:
                 type: string
                 minLength: 1
                 maxLength: 2000
+    applicationOrigin:
+      type: object
+      required: [isElectronic]
+      properties:
+        platform:
+          type: string
+          maxLength: 50
+        isElectronic:
+          type: boolean
+        id:
+          type: string
+          maxLength: 65
+
+
+    notificationMetadata:
+      type: object
+      required: [status, eventType, eventId, applicationOrigin]
+      properties:
+        eventId:
+          type: string
+          description: Unique identifier for this notification event
+        policyNumber:
+          type: string
+        associatedFirmId:
+          type: string
+        applicationOrigin:
+          $ref: '#/components/schemas/applicationOrigin'
