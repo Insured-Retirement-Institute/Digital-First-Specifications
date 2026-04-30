@@ -21,7 +21,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [notification]
+              required: [eventType,notification]
               allOf:
                 - $ref: '#/components/schemas/notificationMetadata'
               properties:
@@ -50,7 +50,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [notification, policyNumber]
+              required: [eventType, notification]
               allOf:
                 - $ref: '#/components/schemas/notificationMetadata'
               properties:
@@ -79,7 +79,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [notification, policyNumber]
+              required: [eventType, notification]
               allOf:
                 - $ref: '#/components/schemas/notificationMetadata'
               properties:
@@ -108,7 +108,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [notification, policyNumber]
+              required: [eventType, notification]
               allOf:
                 - $ref: '#/components/schemas/notificationMetadata'
               properties:
@@ -137,7 +137,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [notification, policyNumber]
+              required: [eventType, notification]
               allOf:
                 - $ref: '#/components/schemas/notificationMetadata'
               properties:
@@ -166,7 +166,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [notification, policyNumber]
+              required: [eventType, notification]
               allOf:
                 - $ref: '#/components/schemas/notificationMetadata'
               properties:
@@ -195,7 +195,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [notification, policyNumber]
+              required: [eventType, notification]
               allOf:
                 - $ref: '#/components/schemas/notificationMetadata'
               properties:
@@ -224,7 +224,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [notification, policyNumber]
+              required: [eventType, notification]
               allOf:
                 - $ref: '#/components/schemas/notificationMetadata'
               properties:
@@ -253,7 +253,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [notification, policyNumber]
+              required: [eventType, notification]
               allOf:
                 - $ref: '#/components/schemas/notificationMetadata'
               properties:
@@ -282,7 +282,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [notification, policyNumber]
+              required: [eventType, notification]
               allOf:
                 - $ref: '#/components/schemas/notificationMetadata'
               properties:
@@ -311,7 +311,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [notification, policyNumber]
+              required: [eventType, notification]
               allOf:
                 - $ref: '#/components/schemas/notificationMetadata'
               properties:
@@ -340,7 +340,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [notification, policyNumber]
+              required: [eventType, notification]
               allOf:
                 - $ref: '#/components/schemas/notificationMetadata'
               properties:
@@ -967,7 +967,7 @@ components:
 
     notificationMetadata:
       type: object
-      required: [status, eventType, eventId, applicationOrigin]
+      required: [status, eventId, policyNumber, applicationOrigin]
       properties:
         eventId:
           type: string
@@ -978,3 +978,5 @@ components:
           type: string
         applicationOrigin:
           $ref: '#/components/schemas/applicationOrigin'
+        status:
+          $ref: '#/components/schemas/notificationStatus'
