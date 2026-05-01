@@ -19,6 +19,7 @@
                     <label for="api-selector">API:</label>
                     <select id="api-selector" onchange="loadSelectedAPI()">
                         <option value="appstatus.yaml">Application Status API</option>
+                        <option value="appstatuspushNotifications1.yaml">Application Status Push Notifications API</option>
                         <option value="producertraining.yaml">Producer Training Update</option>
                         <option value="activatedannuityincome.yaml">Activated Annuity Income API</option>
                         <option value="onetimewithdrawal1.yaml">One-Time Withdrawals API</option>
@@ -62,6 +63,16 @@
                     }
                 }
             },
+            "appstatuspushNotifications1.yaml": {
+                name: "Application Status Push Notifications API",
+                versions: {
+                    "v1": {
+                        path: "specs/appstatuspushNotifications1v1.yaml",
+                        displayName: "v1.0.0"
+                    }
+                }
+            },
+
             "producertraining.yaml": {
                 name: "Producer Training Update",
                 versions: {
