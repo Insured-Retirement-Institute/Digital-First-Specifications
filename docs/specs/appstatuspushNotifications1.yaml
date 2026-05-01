@@ -241,7 +241,7 @@ webhooks:
         "403":
           description: Forbidden
   
-  fundingTransferFollowUp:
+  fundingTransferFollowedUp:
     post:
       summary: New Funding Follow-Up Notification
       description: Webhook fired when a new follow-up action is created
@@ -259,7 +259,7 @@ webhooks:
               properties:
                 eventType:
                   type: string
-                  const: applicationStatus.v1.fundingTransferFollowUp
+                  const: applicationStatus.v1.fundingTransferFollowedUp
                 notification:
                   $ref: '#/components/schemas/NewFollowUpNotification'
       responses:
