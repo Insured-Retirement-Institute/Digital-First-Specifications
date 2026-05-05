@@ -366,7 +366,7 @@ components:
     ApplicationReceivedNotification:
       description: Schema for application received notification data
       type: object
-      required: [applicationOrigin, cusip]
+      required: [cusip]
       properties:
         cusip:
           $ref: '#/components/schemas/cusip'
@@ -377,8 +377,6 @@ components:
         productName:
           type: string
           maxLength: 180
-        isElectronic:
-          type: boolean
         isQualified:
           type: boolean
         id:
@@ -422,7 +420,6 @@ components:
     SuitabilityActionNotification:
       description: Schema for suitability notification data
       type: object
-      required: [policyNumber]
       allOf:
         - $ref: '#/components/schemas/Suitability'
       properties:
@@ -456,7 +453,6 @@ components:
     DocReviewNotification:
       description: Schema for document review notification data
       type: object
-      required: [eventType]
       allOf:
         - $ref: '#/components/schemas/DocumentReview'
       properties:
@@ -466,7 +462,6 @@ components:
     FundingActionNotification:
       description: Schema for funding action notification data
       type: object
-      required: [eventType]
       allOf:
         - $ref: '#/components/schemas/TransferNotificationBase'
       properties:
@@ -477,7 +472,6 @@ components:
     TransferRequestNotification:
       description: Schema for transfer notification data
       type: object
-      required: [eventType]
       allOf:
         - $ref: '#/components/schemas/TransferNotificationBase'
       properties:
@@ -493,9 +487,6 @@ components:
           enum: [fax, email, mail, replacement]
         referenceNumber:
           type: string        
-        eventType:
-          type: string
-          const: transferRequest
     
     SourceTypeNotification:
       description: Schema for source type notification data
@@ -506,7 +497,6 @@ components:
     NewFollowUpNotification:
       description: Schema for new follow up notification data
       type: object
-      required: [eventType]
       allOf:
         - $ref: '#/components/schemas/TransferNotificationBase'
       properties:
@@ -524,7 +514,6 @@ components:
     FundingReceivedNotification:
       description: Schema for funding received notification data
       type: object
-      required: [eventType]
       allOf:
         - $ref: '#/components/schemas/TransferNotificationBase'
       properties:
@@ -543,14 +532,10 @@ components:
         effectiveDate:
           type: string
           format: date
-        eventType:
-          type: string
-          const: fundingReceived
     
     ApplicationCompletedNotification:
       description: Schema for application completed notification data
       type: object
-      required: [eventType]
       properties:
         isActionNeeded:
           type: boolean
@@ -580,7 +565,6 @@ components:
     ApplicationCancelledNotification:
       description: Schema for application cancelled notification data
       type: object
-      required: [eventType]
       properties:
         actionSections:
           $ref: '#/components/schemas/actionSections'
