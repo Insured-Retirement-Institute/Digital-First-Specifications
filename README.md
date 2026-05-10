@@ -117,6 +117,23 @@ Data definitions
   - **_taxId_**
   - **_name_** (for business/entity)
 
+## Bulk Asynchronous Request Pattern
+
+For requests that return data sets too large or too time-consuming to return in a single synchronous response, Digital-First specifications adopt a standardized bulk asynchronous request pattern. This pattern was reviewed and approved by the Governance Committee and applies to any working group's API that needs bulk or long-running data retrieval.
+
+The pattern is industry-aligned with established async integration patterns (RFC 7240 `Prefer: respond-async`, AWS S3 presigned URLs, webhook-based data export flows).
+
+### Pattern Overview
+
+The pattern has four interactions between two parties — the **Requestor** (the caller) and the **Data Provider** (the responding system, optionally fronted by a hub or intermediary):
+
+1. **Bulk Request (Requestor → Data Provider).** The Requestor submits a `POST` request describing what data is needed. The Data Provider validates the request and responds with `202 Accepted` and a body containing a unique `requestId` and a `statusUrl` for polling.
+2. **Data-Ready Notification (Data Provider → Requestor, webhook).** When the data is prepared, the Data Provider calls the Requestor's pre-registered callback URL with a notification payload describing how to retrieve the result (file identifier, expiration, checksum, size, etc.).
+3. **File Download (Requestor → Data Provider).** The Requestor retrieves the prepared data via `GET`, either from a hub-mediated endpoint using the file identifier from the notification, or from a presigned URL contained in the notification.
+4. **Status Lookup (Requestor → Data Provider).** At any time after the original request, the Requestor may `GET` the `statusUrl` to check the current state of the request and — when complete — retrieve the same payload that was (or will be) delivered via webhook. This endpoint is the recovery mechanism for missed or undelivered notifications and is **required** of any bulk async implementation.
+
+Complete normative detail — required endpoints, naming guidance, response codes, status semantics, notification payload schemas, webhook security requirements, error code taxonomy, timing expectations, and intermediary handling — is in **[bulk-async-pattern.md](bulk-async-pattern.md)**.
+
 ## API Versioning
 
 - APIs will utilize versioning at the URL level. In this method, the API endpoint URL includes the major version number. For example, users wanting to retrieve all products from a database would send a request to https://example-api.com/v1/products. The specific version of an API can be specified as an optional header as outlined above.
