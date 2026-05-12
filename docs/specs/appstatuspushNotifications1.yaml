@@ -10,7 +10,7 @@ info:
 paths:
   /v1/application-notificatons/:
     get:
-      operationId: reconcililiation
+      operationId: reconciliation
       summary: Send a list of published events to reconcile for potential missed Notifications
       tags:
         - Application Notifications
@@ -20,11 +20,11 @@ paths:
         - $ref: '#/components/parameters/days'
       responses:
         "200":
-          description: reconcililiation successfully received
+          description: reconciliation successfully received
           content:
             application/json:
               schema: 
-                $ref: '#/components/schemas/reconcililiation'
+                $ref: '#/components/schemas/reconciliation'
         "401":
           description: Unauthorized
         "403":
@@ -1031,7 +1031,7 @@ components:
           type: string
           maxLength: 65
 
-    reconcililiation:
+    reconciliation:
       type: object
       properties:
         events:
