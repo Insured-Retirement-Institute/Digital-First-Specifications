@@ -7,7 +7,30 @@ info:
     name: MIT
     url: https://github.com/Insured-Retirement-Institute/Pending-Case/blob/main/LICENSE
 
-
+paths:
+  /v1/application-notificatons/:
+    get:
+      operationId: reconcililiation
+      summary: Send a list of published events to reconcile for potential missed Notifications
+      tags:
+        - Application Notifications
+      parameters:
+        - $ref: '#/components/parameters/associatedFirmId'
+        - $ref: '#/components/parameters/correlationId'
+        - $ref: '#/components/parameters/days'
+      responses:
+        "200":
+          description: reconcililiation successfully received
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/reconcililiation'
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: NotFound
 webhooks:
   applicationReceived:
     post:
@@ -15,6 +38,9 @@ webhooks:
       description: Webhook fired when a new application is received and a policy number is assigned
       tags:
         - Application Notifications
+      parameters:
+        - $ref: '#/components/parameters/associatedFirmId'
+        - $ref: '#/components/parameters/correlationId'
       requestBody:
         required: true
         content:
@@ -44,6 +70,9 @@ webhooks:
       description: Webhook fired when can-sell action is needed
       tags:
         - Validation Notifications
+      parameters:
+        - $ref: '#/components/parameters/associatedFirmId'
+        - $ref: '#/components/parameters/correlationId'
       requestBody:
         required: true
         content:
@@ -73,6 +102,9 @@ webhooks:
       description: Webhook fired when suitability review requires action
       tags:
         - Suitability Notifications
+      parameters:
+        - $ref: '#/components/parameters/associatedFirmId'
+        - $ref: '#/components/parameters/correlationId'
       requestBody:
         required: true
         content:
@@ -102,6 +134,9 @@ webhooks:
       description: Webhook fired when suitability is approved
       tags:
         - Suitability Notifications
+      parameters:
+        - $ref: '#/components/parameters/associatedFirmId'
+        - $ref: '#/components/parameters/correlationId'
       requestBody:
         required: true
         content:
@@ -131,6 +166,9 @@ webhooks:
       description: Webhook fired when document review requires action
       tags:
         - Document Notifications
+      parameters:
+        - $ref: '#/components/parameters/associatedFirmId'
+        - $ref: '#/components/parameters/correlationId'
       requestBody:
         required: true
         content:
@@ -160,6 +198,9 @@ webhooks:
       description: Webhook fired when funding action is needed
       tags:
         - Funding Notifications
+      parameters:
+        - $ref: '#/components/parameters/associatedFirmId'
+        - $ref: '#/components/parameters/correlationId'
       requestBody:
         required: true
         content:
@@ -189,6 +230,9 @@ webhooks:
       description: Webhook fired when a funding transfer request is sent
       tags:
         - Transfer Notifications
+      parameters:
+        - $ref: '#/components/parameters/associatedFirmId'
+        - $ref: '#/components/parameters/correlationId'
       requestBody:
         required: true
         content:
@@ -218,6 +262,9 @@ webhooks:
       description: Webhook fired when funding source type is determined
       tags:
         - Funding Notifications
+      parameters:
+        - $ref: '#/components/parameters/associatedFirmId'
+        - $ref: '#/components/parameters/correlationId'
       requestBody:
         required: true
         content:
@@ -247,6 +294,9 @@ webhooks:
       description: Webhook fired when a new follow-up action is created
       tags:
         - Follow-Up Notifications
+      parameters:
+        - $ref: '#/components/parameters/associatedFirmId'
+        - $ref: '#/components/parameters/correlationId'
       requestBody:
         required: true
         content:
@@ -276,6 +326,9 @@ webhooks:
       description: Webhook fired when funding is received
       tags:
         - Funding Notifications
+      parameters:
+        - $ref: '#/components/parameters/associatedFirmId'
+        - $ref: '#/components/parameters/correlationId'
       requestBody:
         required: true
         content:
@@ -305,6 +358,9 @@ webhooks:
       description: Webhook fired when an application is completed
       tags:
         - Application Notifications
+      parameters:
+        - $ref: '#/components/parameters/associatedFirmId'
+        - $ref: '#/components/parameters/correlationId'
       requestBody:
         required: true
         content:
@@ -334,6 +390,9 @@ webhooks:
       description: Webhook fired when an application is cancelled
       tags:
         - Application Notifications
+      parameters:
+        - $ref: '#/components/parameters/associatedFirmId'
+        - $ref: '#/components/parameters/correlationId'
       requestBody:
         required: true
         content:
@@ -359,7 +418,31 @@ webhooks:
 
 
 components:
-
+  parameters:
+      correlationId:
+        name: correlationId
+        description: Optional custom header to be sent to the caller in response payload
+        in: header
+        required: false
+        schema:
+          type: string
+      associatedFirmId:
+        name: associatedFirmId
+        description: Optional query parameter for the associated firm ID
+        in: query
+        required: false
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 65
+      days:
+        name: days
+        description: Number of days to return results for starting with the prior days
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 1
 
   ###### Payload schemas #######
   schemas:
@@ -948,6 +1031,13 @@ components:
           type: string
           maxLength: 65
 
+    reconcililiation:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            - $ref: "#/components/schemas/notificationMetadata"
 
     notificationMetadata:
       type: object
@@ -957,8 +1047,6 @@ components:
           type: string
           description: Unique identifier for this notification event
         policyNumber:
-          type: string
-        associatedFirmId:
           type: string
         applicationOrigin:
           $ref: '#/components/schemas/applicationOrigin'
