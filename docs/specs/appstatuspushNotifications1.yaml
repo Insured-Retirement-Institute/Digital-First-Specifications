@@ -8,7 +8,7 @@ info:
     url: https://github.com/Insured-Retirement-Institute/Pending-Case/blob/main/LICENSE
 
 paths:
-  /v1/application-notificatons/:
+  /v1/application-notificatons:
     get:
       operationId: reconciliation
       summary: Send a list of published events to reconcile for potential missed Notifications
