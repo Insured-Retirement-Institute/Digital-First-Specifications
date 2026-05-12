@@ -265,11 +265,9 @@ function flattenSchema(
   }
   visited.add(schema);
 
-  // Handle allOf
   // Handle allOf. The outer schema's own properties/required are an additional
   // constraint alongside allOf, so include them as a participant in the merge.
   if (schema.allOf && schema.allOf.length > 0) {
-    const { merged, issues: mergeIssues } = mergeAllOfSchemas(schema.allOf);
     const selfSchema: Schema = {
       type: schema.type,
       properties: schema.properties,
