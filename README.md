@@ -83,6 +83,92 @@ Response Body Standards
   </code>
 </details>
 
+### Pagination
+
+Pagination introduces inherent complexity and accuracy tradeoffs — it can be difficult to guarantee a perfectly consistent dataset across pages when underlying data may change between requests. Because accurate pagination can significantly increase implementation costs and reduce adoption, and because IRI DFA IRI prefers simplicity over complexity, **pagination should be avoided unless necessary** (e.g., when the full dataset is too large to transfer within typical server or API-gateway limits).
+
+When pagination is required, working groups must choose one of the two supported patterns based on their business requirements.
+
+#### Option 1 — Offset-based pagination
+
+Use offset-based pagination **only when**:
+- The business case can accept a non-perfect (potentially incomplete or duplicated) dataset, **and**
+- The dataset will never become extremely large (less than ~10K resources).
+
+Query parameters:
+
+| Parameter | Description |
+|-----------|-------------|
+| `offset` | Zero-based index of the first resources to return. |
+| `limit` | Maximum number of resources to return per page. Note: the endpoint may use a lower number |
+| `orderBy` | (optional) The field name used to indicate the order of resources in the result set |
+| `sortOrder` | (optional) To indicate if the order of resources in ascending (`asc`) or descending (`desc`) |
+
+
+Callers **must** be prepared to detect and handle duplicate resources across pages. The endpoint specification must identify the unique field (e.g., `id`) to be used for deduplication.
+
+The API specification description for offset-based pagination endpoints **must** state the following:
+- The data returned is **not** guaranteed to represent a moment-in-time snapshot of the data; concurrent writes may still affect results across pages.
+- The caller **must** assume that, on occasion, some resources may be missing from the result set due to concurrent writes
+- The caller **must** be prepared to handle the same resource being provided in multiple pages (i.e. be able to de-duplicate resources in the result set)
+- If the business case requires the ability for the caller specify the ordering of the results, each endpoint specification **should** recommend the "safest" default `orderBy`/`sorrOrder` values — typically a stable, unique identifier sorted with newest entries in the latter pages — to minimize the risk of skipped or duplicated resources as pages are fetched.
+- The endpoint may return a lower `limit` than the one requested by the caller
+
+#### Option 2 — Cursor/token-based pagination
+
+Use cursor-based pagination **when data accuracy is critical**.
+
+Query parameters:
+
+| Parameter | Description |
+|-----------|-------------|
+| `paginationToken` | Opaque token returned by the server identifying the position in the result set. |
+| `limit` | Requested maximum number of resources to return per page. Note: the endpoint may use a lower number. |
+| `orderBy` | (optional) The field name used to indicate the order of resources in the result set |
+| `sortOrder` | (optional) To indicate if the order of resources in ascending (`asc`) or descending (`desc`) |
+
+Key technical implementation requirements:
+- The `paginationToken` **must** be treated as opaque by callers. Implementors should encode the token (e.g., base64) to discourage interpretation.
+- `orderBy` options **should** use a unique identifier to ensure stable token generation.
+- Implementors **must not** include sensitive information (e.g., SSN) in the token — the token is transmitted as a query parameter and may appear in server logs and browser history.
+
+The API specification description for token-based pagination endpoints **must** state the following:
+
+- The endpoint's pagination is **not** guaranteed to represent a moment-in-time snapshot of the data; concurrent writes may still affect results across pages.
+- The endpoint may return a lower `limit` than the one requested by the caller
+
+#### Common response schema
+
+Both patterns **must** include the following metadata fields in the response body.  
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `offset` | Zero-based index of the first resource in the page. |
+| `limit` | integer | The page size used for this response. |
+| `nextOffset` | integer | *(Offset-based only)* Offset to use to retrieve the next page; omitted when no further pages exist. |
+| `nextPaginationToken` | string | *(Cursor-based only)* Token to pass to retrieve the next page; omitted when no further pages exist. |
+| `totalCount` | integer | (optional) Total number of resources matching the query (before pagination). |
+
+To ensure that these fields are not confused as being part of the resource, they should be placed under a `metadata` attribute, like:
+```json
+ "policies": [
+   {
+     "id": "001234",
+   },
+   ...
+   ],
+ "metadata":{
+   "offset": 0,
+   "limit": 5,
+   "nextOffset": 5,
+   "totalCount": 100
+  }
+}
+
+```
+
+Note: Use of `totalCount` is discouraged unless the business case requires it as this can be expensive to calculate.
+
 Standard Error Schema
 
 - Every error response—regardless of transaction type—includes:
