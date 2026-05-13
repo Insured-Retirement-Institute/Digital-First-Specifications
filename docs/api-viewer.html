@@ -25,6 +25,8 @@
                         <option value="onetimewithdrawalquote1.yaml">One-Time Withdrawal Quote API</option>
                         <option value="systematicwithdrawalprogramsetup.yaml">Systematic Withdrawal Program Setup API</option>
                         <option value="systematicwithdrawalprogramupdate.yaml">Systematic Withdrawal Program Update API</option>
+                        <option value="fundtransfer.yaml">Fund Transfer API</option>
+                        <option value="policyinquiry.yaml">Policy Inquiry API</option>
                         <!-- Add more options as you add more APIs -->
                         <!-- <option value="another-api/openapi.yaml">Another API</option> -->
                     </select>
@@ -112,6 +114,24 @@
                 versions: {
                     "v1": {
                         path: "specs/systematicwithdrawalprogramupdate.yaml",
+                        displayName: "v1.0.0"
+                    }
+                }
+            },
+            "fundtransfer.yaml": {
+                name: "Fund Transfer API",
+                versions: {
+                    "v1": {
+                        path: "specs/fundtransfer.yaml",
+                        displayName: "v1.0.0"
+                    }
+                }
+            },
+            "policyinquiry.yaml": {
+                name: "Policy Inquiry API",
+                versions: {
+                    "v1": {
+                        path: "specs/policyinquiry.yaml",
                         displayName: "v1.0.0"
                     }
                 }
