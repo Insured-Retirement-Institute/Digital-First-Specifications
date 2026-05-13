@@ -8,7 +8,7 @@ info:
     url: https://github.com/Insured-Retirement-Institute/Pending-Case/blob/main/LICENSE
 
 paths:
-  /v1/application-notificatons:
+  /v1/application-notificatons/reconciliation:
     get:
       operationId: reconciliation
       summary: Send a list of published events to reconcile for potential missed Notifications
@@ -17,7 +17,8 @@ paths:
       parameters:
         - $ref: '#/components/parameters/associatedFirmId'
         - $ref: '#/components/parameters/correlationId'
-        - $ref: '#/components/parameters/days'
+        - $ref: '#/components/parameters/startTime'
+        - $ref: '#/components/parameters/endTime'
       responses:
         "200":
           description: reconciliation successfully received
@@ -31,6 +32,33 @@ paths:
           description: Forbidden
         "404":
           description: NotFound
+  /v1/application-notificatons/{eventId}:
+    get:
+      operationId: replayEvent
+      summary: Re-send event from web hook based off of id
+      tags:
+        - Application Notifications
+      parameters:
+      - $ref: '#/components/parameters/eventId'
+      responses:
+        "200":
+          description: event retrieved successfully
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - $ref: '#/components/schemas/ApplicationReceivedNotification'
+                  - $ref: '#/components/schemas/CanSellNotification'
+                  - $ref: '#/components/schemas/SuitabilityActionNotification'
+                  - $ref: '#/components/schemas/SuitabilityDecisionNotification'
+                  - $ref: '#/components/schemas/DocReviewNotification'
+                  - $ref: '#/components/schemas/FundingActionNotification'
+                  - $ref: '#/components/schemas/TransferRequestNotification'
+                  - $ref: '#/components/schemas/SourceTypeNotification'
+                  - $ref: '#/components/schemas/NewFollowUpNotification'
+                  - $ref: '#/components/schemas/FundingReceivedNotification'
+                  - $ref: '#/components/schemas/ApplicationCompletedNotification'
+                  - $ref: '#/components/schemas/ApplicationCancelledNotification'
 webhooks:
   applicationReceived:
     post:
@@ -47,15 +75,8 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType,notification]
               allOf:
-                - $ref: '#/components/schemas/notificationMetadata'
-              properties:
-                eventType:
-                  type: string
-                  const: applicationStatus.v1.applicationReceived
-                notification:
-                  $ref: '#/components/schemas/ApplicationReceivedNotification'
+              - $ref: '#/components/schemas/ApplicationReceivedNotification'
       responses:
         "200":
           description: Notification received successfully
@@ -79,15 +100,8 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, notification]
               allOf:
-                - $ref: '#/components/schemas/notificationMetadata'
-              properties:
-                eventType:
-                  type: string
-                  const: applicationStatus.v1.canSellActionNeeded
-                notification:
-                  $ref: '#/components/schemas/CanSellNotification'
+              - $ref: '#/components/schemas/CanSellNotification'
       responses:
         "200":
           description: Notification received successfully
@@ -111,15 +125,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, notification]
-              allOf:
-                - $ref: '#/components/schemas/notificationMetadata'
-              properties:
-                eventType:
-                  type: string
-                  const: applicationStatus.v1.suitabilityActionNeeded
-                notification:
-                  $ref: '#/components/schemas/SuitabilityActionNotification'
+              $ref: '#/components/schemas/SuitabilityActionNotification'
       responses:
         "200":
           description: Notification received successfully
@@ -143,15 +149,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, notification]
-              allOf:
-                - $ref: '#/components/schemas/notificationMetadata'
-              properties:
-                eventType:
-                  type: string
-                  const: applicationStatus.v1.suitabilityApproved
-                notification:
-                  $ref: '#/components/schemas/SuitabilityDecisionNotification'
+              $ref: '#/components/schemas/SuitabilityDecisionNotification'
       responses:
         "200":
           description: Notification received successfully
@@ -175,15 +173,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, notification]
-              allOf:
-                - $ref: '#/components/schemas/notificationMetadata'
-              properties:
-                eventType:
-                  type: string
-                  const: applicationStatus.v1.documentReviewActionNeeded
-                notification:
-                  $ref: '#/components/schemas/DocReviewNotification'
+              $ref: '#/components/schemas/DocReviewNotification'
       responses:
         "200":
           description: Notification received successfully
@@ -207,15 +197,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, notification]
-              allOf:
-                - $ref: '#/components/schemas/notificationMetadata'
-              properties:
-                eventType:
-                  type: string
-                  const: applicationStatus.v1.fundingActionNeeded
-                notification:
-                  $ref: '#/components/schemas/FundingActionNotification'
+              $ref: '#/components/schemas/FundingActionNotification'
       responses:
         "200":
           description: Notification received successfully
@@ -239,15 +221,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, notification]
-              allOf:
-                - $ref: '#/components/schemas/notificationMetadata'
-              properties:
-                eventType:
-                  type: string
-                  const: applicationStatus.v1.fundingTransferRequestSent
-                notification:
-                  $ref: '#/components/schemas/TransferRequestNotification'
+              $ref: '#/components/schemas/TransferRequestNotification'
       responses:
         "200":
           description: Notification received successfully
@@ -271,15 +245,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, notification]
-              allOf:
-                - $ref: '#/components/schemas/notificationMetadata'
-              properties:
-                eventType:
-                  type: string
-                  const: applicationStatus.v1.fundingSourceTypeUpdated
-                notification:
-                  $ref: '#/components/schemas/SourceTypeNotification'
+              $ref: '#/components/schemas/SourceTypeNotification'
       responses:
         "200":
           description: Notification received successfully
@@ -303,15 +269,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, notification]
-              allOf:
-                - $ref: '#/components/schemas/notificationMetadata'
-              properties:
-                eventType:
-                  type: string
-                  const: applicationStatus.v1.fundingTransferFollowedUp
-                notification:
-                  $ref: '#/components/schemas/NewFollowUpNotification'
+              $ref: '#/components/schemas/NewFollowUpNotification'
       responses:
         "200":
           description: Notification received successfully
@@ -335,15 +293,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, notification]
-              allOf:
-                - $ref: '#/components/schemas/notificationMetadata'
-              properties:
-                eventType:
-                  type: string
-                  const: applicationStatus.v1.fundingReceived
-                notification:
-                  $ref: '#/components/schemas/FundingReceivedNotification'
+              $ref: '#/components/schemas/FundingReceivedNotification'
       responses:
         "200":
           description: Notification received successfully
@@ -367,15 +317,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, notification]
-              allOf:
-                - $ref: '#/components/schemas/notificationMetadata'
-              properties:
-                eventType:
-                  type: string
-                  const: applicationStatus.v1.applicationCompleted
-                notification:
-                  $ref: '#/components/schemas/ApplicationCompletedNotification'
+              $ref: '#/components/schemas/ApplicationCompletedNotification'
       responses:
         "200":
           description: Notification received successfully
@@ -399,15 +341,7 @@ webhooks:
           application/json:
             schema:
               type: object
-              required: [eventType, notification]
-              allOf:
-                - $ref: '#/components/schemas/notificationMetadata'
-              properties:
-                eventType:
-                  type: string
-                  const: applicationStatus.v1.applicationCancelled
-                notification:
-                  $ref: '#/components/schemas/ApplicationCancelledNotification'
+              $ref: '#/components/schemas/ApplicationCancelledNotification'
       responses:
         "200":
           description: Notification received successfully
@@ -435,56 +369,79 @@ components:
           type: string
           minLength: 1
           maxLength: 65
-      days:
-        name: days
-        description: Number of days to return results for starting with the prior days
+      startTime:
+        name: startTime
+        description: Start Date/Time of data to send for reconciliation
         in: query
-        required: false
+        required: true
         schema:
-          type: integer
-          default: 1
+          type: string
+          format: date
+      endTime:
+        name: endTime
+        description: End Date/Time of data to send for reconciliation
+        in: query
+        required: true
+        schema: 
+          type: string
+          format: date
+      eventId:
+        name: eventId
+        description: Unique id for requested event to return
+        in: path
+        required: true
+        schema: 
+          type: string
 
   ###### Payload schemas #######
   schemas:
     ApplicationReceivedNotification:
       description: Schema for application received notification data
       type: object
-      required: [cusip]
+      required: [cusip,eventType,notification]
+      allOf:
+        - $ref: '#/components/schemas/notificationMetadata'
       properties:
-        cusip:
-          $ref: '#/components/schemas/cusip'
-        isActionNeeded:
-          type: boolean
-        actionSections:
-          $ref: '#/components/schemas/actionSections'
-        productName:
+        eventType:
           type: string
-          maxLength: 180
-        isQualified:
-          type: boolean
-        id:
-          type: string
-        producers:
-          $ref: '#/components/schemas/Producers'
-        parties:
-          type: array
-          minItems: 1
-          items:
-            anyOf:
-              - $ref: "#/components/schemas/IndividualParty"
-              - $ref: "#/components/schemas/EntityParty"
-        signedDate:
-          type: string
-          format: date
-        receivedDate:
-          type: string
-          format: date
-        rateEffectiveDate:
-          type: string
-          format: date
-        fundsHeldUntilDate:
-          type: string
-          format: date
+          const: applicationStatus.v1.applicationReceived
+        notification:
+          type: object
+          properties:
+            cusip:
+              $ref: '#/components/schemas/cusip'
+            isActionNeeded:
+              type: boolean
+            actionSections:
+              $ref: '#/components/schemas/actionSections'
+            productName:
+              type: string
+              maxLength: 180
+            isQualified:
+              type: boolean
+            id:
+              type: string
+            producers:
+              $ref: '#/components/schemas/Producers'
+            parties:
+              type: array
+              minItems: 1
+              items:
+                anyOf:
+                  - $ref: "#/components/schemas/IndividualParty"
+                  - $ref: "#/components/schemas/EntityParty"
+            signedDate:
+              type: string
+              format: date
+            receivedDate:
+              type: string
+              format: date
+            rateEffectiveDate:
+              type: string
+              format: date
+            fundsHeldUntilDate:
+              type: string
+              format: date
     actionSections:
       type: array
       items:
@@ -493,173 +450,259 @@ components:
     notificationStatus:
       type: string
       enum: [received, inProgress, completed, cancelled]
-
     CanSellNotification:
       description: Schema for can sell notification data
       type: object
+      required: [eventType, notification]
       allOf:
-        - $ref: '#/components/schemas/CanSellValidation'
+        - $ref: '#/components/schemas/notificationMetadata'
+      properties:
+        eventType:
+          type: string
+          const: applicationStatus.v1.canSellActionNeeded
+        notification:
+          allOf:
+            - $ref: '#/components/schemas/CanSellValidation'
     
     SuitabilityActionNotification:
       description: Schema for suitability notification data
       type: object
+      required: [eventType, notification]
       allOf:
-        - $ref: '#/components/schemas/Suitability'
+        - $ref: '#/components/schemas/notificationMetadata'
       properties:
-        actionSections:
-          $ref: '#/components/schemas/actionSections'
+        eventType:
+          type: string
+          const: applicationStatus.v1.suitabilityActionNeeded
+        notification:
+          allOf:
+            - $ref: '#/components/schemas/Suitability'
+          properties:
+            actionSections:
+              $ref: '#/components/schemas/actionSections'
     
     SuitabilityDecisionNotification:
       description: Schema for suitability decision notification data
       type: object
-      required: [status, endDate, isApproved]
+      required: [status, endDate, isApproved, eventType, notification]
+      allOf:
+        - $ref: '#/components/schemas/notificationMetadata'
       properties:
-        status:
-          enum: [awaitingReview, inProgress, completed, notApplicable]
-        isActionNeeded:
-          type: boolean
-        actionSections:
-          $ref: '#/components/schemas/actionSections'
-        startDate:
+        eventType:
           type: string
-          format: date
-        endDate:
-          type: string
-          format: date
-        note:
-          type: string
-          minLength: 1
-          maxLength: 2000
-        isApproved:
-          type: boolean
+          const: applicationStatus.v1.suitabilityApproved
+        notification:
+          properties:
+            status:
+              enum: [awaitingReview, inProgress, completed, notApplicable]
+            isActionNeeded:
+              type: boolean
+            actionSections:
+              $ref: '#/components/schemas/actionSections'
+            startDate:
+              type: string
+              format: date
+            endDate:
+              type: string
+              format: date
+            note:
+              type: string
+              minLength: 1
+              maxLength: 2000
+            isApproved:
+              type: boolean
     
     DocReviewNotification:
       description: Schema for document review notification data
       type: object
+      required: [eventType, notification]
       allOf:
-        - $ref: '#/components/schemas/DocumentReview'
+        - $ref: '#/components/schemas/notificationMetadata'
       properties:
-        actionSections:
-          $ref: '#/components/schemas/actionSections'
+        eventType:
+          type: string
+          const: applicationStatus.v1.documentReviewActionNeeded
+        notification:
+          allOf:
+            - $ref: '#/components/schemas/DocumentReview'
+          properties:
+            actionSections:
+              $ref: '#/components/schemas/actionSections'
     
     FundingActionNotification:
       description: Schema for funding action notification data
       type: object
+      required: [eventType, notification]
       allOf:
-        - $ref: '#/components/schemas/TransferNotificationBase'
+        - $ref: '#/components/schemas/notificationMetadata'
       properties:
-        reason:
+        eventType:
           type: string
-          enum: [awaitingFundsFromCedingCompany, contactTheCarrier, fundingDiscrepancy, nigoAtCedingCarrier, noFundsReceivedCash, pendingReg60, other]
+          const: applicationStatus.v1.fundingActionNeeded
+        notification:
+          allOf:
+            - $ref: '#/components/schemas/TransferNotificationBase'
+          properties:
+            reason:
+              type: string
+              enum: [awaitingFundsFromCedingCompany, contactTheCarrier, fundingDiscrepancy, nigoAtCedingCarrier, noFundsReceivedCash, pendingReg60, other]
     
     TransferRequestNotification:
       description: Schema for transfer notification data
       type: object
+      required: [eventType, notification]
       allOf:
-        - $ref: '#/components/schemas/TransferNotificationBase'
+        - $ref: '#/components/schemas/notificationMetadata'
       properties:
-        nextActivityDate:
+        eventType:
           type: string
-          format: date
-        note:
-          type: string
-          minLength: 1
-          maxLength: 2000
-        methodOfInitiation:
-          type: string
-          enum: [fax, email, mail, replacement]
-        referenceNumber:
-          type: string        
+          const: applicationStatus.v1.fundingTransferRequestSent
+        notification:
+          allOf:
+            - $ref: '#/components/schemas/TransferNotificationBase'
+          properties:
+            nextActivityDate:
+              type: string
+              format: date
+            note:
+              type: string
+              minLength: 1
+              maxLength: 2000
+            methodOfInitiation:
+              type: string
+              enum: [fax, email, mail, replacement]
+            referenceNumber:
+              type: string        
     
     SourceTypeNotification:
       description: Schema for source type notification data
       type: object
+      required: [eventType, notification]
       allOf:
-        - $ref: '#/components/schemas/TransferNotificationBase'
+        - $ref: '#/components/schemas/notificationMetadata'
+      properties:
+        eventType:
+          type: string
+          const: applicationStatus.v1.fundingSourceTypeUpdated
+        notification:
+          allOf:
+            - $ref: '#/components/schemas/TransferNotificationBase'
     
     NewFollowUpNotification:
       description: Schema for new follow up notification data
       type: object
+      required: [eventType, notification]
       allOf:
-        - $ref: '#/components/schemas/TransferNotificationBase'
+        - $ref: '#/components/schemas/notificationMetadata'
       properties:
-        nextActivityDate:
+        eventType:
           type: string
-          format: date
-        note:
-          type: string
-          minLength: 1
-          maxLength: 2000
-        transferSentDate:
-          type: string
-          format: date
+          const: applicationStatus.v1.fundingTransferFollowedUp
+        notification:
+          allOf:
+            - $ref: '#/components/schemas/TransferNotificationBase'
+          properties:
+            nextActivityDate:
+              type: string
+              format: date
+            note:
+              type: string
+              minLength: 1
+              maxLength: 2000
+            transferSentDate:
+              type: string
+              format: date
     
     FundingReceivedNotification:
       description: Schema for funding received notification data
       type: object
+      required: [eventType, notification]
       allOf:
-        - $ref: '#/components/schemas/TransferNotificationBase'
+        - $ref: '#/components/schemas/notificationMetadata'
       properties:
-        anticipatedAmount:
-          type: number
-          format: float
-        receivedAmount:
-          type: number
-          format: float
-        receivedDate:
+        eventType:
           type: string
-          format: date
-        status:
-          type: string
-          enum: [inProgress, complete]
-        effectiveDate:
-          type: string
-          format: date
+          const: applicationStatus.v1.fundingReceived
+        notification:                  
+          allOf:
+            - $ref: '#/components/schemas/TransferNotificationBase'
+          properties:
+            anticipatedAmount:
+              type: number
+              format: float
+            receivedAmount:
+              type: number
+              format: float
+            receivedDate:
+              type: string
+              format: date
+            status:
+              type: string
+              enum: [inProgress, complete]
+            effectiveDate:
+              type: string
+              format: date
     
     ApplicationCompletedNotification:
       description: Schema for application completed notification data
       type: object
+      required: [eventType, notification]
+      allOf:
+        - $ref: '#/components/schemas/notificationMetadata'
       properties:
-        isActionNeeded:
-          type: boolean
-        actionSections:
-          $ref: '#/components/schemas/actionSections'
-        startDate:
-          type: string
-          format: date
-        note:
-          type: string
-          minLength: 1
-          maxLength: 2000
-        delivery:
+        eventType:
+            type: string
+            const: applicationStatus.v1.applicationCompleted
+        notification:
           type: object
           properties:
-            sentDate:
+            isActionNeeded:
+              type: boolean
+            actionSections:
+              $ref: '#/components/schemas/actionSections'
+            startDate:
               type: string
               format: date
-            method:
-              type: string
-              enum: [fedex, ups, electronicDelivery, handDelivery, usps]
-            trackingNumber:
+            note:
               type: string
               minLength: 1
-              maxLength: 65
+              maxLength: 2000
+            delivery:
+              type: object
+              properties:
+                sentDate:
+                  type: string
+                  format: date
+                method:
+                  type: string
+                  enum: [fedex, ups, electronicDelivery, handDelivery, usps]
+                trackingNumber:
+                  type: string
+                  minLength: 1
+                  maxLength: 65
     
     ApplicationCancelledNotification:
       description: Schema for application cancelled notification data
       type: object
+      required: [eventType, notification]
+      allOf:
+        - $ref: '#/components/schemas/notificationMetadata'
       properties:
-        actionSections:
-          $ref: '#/components/schemas/actionSections'
-        initiator:
+        eventType:
           type: string
-          enum: [advisor, carrier, client]
-        cancelledDate:
-          type: string
-          format: date
-        reason:
-          type: string
-    
+          const: applicationStatus.v1.applicationCancelled
+        notification:
+          properties:
+            actionSections:
+              $ref: '#/components/schemas/actionSections'
+            initiator:
+              type: string
+              enum: [advisor, carrier, client]
+            cancelledDate:
+              type: string
+              format: date
+            reason:
+              type: string    
     TransferNotificationBase:
       description: Schema for policy funding data
       type: object
@@ -1034,6 +1077,8 @@ components:
     reconciliation:
       type: object
       properties:
+        totalEvents:
+          type: integer
         events:
           type: array
           items:
