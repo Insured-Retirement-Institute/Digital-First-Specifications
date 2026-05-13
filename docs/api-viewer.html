@@ -25,6 +25,7 @@
                         <option value="onetimewithdrawalquote1.yaml">One-Time Withdrawal Quote API</option>
                         <option value="systematicwithdrawalprogramsetup.yaml">Systematic Withdrawal Program Setup API</option>
                         <option value="systematicwithdrawalprogramupdate.yaml">Systematic Withdrawal Program Update API</option>
+                        <option value="paperlessreplacements1.yaml">Paperless Replacements (RPL) API</option>
                         <!-- Add more options as you add more APIs -->
                         <!-- <option value="another-api/openapi.yaml">Another API</option> -->
                     </select>
@@ -115,8 +116,18 @@
                         displayName: "v1.0.0"
                     }
                 }
+            },
+            "paperlessreplacements1.yaml": {
+                name: "Paperless Replacements (RPL) API",
+                versions: {
+                    "v1": {
+                        path: "specs/paperlessreplacements1.yaml",
+                        displayName: "v1.0.0"
+                    }
+                }
             }
         };
+        // Add more APIs to the end of the object above as you add more APIs
 
         function populateVersionSelector(apiKey) {
             const versionSelector = document.getElementById('version-selector');
