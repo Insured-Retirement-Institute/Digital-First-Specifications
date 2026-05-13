@@ -1,0 +1,4335 @@
+openapi: 3.1.0
+info:
+  title: Policy Inquiry
+  version: 1.0.0
+  description: 'Provides comprehensive servicing and inquiry capabilities. These endpoints
+    allow clients to retrieve detailed information about a policy, financial values,
+    parties, transactions, dates, riders, funds, producers, systematic programs, payouts,
+    and underlying assets.'
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+paths:
+  /v1/policies/{policyNumber}/summary:
+    get:
+      operationId: getPolicySummary
+      tags:
+      - Policy Summary
+      description: 'Retrieves a comprehensive summary of the specified policy, including
+
+        status, effective date, carrier, product metadata, and key attributes used
+
+        for servicing and downstream processes.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/CorrelationIdHeader'
+      - $ref: '#/components/parameters/PolicyNumber'
+      - $ref: '#/components/parameters/AssociatedFirmId'
+      responses:
+        '200':
+          $ref: '#/components/responses/getPolicySummaryResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowedError'
+        '406':
+          $ref: '#/components/responses/NotAcceptableError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '413':
+          $ref: '#/components/responses/PayloadTooLargeError'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaTypeError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailableError'
+        '504':
+          $ref: '#/components/responses/GatewayTimeoutError'
+  /v1/policies/{policyNumber}/values:
+    get:
+      operationId: getPolicyValue
+      tags:
+      - Policy Value
+      description: Retrieve current policy value information.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationIdHeader'
+      - $ref: '#/components/parameters/PolicyNumber'
+      - $ref: '#/components/parameters/AssociatedFirmId'
+      responses:
+        '200':
+          $ref: '#/components/responses/getPolicyValueResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowedError'
+        '406':
+          $ref: '#/components/responses/NotAcceptableError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '413':
+          $ref: '#/components/responses/PayloadTooLargeError'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaTypeError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailableError'
+        '504':
+          $ref: '#/components/responses/GatewayTimeoutError'
+  /v1/policies/{policyNumber}/funds:
+    get:
+      operationId: getPolicyFunds
+      tags:
+      - Policy Funds
+      description: Retrieve funds associated with the policy.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationIdHeader'
+      - $ref: '#/components/parameters/PolicyNumber'
+      - $ref: '#/components/parameters/AssociatedFirmId'
+      - $ref: '#/components/parameters/StartIndex'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          $ref: '#/components/responses/getPolicyFundsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowedError'
+        '406':
+          $ref: '#/components/responses/NotAcceptableError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '413':
+          $ref: '#/components/responses/PayloadTooLargeError'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaTypeError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailableError'
+        '504':
+          $ref: '#/components/responses/GatewayTimeoutError'
+  /v1/policies/{policyNumber}/parties:
+    get:
+      operationId: getPolicyParties
+      tags:
+      - Policy Parties
+      description: Retrieve parties associated with the policy.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationIdHeader'
+      - $ref: '#/components/parameters/PolicyNumber'
+      - $ref: '#/components/parameters/AssociatedFirmId'
+      - $ref: '#/components/parameters/StartIndex'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          $ref: '#/components/responses/getPolicyPartiesResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowedError'
+        '406':
+          $ref: '#/components/responses/NotAcceptableError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '413':
+          $ref: '#/components/responses/PayloadTooLargeError'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaTypeError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailableError'
+        '504':
+          $ref: '#/components/responses/GatewayTimeoutError'
+  /v1/policies/{policyNumber}/parties/{partyId}:
+    get:
+      operationId: getPolicyPartyById
+      tags:
+      - Policy Parties
+      description: Retrieve specific party details associated with the policy.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationIdHeader'
+      - $ref: '#/components/parameters/PolicyNumber'
+      - $ref: '#/components/parameters/PartyRole'
+      - $ref: '#/components/parameters/PartyStatus'
+      - $ref: '#/components/parameters/AssociatedFirmId'
+      - name: partyId
+        in: path
+        required: true
+        description: Unique identifier of the party.
+        schema:
+          type: string
+          pattern: ^[A-Za-z0-9._-]{1,100}$
+      responses:
+        '200':
+          $ref: '#/components/responses/getPolicyPartiesByIdResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowedError'
+        '406':
+          $ref: '#/components/responses/NotAcceptableError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '413':
+          $ref: '#/components/responses/PayloadTooLargeError'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaTypeError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailableError'
+        '504':
+          $ref: '#/components/responses/GatewayTimeoutError'
+  /v1/policies/{policyNumber}/producers:
+    get:
+      operationId: getPolicyProducers
+      tags:
+      - Policy Producers
+      description: Retrieve producer information for the policy.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationIdHeader'
+      - $ref: '#/components/parameters/PolicyNumber'
+      - $ref: '#/components/parameters/AssociatedFirmId'
+      - $ref: '#/components/parameters/StartIndex'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          $ref: '#/components/responses/getPolicyProducersResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowedError'
+        '406':
+          $ref: '#/components/responses/NotAcceptableError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '413':
+          $ref: '#/components/responses/PayloadTooLargeError'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaTypeError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailableError'
+        '504':
+          $ref: '#/components/responses/GatewayTimeoutError'
+  /v1/policies/{policyNumber}/riders:
+    get:
+      operationId: getPolicyRiders
+      tags:
+      - Policy Riders
+      description: Retrieve riders attached to the policy.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationIdHeader'
+      - $ref: '#/components/parameters/PolicyNumber'
+      - $ref: '#/components/parameters/AssociatedFirmId'
+      - $ref: '#/components/parameters/StartIndex'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          $ref: '#/components/responses/getPolicyRidersResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowedError'
+        '406':
+          $ref: '#/components/responses/NotAcceptableError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '413':
+          $ref: '#/components/responses/PayloadTooLargeError'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaTypeError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailableError'
+        '504':
+          $ref: '#/components/responses/GatewayTimeoutError'
+  /v1/policies/{policyNumber}/riders/{riderId}:
+    get:
+      operationId: getPolicyRiderById
+      tags:
+      - Policy Riders
+      description: Retrieve details for a specific policy rider.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationIdHeader'
+      - $ref: '#/components/parameters/PolicyNumber'
+      - $ref: '#/components/parameters/AssociatedFirmId'
+      - name: riderId
+        in: path
+        required: true
+        description: Unique identifier of the rider.
+        schema:
+          type: string
+          pattern: ^[A-Za-z0-9._-]{1,100}$
+      responses:
+        '200':
+          $ref: '#/components/responses/getPolicyRiderByIdResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowedError'
+        '406':
+          $ref: '#/components/responses/NotAcceptableError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '413':
+          $ref: '#/components/responses/PayloadTooLargeError'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaTypeError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailableError'
+        '504':
+          $ref: '#/components/responses/GatewayTimeoutError'
+  /v1/policies/{policyNumber}/dates:
+    get:
+      operationId: getPolicyDates
+      tags:
+      - Policy Dates
+      description: Retrieve important policy-related dates.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationIdHeader'
+      - $ref: '#/components/parameters/PolicyNumber'
+      - $ref: '#/components/parameters/AssociatedFirmId'
+      responses:
+        '200':
+          $ref: '#/components/responses/getPolicyDatesResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowedError'
+        '406':
+          $ref: '#/components/responses/NotAcceptableError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '413':
+          $ref: '#/components/responses/PayloadTooLargeError'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaTypeError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailableError'
+        '504':
+          $ref: '#/components/responses/GatewayTimeoutError'
+  /v1/policies/{policyNumber}/systematic-programs:
+    get:
+      operationId: getPolicySystematicPrograms
+      tags:
+      - Policy Systematic Programs
+      description: Retrieve systematic programs configured on the policy.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationIdHeader'
+      - $ref: '#/components/parameters/PolicyNumber'
+      - $ref: '#/components/parameters/AssociatedFirmId'
+      - $ref: '#/components/parameters/StartIndex'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          $ref: '#/components/responses/getPolicySystematicProgramsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowedError'
+        '406':
+          $ref: '#/components/responses/NotAcceptableError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '413':
+          $ref: '#/components/responses/PayloadTooLargeError'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaTypeError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailableError'
+        '504':
+          $ref: '#/components/responses/GatewayTimeoutError'
+  /v1/policies/{policyNumber}/payouts:
+    get:
+      operationId: getPolicyPayouts
+      tags:
+      - Policy Payouts
+      description: Retrieve payouts associated with the policy.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationIdHeader'
+      - $ref: '#/components/parameters/PolicyNumber'
+      - $ref: '#/components/parameters/AssociatedFirmId'
+      - $ref: '#/components/parameters/StartIndex'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          $ref: '#/components/responses/getPolicyPayoutsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowedError'
+        '406':
+          $ref: '#/components/responses/NotAcceptableError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '413':
+          $ref: '#/components/responses/PayloadTooLargeError'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaTypeError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailableError'
+        '504':
+          $ref: '#/components/responses/GatewayTimeoutError'
+  /v1/policies/{policyNumber}/transactions:
+    get:
+      operationId: getPolicyTransactions
+      tags:
+      - Policy Transactions
+      description: Retrieve transactions for the policy.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationIdHeader'
+      - $ref: '#/components/parameters/PolicyNumber'
+      - $ref: '#/components/parameters/AssociatedFirmId'
+      - $ref: '#/components/parameters/StartDate'
+      - $ref: '#/components/parameters/EndDate'
+      - $ref: '#/components/parameters/TransactionTypes'
+      - $ref: '#/components/parameters/StartIndex'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          $ref: '#/components/responses/getPolicyTransactionsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowedError'
+        '406':
+          $ref: '#/components/responses/NotAcceptableError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '413':
+          $ref: '#/components/responses/PayloadTooLargeError'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaTypeError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailableError'
+        '504':
+          $ref: '#/components/responses/GatewayTimeoutError'
+  /v1/policies/{policyNumber}/underlying-assets:
+    get:
+      operationId: getPolicyUnderlyingAssets
+      tags:
+      - Policy Underlying Assets
+      description: 'List of underlying asset/fund-level breakdown records tied to
+        a transaction.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/CorrelationIdHeader'
+      - $ref: '#/components/parameters/PolicyNumber'
+      - $ref: '#/components/parameters/AssociatedFirmId'
+      - $ref: '#/components/parameters/TransactionId'
+      - $ref: '#/components/parameters/StartIndex'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          $ref: '#/components/responses/getPolicyUnderlyingAssetsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowedError'
+        '406':
+          $ref: '#/components/responses/NotAcceptableError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '413':
+          $ref: '#/components/responses/PayloadTooLargeError'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaTypeError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailableError'
+        '504':
+          $ref: '#/components/responses/GatewayTimeoutError'
+components:
+  parameters:
+    CorrelationIdHeader:
+      name: correlationId
+      in: header
+      required: false
+      description: Unique identifier to trace the request.
+      schema:
+        type: string
+        maxLength: 100
+    PolicyNumber:
+      name: policyNumber
+      in: path
+      required: true
+      description: Unique identifier of the policy.
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 30
+    AssociatedFirmId:
+      name: associatedFirmId
+      in: query
+      required: false
+      description: Optional firm/linkage identifier (preferred location per IRI).
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 65
+    StartDate:
+      name: startDate
+      in: query
+      required: false
+      description: Filter transactions from this date (inclusive).
+      schema:
+        type: string
+        format: date
+    EndDate:
+      name: endDate
+      in: query
+      required: false
+      description: Filter transactions up to this date (inclusive).
+      schema:
+        type: string
+        format: date
+    TransactionTypes:
+      name: transactionTypes
+      in: query
+      required: false
+      description: Filter by one or more transaction type codes (comma-separated).
+        Values correspond to the transactionType field on each Transaction object.
+      schema:
+        type: string
+        pattern: ^([A-Za-z][A-Za-z0-9]*)(,[A-Za-z][A-Za-z0-9]*)*$
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: Page size (default 50, max 200).
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 200
+    PartyRole:
+      name: partyRole
+      in: query
+      required: false
+      description: Filter parties by role using the camelCase query key `partyRole`
+        and DD-aligned PascalCase enum values. This filter vocabulary is intentionally
+        broader than the response-body relationships enum; Payee, Payor, Agent, and
+        Trustee are supported filter values even when not emitted in PartyRelationship.relationships.
+      schema:
+        type: string
+        enum:
+        - Owner
+        - JointOwner
+        - Annuitant
+        - JointAnnuitant
+        - Payee
+        - Payor
+        - PrimaryBeneficiary
+        - ContingentBeneficiary
+        - Agent
+        - Trustee
+    PartyStatus:
+      name: partyStatus
+      in: query
+      required: false
+      description: Filter parties by status. NOTAPPROVED is the canonical DD token
+        (not split as NOT_APPROVED).
+      schema:
+        type: string
+        enum:
+        - APPROVED
+        - NOTAPPROVED
+        - PROCESSED
+    TransactionId:
+      name: transactionId
+      in: query
+      required: false
+      description: Unique identifier assigned to the transaction. Uses the standard
+        transaction identifier pattern for inquiry endpoints.
+      schema:
+        type: string
+        pattern: ^[A-Za-z0-9._-]{1,100}$
+        minLength: 1
+        maxLength: 100
+    StartIndex:
+      name: startIndex
+      in: query
+      required: false
+      description: Zero-based index of the first record to return.
+      schema:
+        type: integer
+        minimum: 0
+  responses:
+    BadRequestError:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+    UnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+    ForbiddenError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+    NotFoundError:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+    MethodNotAllowedError:
+      description: Method Not Allowed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+    NotAcceptableError:
+      description: Not Acceptable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+    ConflictError:
+      description: 'A conflicting policy operation is in progress or the request duplicates
+        an in-flight action. '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+    PayloadTooLargeError:
+      description: Payload Too Large
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+    UnsupportedMediaTypeError:
+      description: Unsupported Media Type
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+    UnprocessableEntityError:
+      description: Unprocessable Entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+    TooManyRequestsError:
+      description: Too Many Requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+    BadGatewayError:
+      description: Bad Gateway
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+    ServiceUnavailableError:
+      description: Service Unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+    GatewayTimeoutError:
+      description: Gateway Timeout
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+    getPolicySummaryResponse:
+      description: Policy summary successfully retrieved.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PolicySummary'
+          example:
+            effectiveDate: '2021-01-15'
+            cusip: 78462F103
+            carrierId: CARR123
+            carrierName: Contoso Life & Annuity
+            policyLastRefreshDateTime: '2026-03-06T16:30:00Z'
+            product:
+              planName: Fixed Indexed Annuity Premier
+              productType: INDEXED
+              shortName: FIA Premier
+              planCode: FIAPRM01
+            qualificationType: IRA Rollover
+            policyStatus: ACTIVE
+            hasRestriction: true
+            restrictions:
+            - category: CONTRACT
+              subCategory: COLLATERAL_ASSIGNMENT
+              reason: Collateral Assignment
+              definition: Collateral assignment on the contract
+            issueType: FULLUNDERWRITING
+            issueState: NC
+            currency: USD
+    getPolicyValueResponse:
+      description: Policy value successfully retrieved.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PolicyValue'
+          example:
+            valuesAsOfDate: '2026-03-06'
+            accountDesignation: INDIVIDUAL
+            jurisdiction: NC
+            sponsoringPlanSeparationDate: '2020-12-31'
+            payoutType: ACCUMULATION
+            totalDepositITD: 78250.0
+            surrenderChargeFreeDate: '2027-01-15'
+            digitalPaymentTypeCode: ACH
+            digitalPaymentTypeDescription: Automated Clearing House
+            authorization:
+              businessMethods:
+              - internet
+              - phone
+              - mail
+              authorizationEntities:
+              - authorizationEntity: Power of Attorney – Jane Doe
+                isAllAgentsAuthorized: false
+              - authorizationEntity: Agent – Sarah Smith
+                isAllAgentsAuthorized: false
+              authorizationTransaction:
+                isAuthorizationSignatureRequired: true
+                administrativeTransactions:
+                - fundTransfer
+                - withdrawal
+                - arrangementAdministration
+            accountValues:
+              beginningAccountValue: 121250.25
+              endingAccountValue: 124980.1
+              minimumRequiredAccountValue: 1000.0
+              unloanedPortionOfAccountValue: 120860.1
+              loanedPortionOfAccountValue: 4120.0
+              surrenderValue: 121995.22
+              surrenderValueWithoutMarketValueAdjustment: 122505.77
+              guaranteedCashSurrenderValueFixed: 98548.42
+              guaranteedCashSurrenderValueIndexed: 100187.13
+              interestEarned: 1429.85
+              totalNetWithdrawalSinceIssue: 7550.75
+              totalGainWithdrawnSinceIssue: 2025.5
+            loanValues:
+              totalLoanBalance: 4120.0
+              totalLoanPrincipal: 4000.0
+              loanPayoffAmount: 4120.35
+              maximumLoanAmount: 61250.0
+              minimumLoanAmount: 500.0
+              totalLoanAccruedInterest: 120.35
+              lastLoanInterestDueDate: '2026-01-15'
+              totalNumberOfLoan: 1
+              totalYearToDateLoanTaken: 0.0
+            withdrawalValues:
+              totalWithdrawalAmount: 2800.0
+              freeWithdrawalAmount: 12200.0
+              yearToDateFreeWithdrawalAmount: 2800.0
+              minimumWithdrawalAmount: 100.0
+              maximumWithdrawalAmount: 50000.0
+              freeAvailableAmount: 9400.0
+            marketValueAdjustment:
+              isMarketValueAdjusted: true
+            rmdInfo:
+              rmdTaxYear: 2026
+              totalRMDAmountRemaining: 3200.0
+    getPolicyFundsResponse:
+      description: Policy funds successfully retrieved.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PolicyFunds'
+          example:
+            startIndex: 0
+            itemsCount: 1
+            totalItemsCount: 1
+            funds:
+            - fundAccountType: INDEXED
+              fundId: IDX001
+              fundName: S&P 500 Index Strategy
+              fundPrice: 110.5
+              fundValuationDate: '2026-03-06'
+              generalLedgerFundCode: GLI001
+              totalFundValue: 59890.47
+              interestGuaranteedPeriod: 0
+              guaranteedMinimumInterestRate: 0.0
+              assetClass: INDEXED
+              productCode: FIAPRM01
+              carrierCode: CARR123
+              investmentType: INDEXED
+              openDate: '2021-01-15'
+              availableFundsAmount: 0.0
+              capRate: 9.0
+              isTransferSendAllowed: true
+              isWithdrawalsAllowed: true
+              capAmount: 0.0
+              isTransferDestAllowed: false
+              transferDestRestrictInfo:
+                fundRestrictReason: TRANSFER_OUT_NOT_ALLOWED
+                startDate: '2026-02-01'
+                endDate: '2026-03-01'
+              guaranteedInterestRate: 0.0
+              bonusRate: 2.0
+              financialActivity: INTEREST_CREDIT
+              isFinancialActivityReversed: false
+              appliesToCoverageId: COV-001
+              arrangementRefId: ARR-LOCK-01
+              financialActivityType: PERFORMANCE_LOCK
+              financialActivityGrossAmount: 899.12
+              financialEffectiveDate: '2026-02-01'
+              participationRate: 200.0
+              participationDownsideRate: 0.0
+              subAccountTerm: '365'
+              bufferRate: 10.0
+              capThresholdRate: 0.0
+              floorRate: 1.0
+              mvaRate: 0.85
+              marginRate: 0.0
+              triggerRate: 0.0
+              indexCreditingMethod: ANNUAL_POINT_TO_POINT
+              indexCreditingMode: POINT_TO_POINT
+              indexType: SP500
+              termPeriod: '365'
+              trackingValue: 4825.33
+              initialIndexBenchmarkValue: 4000.0
+              currentIndexBenchmarkValue: 4800.0
+              minimumCapRate: 3.0
+              indexCreditingDate: '2026-02-01'
+              isLockFeatureEnabled: true
+              indexOptionPeriod: '365'
+              accruedInterest: 899.12
+              thresholdPercent: 5.0
+              rateTier:
+                indexReturnPercent: 20.63
+                tieredRate: 9.0
+                rateType: PARTICIPATION
+              fundSegments:
+              - segmentId: SEG-IDX-001
+                fundId: IDX001
+                originalDepositAmount: 50000.0
+                originalDepositDate: '2021-01-15'
+                depositDate: '2025-03-01'
+                depositAmount: 10000.0
+                currentAmount: 59890.47
+                renewalDate: '2026-03-01'
+                numberOfUnits: 1000.0
+                sweepAccountId: SWP001
+                interestEarningAmount: 899.12
+                appliedInterestRate: 9.0
+                startingPrice: 100.0
+                startingPriceDate: '2025-03-01'
+                endingPrice: 110.5
+                endingPriceDate: '2026-03-06'
+                startDate: '2025-03-01'
+                endDate: '2026-03-01'
+                maxPrice: 111.2
+                maxPriceDate: '2025-12-15'
+              rateLockInfo:
+                rateType: INDEXED_RATE_LOCK
+                lockStartDate: '2026-01-15'
+                lockEndDate: '2026-03-15'
+                lockPeriod: 60
+    getPolicyProducersResponse:
+      description: Policy producers successfully retrieved.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PolicyProducers'
+          example:
+            startIndex: 0
+            itemsCount: 1
+            totalItemsCount: 1
+            producers:
+            - externalIds:
+                npn: '7654321'
+                crdNumber: '5543210'
+                agencyId: '246'
+                firmId: '1701'
+              commissionOption: Upfront
+              commission:
+                commissionIdentifier: COMM-2026-001
+                commissionSplitPercent: 100
+              producerNumber: PROD-001
+    getPolicyDatesResponse:
+      description: Policy dates successfully retrieved.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PolicyDates'
+          example:
+            policyStartDate: '2021-01-15'
+            applicationDate: '2020-12-20'
+            applicationReceivedDate: '2020-12-22'
+            issueDate: '2021-01-15'
+            policyDeliveryDate: '2021-01-20'
+            previousPolicyAnniversaryDate: '2025-01-15'
+            previousPolicyMonthiversaryDate: '2026-02-15'
+            nextAnniversaryDate: '2027-01-15'
+            maturityDate: '2051-01-15'
+            policyTerminationDate: '9999-12-31'
+            initialPaymentExpiryDate: '2021-02-15'
+            nextMonthiversaryDate: '2026-04-15'
+    getPolicyPartiesResponse:
+      description: Policy parties successfully retrieved.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PartiesList'
+          example:
+            startIndex: 0
+            itemsCount: 1
+            totalItemsCount: 1
+            parties:
+            - type: individual
+              firstName: John
+              middleName: Q
+              lastName: Public
+              taxId: '123456789'
+              relationships:
+              - owner
+              paymentForm: ACH
+              allocationPercentage: 100
+              bank:
+                bankId: BNK123
+                nameOnAccount: JOHN Q PUBLIC
+                accountStatus: ACTIVEBANKACCOUNT
+                accountType: CHECKING
+                accountNumber: '0000123412341234'
+                routingNumber: '021000021'
+                branchName: Charlotte Main Branch
+              address:
+                addressId: ADDR001
+                addressType: RESIDENCE
+                addressLine1: 123 Elm St
+                addressLine2: Unit 5
+                addressLine3: Building B
+                addressLine4: Floor 3
+                addressLine5: 'Attn: Accounts'
+                city: Charlotte
+                state: NC
+                zipCode: '28202'
+                zipCodeExtension: '1234'
+                country: US
+              phones:
+              - startDate: '2026-03-06'
+                endDate: '2027-03-06'
+                phoneType: MOBILE
+                countryCode: '+1'
+                areaCode: '704'
+                dialNumber: '5550123'
+                extension: '123'
+                bestTime: ANYTIME
+                timezone: America/New_York
+                isPreferred: true
+                phoneId: PH001
+              emails:
+              - startDate: '2026-03-06'
+                endDate: '2027-03-06'
+                emailType: PERSONAL
+                emailAddress: john.public@example.com
+                isPreferred: true
+                emailId: EM001
+              identifications:
+              - identificationId: IDE-875
+                startDate: '2026-03-06'
+                endDate: '2028-03-06'
+                identificationType: PASSPORT
+                identificationKey: US-PPT
+                identificationValue: '999888777'
+                identificationDescription: US Passport
+                issueState: NC
+                issueCountry: US
+              taxWithholdingInstructions:
+              - party:
+                  type: individual
+                  firstName: John
+                  lastName: Public
+                  taxId: '123456789'
+                taxWithholdingType: FEDERAL
+                taxRateToUse: NOWITHHOLDINGELECTED
+                filingStatus: SINGLE
+                percentage: 10.0
+              - party:
+                  type: individual
+                  firstName: John
+                  lastName: Public
+                  taxId: '123456789'
+                taxWithholdingType: STATE
+                taxRateToUse: NOWITHHOLDINGELECTED
+                filingStatus: SINGLE
+                dollar: 125.0
+                taxJurisdiction: NC
+    getPolicyPartiesByIdResponse:
+      description: Policy parties successfully retrieved.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Party'
+          example:
+            type: individual
+            firstName: John
+            middleName: Q
+            lastName: Public
+            taxId: '123456789'
+            relationships:
+            - owner
+            paymentForm: ACH
+            allocationPercentage: 100
+            bank:
+              bankId: BNK123
+              nameOnAccount: JOHN Q PUBLIC
+              accountStatus: ACTIVEBANKACCOUNT
+              accountType: CHECKING
+              accountNumber: '0000123412341234'
+              routingNumber: '021000021'
+              branchName: Charlotte Main Branch
+            address:
+              addressId: ADDR001
+              addressType: RESIDENCE
+              addressLine1: 123 Elm St
+              addressLine2: Unit 5
+              addressLine3: Building B
+              addressLine4: Floor 3
+              addressLine5: 'Attn: Accounts'
+              city: Charlotte
+              state: NC
+              zipCode: '28202'
+              zipCodeExtension: '1234'
+              country: US
+            phones:
+            - startDate: '2026-03-06'
+              endDate: '2027-03-06'
+              phoneType: MOBILE
+              countryCode: '+1'
+              areaCode: '704'
+              dialNumber: '5550123'
+              extension: '123'
+              bestTime: ANYTIME
+              timezone: America/New_York
+              isPreferred: true
+              phoneId: PH001
+            emails:
+            - startDate: '2026-03-06'
+              endDate: '2027-03-06'
+              emailType: PERSONAL
+              emailAddress: john.public@example.com
+              isPreferred: true
+              emailId: EM001
+            identifications:
+            - identificationId: IDE-875
+              startDate: '2026-03-06'
+              endDate: '2028-03-06'
+              identificationType: PASSPORT
+              identificationKey: US-PPT
+              identificationValue: '999888777'
+              identificationDescription: US Passport
+              issueState: NC
+              issueCountry: US
+            taxWithholdingInstructions:
+            - party:
+                type: individual
+                firstName: John
+                lastName: Public
+                taxId: '123456789'
+              taxWithholdingType: FEDERAL
+              taxRateToUse: NOWITHHOLDINGELECTED
+              filingStatus: SINGLE
+              percentage: 10.0
+            - party:
+                type: individual
+                firstName: John
+                lastName: Public
+                taxId: '123456789'
+              taxWithholdingType: STATE
+              taxRateToUse: NOWITHHOLDINGELECTED
+              filingStatus: SINGLE
+              dollar: 125.0
+              taxJurisdiction: NC
+    getPolicyRidersResponse:
+      description: Policy riders successfully retrieved.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RidersList'
+          example:
+            startIndex: 0
+            itemsCount: 1
+            totalItemsCount: 1
+            riders:
+            - timestamp: '2026-03-01T10:30:00Z'
+              riderType: GMWB_RIDER
+              riderName: Guaranteed Lifetime Withdrawal Benefit
+              isRiderElected: true
+              riderCode: GLWB
+              underwritingStatus: APPROVED
+              effectiveDate: '2021-01-15'
+              exerciseDate: '2025-01-15'
+              terminationDate: '9999-12-31'
+              status: ACTIVE
+              coverageId: COV-001
+              amount: 25000.0
+              annualBenefitAmount: 5000.0
+              riderBenefitAmount: 25000.0
+              riderBenefitPercent: 5.0
+              riderParticipants:
+              - insuredAgeAtIssue: 60
+                taxId: '123456789'
+              charge:
+                riderExerciseCharge: 0.0
+                riderExerciseChargeRate: 0.0
+              maximumChronicIllnessBenefitPercentage: 100.0
+              maximumPeriodicPaymentPeriod: 240
+              riderPaymentDate: '2026-03-06'
+              remainingBenefit: 20000.0
+              isAdditionalBenefitUsedUp: false
+              totalBenefit: 25000.0
+              payoutOption: SINGLE
+              benefitPercent: 5.0
+              annualBenefitLimit: 10000.0
+              riderSubType: INCOME
+              livesType: SINGLE
+              isParticipantIrrevocable: false
+              additionalRiderClassification: INCOME_ENHANCEMENT
+              riderFreeAmt: 65198.45
+              participantRoleCode: Insured
+    getPolicyRiderByIdResponse:
+      description: Policy rider successfully retrieved.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Rider'
+          example:
+            timestamp: '2026-03-01T10:30:00Z'
+            riderType: BENEFIT_RIDER
+            riderName: Waiver of Premium Rider
+            isRiderElected: true
+            riderCode: WOP
+            underwritingStatus: APPROVED
+            effectiveDate: '2022-02-01'
+            exerciseDate: '2025-02-01'
+            terminationDate: '9999-12-31'
+            status: ACTIVE
+            coverageId: COV-002
+            amount: 15000.0
+            annualBenefitAmount: 3000.0
+            riderBenefitAmount: 15000.0
+            riderBenefitPercent: 3.0
+            riderParticipants:
+            - insuredAgeAtIssue: 58
+              taxId: '987654321'
+            charge:
+              riderExerciseCharge: 50.0
+              riderExerciseChargeRate: 1.5
+            maximumChronicIllnessBenefitPercentage: 50.0
+            maximumPeriodicPaymentPeriod: 120
+            riderPaymentDate: '2026-02-01'
+            remainingBenefit: 12000.0
+            isAdditionalBenefitUsedUp: false
+            totalBenefit: 15000.0
+            payoutOption: SINGLE
+            benefitPercent: 3.0
+            annualBenefitLimit: 6000.0
+            riderSubType: INCOME
+            livesType: SINGLE
+            isParticipantIrrevocable: false
+            additionalRiderClassification: INCOME_SUPPORT
+            riderFreeAmt: 2500.0
+            participantRoleCode: Insured
+    getPolicySystematicProgramsResponse:
+      description: Policy systematic programs successfully retrieved.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SystematicProgramsList'
+          example:
+            startIndex: 0
+            itemsCount: 1
+            totalItemsCount: 1
+            systematicPrograms:
+            - arrangementType: WITHDRAWAL
+              allocationOptionType: DOLLAR
+              paymentForm: ACH
+              frequency: MONTHLY
+              startDate: '2026-03-15'
+              endDate: '2027-03-15'
+              previousProgramDate: '2026-02-15'
+              optedNextProgramDate: '2026-04-15'
+              nextProgramDate: '2026-04-15'
+              amountType: AMOUNT
+              requestedAmount: 750.0
+              externalArrangementId: ARR-202603-001
+              numOfModalOccurrences: 12
+              modalAmt: 750.0
+              modalPct: 0.0
+              sourceTransferAmtType: AMOUNT
+              destTransferAmtType: AMOUNT
+              arrSource: TransferAmt
+              taxWithholdingInstructions:
+              - party:
+                  type: individual
+                  firstName: John
+                  lastName: Public
+                  taxId: '123456789'
+                taxWithholdingType: FEDERAL
+                taxRateToUse: NOWITHHOLDINGELECTED
+                filingStatus: SINGLE
+                percentage: 10.0
+              - party:
+                  type: individual
+                  firstName: John
+                  lastName: Public
+                  taxId: '123456789'
+                taxWithholdingType: STATE
+                taxRateToUse: NOWITHHOLDINGELECTED
+                filingStatus: SINGLE
+                dollar: 125.0
+                taxJurisdiction: NC
+              arrSubType: SYSTEMATICWITHDRAWAL
+              dayOfMonth: '15'
+              productCode: FIAPRM01
+              parties:
+              - partyRole: Payee
+                taxId: '789452367'
+                paymentForm: ACH
+                percentage: 100.0
+                bankId: BNK92873
+                addressId: ADDR-CLT-001
+    getPolicyPayoutsResponse:
+      description: Policy payouts successfully retrieved.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PayoutsList'
+          example:
+            startIndex: 0
+            itemsCount: 1
+            totalItemsCount: 1
+            incomeArrangements:
+            - incomeArrangementId: INC-001
+              annuitization:
+                isAnnuitized: true
+                annuitizationStartDateTime: '2026-03-06T10:00:00Z'
+                annuitizationEndDateTime: '2036-03-06T10:00:00Z'
+                annuitizationTypeCode: FIXED
+                periodCertain:
+                  numberOfPayments: '120'
+                survivorReduction:
+                  primaryreductionCode: P
+                  jointreductionCode: J
+              incomePayment:
+                incomePaymentId: PAY-001
+                status: ACTIVE
+                frequencyCode: '12'
+                amount:
+                  value: '1250.00'
+                  amountType: GROSS
+                  amountCode: AMO
+                adjustments:
+                  increasePercentage: 3.0
+                taxExclusion:
+                  value: '15.00'
+    getPolicyTransactionsResponse:
+      description: Policy transactions successfully retrieved.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TransactionsList'
+          example:
+            startIndex: 0
+            itemsCount: 1
+            totalItemsCount: 1
+            transactions:
+            - transactionId: TX-0001
+              originalTransactionId: TX-REF-0000
+              partyPolicyChangeReferenceId: PAR-686
+              partyPolicyNewReferenceId: PAR-908
+              planCode: FIAPRM01
+              parentId: ROOT-1
+              transactionType: SubsequentPayment
+              requestDate: '2026-03-06'
+              effectiveDate: '2026-03-06'
+              processDate: '2026-03-06'
+              reversalDate: '9999-12-31'
+              status: Pending
+              transactionReason: GRACEPERIODPREMIUM
+              transactionAmounts:
+                amountType: AMOUNT
+                requestedAmount: 137547.78
+                disbursementType: GROSS
+                disbursementPaymentForm: DTCC
+              charges:
+              - chargeType: SERVICE_CHARGE
+                isChargeWaived: false
+                chargeWaiverReason: WITHIN_FREE_WITHDRAWAL
+                chargeAmount: 374.75
+                chargeAppliedRate: 0.27
+              taxWithholdingInstructions:
+              - party:
+                  type: individual
+                  firstName: John
+                  middleName: Q
+                  lastName: Public
+                  taxId: '123456789'
+                taxWithholdingType: FEDERAL
+                taxRateToUse: NOWITHHOLDINGELECTED
+                filingStatus: SINGLE
+                percentage: 10.0
+                exemptions: 0
+                taxJurisdiction: NC
+              timestamp: '2026-03-06T12:00:00Z'
+              isReverseInitiated: false
+              version: 1
+              externalIdentifiers:
+                referenceNumber: EXT-REF-1001
+                externalTransactionId: EXT-TX-1001
+                externalArrangementId: ARR-001
+    getPolicyUnderlyingAssetsResponse:
+      description: Policy underlying assets successfully retrieved.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnderlyingAssets'
+          example:
+            startIndex: 0
+            itemsCount: 1
+            totalItemsCount: 1
+            underlyingAssets:
+            - insuranceActivityFundID: INS-708
+              insuranceActivityFundAmount: '1250.00'
+              insuranceActivityFundAmountDebitCreditIndicator: CREDIT
+              insuranceActivityFundUnitAmount: '12.5000'
+              insuranceActivityFundUnitAmountDebitCreditIndicator: CREDIT
+              insuranceActivityFundUnitPriceAmount: '100.00'
+              insuranceProductSubAccountProductFullName: S&P 500 Index Strategy
+              insuranceProductSubAccountAssetClassCode: EQUITY
+              insuranceActivityMutualFundCusipNumber: 78462F103
+              insuranceActivityFundMVAAmount: '0.00'
+              insuranceActivityFundMVAAmountDebitCreditIndicator: CREDIT
+              insuranceActivityFundAdministrativeChargeAmount: '0.00'
+              insuranceActivityFundAdministrativeChargeAmountDebitCreditIndicator: CREDIT
+              insuranceActivityFundSurrenderChargeAmount: '0.00'
+              insuranceActivityFundSurrenderChargeAmountDebitCreditIndicator: CREDIT
+              insuranceActivityFundEmployerAmount: '0.00'
+              insuranceActivityFundEmployerAmountDebitCreditIndicator: CREDIT
+              insuranceActivityFundEmployeeAmount: '0.00'
+              insuranceActivityFundEmployeeAmountDebitCreditIndicator: CREDIT
+  headers:
+    correlationId:
+      description: Correlates this response to requests and downstream logs.
+      schema:
+        type: string
+        maxLength: 100
+  schemas:
+    PolicySummary:
+      type: object
+      required:
+      - carrierId
+      - currency
+      - effectiveDate
+      - issueType
+      - policyLastRefreshDateTime
+      - policyStatus
+      - product
+      properties:
+        effectiveDate:
+          type: string
+          format: date
+        cusip:
+          type: string
+          minLength: 9
+          maxLength: 9
+          pattern: ^[0-9]{3}[A-Z0-9]{5}[0-9]$
+        carrierId:
+          type: string
+          maxLength: 10
+        carrierName:
+          type: string
+          maxLength: 200
+        policyLastRefreshDateTime:
+          type: string
+          format: date-time
+        product:
+          $ref: '#/components/schemas/Product'
+        qualificationType:
+          type: string
+          enum:
+          - Non-Qualified
+          - Solo 401k
+          - 401k
+          - 403b
+          - 457 Deferred Compensation
+          - Inherited IRA
+          - IRA Spousal
+          - Educational IRA
+          - IRA
+          - IRA Rollover
+          - IRA Transfer
+          - Roth IRA
+          - Roth IRA - Inherited
+          - SEP IRA
+          - SIMPLE IRA
+          - Pension Plan
+          - Cash Balance Plan-Defined Contributions
+          - Solo Defined Benefit
+          - Cash Balance Plan-Defined Benefit
+          - Profit Sharing Plan
+          - Money Purchase Plan
+          - SAREP
+          - 401g
+          - HR10
+          - Welfare Benefit Plan
+          - Roth 401K
+          - Roth 403b
+          - Roth 457
+        policyStatus:
+          type: string
+          enum:
+          - PENDINGISSUED
+          - ACTIVE
+          - LAPSED
+          - SURRENDERED
+          - TERMINATED
+        hasRestriction:
+          type: boolean
+        restrictions:
+          type: array
+          description: Required when `hasRestriction` is true.
+          items:
+            $ref: '#/components/schemas/RestrictionReason'
+        issueType:
+          type: string
+          enum:
+          - FULLUNDERWRITING
+          - SIMPLIFIED
+          - GUARANTEED
+        issueState:
+          type: string
+          pattern: ^[A-Z]{2}$
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+      allOf:
+      - if:
+          properties:
+            hasRestriction:
+              const: true
+          required:
+          - hasRestriction
+        then:
+          required:
+          - restrictions
+          properties:
+            restrictions:
+              minItems: 1
+        else:
+          not:
+            required:
+            - restrictions
+    RestrictionReason:
+      type: object
+      additionalProperties: false
+      required:
+      - reason
+      - definition
+      - category
+      - subCategory
+      properties:
+        category:
+          type: string
+          enum:
+          - PRODUCT_RULE
+          - CONTRACT
+          - AUTHORIZATION_IDENTITY
+          - TRANSACTION
+          - ARRANGEMENT
+          - PARTY_CONTRACT_DATA
+          description: Enum values use underscore-delimited tokens for consistency
+            with the broader IRI style convention.
+        subCategory:
+          type: string
+          enum:
+          - TRANSFER_NOT_ELIGIBLE
+          - STATUS_OR_GLOBAL_RESTRICTION
+          - RESTRICTED_TRADES_FLAG
+          - AGENT_NOT_AUTHORIZED
+          - SHORT_TERM_TRADING_LIMIT
+          - ANNUAL_TRANSFER_LIMIT_EXCEEDED
+          - ENROLLMENT_CONFLICT
+          - CONFLICTING_TRANSACTION_PENDING
+          - COLLATERAL_ASSIGNMENT
+          - RECENT_OWNER_CHANGE
+          - RECENT_ADDRESS_CHANGE
+          - LOAN_OUTSTANDING
+          - CONFLICTING_RIDER
+          - CONFLICTING_ARRANGEMENT
+          - PRODUCT_RULES
+          - EXCESSIVE_TRADING_RESTRICTION
+          - NO_SIGNATURE_ON_FILE
+          - INVALID_GOVT_ID
+          - WITHDRAWAL_FULL_LIQUIDATION
+          - WITHDRAWAL_SPECIFIED_AMOUNT
+          - WITHDRAWAL_SPECIFIED_PERCENTAGE
+          - WITHDRAWAL_INTEREST_ONLY
+          - WITHDRAWAL_RMD
+          - WITHDRAWAL_RIDER_FREE_AMOUNT
+          - WITHDRAWAL_SURRENDER_FREE_AMOUNT
+          - WITHDRAWAL_FUND_SPECIFIC
+          - WITHDRAWAL_PRORATA
+          - WITHDRAWAL_PRORATA_VARIABLE_FUNDS
+          - WITHDRAWAL_SYSTEMATIC
+          - DCA_RESTRICTION
+          - SWEEP_RESTRICTION
+          - REBALANCE_RESTRICTION
+          - INVEST_RESTRICTION
+          - PRORATA_INVEST_RESTRICTION
+          - PRORATA_VARIABLE_FUNDS_INVEST_RESTRICTION
+          - FUND_SPECIFIC_INVEST_RESTRICTION
+          - WITHDRAWAL_RMD_CARRIER_CALC
+        reason:
+          type: string
+          minLength: 1
+          maxLength: 200
+        definition:
+          type: string
+          minLength: 1
+          maxLength: 500
+    Product:
+      type: object
+      required:
+      - planName
+      - productType
+      - planCode
+      properties:
+        planName:
+          type: string
+          maxLength: 200
+        productType:
+          type: string
+          enum:
+          - FIXED
+          - VARIABLE
+          - INDEXED
+          - IMMEDIATE
+          - DEFERRED
+        shortName:
+          type: string
+          maxLength: 100
+        planCode:
+          type: string
+          pattern: ^[A-Za-z0-9]{1,50}$
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: A structured error code <domain>.<category>.<subcategory>
+          pattern: ^[a-zA-Z]+\.[a-zA-Z]+\.[a-zA-Z]+$
+        timestamp:
+          type: string
+          format: date-time
+        message:
+          type: string
+          description: Message with specific error details.
+        validationErrors:
+          type: array
+          description: Logical rule violations or decision failures related to business
+            logic or rules
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                description: Code to classify the error & Identifies the type of business
+                  rule or decision failure. Matches the top-level Error.code token
+                  pattern.
+                pattern: ^[a-zA-Z]+\.[a-zA-Z]+\.[a-zA-Z]+$
+              message:
+                type: string
+                description: Why the error occurred / Specific business rule violation
+            required:
+            - code
+            - message
+      required:
+      - code
+      - message
+    PolicyValue:
+      type: object
+      required:
+      - accountValues
+      - valuesAsOfDate
+      properties:
+        valuesAsOfDate:
+          type: string
+          format: date
+        accountDesignation:
+          type: string
+          enum:
+          - INDIVIDUAL
+          - JOINT
+          - TRUST
+          - CUSTODIAL
+          - OTHER
+        jurisdiction:
+          type: string
+          pattern: ^[A-Z]{2}$
+        sponsoringPlanSeparationDate:
+          type: string
+          format: date
+        payoutType:
+          type: string
+          enum:
+          - DEFERRED
+          - IMMEDIATE
+          - ANNUITIZED
+          - ACCUMULATION
+          - UNKNOWN
+        totalDepositITD:
+          type: number
+          minimum: 0
+          maximum: 9999999999.99
+        surrenderChargeFreeDate:
+          type: string
+          format: date
+        digitalPaymentTypeCode:
+          type: string
+          pattern: ^[A-Za-z0-9._-]{1,100}$
+        digitalPaymentTypeDescription:
+          type: string
+          maxLength: 100
+        accountValues:
+          type: object
+          properties:
+            beginningAccountValue:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            endingAccountValue:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            minimumRequiredAccountValue:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            unloanedPortionOfAccountValue:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            loanedPortionOfAccountValue:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            surrenderValue:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            surrenderValueWithoutMarketValueAdjustment:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            guaranteedCashSurrenderValueFixed:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            guaranteedCashSurrenderValueIndexed:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            interestEarned:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+              multipleOf: 0.01
+            totalNetWithdrawalSinceIssue:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            totalGainWithdrawnSinceIssue:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+          required:
+          - endingAccountValue
+        loanValues:
+          type: object
+          properties:
+            totalLoanBalance:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            totalLoanPrincipal:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            loanPayoffAmount:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            maximumLoanAmount:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            minimumLoanAmount:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            totalLoanAccruedInterest:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            lastLoanInterestDueDate:
+              type: string
+              format: date
+            totalNumberOfLoan:
+              type: integer
+              minimum: 0
+            totalYearToDateLoanTaken:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+        withdrawalValues:
+          type: object
+          required:
+          - yearToDateFreeWithdrawalAmount
+          properties:
+            totalWithdrawalAmount:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            freeWithdrawalAmount:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            yearToDateFreeWithdrawalAmount:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            minimumWithdrawalAmount:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            maximumWithdrawalAmount:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+            freeAvailableAmount:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+        marketValueAdjustment:
+          type: object
+          properties:
+            isMarketValueAdjusted:
+              type: boolean
+        rmdInfo:
+          type: object
+          properties:
+            rmdTaxYear:
+              type: integer
+              minimum: 1900
+              maximum: 2100
+            totalRMDAmountRemaining:
+              type: number
+              minimum: 0
+              maximum: 9999999999.99
+        authorization:
+          $ref: '#/components/schemas/Authorization'
+    Authorization:
+      type: object
+      required:
+      - businessMethods
+      - authorizationEntities
+      - authorizationTransaction
+      properties:
+        businessMethods:
+          type: array
+          items:
+            type: string
+            enum:
+            - mail
+            - electronic
+            - fax
+            - phone
+            - voiceResponseUnit
+            - internet
+        authorizationEntities:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthorizationEntity'
+        authorizationTransaction:
+          type: object
+          required:
+          - administrativeTransactions
+          properties:
+            administrativeTransactions:
+              type: array
+              items:
+                type: string
+                enum:
+                - fundTransfer
+                - withdrawal
+                - arrangementAdministration
+                - allTransactions
+            isAuthorizationSignatureRequired:
+              type: boolean
+    AuthorizationEntity:
+      type: object
+      properties:
+        authorizationEntity:
+          type: string
+          maxLength: 100
+        isAllAgentsAuthorized:
+          type: boolean
+    PolicyFunds:
+      type: object
+      properties:
+        startIndex:
+          type: integer
+          minimum: 0
+        itemsCount:
+          type: integer
+          minimum: 0
+        totalItemsCount:
+          type: integer
+          minimum: 0
+        funds:
+          type: array
+          items:
+            type: object
+            required:
+            - fundAccountType
+            - fundId
+            - fundName
+            - fundValuationDate
+            properties:
+              fundAccountType:
+                type: string
+                enum:
+                - FIXED
+                - INDEXED
+                - VARIABLE
+                - SWEEP
+                - LOAN
+                - OTHER
+              fundId:
+                type: string
+                pattern: ^[A-Za-z0-9._-]{1,50}$
+              fundName:
+                type: string
+                maxLength: 200
+              fundPrice:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              fundValuationDate:
+                type: string
+                format: date
+              generalLedgerFundCode:
+                type: string
+                pattern: ^[A-Za-z0-9._-]{1,50}$
+              totalFundValue:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              interestGuaranteedPeriod:
+                type: integer
+                minimum: 0
+              guaranteedMinimumInterestRate:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              assetClass:
+                type: string
+                enum:
+                - FIXED
+                - VARIABLE
+                - INDEXED
+                - MODEL
+                - CASH
+                - EQUITY
+                - OTHER
+              productCode:
+                type: string
+                pattern: ^[A-Za-z0-9._-]{1,50}$
+              carrierCode:
+                type: string
+                pattern: ^[A-Za-z0-9._-]{1,50}$
+              investmentType:
+                type: string
+                enum:
+                - FIXED
+                - VARIABLE
+                - INDEXED
+                - MODEL
+                - SUBACCOUNT
+                - SEGMENT
+                - OTHER
+              openDate:
+                type: string
+                format: date
+              availableFundsAmount:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              capRate:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              isTransferSendAllowed:
+                type: boolean
+              isWithdrawalsAllowed:
+                type: boolean
+              capAmount:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              isTransferDestAllowed:
+                type: boolean
+              guaranteedInterestRate:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              fundRestrictReason:
+                type: string
+                maxLength: 250
+              bonusRate:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              financialActivity:
+                type: string
+                enum:
+                - PREMIUM_ALLOCATION
+                - TRANSFER_IN
+                - TRANSFER_OUT
+                - INTEREST_CREDIT
+                - DIVIDEND_CREDIT
+                - FEE_DEBIT
+                - CHARGE_DEBIT
+                - UNIT_ADJUSTMENT
+                - VALUE_ADJUSTMENT
+                - REBALANCE
+                - DCA_IN
+                - DCA_OUT
+                - MVA_ADJUSTMENT
+                - OTHER
+              isFinancialActivityReversed:
+                type: boolean
+              appliesToCoverageId:
+                type: string
+                maxLength: 200
+              arrangementRefId:
+                type: string
+                maxLength: 200
+              financialActivityType:
+                type: string
+                enum:
+                - PERFORMANCE_LOCK
+              financialActivityGrossAmount:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              financialEffectiveDate:
+                type: string
+                format: date
+              participationRate:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              participationDownsideRate:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              transferSendRestrictInfo:
+                type: object
+                description: Required when `isTransferSendAllowed` is false.
+                required:
+                - fundRestrictReason
+                - startDate
+                - endDate
+                properties:
+                  fundRestrictReason:
+                    type: string
+                    enum:
+                    - CLOSED_TO_NEW_TRANSFER_IN
+                    - RATE_LOCKED
+                    - MARKET_VALUE_ADJUSTMENT_APPLIES
+                    - MIN_HOLDING_REQUIREMENT
+                    - MAX_ALLOCATION_LIMIT
+                    - PRODUCT_RULE_RESTRICTION
+                    - RIDER_RESTRICTION
+                    - TERM_NOT_MET
+                    - CARRIER_RESTRICTION
+                    - OTHER
+                  startDate:
+                    type: string
+                    format: date
+                  endDate:
+                    type: string
+                    format: date
+              transferDestRestrictInfo:
+                type: object
+                description: Required when `isTransferDestAllowed` is false.
+                required:
+                - fundRestrictReason
+                - startDate
+                - endDate
+                properties:
+                  fundRestrictReason:
+                    type: string
+                    enum:
+                    - TRANSFER_OUT_NOT_ALLOWED
+                    - RATE_LOCKED
+                    - SURRENDER_CHARGE_APPLIES
+                    - MARKET_VALUE_ADJUSTMENT_APPLIES
+                    - MIN_HOLDING_REQUIREMENT
+                    - RIDER_RESTRICTION
+                    - TERM_NOT_MET
+                    - PRODUCT_RULE_RESTRICTION
+                    - CARRIER_RESTRICTION
+                    - OTHER
+                  startDate:
+                    type: string
+                    format: date
+                  endDate:
+                    type: string
+                    format: date
+              subAccountTerm:
+                type: string
+                pattern: ^\d+$
+                description: Sub-account term period. String type retained for carrier
+                  code compatibility.
+              bufferRate:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              capThresholdRate:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              floorRate:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              mvaRate:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              marginRate:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              triggerRate:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              indexCreditingMethod:
+                type: string
+                enum:
+                - ANNUAL_POINT_TO_POINT
+                - MONTHLY_POINT_TO_POINT
+                - DAILY_AVERAGE
+                - MONTHLY_AVERAGE
+                - TERM_END_POINT_TO_POINT
+                - PERFORMANCE_TRIGGER
+                - FIXED_RATE
+                - DECLARED_RATE
+                - SPREAD
+                - PARTICIPATION_RATE
+                - CAP_RATE
+                - FLOOR_RATE
+                - BUFFERED
+                - DUAL_DIRECTIONAL
+                - UNCAPPED
+                - OTHER
+              indexCreditingMode:
+                type: string
+                enum:
+                - POINT_TO_POINT
+                - MONTHLY_AVERAGE
+                - MONTHLY_SUM
+                - DAILY_AVERAGE
+                - ANNUAL_RESET
+                - TERM_END
+                - OTHER
+              indexType:
+                type: string
+                maxLength: 100
+              termPeriod:
+                type: string
+                pattern: ^\d+$
+                description: Term period value. String type retained for carrier-specific
+                  encoding.
+              trackingValue:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              initialIndexBenchmarkValue:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              currentIndexBenchmarkValue:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              minimumCapRate:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              indexCreditingDate:
+                type: string
+                format: date
+              isLockFeatureEnabled:
+                type: boolean
+              indexOptionPeriod:
+                type: string
+                pattern: ^\d+$
+                description: Index option period. String type retained for carrier
+                  code compatibility.
+              accruedInterest:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              thresholdPercent:
+                type: number
+                minimum: 0
+                maximum: 9999999999.99
+              rateTier:
+                type: object
+                required:
+                - indexReturnPercent
+                - tieredRate
+                - rateType
+                properties:
+                  indexReturnPercent:
+                    type: number
+                    minimum: 0
+                    maximum: 100
+                  tieredRate:
+                    type: number
+                    minimum: 0
+                    maximum: 9999999999.99
+                  rateType:
+                    type: string
+                    enum:
+                    - PARTICIPATION
+                    - DOWNSIDE_PARTICIPATION
+                    description: Enum values normalized to uppercase underscore style
+                      for consistency.
+              fundSegments:
+                type: array
+                items:
+                  type: object
+                  required:
+                  - segmentId
+                  - fundId
+                  - originalDepositAmount
+                  - originalDepositDate
+                  - depositDate
+                  - depositAmount
+                  - currentAmount
+                  - renewalDate
+                  - numberOfUnits
+                  - sweepAccountId
+                  - startDate
+                  - endDate
+                  properties:
+                    segmentId:
+                      type: string
+                      pattern: ^[A-Za-z0-9._-]{1,100}$
+                    fundId:
+                      type: string
+                      maxLength: 200
+                      pattern: ^[A-Za-z0-9._-]{1,50}$
+                    originalDepositAmount:
+                      type: number
+                      minimum: 0
+                      maximum: 9999999999.99
+                    originalDepositDate:
+                      type: string
+                      format: date
+                    depositDate:
+                      type: string
+                      format: date
+                    depositAmount:
+                      type: number
+                      minimum: 0
+                      maximum: 9999999999.99
+                    currentAmount:
+                      type: number
+                      minimum: 0
+                      maximum: 9999999999.99
+                    renewalDate:
+                      type: string
+                      format: date
+                    numberOfUnits:
+                      type: number
+                      minimum: 0
+                    sweepAccountId:
+                      type: string
+                      pattern: ^[A-Za-z0-9._-]{1,100}$
+                    interestEarningAmount:
+                      type: number
+                      minimum: 0
+                      maximum: 9999999999.99
+                    appliedInterestRate:
+                      type: number
+                      minimum: 0
+                      maximum: 100
+                    startingPrice:
+                      type: number
+                      minimum: 0
+                      maximum: 9999999999.99
+                    startingPriceDate:
+                      type: string
+                      format: date
+                    endingPrice:
+                      type: number
+                      minimum: 0
+                      maximum: 9999999999.99
+                    endingPriceDate:
+                      type: string
+                      format: date
+                    startDate:
+                      type: string
+                      format: date
+                    endDate:
+                      type: string
+                      format: date
+                    maxPrice:
+                      type: number
+                      minimum: 0
+                      maximum: 9999999999.99
+                    maxPriceDate:
+                      type: string
+                      format: date
+              rateLockInfo:
+                type: object
+                description: Required when `isLockFeatureEnabled` is true.
+                properties:
+                  rateType:
+                    type: string
+                    maxLength: 100
+                  lockStartDate:
+                    type: string
+                    format: date
+                  lockEndDate:
+                    type: string
+                    format: date
+                  lockPeriod:
+                    type: number
+                    minimum: 0
+                required:
+                - rateType
+                - lockStartDate
+                - lockEndDate
+            allOf:
+            - if:
+                properties:
+                  isTransferSendAllowed:
+                    const: false
+                required:
+                - isTransferSendAllowed
+              then:
+                required:
+                - transferSendRestrictInfo
+              else:
+                not:
+                  required:
+                  - transferSendRestrictInfo
+            - if:
+                properties:
+                  isTransferDestAllowed:
+                    const: false
+                required:
+                - isTransferDestAllowed
+              then:
+                required:
+                - transferDestRestrictInfo
+              else:
+                not:
+                  required:
+                  - transferDestRestrictInfo
+            - if:
+                properties:
+                  isLockFeatureEnabled:
+                    const: true
+                required:
+                - isLockFeatureEnabled
+              then:
+                required:
+                - rateLockInfo
+              else:
+                not:
+                  required:
+                  - rateLockInfo
+    PartiesList:
+      type: object
+      properties:
+        startIndex:
+          type: integer
+          minimum: 0
+        itemsCount:
+          type: integer
+          minimum: 0
+        totalItemsCount:
+          type: integer
+          minimum: 0
+        parties:
+          type: array
+          items:
+            $ref: '#/components/schemas/Party'
+    Party:
+      description: The parties object represents policy parties such as owners, annuitants,
+        beneficiaries, payees, trustees, and agents, together with their identity,
+        relationship, and servicing instructions.
+      type: object
+      allOf:
+      - type: object
+        properties:
+          paymentForm:
+            type: string
+            enum:
+            - DTCC
+            - ACH
+            - CHECK
+            - WIRE
+            - EXCHANGE
+            description: Party-level payment form. `EXCHANGE` is retained only for
+              party-level exchange servicing scenarios; recurring disbursement schemas
+              intentionally use the narrower ACH/EFT/CHECK/WIRE/DTCC vocabularies.
+          allocationPercentage:
+            type: number
+            minimum: 0
+            maximum: 100
+          bank:
+            $ref: '#/components/schemas/Bank'
+          address:
+            $ref: '#/components/schemas/Address'
+          phones:
+            type: array
+            items:
+              $ref: '#/components/schemas/Phone'
+          emails:
+            type: array
+            items:
+              $ref: '#/components/schemas/Email'
+          identifications:
+            type: array
+            items:
+              $ref: '#/components/schemas/Identification'
+          taxWithholdingInstructions:
+            type: array
+            items:
+              $ref: '#/components/schemas/TaxWithholdingInstruction'
+          deathDetails:
+            $ref: '#/components/schemas/DeathDetails'
+      - anyOf:
+        - $ref: '#/components/schemas/IndividualParty'
+        - $ref: '#/components/schemas/EntityParty'
+      - if:
+          properties:
+            paymentForm:
+              enum:
+              - ACH
+              - WIRE
+              - DTCC
+          required:
+          - paymentForm
+        then:
+          required:
+          - bank
+    PolicyProducers:
+      type: object
+      properties:
+        producers:
+          type: array
+          items:
+            $ref: '#/components/schemas/PolicyProducer'
+        startIndex:
+          type: integer
+          minimum: 0
+          description: Zero-based index of the first item returned.
+        itemsCount:
+          type: integer
+          minimum: 0
+          description: Number of items in the current response.
+        totalItemsCount:
+          type: integer
+          minimum: 0
+          description: Total number of items available.
+    PolicyProducer:
+      type: object
+      properties:
+        externalIds:
+          $ref: '#/components/schemas/ProducerExternalIds'
+        commissionOption:
+          type: string
+          maxLength: 50
+        commission:
+          $ref: '#/components/schemas/ProducerCommission'
+        producerNumber:
+          type: string
+          maxLength: 50
+          pattern: ^[A-Za-z0-9._-]{1,50}$
+          description: Carrier-assigned producer identifier.
+    ProducerExternalIds:
+      type: object
+      properties:
+        npn:
+          type: string
+          maxLength: 10
+          pattern: ^[0-9]{1,10}$
+        crdNumber:
+          type: string
+          pattern: ^[0-9]{1,12}$
+        agencyId:
+          type: string
+          pattern: ^[0-9]{1,18}$
+        firmId:
+          type: string
+          pattern: ^[0-9]{1,18}$
+    ProducerCommission:
+      type: object
+      properties:
+        commissionIdentifier:
+          type: string
+          pattern: ^[A-Za-z0-9._-]{1,100}$
+        commissionSplitPercent:
+          type: number
+          minimum: 0
+          maximum: 100
+    PolicyDates:
+      type: object
+      description: Policy date fields for the contract.
+      properties:
+        policyStartDate:
+          type: string
+          format: date
+        applicationDate:
+          type: string
+          format: date
+        applicationReceivedDate:
+          type: string
+          format: date
+        issueDate:
+          type: string
+          format: date
+        policyDeliveryDate:
+          type: string
+          format: date
+        previousPolicyAnniversaryDate:
+          type: string
+          format: date
+        previousPolicyMonthiversaryDate:
+          type: string
+          format: date
+        nextAnniversaryDate:
+          type: string
+          format: date
+        maturityDate:
+          type: string
+          format: date
+        policyTerminationDate:
+          type: string
+          format: date
+        initialPaymentExpiryDate:
+          type: string
+          format: date
+        nextMonthiversaryDate:
+          type: string
+          format: date
+      required:
+      - policyStartDate
+      - issueDate
+    SystematicProgramsList:
+      type: object
+      properties:
+        systematicPrograms:
+          type: array
+          items:
+            $ref: '#/components/schemas/SystematicProgram'
+        startIndex:
+          type: integer
+          minimum: 0
+        itemsCount:
+          type: integer
+          minimum: 0
+        totalItemsCount:
+          type: integer
+          minimum: 0
+    SystematicProgram:
+      type: object
+      required:
+      - arrangementType
+      - allocationOptionType
+      - frequency
+      - startDate
+      - endDate
+      - nextProgramDate
+      - amountType
+      - externalArrangementId
+      - paymentForm
+      - numOfModalOccurrences
+      - sourceTransferAmtType
+      - destTransferAmtType
+      - arrSource
+      - arrSubType
+      properties:
+        arrangementType:
+          type: string
+          enum:
+          - PAYMENT
+          - WITHDRAWAL
+          - LOANREPAYMENT
+          - REQUIREDMINIMUMDISTRIBUTION
+          - PAYOUT
+        allocationOptionType:
+          type: string
+          enum:
+          - PRORATA
+          - DOLLAR
+          - SPECIFYPERCENTAGE
+          - SPECIFIEDFUNDS
+          - SPECIFIEDSEGMENTS
+          - DEFAULT
+          - PECKINGORDER
+          - EARNINGSONLY
+        paymentForm:
+          type: string
+          enum:
+          - DTCC
+          - EFT
+          - ACH
+          - CHECK
+          - WIRE
+          description: Recurring systematic-program payment form. `EFT` is valid here;
+            `EXCHANGE` is intentionally excluded because exchange handling is party-specific
+            rather than a recurring disbursement mode.
+        frequency:
+          type: string
+          enum:
+          - DAILY
+          - EVERYTWOWEEKS
+          - MONTHLY
+          - SEMIANNUAL
+          - QUARTERLY
+          - ANNUAL
+          - SINGLEPAYMENT
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        previousProgramDate:
+          type: string
+          format: date
+        optedNextProgramDate:
+          type: string
+          format: date
+        nextProgramDate:
+          type: string
+          format: date
+        amountType:
+          type: string
+          enum:
+          - AMOUNT
+          - PERCENTAGE
+          - MAX
+          - FREEWITHDRAWALAMOUNT
+          - WITHDRAWALUNTILBASIS
+          - EARNINGSONLY
+          - MODIFIEDEARNINGSONLY
+        requestedAmount:
+          type: number
+          minimum: 0
+          maximum: 9999999999.99
+          description: Required when amountType is 'AMOUNT'. Mutually exclusive with
+            requestedPercentage. Omit this field when amountType is not AMOUNT instead
+            of sending null.
+        requestedPercentage:
+          type: number
+          description: Required when amountType is 'PERCENTAGE'. Mutually exclusive
+            with requestedAmount. Populate for PERCENTAGE requests; otherwise omit
+            the field.
+          minimum: 0
+          maximum: 100
+        externalArrangementId:
+          type: string
+          maxLength: 100
+        numOfModalOccurrences:
+          type: integer
+          minimum: 0
+          maximum: 9999999999
+        modalAmt:
+          type: number
+          minimum: 0
+          maximum: 9999999999.99
+          description: Legacy DD abbreviation retained; represents modal amount.
+        modalPct:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Legacy DD abbreviation retained; represents modal percentage.
+        sourceTransferAmtType:
+          type: string
+          enum:
+          - AMOUNT
+          - PERCENTAGE
+          - PRO_RATA
+          - SPECIFIED_FUNDS
+          - ALL_FUNDS
+          - OTHER
+        destTransferAmtType:
+          type: string
+          enum:
+          - AMOUNT
+          - PERCENTAGE
+          - PRO_RATA
+          - SPECIFIED_FUNDS
+          - ALL_FUNDS
+          - OTHER
+        arrSource:
+          type: string
+          enum:
+          - TransferAmt
+          - TransferPct
+          description: Legacy DD abbreviation retained; represents arrangement source.
+            Arrangement source retained per DD naming.
+        taxWithholdingInstructions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxWithholdingInstruction'
+        arrSubType:
+          type: string
+          pattern: ^[A-Za-z0-9_ -]{1,100}$
+          maxLength: 100
+          description: Legacy DD abbreviation retained; represents arrangement subtype.
+            Arrangement subtype retained per DD naming.
+        dayOfMonth:
+          type: string
+          pattern: ^(?:[1-9]|[12][0-9]|3[01])$
+          description: Day of month for the scheduled arrangement.
+        productCode:
+          type: string
+          pattern: ^[A-Za-z0-9._-]{1,50}$
+        parties:
+          type: array
+          items:
+            type: object
+            required:
+            - partyRole
+            - taxId
+            - paymentForm
+            - percentage
+            - bankId
+            properties:
+              partyRole:
+                type: string
+                enum:
+                - Payor
+                - Payee
+                description: Role of the party within the systematic program. Uses
+                  PascalCase values to align with the PartyRole filter vocabulary.
+              taxId:
+                type: string
+                maxLength: 9
+                pattern: ^[0-9]{9}$
+                minLength: 9
+              percentage:
+                type: number
+                minimum: 0
+                maximum: 100
+              bankId:
+                type: string
+                maxLength: 100
+              addressId:
+                type: string
+                maxLength: 100
+              paymentForm:
+                type: string
+                enum:
+                - DTCC
+                - ACH
+                - CHECK
+                - WIRE
+                - EXCHANGE
+      allOf:
+      - if:
+          properties:
+            amountType:
+              const: AMOUNT
+          required:
+          - amountType
+        then:
+          required:
+          - requestedAmount
+          not:
+            required:
+            - requestedPercentage
+      - if:
+          properties:
+            amountType:
+              const: PERCENTAGE
+          required:
+          - amountType
+        then:
+          required:
+          - requestedPercentage
+          not:
+            required:
+            - requestedAmount
+      - if:
+          properties:
+            amountType:
+              enum:
+              - MAX
+              - FREEWITHDRAWALAMOUNT
+              - WITHDRAWALUNTILBASIS
+              - EARNINGSONLY
+          required:
+          - amountType
+        then:
+          required:
+          - amountType
+          not:
+            anyOf:
+            - required:
+              - requestedAmount
+            - required:
+              - requestedPercentage
+    Rider:
+      type: object
+      required:
+      - timestamp
+      - effectiveDate
+      - exerciseDate
+      - terminationDate
+      - status
+      - coverageId
+      - amount
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        riderType:
+          type: string
+          enum:
+          - BASE
+          - RIDER
+          - INTEGRATED_RIDER
+          - BENEFIT_RIDER
+          - INCOME_RIDER
+          - DEATH_BENEFIT_RIDER
+          - LTC_RIDER
+          - GMWB_RIDER
+          - GMDB_RIDER
+          - GMAB_RIDER
+          - CHARGE_RIDER
+          - DISCOUNT
+          - BASE_INCREASE
+          - RIDER_INCREASE
+          - OTHER
+          - UNKNOWN
+        riderName:
+          type: string
+          maxLength: 200
+        isRiderElected:
+          type: boolean
+        riderCode:
+          type: string
+          pattern: ^[A-Za-z0-9._-]{1,50}$
+        underwritingStatus:
+          type: string
+          enum:
+          - APPROVED
+          - DECLINED
+        effectiveDate:
+          type: string
+          format: date
+        exerciseDate:
+          type: string
+          format: date
+        terminationDate:
+          type: string
+          format: date
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - TERMINATED
+          - PENDING
+          - SUSPENDED
+        coverageId:
+          type: string
+          pattern: ^[A-Za-z0-9._-]{1,100}$
+        amount:
+          type: number
+          minimum: 0
+          maximum: 9999999999.99
+        annualBenefitAmount:
+          type: number
+          minimum: 0
+          maximum: 9999999999.99
+        riderBenefitAmount:
+          type: number
+          minimum: 0
+          maximum: 9999999999.99
+        riderBenefitPercent:
+          type: number
+          multipleOf: 0.01
+          minimum: 0
+          maximum: 100
+        riderParticipants:
+          type: array
+          items:
+            type: object
+            required:
+            - taxId
+            properties:
+              insuredAgeAtIssue:
+                type: integer
+                format: int32
+                minimum: 0
+                maximum: 150
+              taxId:
+                type: string
+                maxLength: 9
+                pattern: ^[0-9]{9}$
+                minLength: 9
+        charge:
+          type: object
+          properties:
+            riderExerciseCharge:
+              type: number
+              multipleOf: 0.01
+              minimum: 0
+              maximum: 9999999999.99
+            riderExerciseChargeRate:
+              type: number
+              multipleOf: 0.01
+              minimum: 0
+              maximum: 100
+        maximumChronicIllnessBenefitPercentage:
+          type: number
+          minimum: 0
+        maximumPeriodicPaymentPeriod:
+          type: integer
+          minimum: 0
+        riderPaymentDate:
+          type: string
+          format: date
+        remainingBenefit:
+          type: number
+          minimum: 0
+          maximum: 9999999999.99
+        isAdditionalBenefitUsedUp:
+          type: boolean
+        totalBenefit:
+          type: number
+          minimum: 0
+          maximum: 9999999999.99
+        payoutOption:
+          type: string
+          enum:
+          - SINGLE
+          - JOINT
+        benefitPercent:
+          type: number
+          minimum: 0
+          maximum: 100
+        annualBenefitLimit:
+          type: number
+          minimum: 0
+          maximum: 9999999999.99
+        riderSubType:
+          type: string
+          pattern: ^[A-Za-z0-9_ -]{1,100}$
+          maxLength: 100
+          description: Subtype classification for the rider.
+        livesType:
+          type: string
+          enum:
+          - SINGLE
+          - JOINT
+          - MULTIPLE
+          - UNKNOWN
+        isParticipantIrrevocable:
+          type: boolean
+        additionalRiderClassification:
+          type: string
+          pattern: ^[A-Za-z0-9_ -]{1,100}$
+          maxLength: 100
+          description: Additional rider classification code. Additional rider classification
+            retained per DD naming.
+        riderFreeAmt:
+          type: number
+          minimum: 0
+          maximum: 9999999999.99
+          description: Legacy DD abbreviation retained; represents rider free amount.
+        participantRoleCode:
+          type: string
+          pattern: ^[A-Za-z0-9_ -]{1,100}$
+          maxLength: 100
+          description: Role code describing the rider participant.
+    RidersList:
+      type: object
+      properties:
+        startIndex:
+          type: integer
+          minimum: 0
+        itemsCount:
+          type: integer
+          minimum: 0
+        totalItemsCount:
+          type: integer
+          minimum: 0
+        riders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Rider'
+    PayoutsList:
+      type: object
+      properties:
+        startIndex:
+          type: integer
+          minimum: 0
+        itemsCount:
+          type: integer
+          minimum: 0
+        totalItemsCount:
+          type: integer
+          minimum: 0
+        incomeArrangements:
+          type: array
+          items:
+            type: object
+            required:
+            - annuitization
+            - incomePayment
+            properties:
+              incomeArrangementId:
+                type: string
+                pattern: ^[A-Za-z0-9._-]{1,100}$
+              annuitization:
+                type: object
+                required:
+                - isAnnuitized
+                properties:
+                  isAnnuitized:
+                    type: boolean
+                  annuitizationStartDateTime:
+                    type: string
+                    format: date-time
+                  annuitizationEndDateTime:
+                    type: string
+                    format: date-time
+                  annuitizationTypeCode:
+                    type: string
+                    enum:
+                    - FIXED
+                    - VARIABLE
+                  periodCertain:
+                    type: object
+                    properties:
+                      numberOfPayments:
+                        type: string
+                        pattern: ^\d+$
+                        description: Total payment count. String type retained for
+                          carrier-specific leading-zero semantics.
+                  survivorReduction:
+                    type: object
+                    properties:
+                      primaryreductionCode:
+                        type: string
+                        pattern: ^[A-Za-z0-9._-]{1,50}$
+                      jointreductionCode:
+                        type: string
+                        pattern: ^[A-Za-z0-9._-]{1,50}$
+              incomePayment:
+                type: object
+                properties:
+                  incomePaymentId:
+                    type: string
+                    pattern: ^[A-Za-z0-9._-]{1,100}$
+                  status:
+                    type: string
+                    enum:
+                    - ACTIVE
+                    - INACTIVE
+                    - PENDING
+                    - ENDED
+                  frequencyCode:
+                    type: string
+                    pattern: ^[A-Za-z0-9._-]{1,50}$
+                    description: Frequency code value. String type retained for carrier-specific
+                      code semantics.
+                  amount:
+                    type: object
+                    properties:
+                      value:
+                        type: string
+                        pattern: ^-?\d+(\.\d+)?$
+                      amountType:
+                        type: string
+                        enum:
+                        - GROSS
+                        - NET
+                      amountCode:
+                        type: string
+                        pattern: ^[A-Za-z0-9._-]{1,50}$
+                  adjustments:
+                    type: object
+                    properties:
+                      increasePercentage:
+                        type: number
+                        minimum: 0
+                        maximum: 100
+                  taxExclusion:
+                    type: object
+                    properties:
+                      value:
+                        type: string
+                        pattern: ^-?\d+(\.\d+)?$
+    TransactionsList:
+      type: object
+      properties:
+        startIndex:
+          type: integer
+          minimum: 0
+        itemsCount:
+          type: integer
+          minimum: 0
+        totalItemsCount:
+          type: integer
+          minimum: 0
+        transactions:
+          type: array
+          items:
+            type: object
+            required:
+            - transactionId
+            - planCode
+            - requestDate
+            - effectiveDate
+            - processDate
+            - status
+            - transactionReason
+            - timestamp
+            - version
+            properties:
+              transactionId:
+                type: string
+                pattern: ^[A-Za-z0-9._-]{1,100}$
+              originalTransactionId:
+                type: string
+                pattern: ^[A-Za-z0-9._-]{1,100}$
+              partyPolicyChangeReferenceId:
+                type: string
+                pattern: ^[A-Za-z0-9._-]{1,100}$
+              partyPolicyNewReferenceId:
+                type: string
+                pattern: ^[A-Za-z0-9._-]{1,100}$
+              planCode:
+                type: string
+                pattern: ^[A-Za-z0-9._-]{1,50}$
+              parentId:
+                type: string
+                pattern: ^[A-Za-z0-9._-]{1,100}$
+              transactionType:
+                type: string
+                enum:
+                - SubsequentPayment
+                - OneTimePremium
+                - PartialWithdrawalOneTime
+                - SystematicPartialWithdrawal
+                - RequiredMinimumDistributionOneTime
+                - SystematicRequiredMinimumDistribution
+                - FullSurrender
+                - FundTransfer
+                - FundAllocationsChange
+                - Sweep
+                - DollarCostAverage
+                - NewLoan
+                - LoanRepaymentOneTime
+                - SystematicLoanRepayment
+                - Annuitization
+                - SystematicAnnuityPayout
+                - PayoutAmountChange
+                - ServiceCharge
+                - RiderCharge
+                - ValueAdjustment
+                - InterestCredit
+                - AddressChange
+                - EmailChange
+                - PhoneNumberChange
+                - BeneficiaryChange
+                - OwnerChange
+                - BankAccountChange
+                - CommunicationPreferenceChange
+                - Reinstatement
+                - Lapse
+                - Other
+              requestDate:
+                type: string
+                format: date
+              effectiveDate:
+                type: string
+                format: date
+              processDate:
+                type: string
+                format: date
+              reversalDate:
+                type: string
+                format: date
+              status:
+                type: string
+                enum:
+                - Pending
+                - Completed
+                - Failed
+                - Reversed
+                - Canceled
+                - PendingReversal
+              transactionReason:
+                type: string
+                enum:
+                - ONETIMEPREMIUM
+                - GRACEPERIODPREMIUM
+                - REINSTATEMENTPREMIUM
+                - EXCHANGE1035
+                - SURRENDER
+                - AMOUNTEXCESSTOMEC
+                - AMOUNTEXCESSTOGUIDELINE
+                - CURRENTVALUE
+                - COSTBASIS
+                - GUIDELINESINGLEPREMIUM
+                - GUIDELINELEVELPREMIUM
+                - SEVENPAYPREMIUM
+                - TOTALYTDPREMIUMAMOUNT
+                - FACEDECREASECOVERAGE
+                - INITIALPREMIUMEXPIRATION
+                - COMPLIANCE
+                - STARTINGPRICE
+                - LUMPSUM
+                - FIVEYEARDEFERRAL
+                - SPOUSALCONTINUATION
+                - DISCOUNT
+                - CONTROLBUSINESSINDICATOR
+                - NATIONALCHANGEOFADDRESS
+              transactionAmounts:
+                $ref: '#/components/schemas/TransactionAmounts'
+              charges:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    chargeType:
+                      type: string
+                      enum:
+                      - SERVICE_CHARGE
+                      - RIDER_CHARGE
+                      - ADMINISTRATIVE_CHARGE
+                      - SURRENDER_CHARGE
+                      - MVA
+                      - TAX
+                      - COST_OF_INSURANCE
+                      - EXPENSE_CHARGE
+                      - UNIT_EXPENSE_CHARGE
+                      - WITHDRAWAL_CHARGE
+                      - OTHER
+                    isChargeWaived:
+                      type: boolean
+                    chargeWaiverReason:
+                      type: string
+                    chargeAmount:
+                      type: number
+                      minimum: 0
+                      maximum: 9999999999.99
+                    chargeAppliedRate:
+                      type: number
+                      minimum: 0
+                      maximum: 9999999999.99
+              taxWithholdingInstructions:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaxWithholdingInstruction'
+              timestamp:
+                type: string
+                format: date-time
+              isReverseInitiated:
+                type: boolean
+              version:
+                type: integer
+                format: int32
+              externalIdentifiers:
+                type: object
+                properties:
+                  referenceNumber:
+                    type: string
+                    pattern: ^[A-Za-z0-9._-]{1,100}$
+                  externalTransactionId:
+                    type: string
+                    pattern: ^[A-Za-z0-9._-]{1,100}$
+                  externalArrangementId:
+                    type: string
+                    pattern: ^[A-Za-z0-9._-]{1,100}$
+    TransactionAmounts:
+      type: object
+      description: Details of financial amounts associated with the transaction
+      properties:
+        requestedAmount:
+          type: number
+          description: 'Required when `amountType` is AMOUNT. Must not be provided
+            for PERCENTAGE, MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS, or EARNINGSONLY.
+
+            '
+          minimum: 0
+          maximum: 9999999999.99
+        requestedPercentage:
+          type: number
+          description: 'Required when `amountType` is PERCENTAGE. Must not be provided
+            for AMOUNT, MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS, or EARNINGSONLY.
+
+            '
+          minimum: 0
+          maximum: 100
+        amountType:
+          type: string
+          enum:
+          - AMOUNT
+          - PERCENTAGE
+          - MAX
+          - FREEWITHDRAWALAMOUNT
+          - WITHDRAWALUNTILBASIS
+          - EARNINGSONLY
+        disbursementType:
+          type: string
+          enum:
+          - GROSS
+          - NET
+        disbursementPaymentForm:
+          type: string
+          enum:
+          - DTCC
+          - EFT
+          - ACH
+          - CHECK
+          - WIRE
+          description: Transaction disbursement payment form. Uses the recurring disbursement
+            vocabulary with `EFT`; `EXCHANGE` is intentionally excluded because it
+            applies only to party-level exchange servicing.
+      required:
+      - amountType
+      - disbursementType
+      allOf:
+      - if:
+          properties:
+            amountType:
+              const: AMOUNT
+          required:
+          - amountType
+        then:
+          required:
+          - requestedAmount
+          not:
+            required:
+            - requestedPercentage
+      - if:
+          properties:
+            amountType:
+              const: PERCENTAGE
+          required:
+          - amountType
+        then:
+          required:
+          - requestedPercentage
+          not:
+            required:
+            - requestedAmount
+      - if:
+          properties:
+            amountType:
+              enum:
+              - MAX
+              - FREEWITHDRAWALAMOUNT
+              - WITHDRAWALUNTILBASIS
+              - EARNINGSONLY
+          required:
+          - amountType
+        then:
+          required:
+          - amountType
+          not:
+            anyOf:
+            - required:
+              - requestedAmount
+            - required:
+              - requestedPercentage
+    UnderlyingAssets:
+      type: object
+      properties:
+        startIndex:
+          type: integer
+          minimum: 0
+        itemsCount:
+          type: integer
+          minimum: 0
+        totalItemsCount:
+          type: integer
+          minimum: 0
+        underlyingAssets:
+          type: array
+          items:
+            type: object
+            required:
+            - insuranceActivityFundID
+            properties:
+              insuranceActivityFundID:
+                type: string
+                pattern: ^[A-Za-z0-9._-]{1,50}$
+              insuranceActivityFundAmount:
+                type: string
+                pattern: ^-?\d+(\.\d+)?$
+              insuranceActivityFundAmountDebitCreditIndicator:
+                type: string
+                enum:
+                - DEBIT
+                - CREDIT
+              insuranceActivityFundUnitAmount:
+                type: string
+                pattern: ^-?\d+(\.\d+)?$
+              insuranceActivityFundUnitAmountDebitCreditIndicator:
+                type: string
+                enum:
+                - DEBIT
+                - CREDIT
+              insuranceActivityFundUnitPriceAmount:
+                type: string
+                pattern: ^-?\d+(\.\d+)?$
+              insuranceProductSubAccountProductFullName:
+                type: string
+                maxLength: 200
+              insuranceProductSubAccountAssetClassCode:
+                type: string
+                enum:
+                - FIXED
+                - VARIABLE
+                - INDEXED
+                - MODEL
+                - CASH
+                - EQUITY
+                - OTHER
+                description: Asset class classification code.
+              insuranceActivityMutualFundCusipNumber:
+                type: string
+                pattern: ^[0-9]{3}[A-Z0-9]{5}[0-9]$
+                minLength: 9
+                maxLength: 9
+                description: Uses the standard CUSIP format.
+              insuranceActivityFundMVAAmount:
+                type: string
+                pattern: ^-?\d+(\.\d+)?$
+              insuranceActivityFundMVAAmountDebitCreditIndicator:
+                type: string
+                enum:
+                - DEBIT
+                - CREDIT
+              insuranceActivityFundAdministrativeChargeAmount:
+                type: string
+                pattern: ^-?\d+(\.\d+)?$
+              insuranceActivityFundAdministrativeChargeAmountDebitCreditIndicator:
+                type: string
+                enum:
+                - DEBIT
+                - CREDIT
+              insuranceActivityFundSurrenderChargeAmount:
+                type: string
+                pattern: ^-?\d+(\.\d+)?$
+              insuranceActivityFundSurrenderChargeAmountDebitCreditIndicator:
+                type: string
+                enum:
+                - DEBIT
+                - CREDIT
+              insuranceActivityFundEmployerAmount:
+                type: string
+                pattern: ^-?\d+(\.\d+)?$
+              insuranceActivityFundEmployerAmountDebitCreditIndicator:
+                type: string
+                enum:
+                - DEBIT
+                - CREDIT
+              insuranceActivityFundEmployeeAmount:
+                type: string
+                pattern: ^-?\d+(\.\d+)?$
+              insuranceActivityFundEmployeeAmountDebitCreditIndicator:
+                type: string
+                enum:
+                - DEBIT
+                - CREDIT
+    TaxWithholdingInstruction:
+      type: object
+      description: Tax withholding instructions. Exactly one of dollar or percentage
+        may be provided when taxRateToUse expects entered values. filingStatus remains
+        optional per the data dictionary.
+      properties:
+        party:
+          anyOf:
+          - $ref: '#/components/schemas/IndividualIdentity'
+          - $ref: '#/components/schemas/EntityIdentity'
+        taxWithholdingType:
+          type: string
+          enum:
+          - FEDERAL
+          - STATE
+          - NRA
+          - BACKUP
+        taxRateToUse:
+          type: string
+          enum:
+          - NOWITHHOLDINGELECTED
+          - USEVALUESENTERED
+          - NOWITHHOLDINGALLOWED
+          - USEDEFAULTTABLE
+        filingStatus:
+          type: string
+          enum:
+          - SINGLE
+          - DOMESTICPARTNERSHIP
+          - DEFAULT
+          - MARRIED
+          - HEADOFHOUSEHOLD
+          - WIDOWED
+          - DIVORCED
+          description: Optional per data dictionary. Typically provided when `taxRateToUse`
+            is `USEDEFAULTTABLE` and filing status is needed to determine the applicable
+            withholding table; do not treat this field as universally required.
+        dollar:
+          type: number
+          description: Fixed dollar amount to withhold. Mutually exclusive with percentage;
+            provide one, not both.
+          minimum: 0
+          maximum: 9999999999.99
+        percentage:
+          type: number
+          description: Percentage rate to withhold. Mutually exclusive with dollar;
+            provide one, not both.
+          minimum: 0
+          maximum: 100
+        exemptions:
+          type: integer
+          minimum: 0
+          maximum: 99
+        taxJurisdiction:
+          type: string
+          maxLength: 50
+      required:
+      - taxRateToUse
+      - taxWithholdingType
+      oneOf:
+      - required:
+        - dollar
+      - required:
+        - percentage
+      allOf:
+      - if:
+          properties:
+            taxWithholdingType:
+              const: STATE
+          required:
+          - taxWithholdingType
+        then:
+          required:
+          - taxJurisdiction
+    IndividualParty:
+      description: Schema for individual party data
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/IndividualIdentity'
+      - $ref: '#/components/schemas/PartyRelationship'
+    EntityParty:
+      description: Schema for entity party data
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EntityIdentity'
+      - $ref: '#/components/schemas/PartyRelationship'
+    IndividualIdentity:
+      description: Schema for individual identity data
+      required:
+      - firstName
+      - lastName
+      - taxId
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          const: individual
+        firstName:
+          type: string
+          minLength: 1
+          maxLength: 100
+          pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\\?\-]{1,100}$
+        middleName:
+          type: string
+          minLength: 1
+          maxLength: 100
+          pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\\?\-]{1,100}$
+        lastName:
+          type: string
+          minLength: 1
+          maxLength: 100
+          pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\\?\-]{1,100}$
+        taxId:
+          type: string
+          maxLength: 9
+          pattern: ^[0-9]{9}$
+          minLength: 9
+    PartyRelationship:
+      description: Schema for party relationship data
+      type: object
+      required:
+      - relationships
+      properties:
+        relationships:
+          type: array
+          minItems: 1
+          maxItems: 6
+          items:
+            type: string
+            enum:
+            - owner
+            - jointOwner
+            - annuitant
+            - jointAnnuitant
+            - primaryBeneficiary
+            - contingentBeneficiary
+          description: Canonical response-body relationship vocabulary. Uses camelCase
+            relationship values returned by the service and is intentionally narrower
+            than the PartyRole query filter vocabulary. A single party may hold multiple
+            concurrent relationships, so maxItems is aligned to the full response
+            vocabulary.
+    EntityIdentity:
+      description: Schema for entity identity data
+      type: object
+      required:
+      - type
+      - name
+      - taxId
+      properties:
+        type:
+          type: string
+          const: entity
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          pattern: ^[\w=()*@#\s.,'\/~%$!;:&"®`\\?\-]{1,100}$
+        taxId:
+          type: string
+          maxLength: 9
+          pattern: ^[0-9]{9}$
+          minLength: 9
+    Bank:
+      type: object
+      required:
+      - nameOnAccount
+      - accountType
+      - accountNumber
+      - routingNumber
+      properties:
+        bankId:
+          type: string
+          maxLength: 100
+        nameOnAccount:
+          type: string
+          maxLength: 100
+        accountStatus:
+          type: string
+          enum:
+          - ACTIVEBANKACCOUNT
+          - TERMINATEDBANKACCOUNT
+        accountType:
+          type: string
+          enum:
+          - CHECKING
+          - SAVINGS
+          - CREDITCARDACCOUNT
+          - DEBITCARDACCOUNT
+          - BROKERAGEACCOUNT
+          - CERTIFICATEOFDEPOSITACCOUNT
+        accountNumber:
+          type: string
+          pattern: ^\d{4,17}$
+          maxLength: 17
+        routingNumber:
+          type: string
+          pattern: ^\d{9}$
+        branchName:
+          type: string
+          maxLength: 100
+    Address:
+      type: object
+      required:
+      - addressType
+      - addressLine1
+      - city
+      - state
+      - zipCode
+      properties:
+        addressId:
+          type: string
+          maxLength: 100
+        addressType:
+          type: string
+          enum:
+          - RESIDENCE
+          - BUSINESS
+          - POBOXSEASONAL
+          - OTHER
+        addressLine1:
+          type: string
+          maxLength: 100
+        addressLine2:
+          type: string
+          maxLength: 100
+        addressLine3:
+          type: string
+          maxLength: 100
+        addressLine4:
+          type: string
+          maxLength: 100
+        addressLine5:
+          type: string
+          maxLength: 100
+        city:
+          type: string
+          maxLength: 100
+        state:
+          type: string
+          pattern: ^[A-Z]{2}$
+        zipCode:
+          type: string
+          pattern: ^[0-9A-Za-z -]{3,10}$
+        zipCodeExtension:
+          type: string
+          pattern: ^[0-9A-Za-z]{1,4}$
+        country:
+          type: string
+          pattern: ^[A-Z]{2}$
+    Phone:
+      type: object
+      required:
+      - countryCode
+      - areaCode
+      - dialNumber
+      properties:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        phoneType:
+          type: string
+          enum:
+          - MOBILE
+          - HOME
+          - BUSINESS
+          - CLAIMCENTER
+          - CUSTOMERSERVICE
+          - CORPORATEOFFICE
+          - FAX
+          - UNKNOWN
+          - OTHER
+        countryCode:
+          type: string
+          pattern: ^\+?[0-9]{1,3}$
+        areaCode:
+          type: string
+          pattern: ^[0-9]{2,5}$
+          description: Supports domestic and international numbering plans; 2 to 5
+            digits are allowed.
+        dialNumber:
+          type: string
+          pattern: ^[0-9]{4,12}$
+        extension:
+          type: string
+          pattern: ^[A-Za-z0-9-]{1,10}$
+        bestTime:
+          type: string
+          enum:
+          - MORNING
+          - AFTERNOON
+          - EVENING
+          - ANYTIME
+        timezone:
+          type: string
+          pattern: ^[A-Za-z_]+/[A-Za-z_]+(?:/[A-Za-z_]+)?$
+        isPreferred:
+          type: boolean
+        phoneId:
+          type: string
+          pattern: ^[A-Za-z0-9._-]{1,100}$
+    Email:
+      type: object
+      required:
+      - emailAddress
+      properties:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        emailType:
+          type: string
+          enum:
+          - PERSONAL
+          - BUSINESS
+          - CUSTOMERSERVICE
+          - OTHER
+        emailAddress:
+          type: string
+          format: email
+          pattern: ^[^@\s]+@[^@\s]+\.[^@\s]+$
+        isPreferred:
+          type: boolean
+        emailId:
+          type: string
+          pattern: ^[A-Za-z0-9._-]{1,100}$
+    Identification:
+      type: object
+      required:
+      - startDate
+      - endDate
+      properties:
+        identificationId:
+          type: string
+          pattern: ^[A-Za-z0-9._-]{1,100}$
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        identificationType:
+          type: string
+          enum:
+          - PASSPORT
+          - STATEPHOTOID
+          - DRIVERLICENSENUMBER
+          - SSN
+          - TIN
+          - EXTERNAL
+          - EIN
+          - OTHER
+        identificationKey:
+          type: string
+          pattern: ^[A-Za-z0-9._-]{1,100}$
+        identificationValue:
+          type: string
+          maxLength: 100
+        identificationDescription:
+          type: string
+          maxLength: 255
+        issueState:
+          type: string
+          enum:
+          - AA
+          - AE
+          - AL
+          - AP
+          - AK
+          - AZ
+          - AR
+          - AS
+          - CA
+          - CO
+          - CT
+          - DC
+          - DE
+          - FL
+          - GA
+          - GU
+          - HI
+          - ID
+          - IL
+          - IN
+          - IA
+          - KS
+          - KY
+          - LA
+          - ME
+          - MD
+          - MA
+          - MI
+          - MN
+          - MS
+          - MO
+          - MP
+          - MT
+          - NE
+          - NV
+          - NH
+          - NJ
+          - NM
+          - NY
+          - NC
+          - ND
+          - OH
+          - OK
+          - OR
+          - PA
+          - PR
+          - RI
+          - SC
+          - SD
+          - TN
+          - TX
+          - UM
+          - UT
+          - VT
+          - VA
+          - VI
+          - WA
+          - WV
+          - WI
+          - WY
+          description: Values represent USPS state, territory, and military mail codes.
+        issueCountry:
+          type: string
+          enum:
+          - US
+          - CA
+          - RU
+          - EG
+          - ZA
+          - GR
+          - NL
+          - BE
+          - FR
+          - ES
+          - HU
+          - IT
+          - RO
+          - CH
+          - AT
+          - GB
+          - DK
+          - SE
+          - 'NO'
+          - PL
+          - DE
+          - PE
+          - MX
+          - CU
+          - AR
+          - BR
+          - CL
+          - CO
+          - VE
+          - MY
+          - AU
+          - ID
+          - PH
+          - NZ
+          - SG
+          - TH
+          - JP
+          - VN
+          - CN
+          - TR
+          - IN
+          - PK
+          - AF
+          - LK
+          - IR
+          - MA
+          - DZ
+          - TN
+          - LY
+          - GM
+          - SN
+          - MR
+          - ML
+          - GN
+          - BF
+          - NE
+          - TG
+          - BJ
+          - MU
+          - LR
+          - SL
+          - GH
+          - NG
+          - CF
+          - TD
+          - CM
+          - CV
+          - ST
+          - GQ
+          - GA
+          - BS
+          - AO
+          - BB
+          - AX
+          - SD
+          - RW
+          - ET
+          - SO
+          - DJ
+          - KE
+          - TZ
+          - UG
+          - BI
+          - MZ
+          - ZM
+          - MG
+          - RE
+          - ZW
+          - NA
+          - MW
+          - LS
+          - BW
+          - AG
+          - KM
+          - GW
+          - CD
+          - VG
+          - SH
+          - AW
+          - FO
+          - GL
+          - KY
+          - GI
+          - PT
+          - LU
+          - IE
+          - IS
+          - AL
+          - MT
+          - CY
+          - FI
+          - BG
+          - GG
+          - LT
+          - LV
+          - EE
+          - MD
+          - AM
+          - BY
+          - AD
+          - SM
+          - UA
+          - HR
+          - SI
+          - BA
+          - MK
+          - XK
+          - CZ
+          - SK
+          - LI
+          - BM
+          - GD
+          - FK
+          - BZ
+          - GT
+          - SV
+          - HN
+          - NI
+          - CR
+          - PM
+          - HT
+          - PR
+          - VI
+          - GS
+          - SX
+          - BQ
+          - GP
+          - BO
+          - GY
+          - EC
+          - GF
+          - PY
+          - MQ
+          - SR
+          - UY
+          - TC
+          - BL
+          - MF
+          - MS
+          - GU
+          - AQ
+          - BN
+          - NR
+          - PG
+          - TO
+          - SB
+          - VU
+          - FJ
+          - WF
+          - CK
+          - NU
+          - AS
+          - KI
+          - NC
+          - TV
+          - PF
+          - MP
+          - PW
+          - MH
+          - FM
+          - SS
+          - LC
+          - DM
+          - VC
+          - DO
+          - HK
+          - MO
+          - KH
+          - LA
+          - TT
+          - KN
+          - JM
+          - BD
+          - TW
+          - MM
+          - KR
+          - KP
+          - LB
+          - JO
+          - SY
+          - IQ
+          - KW
+          - SA
+          - OM
+          - AE
+          - IL
+          - BH
+          - QA
+          - BT
+          - NP
+          - TJ
+          - TM
+          - AZ
+          - GE
+          - UZ
+          - AI
+          - PA
+          - CI
+          - ER
+          - KZ
+          - KG
+          - CC
+          - MN
+          - BV
+          - SC
+          - IO
+          - WS
+          - TL
+          - TF
+          - YT
+          - PN
+          - SJ
+          - TK
+          - UM
+          - EH
+          - MV
+          - CX
+          - NF
+          - CG
+          - MC
+          - VA
+          - SZ
+          - PS
+          - JE
+          - IM
+          - RS
+          - ME
+          - HM
+          - CW
+          - YE
+          description: Uses current ISO 3166-1 alpha-2 country codes.
+    DeathDetails:
+      type: object
+      properties:
+        dateOfDeath:
+          type: string
+          format: date
+        causeOfDeath:
+          type: string
+          maxLength: 100
+        deathNotificationDate:
+          type: string
+          format: date
+        dateOfDueProof:
+          type: string
+          format: date
