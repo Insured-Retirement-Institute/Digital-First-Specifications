@@ -35,7 +35,7 @@ paths:
   /v1/application-notificatons/{eventId}:
     get:
       operationId: replayEvent
-      summary: Re-send event from web hook based off of id
+      summary: Retrieve payload for the given event ID
       tags:
         - Application Notifications
       parameters:
