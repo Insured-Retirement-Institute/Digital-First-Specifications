@@ -441,10 +441,7 @@ components:
                   type: string
                   format: date
               actionSections:
-                type: array
-                items:
-                  type: string
-                  enum: [suitability, canSellValidation, documentReview, funding]
+                $ref: '#/components/schemas/actionSections'
               notificationStatus:
                 type: string
                 enum: [received, inProgress, completed, cancelled]
@@ -524,9 +521,10 @@ components:
             notification:
               allOf:
                 - $ref: '#/components/schemas/DocumentReview'
-              properties:
-                actionSections:
-                  $ref: '#/components/schemas/actionSections'
+                - type: object
+                  properties:
+                    actionSections:
+                      $ref: '#/components/schemas/actionSections'
     
     FundingActionNotification:
       description: Schema for funding action notification data
@@ -1085,6 +1083,12 @@ components:
           type: array
           items:
             - $ref: "#/components/schemas/notificationMetadata"
+
+    actionSections:
+      type: array
+      items:
+        type: string
+        enum: [suitability, canSellValidation, documentReview, funding]
 
     notificationMetadata:
       type: object
