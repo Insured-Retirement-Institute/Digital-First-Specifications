@@ -8,7 +8,7 @@ info:
     url: https://github.com/Insured-Retirement-Institute/Pending-Case/blob/main/LICENSE
 
 paths:
-  /v1/application-notificatons/reconciliation:
+  /v1/application-notifications/reconciliation:
     get:
       operationId: reconciliation
       summary: Send a list of published events to reconcile for potential missed Notifications
@@ -32,7 +32,7 @@ paths:
           description: Forbidden
         "404":
           description: NotFound
-  /v1/application-notificatons/{eventId}:
+  /v1/application-notifications/{eventId}:
     get:
       operationId: replayEvent
       summary: Retrieve payload for the given event ID
@@ -376,7 +376,7 @@ components:
         required: true
         schema:
           type: string
-          format: date
+          format: date-time
       endTime:
         name: endTime
         description: End Date/Time of data to send for reconciliation
@@ -384,7 +384,7 @@ components:
         required: true
         schema: 
           type: string
-          format: date
+          format: date-time
       eventId:
         name: eventId
         description: Unique id for requested event to return
@@ -397,70 +397,70 @@ components:
   schemas:
     ApplicationReceivedNotification:
       description: Schema for application received notification data
-      type: object
       required: [cusip,eventType,notification]
       allOf:
         - $ref: '#/components/schemas/notificationMetadata'
-      properties:
-        eventType:
-          type: string
-          const: applicationStatus.v1.applicationReceived
-        notification:
-          type: object
+        - type: object
           properties:
-            cusip:
-              $ref: '#/components/schemas/cusip'
-            isActionNeeded:
-              type: boolean
-            actionSections:
-              $ref: '#/components/schemas/actionSections'
-            productName:
+            eventType:
               type: string
-              maxLength: 180
-            isQualified:
-              type: boolean
-            producers:
-              $ref: '#/components/schemas/Producers'
-            parties:
-              type: array
-              minItems: 1
-              items:
-                anyOf:
-                  - $ref: "#/components/schemas/IndividualParty"
-                  - $ref: "#/components/schemas/EntityParty"
-            signedDate:
-              type: string
-              format: date
-            receivedDate:
-              type: string
-              format: date
-            rateEffectiveDate:
-              type: string
-              format: date
-            fundsHeldUntilDate:
-              type: string
-              format: date
-    actionSections:
-      type: array
-      items:
-        type: string
-        enum: [suitability, canSellValidation, documentReview, funding]
-    notificationStatus:
-      type: string
-      enum: [received, inProgress, completed, cancelled]
+              const: applicationStatus.v1.applicationReceived
+            notification:
+              type: object
+              properties:
+                cusip:
+                  $ref: '#/components/schemas/cusip'
+                isActionNeeded:
+                  type: boolean
+                actionSections:
+                  $ref: '#/components/schemas/actionSections'
+                productName:
+                  type: string
+                  maxLength: 180
+                isQualified:
+                  type: boolean
+                producers:
+                  $ref: '#/components/schemas/Producers'
+                parties:
+                  type: array
+                  minItems: 1
+                  items:
+                    anyOf:
+                      - $ref: "#/components/schemas/IndividualParty"
+                      - $ref: "#/components/schemas/EntityParty"
+                signedDate:
+                  type: string
+                  format: date
+                receivedDate:
+                  type: string
+                  format: date
+                rateEffectiveDate:
+                  type: string
+                  format: date
+                fundsHeldUntilDate:
+                  type: string
+                  format: date
+              actionSections:
+                type: array
+                items:
+                  type: string
+                  enum: [suitability, canSellValidation, documentReview, funding]
+              notificationStatus:
+                type: string
+                enum: [received, inProgress, completed, cancelled]
     CanSellNotification:
       description: Schema for can sell notification data
-      type: object
       required: [eventType, notification]
       allOf:
         - $ref: '#/components/schemas/notificationMetadata'
-      properties:
-        eventType:
-          type: string
-          const: applicationStatus.v1.canSellActionNeeded
-        notification:
-          allOf:
-            - $ref: '#/components/schemas/CanSellValidation'
+        - type: object
+          properties:
+            eventType:
+              type: string
+              const: applicationStatus.v1.canSellActionNeeded
+            notification:
+              allOf:
+                - $ref: '#/components/schemas/CanSellValidation'
     
     SuitabilityActionNotification:
       description: Schema for suitability notification data
@@ -468,239 +468,243 @@ components:
       required: [eventType, notification]
       allOf:
         - $ref: '#/components/schemas/notificationMetadata'
-      properties:
-        eventType:
-          type: string
-          const: applicationStatus.v1.suitabilityActionNeeded
-        notification:
-          allOf:
-            - $ref: '#/components/schemas/Suitability'
+        - type: object
           properties:
-            actionSections:
-              $ref: '#/components/schemas/actionSections'
+            eventType:
+              type: string
+              const: applicationStatus.v1.suitabilityActionNeeded
+            notification:
+              allOf:
+                - $ref: '#/components/schemas/Suitability'
+              properties:
+                actionSections:
+                  $ref: '#/components/schemas/actionSections'
     
     SuitabilityDecisionNotification:
       description: Schema for suitability decision notification data
-      type: object
       required: [status, endDate, isApproved, eventType, notification]
       allOf:
         - $ref: '#/components/schemas/notificationMetadata'
-      properties:
-        eventType:
-          type: string
-          const: applicationStatus.v1.suitabilityApproved
-        notification:
+        - type: object
           properties:
-            status:
-              enum: [awaitingReview, inProgress, completed, notApplicable]
-            isActionNeeded:
-              type: boolean
-            actionSections:
-              $ref: '#/components/schemas/actionSections'
-            startDate:
+            eventType:
               type: string
-              format: date
-            endDate:
-              type: string
-              format: date
-            note:
-              type: string
-              minLength: 1
-              maxLength: 2000
-            isApproved:
-              type: boolean
+              const: applicationStatus.v1.suitabilityApproved
+            notification:
+              properties:
+                status:
+                  enum: [awaitingReview, inProgress, completed, notApplicable]
+                isActionNeeded:
+                  type: boolean
+                actionSections:
+                  $ref: '#/components/schemas/actionSections'
+                startDate:
+                  type: string
+                  format: date
+                endDate:
+                  type: string
+                  format: date
+                note:
+                  type: string
+                  minLength: 1
+                  maxLength: 2000
+                isApproved:
+                  type: boolean
     
     DocReviewNotification:
       description: Schema for document review notification data
-      type: object
       required: [eventType, notification]
       allOf:
         - $ref: '#/components/schemas/notificationMetadata'
-      properties:
-        eventType:
-          type: string
-          const: applicationStatus.v1.documentReviewActionNeeded
-        notification:
-          allOf:
-            - $ref: '#/components/schemas/DocumentReview'
+        - type: object
           properties:
-            actionSections:
-              $ref: '#/components/schemas/actionSections'
+            eventType:
+              type: string
+              const: applicationStatus.v1.documentReviewActionNeeded
+            notification:
+              allOf:
+                - $ref: '#/components/schemas/DocumentReview'
+              properties:
+                actionSections:
+                  $ref: '#/components/schemas/actionSections'
     
     FundingActionNotification:
       description: Schema for funding action notification data
-      type: object
       required: [eventType, notification]
       allOf:
         - $ref: '#/components/schemas/notificationMetadata'
-      properties:
-        eventType:
-          type: string
-          const: applicationStatus.v1.fundingActionNeeded
-        notification:
-          allOf:
-            - $ref: '#/components/schemas/TransferNotificationBase'
+        - type: object
           properties:
-            reason:
+            eventType:
               type: string
-              enum: [awaitingFundsFromCedingCompany, contactTheCarrier, fundingDiscrepancy, nigoAtCedingCarrier, noFundsReceivedCash, pendingReg60, other]
+              const: applicationStatus.v1.fundingActionNeeded
+            notification:
+              allOf:
+                - $ref: '#/components/schemas/TransferNotificationBase'
+              properties:
+                reason:
+                  type: string
+                  enum: [awaitingFundsFromCedingCompany, contactTheCarrier, fundingDiscrepancy, nigoAtCedingCarrier, noFundsReceivedCash, pendingReg60, other]
     
     TransferRequestNotification:
       description: Schema for transfer notification data
-      type: object
       required: [eventType, notification]
       allOf:
         - $ref: '#/components/schemas/notificationMetadata'
-      properties:
-        eventType:
-          type: string
-          const: applicationStatus.v1.fundingTransferRequestSent
-        notification:
-          allOf:
-            - $ref: '#/components/schemas/TransferNotificationBase'
+        - type: object
           properties:
-            nextActivityDate:
+            eventType:
               type: string
-              format: date
-            note:
-              type: string
-              minLength: 1
-              maxLength: 2000
-            methodOfInitiation:
-              type: string
-              enum: [fax, email, mail, replacement]
-            referenceNumber:
-              type: string        
+              const: applicationStatus.v1.fundingTransferRequestSent
+            notification:
+              allOf:
+                - $ref: '#/components/schemas/TransferNotificationBase'
+              properties:
+                nextActivityDate:
+                  type: string
+                  format: date
+                note:
+                  type: string
+                  minLength: 1
+                  maxLength: 2000
+                methodOfInitiation:
+                  type: string
+                  enum: [fax, email, mail, replacement]
+                referenceNumber:
+                  type: string        
     
     SourceTypeNotification:
       description: Schema for source type notification data
-      type: object
       required: [eventType, notification]
       allOf:
         - $ref: '#/components/schemas/notificationMetadata'
-      properties:
-        eventType:
-          type: string
-          const: applicationStatus.v1.fundingSourceTypeUpdated
-        notification:
-          allOf:
-            - $ref: '#/components/schemas/TransferNotificationBase'
+        - type: object
+          properties:
+            eventType:
+              type: string
+              const: applicationStatus.v1.fundingSourceTypeUpdated
+            notification:
+              allOf:
+                - $ref: '#/components/schemas/TransferNotificationBase'
     
     NewFollowUpNotification:
       description: Schema for new follow up notification data
-      type: object
       required: [eventType, notification]
       allOf:
         - $ref: '#/components/schemas/notificationMetadata'
-      properties:
-        eventType:
-          type: string
-          const: applicationStatus.v1.fundingTransferFollowedUp
-        notification:
-          allOf:
-            - $ref: '#/components/schemas/TransferNotificationBase'
+        - type: object
           properties:
-            nextActivityDate:
+            eventType:
               type: string
-              format: date
-            note:
-              type: string
-              minLength: 1
-              maxLength: 2000
-            transferSentDate:
-              type: string
-              format: date
+              const: applicationStatus.v1.fundingTransferFollowedUp
+            notification:
+              type: object
+              allOf:
+                - $ref: '#/components/schemas/TransferNotificationBase'
+              properties:
+                nextActivityDate:
+                  type: string
+                  format: date
+                note:
+                  type: string
+                  minLength: 1
+                  maxLength: 2000
+                transferSentDate:
+                  type: string
+                  format: date
     
     FundingReceivedNotification:
       description: Schema for funding received notification data
-      type: object
       required: [eventType, notification]
       allOf:
         - $ref: '#/components/schemas/notificationMetadata'
-      properties:
-        eventType:
-          type: string
-          const: applicationStatus.v1.fundingReceived
-        notification:                  
-          allOf:
-            - $ref: '#/components/schemas/TransferNotificationBase'
+        - type: object
           properties:
-            anticipatedAmount:
-              type: number
-              format: float
-            receivedAmount:
-              type: number
-              format: float
-            receivedDate:
+            eventType:
               type: string
-              format: date
-            status:
-              type: string
-              enum: [inProgress, complete]
-            effectiveDate:
-              type: string
-              format: date
+              const: applicationStatus.v1.fundingReceived
+            notification: 
+              type: object                 
+              allOf:
+                - $ref: '#/components/schemas/TransferNotificationBase'
+              properties:
+                anticipatedAmount:
+                  type: number
+                  format: float
+                receivedAmount:
+                  type: number
+                  format: float
+                receivedDate:
+                  type: string
+                  format: date
+                status:
+                  type: string
+                  enum: [inProgress, complete]
+                effectiveDate:
+                  type: string
+                  format: date
     
     ApplicationCompletedNotification:
       description: Schema for application completed notification data
-      type: object
       required: [eventType, notification]
       allOf:
         - $ref: '#/components/schemas/notificationMetadata'
-      properties:
-        eventType:
-            type: string
-            const: applicationStatus.v1.applicationCompleted
-        notification:
-          type: object
+        - type: object
           properties:
-            isActionNeeded:
-              type: boolean
-            actionSections:
-              $ref: '#/components/schemas/actionSections'
-            startDate:
-              type: string
-              format: date
-            note:
-              type: string
-              minLength: 1
-              maxLength: 2000
-            delivery:
+            eventType:
+                type: string
+                const: applicationStatus.v1.applicationCompleted
+            notification:
               type: object
               properties:
-                sentDate:
+                isActionNeeded:
+                  type: boolean
+                actionSections:
+                  $ref: '#/components/schemas/actionSections'
+                startDate:
                   type: string
                   format: date
-                method:
-                  type: string
-                  enum: [fedex, ups, electronicDelivery, handDelivery, usps]
-                trackingNumber:
+                note:
                   type: string
                   minLength: 1
-                  maxLength: 65
+                  maxLength: 2000
+                delivery:
+                  type: object
+                  properties:
+                    sentDate:
+                      type: string
+                      format: date
+                    method:
+                      type: string
+                      enum: [fedex, ups, electronicDelivery, handDelivery, usps]
+                    trackingNumber:
+                      type: string
+                      minLength: 1
+                      maxLength: 65
     
     ApplicationCancelledNotification:
       description: Schema for application cancelled notification data
-      type: object
       required: [eventType, notification]
       allOf:
         - $ref: '#/components/schemas/notificationMetadata'
-      properties:
-        eventType:
-          type: string
-          const: applicationStatus.v1.applicationCancelled
-        notification:
+        - type: object
           properties:
-            actionSections:
-              $ref: '#/components/schemas/actionSections'
-            initiator:
+            eventType:
               type: string
-              enum: [advisor, carrier, client]
-            cancelledDate:
-              type: string
-              format: date
-            reason:
-              type: string    
+              const: applicationStatus.v1.applicationCancelled
+            notification:
+              properties:
+                actionSections:
+                  $ref: '#/components/schemas/actionSections'
+                initiator:
+                  type: string
+                  enum: [advisor, carrier, client]
+                cancelledDate:
+                  type: string
+                  format: date
+                reason:
+                  type: string    
+
     TransferNotificationBase:
       description: Schema for policy funding data
       type: object
