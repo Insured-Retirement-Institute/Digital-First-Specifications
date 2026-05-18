@@ -442,9 +442,6 @@ components:
                   format: date
               actionSections:
                 $ref: '#/components/schemas/actionSections'
-              notificationStatus:
-                type: string
-                enum: [received, inProgress, completed, cancelled]
     CanSellNotification:
       description: Schema for can sell notification data
       required: [eventType, notification]
@@ -1083,6 +1080,10 @@ components:
           type: array
           items:
             - $ref: "#/components/schemas/notificationMetadata"
+
+    notificationStatus:
+      type: string
+      enum: [received, inProgress, completed, cancelled]
 
     actionSections:
       type: array
