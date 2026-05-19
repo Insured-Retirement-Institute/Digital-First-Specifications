@@ -387,7 +387,7 @@ components:
           format: date-time
       eventId:
         name: eventId
-        description: Unique id for requested event to return
+        description: Globally unique id for requested event to return
         in: path
         required: true
         schema: 
@@ -1097,7 +1097,7 @@ components:
       properties:
         eventId:
           type: string
-          description: Unique identifier for this notification event
+          description: Globally unique identifier for this notification event
         policyNumber:
           type: string
         id:
