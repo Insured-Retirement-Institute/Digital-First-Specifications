@@ -440,8 +440,6 @@ components:
                 fundsHeldUntilDate:
                   type: string
                   format: date
-              actionSections:
-                $ref: '#/components/schemas/actionSections'
     CanSellNotification:
       description: Schema for can sell notification data
       required: [eventType, notification]
@@ -792,7 +790,7 @@ components:
       description: Generally used to identify financial instruments based on ABA standard CUSIP, but defined here with relaxed constraints to allow for annuity products that are not issued with standard ABA CUSIPs
       type: string
       minLength: 1
-      pattern:  ^[0-9A-Za-z][0-9A-Za-z\-_]+[0-9A-Za-z]$
+      pattern:  ^[0-9]{3}[A-Z0-9]{5}[0-9]$
       examples:
         - standardCusip:
             description: ABA Standard CUSIP
