@@ -21,7 +21,7 @@ jobs:
           SOURCE_BRANCH: ${{ github.ref_name }}
           SOURCE_SHA: ${{ github.sha }}
         run: |
-          curl -L \
+          curl --fail-with-body -L \
             -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${BACKUP_DISPATCH_TOKEN}" \
