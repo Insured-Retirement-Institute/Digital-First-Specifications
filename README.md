@@ -30,7 +30,7 @@ Regular Expressions
 - There is no single universally adopted regex "standard," but Perl-Compatible Regular Expressions (PCRE) is the most widely supported and influential standard
 
 Response Body Standards
-  - Response object body must only contain the resource or collection of resources that were requested (error responses are an exception to this rule.)
+  - Response body must only contain the resource or collection of resources that were requested (error responses are an exception to this rule.)
   - The response body should __BE__ the resource or array rather than an object that contains a named object or array that contains the data. Arbitrary renaming or nesting of single resources is disallowed.
   - **Metadata placement**
     - Transport and tracing metadata (e.g., `correlationId`) belongs in response headers.
