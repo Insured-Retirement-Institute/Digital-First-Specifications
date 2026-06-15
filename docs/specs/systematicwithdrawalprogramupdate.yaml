@@ -600,6 +600,39 @@ components:
           type: string
           maxLength: 9
 
+    rmdInfo:
+      type: object
+      description: required minimum distribution (rmd) details for the systematic program
+      properties:
+        rmdTaxYear:
+          type: integer
+          description: The tax year this rmd withdrawal is for (e.g., 2025).
+          minimum: 1900
+          maximum: 2100
+        rmdAgeAtDistribution:
+          type: integer
+          description: The age of the rmd owner on the distribution date, in whole years.
+          minimum: 0
+          maximum: 150
+        rmdSpouseDoB:
+          type: string
+          format: date
+          description: Date of birth of the spouse used for rmd calculations, if applicable.
+        rmdRequestedAmount:
+          type: number
+          description: Portion of this withdrawal that should count toward rmd for rmdTaxYear.
+          minimum: 0
+          maximum: 9999999999.99
+        rmdCalculationMethod:
+          type: string
+          description: The method or IRS table used to calculate the rmd.
+          enum: [UNIFORM_LIFETIME_TABLE, JOINT_LIFE, SINGLE_LIFE, OTHER]
+        rmdPriorYearEndValue:
+          type: number
+          description: Contract value as of 12/31 of the prior year used as the base for rmd calculation.
+          minimum: 0
+          maximum: 9999999999.99
+
     UpdateSystematicWithdrawalRequest:
       type: object
       description: UpdateSystematicWithdrawalRequest
@@ -1155,39 +1188,6 @@ components:
         - required: [requestedPercentage]
           not:
             required: [requestedAmount]
-
-    rmdInfo:
-      type: object
-      description: required minimum distribution (rmd) details for the systematic program
-      properties:
-        rmdTaxYear:
-          type: integer
-          description: The tax year this rmd withdrawal is for (e.g., 2025).
-          minimum: 1900
-          maximum: 2100
-        rmdAgeAtDistribution:
-          type: integer
-          description: The age of the rmd owner on the distribution date, in whole years.
-          minimum: 0
-          maximum: 150
-        rmdSpouseDoB:
-          type: string
-          format: date
-          description: Date of birth of the spouse used for rmd calculations, if applicable.
-        rmdRequestedAmount:
-          type: number
-          description: Portion of this withdrawal that should count toward rmd for rmdTaxYear.
-          minimum: 0
-          maximum: 9999999999.99
-        rmdCalculationMethod:
-          type: string
-          description: The method or IRS table used to calculate the rmd.
-          enum: [UNIFORM_LIFETIME_TABLE, JOINT_LIFE, SINGLE_LIFE, OTHER]
-        rmdPriorYearEndValue:
-          type: number
-          description: Contract value as of 12/31 of the prior year used as the base for rmd calculation.
-          minimum: 0
-          maximum: 9999999999.99
 
     WithdrawalRequestStatus:
       type: object
