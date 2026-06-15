@@ -30,9 +30,15 @@ Regular Expressions
 - There is no single universally adopted regex "standard," but Perl-Compatible Regular Expressions (PCRE) is the most widely supported and influential standard
 
 Response Body Standards
-  - Response object body must only contain the resource or collection of resources that were requested (error responses are an exception to this rule.)
-    - Additional response metadata should be in the response header (eg. correlationId)
-  - The response body should __BE__ the resource or array rather than an object that contains a named object or array that contains the data.
+  - Response body must only contain the resource or collection of resources that were requested (error responses are an exception to this rule.)
+  - The response body should __BE__ the resource or array rather than an object that contains a named object or array that contains the data. Arbitrary renaming or nesting of single resources is disallowed.
+  - **Metadata placement**
+    - Transport and tracing metadata (e.g., `correlationId`) belongs in response headers.
+    - Representation metadata that describes or navigates the payload belongs in a documented body envelope — not in ad-hoc wrapper objects.
+  - **Exception — composite query results**: When a response delivers a collection together with metadata that describes or navigates *that collection* (e.g., pagination; see [Pagination](#pagination)), the body **may** use a standardized composite shape: a plural resource array plus a sibling `metadata` object. This is permitted only when:
+    - The metadata fields are defined in this style guide (or an approved extension),
+    - The metadata is intrinsically tied to the array in the same response, and
+    - The shape uses the prescribed `metadata` sibling — not ad-hoc wrapper names.
   <details>
     <summary>Examples</summary>
     <code>
@@ -83,7 +89,124 @@ Response Body Standards
   </code>
 </details>
 
-Standard Error Schema
+### Pagination
+
+Pagination introduces inherent complexity and accuracy tradeoffs — it can be difficult to guarantee a perfectly consistent dataset across pages when underlying data may change between requests. Because accurate pagination can significantly increase implementation costs and reduce adoption, and because IRI DFA prefers simplicity over complexity, **pagination should be avoided unless necessary** (e.g., when the full dataset is too large to transfer within typical server or API-gateway limits).
+
+When pagination is required, working groups must choose one of the two supported patterns based on their business requirements.
+
+#### Choosing a pattern
+
+Offset-based paging and cursor/token-based paging are paging patterns available for working groups to adopt. Neither pattern guarantees a moment-in-time snapshot of the data; concurrent writes may add, remove, or reorder resources between page requests. The patterns differ in their implementation complexity, dataset accuracy and how callers should handle responses.
+
+| Concern | Offset-based | Cursor/token-based |
+|---------|--------------|-------------------|
+| Implementation effort/complexity | Med | Med/high depending on DB being used |
+| Skipped or duplicated resources when data changes between requests | Expected; caller **must** deduplicate | Unlikely under stable sort order; iteration position is carried in the token |
+| Dataset size | Suitable when fewer than ~10K resources | Suitable for large or unbounded datasets |
+| Random access (e.g., "jump to page 5") | Supported via `offset` | Not supported |
+| `totalCount` for "page X of Y" on a UI | Optional (discouraged unless required) | Optional (discouraged unless required) |
+
+Use offset-based pagination when the business case accepts approximate completeness (with potentially incomplete or duplicated records) and the dataset stays small. Use cursor-based pagination when the caller must iterate the full result set reliably without missing/duplicated data (e.g., sync or export) or when the dataset may grow beyond ~10K resources.
+
+> **Note on existing specifications**: Some published specs predate this guidance and use legacy field names (e.g., `start`, `startIndex`, `itemsCount`, `totalItemsCount`). New and revised specifications **must** follow the field names and response shape defined below.
+
+#### Option 1 — Offset-based pagination
+
+Query parameters:
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `offset` | No (default: `0`) | Zero-based index of the first resource to return. |
+| `limit` | No | Maximum number of resources to return per page. The endpoint may return fewer resources than requested. |
+| `orderBy` | No | Field name used to order resources in the result set. |
+| `sortOrder` | No | Whether resources are ordered in ascending (`asc`) or descending (`desc`) order. |
+
+Callers **must** be prepared to detect and handle duplicate resources across pages.
+
+When the specified `offset` is greater than or equal to the total number of matching resources, the endpoint **must** return HTTP `200` with an empty resource array and omit `nextOffset` from `metadata`.
+
+The API specification description for offset-based pagination endpoints **must** state the following:
+- The data returned is **not** guaranteed to represent a moment-in-time snapshot of the data; concurrent writes may still affect results across pages.
+- The caller **must** assume that, on occasion, some resources may be missing from the result set due to concurrent writes.
+- The caller **must** be prepared to handle the same resource appearing on multiple pages (i.e., be able to de-duplicate resources in the result set). In this warning, also include the unique field (e.g., `id`) to be used for deduplication.
+- When an endpoint supports sorting, the API specification **must** document the `orderBy` and `sortOrder` values that provide the most stability across pages — typically a unique, stable identifier.
+- The endpoint may return a lower `limit` than the one requested by the caller.
+
+#### Option 2 — Cursor/token-based pagination
+
+Use cursor-based pagination when stable iteration through the result set is required, or when the dataset may be large or unbounded.
+
+Query parameters:
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `paginationToken` | No | Opaque token returned by the server identifying the position in the result set. Omit on the first request. |
+| `limit` | No | Maximum number of resources to return per page. The endpoint may return fewer resources than requested. |
+| `orderBy` | No | Field name used to order resources in the result set. Must not change on subsequent requests in the same paginated session. |
+| `sortOrder` | No | Whether resources are ordered in ascending (`asc`) or descending (`desc`) order. Must not change on subsequent requests in the same paginated session. |
+
+Key technical implementation requirements:
+- The `paginationToken` **must** be treated as opaque by callers. Implementors should encode the token (e.g., base64) to discourage interpretation.
+- The token **must** encode sufficient state to resume iteration (including sort order when applicable). On subsequent requests, `orderBy` and `sortOrder` **must** match the values used to start the paginated session, or the endpoint **must** reject the request.
+- `orderBy` options **should** include a unique, stable field (alone or as a tie-breaker) to ensure deterministic token generation.
+- Implementors **must not** include sensitive information (e.g., SSN) in the token — the token is transmitted as a query parameter and may appear in server logs and browser history (see [Query String Parameters](#style-conventions) regarding PII in URLs).
+
+The API specification description for token-based pagination endpoints **must** state the following:
+- Pagination is **not** guaranteed to represent a moment-in-time snapshot; resources added or removed after the session starts may not appear in the result set.
+- Pagination **does** provide stable forward iteration: callers should not receive skipped or duplicated resources under normal concurrent writes when using tokens as returned.
+- When an endpoint supports sorting, the API specification **must** document the `orderBy` and `sortOrder` values that provide the most stability across pages — typically a unique, stable identifier.
+- The endpoint may return a lower `limit` than the one requested by the caller.
+
+#### Common response schema
+
+Paginated responses are a composite query result (see Response Body Standards above): a plural resource array (named for the resource type, e.g., `policies`) and a sibling `metadata` object. Do not mix offset and cursor continuation fields in the same response — include only the fields applicable to the pattern in use.
+
+| Field | Type | Applies to | Description |
+|-------|------|------------|-------------|
+| `offset` | integer | Offset-based only | Zero-based index of the first resource in this page. |
+| `limit` | integer | Both | The page size used for this response (may be less than requested). |
+| `nextOffset` | integer | Offset-based only | Offset to use to retrieve the next page. **Omit** when no further pages exist. |
+| `nextPaginationToken` | string | Cursor-based only | Token to pass as `paginationToken` to retrieve the next page. **Omit** when no further pages exist. |
+| `totalCount` | integer | Both (optional) | Total number of resources matching the query (before pagination). |
+
+Note: Use of `totalCount` is discouraged unless the business case requires it, as it can be expensive to calculate.
+
+**Offset-based example:**
+
+```json
+{
+  "policies": [
+    { "id": "001234" },
+    { "id": "001235" }
+  ],
+  "metadata": {
+    "offset": 0,
+    "limit": 2,
+    "nextOffset": 2,
+    "totalCount": 100
+  }
+}
+```
+
+**Cursor-based example:**
+
+```json
+{
+  "policies": [
+    { "id": "001234" },
+    { "id": "001235" }
+  ],
+  "metadata": {
+    "limit": 2,
+    "nextPaginationToken": "eyJvZmZzZXQiOjJ9"
+  }
+}
+```
+
+**Last page** (both patterns): omit `nextOffset` or `nextPaginationToken` from `metadata`. An empty resource array with no continuation field indicates the caller has reached the end of the result set.
+
+### Standard Error Schema
 
 - Every error response—regardless of transaction type—includes:
   - An HTTP status code in the **400–599** range

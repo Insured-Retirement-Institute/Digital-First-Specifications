@@ -1,0 +1,1020 @@
+openapi: 3.1.0
+info:
+  title: Fund Transfer Service
+  version: 1.0.0
+  description: >
+    API to perform fund-to-fund and segment-based value transfers.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+paths:
+  /v1/policies/{policyNumber}/fund-transfers:
+    post:
+      operationId: createFundTransfer
+      tags:
+        - Fund Transfer
+      description: >
+        Submits a fund transfer transaction for a policy, supporting
+        source and destination fund or segment allocations.
+      parameters:
+        - $ref: '#/components/parameters/PolicyNumber'
+        - $ref: '#/components/parameters/CorrelationIdHeader'
+        - $ref: '#/components/parameters/AssociatedFirmId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FundTransferRequest'
+            examples:
+              completeFundTransferRequest:
+                summary: Complete fund transfer request – FULL_REBALANCE (validated)
+                value:
+                  effectiveDate: "2026-03-15"
+                  allocationOption: SPECIFIED_FUNDS
+                  nsccParticipantId: "12345"
+                  cusip: "123ABC456"
+                  transactionAmounts:
+                    amountType: FULL_REBALANCE
+                  funds:
+                    transferFromFunds:
+                      - fundId: FUND_FIXED_01
+                        assetClass: FIXED
+                        investmentType: VARIABLE_ANNUITY_FUND
+                        currentRate: 4.25
+                        maturityDate: "2030-12-31"
+                        fundSegments:
+                          - segmentId: SEG_FROM_01
+                    transferToFunds:
+                      - fundId: FUND_FIXED_99
+                        assetClass: FIXED
+                        investmentType: VARIABLE_ANNUITY_FUND
+                        currentRate: 6.75
+                        maturityDate: "2035-06-30"
+                        fundSegments:
+                          - segmentId: SEG_TO_01
+                            requestedPercentage: 100
+                  arrangement:
+                    productCode: ARR_PROD_001
+                    arrangementType: SYSTEMATIC_TRANSFER
+                    arrangementSubType: MONTHLY
+                    startDate: "2026-04-01"
+                    endDate: "2030-04-01"
+                    modalAmount: 500
+                    sourceTransferAmountType: AMOUNT
+                    destinationTransferAmountType: AMOUNT
+                    arrangementSource:
+                      subAccountId: SRC_SUB_ACCT_01
+                      transferAmount: 500
+                    arrangementDestination:
+                      subAccountId: DEST_SUB_ACCT_01
+                      transferPercentage: 100
+                  investProduct:
+                    rateLockInfo: RATE_LOCK_2026
+                    isLockedIn: true
+                  auditTransSummation:
+                    auditTotalType: COUNT
+                    auditTotal: 1
+                    correlationGuid: "550e8400-e29b-41d4-a716-446655440000"
+                    correlationIdState: INITIAL_USAGE
+                  producer:
+                    producerNumber: PRD12345
+                    npn: "99887766"
+                    crdNumber: CRD445566
+                  parties:
+                    - type: individual
+                      firstName: John
+                      middleName: A
+                      lastName: Doe
+                      taxId: "123456789"
+                      relationships:
+                        - owner
+                      paymentForm: ACH
+                      allocationPercentage: 100
+                    - type: entity
+                      name: ABC TRUST
+                      taxId: "987654321"
+                      relationships:
+                        - primaryBeneficiary
+                      paymentForm: CHECK
+                      allocationPercentage: 100
+
+      responses:
+        '202':
+          $ref: '#/components/responses/FundTransferSuccess'
+        '400': { $ref: '#/components/responses/BadRequestError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '405': { $ref: '#/components/responses/MethodNotAllowedError' }
+        '406': { $ref: '#/components/responses/NotAcceptableError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '413': { $ref: '#/components/responses/PayloadTooLargeError' }
+        '415': { $ref: '#/components/responses/UnsupportedMediaTypeError' }
+        '422': { $ref: '#/components/responses/UnprocessableEntityError' }
+        '429': { $ref: '#/components/responses/TooManyRequestsError' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '502': { $ref: '#/components/responses/BadGatewayError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailableError' }
+        '504': { $ref: '#/components/responses/GatewayTimeoutError' }
+
+  /v1/policies/{policyNumber}/fund-transfers/requests/{requestId}:
+    get:
+      operationId: getFundTransferRequest
+      tags:
+        - Fund Transfer Request Lifecycle
+      description: >
+        Retrieve the current processing status of a fund transfer request
+        submitted asynchronously via POST.
+
+        This endpoint is intended for polling and reconciliation.
+        For real-time completion, consumers may optionally subscribe
+        to asynchronous notifications using the subscription API.
+
+      parameters:
+        - $ref: '#/components/parameters/PolicyNumber'
+        - name: requestId
+          in: path
+          required: true
+          description: >
+            Identifier returned in the Location header from the
+            fund transfer POST request.
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 100
+
+      responses:
+        '200':
+          description: Fund transfer request status.
+          headers:
+            correlationId:
+              $ref: '#/components/headers/correlationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFundTransferRequestStatus'
+
+        '400': { $ref: '#/components/responses/BadRequestError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '429': { $ref: '#/components/responses/TooManyRequestsError' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+components:
+  headers:
+    correlationId:
+      description: Correlates this response to downstream processing.
+      schema:
+        type: string
+        maxLength: 100
+
+  parameters:
+    PolicyNumber:
+      name: policyNumber
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 30
+    CorrelationIdHeader:
+      name: correlationId
+      in: header
+      required: false
+      schema:
+        type: string
+        maxLength: 100
+    AssociatedFirmId:
+      name: associatedFirmId
+      in: query
+      required: false
+      schema:
+        type: string
+        maxLength: 65
+
+  responses:
+    FundTransferSuccess:
+      description: Accepted — Fund Transfer request accepted for processing.
+      headers:
+        Location:
+          description: >
+            URI of the created fund transfer request resource.
+          schema:
+            type: string
+            format: uri
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FundTransferResponse'
+
+    BadRequestError:
+      description: Bad Request — the request payload is malformed or fails schema validation.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnauthorizedError:
+      description: Unauthorized — authentication credentials are missing or invalid.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ForbiddenError:
+      description: Forbidden — the caller is not permitted to perform this action.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFoundError:
+      description: Not Found — the referenced policy or fund transfer request does not exist.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    MethodNotAllowedError:
+      description: Method Not Allowed — the HTTP method is not supported on this resource.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotAcceptableError:
+      description: Not Acceptable — the requested media type is not supported.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ConflictError:
+      description: |
+        A transaction for this policy is already in progress or an equivalent request has already been accepted.
+        Re-submitting the same transaction while it is in-flight will be rejected to prevent duplicate processing.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    PayloadTooLargeError:
+      description: Payload Too Large — the request body exceeds the maximum allowed size.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnsupportedMediaTypeError:
+      description: Unsupported Media Type — the request Content-Type is not supported.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnprocessableEntityError:
+      description: >
+        Unprocessable Entity — the request is well-formed but fails business
+        rule validation (e.g., invalid combinations of amount type and
+        segment amounts).
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TooManyRequestsError:
+      description: >
+        Too Many Requests — the caller has exceeded the permitted rate limit.
+        Clients should honor any Retry-After header returned.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description: Internal Server Error — an unexpected condition prevented the request from completing.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadGatewayError:
+      description: Bad Gateway — an upstream system returned an invalid response.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ServiceUnavailableError:
+      description: Service Unavailable — the service is temporarily unable to handle the request.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GatewayTimeoutError:
+      description: Gateway Timeout — an upstream system did not respond in time.
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    FundTransferRequest:
+      type: object
+      description: >
+        Represents a request to transfer value between funds or fund segments
+        on a policy. Fund transfers are processed asynchronously and may be
+        amount-based, percentage-based, or full rebalances depending on the
+        transaction type.
+      required:
+        - effectiveDate
+        - transactionAmounts
+        - funds
+      properties:
+        effectiveDate:
+          type: string
+          format: date
+          description: Date on which the fund transfer should take effect.
+        allocationOption:
+          type: string
+          description: >
+            Indicates the allocation method to be applied to the transfer,
+            such as pro-rata across funds, dollar-based, or a specified set
+            of funds or segments.
+          enum:
+            - PRO_RATA
+            - DOLLAR
+            - SPECIFY_PERCENTAGE
+            - SPECIFIED_FUNDS
+            - SPECIFIED_SEGMENTS
+            - DEFAULT
+            - PECKING_ORDER
+            - EARNINGS_ONLY
+        cusip:
+          type: string
+          minLength: 9
+          maxLength: 9
+          pattern: '^[0-9]{3}[A-Z0-9]{5}[0-9]$'
+          description: >
+            CUSIP — unique identification code for the security. Optional.
+        nsccParticipantId:
+          type: string
+          maxLength: 100
+          description: NSCC participant identifier for the submitting firm.
+        transactionAmounts:
+          $ref: '#/components/schemas/TransactionAmounts'
+        funds:
+          $ref: '#/components/schemas/FundTransferFunds'
+          description: >
+            Source and destination funds for the transfer. Required for all transfer types.
+            For FULL_REBALANCE transfers, destination segments must specify requestedPercentage: 100
+            and source segments must not specify amounts or percentages.
+        arrangement:
+          $ref: '#/components/schemas/Arrangement'
+        auditTransSummation:
+          $ref: '#/components/schemas/AuditTransSummation'
+        producer:
+          $ref: '#/components/schemas/Producer'
+        parties:
+          type: array
+          description: Parties associated with the policy involved in this transfer.
+          items:
+            $ref: '#/components/schemas/Party'
+        investProduct:
+          $ref: '#/components/schemas/InvestProduct'
+      allOf:
+        - if:
+            properties:
+              transactionAmounts:
+                properties:
+                  amountType:
+                    const: FULL_REBALANCE
+                required:
+                  - amountType
+            required:
+              - transactionAmounts
+          then:
+            properties:
+              funds:
+                properties:
+                  transferFromFunds:
+                    items:
+                      properties:
+                        fundSegments:
+                          items:
+                            not:
+                              anyOf:
+                                - required: [requestedAmount]
+                                - required: [requestedPercentage]
+                  transferToFunds:
+                    items:
+                      properties:
+                        fundSegments:
+                          items:
+                            required: [requestedPercentage]
+                            properties:
+                              requestedPercentage:
+                                const: 100
+
+    TransactionAmounts:
+      type: object
+      description: >
+        Specifies how the value of the fund transfer is calculated. This section
+        indicates whether the transfer is based on a fixed dollar amount,
+        a percentage of contract value, or a full rebalance. The selected method
+        applies consistently to both the source and destination sides of the transfer.
+      required:
+        - amountType
+      properties:
+        amountType:
+          type: string
+          description: >
+            Indicates the method used to calculate the transfer value, such as
+            a specified dollar amount, a percentage of contract value, or a full
+            rebalance. This value drives how amounts are specified throughout
+            the transaction.
+          enum:
+            - FULL_REBALANCE
+            - FUND_BALANCE_TRANSFER
+            - PERCENT_OF_CONTRACT_VALUE
+            - SPECIFIED_AMOUNT
+        requestedAmount:
+          type: number
+          description: >
+            The dollar amount to be transferred when the transaction is
+            amount-based. Required when amountType is SPECIFIED_AMOUNT
+            and must not be provided for other amount types.
+          minimum: 0
+        requestedPercentage:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: >
+            The percentage of the contract value to be transferred when the
+            transaction is percentage-based. Required when amountType is
+            PERCENT_OF_CONTRACT_VALUE and must not be provided for other amount types.
+      allOf:
+        - if:
+            properties:
+              amountType:
+                const: SPECIFIED_AMOUNT
+            required:
+              - amountType
+          then:
+            required:
+              - requestedAmount
+            not:
+              required:
+                - requestedPercentage
+        - if:
+            properties:
+              amountType:
+                const: PERCENT_OF_CONTRACT_VALUE
+            required:
+              - amountType
+          then:
+            required:
+              - requestedPercentage
+            not:
+              required:
+                - requestedAmount
+
+    FundTransferFunds:
+      type: object
+      description: >
+        Defines the source and destination funds involved in the transfer.
+        This section identifies where value is removed from and where it is
+        added as part of the fund transfer.
+      required:
+        - transferFromFunds
+        - transferToFunds
+      properties:
+        transferFromFunds:
+          type: array
+          description: >
+            Lists the funds or fund segments from which value will be moved
+            as part of the transfer.
+          items:
+            $ref: '#/components/schemas/FundTransferItem'
+        transferToFunds:
+          type: array
+          description: >
+            Lists the funds or fund segments to which value will be allocated
+            as part of the transfer.
+          items:
+            $ref: '#/components/schemas/FundTransferItem'
+
+    FundTransferItem:
+      type: object
+      description: >
+        Represents an individual fund participating in the transfer, including
+        optional segment-level breakdowns.
+      properties:
+        fundId:
+          type: string
+          description: Identifies the specific fund involved in the transfer.
+          maxLength: 100
+        assetClass:
+          type: string
+          description: >
+            Indicates the asset class of the fund, such as fixed income,
+            or model-based investments.
+          enum: [FIXED, VARIABLE, INDEXED, MODEL, CASH, OTHER]
+        investmentType:
+          type: string
+          description: >
+            Identifies the type of investment, such as a variable
+            annuity fund or model portfolio.
+          enum:
+            - VARIABLE_LIFE_FUND
+            - VARIABLE_ANNUITY_FUND
+            - MODEL
+            - CATEGORY
+            - ALLOCATION_RULE
+        currentRate:
+          type: number
+          minimum: 0
+          description: Current interest or crediting rate for the fund, if applicable.
+        maturityDate:
+          type: string
+          format: date
+          description: Maturity date of the fund, if applicable.
+        fundSegments:
+          type: array
+          description: >
+            Optional breakdown of a fund into individual segments, allowing
+            transfers to be applied at a more granular level.
+          items:
+            $ref: '#/components/schemas/FundSegment'
+
+    FundSegment:
+      type: object
+      description: >
+        When transferring value between fund segments, all segments must use
+        the same method for specifying values. If amounts are used,
+        both the transfer-from and transfer-to segments must specify amounts.
+        If percentages are used, both sides must specify percentages.
+        Mixing amounts and percentages in the same transfer is not allowed.
+
+        For FULL_REBALANCE transfers, source segments must not specify amounts
+        or percentages, while destination segments must specify requestedPercentage: 100.
+      required:
+        - segmentId
+      properties:
+        segmentId:
+          type: string
+          maxLength: 100
+          description: Identifier of the fund segment participating in the transfer.
+        requestedAmount:
+          type: number
+          minimum: 0
+          maximum: 9999999999.99
+          description: >
+            Dollar amount to transfer from this segment. Use this field for
+            amount-based transfers. Mutually exclusive with requestedPercentage.
+            Not allowed for FULL_REBALANCE transfers.
+        requestedPercentage:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: >
+            Percentage of segment value to transfer. Use this field for
+            percentage-based transfers. Mutually exclusive with requestedAmount.
+            Required for destination segments in FULL_REBALANCE transfers (must be 100).
+      oneOf:
+        # Case 1: FULL_REBALANCE source segment → neither amount nor percentage allowed
+        - not:
+            anyOf:
+              - required: [requestedAmount]
+              - required: [requestedPercentage]
+        # Case 2: AMOUNT-based transfer
+        - required: [requestedAmount]
+          not:
+            required: [requestedPercentage]
+        # Case 3: PERCENTAGE-based transfer
+        - required: [requestedPercentage]
+          not:
+            required: [requestedAmount]
+
+    Arrangement:
+      type: object
+      description: >
+        Provides details of a standing or recurring fund transfer arrangement
+        when the transfer is part of a systematic or scheduled program rather
+        than a one-time transaction.
+      required:
+        - productCode
+        - arrangementType
+      properties:
+        productCode:
+          type: string
+          maxLength: 100
+          description: Product code identifying the underlying product for this arrangement.
+        arrangementType:
+          type: string
+          description: >
+            Type of arrangement, such as a systematic transfer or periodic rebalance.
+          enum:
+            - SYSTEMATIC_TRANSFER
+            - PERIODIC_REBALANCE
+        arrangementSubType:
+          type: string
+          description: >
+            Frequency or subtype of the arrangement, such as MONTHLY, QUARTERLY,
+            SEMI_ANNUAL, or ANNUAL.
+          enum:
+            - MONTHLY
+            - QUARTERLY
+            - SEMI_ANNUAL
+            - ANNUAL
+        startDate:
+          type: string
+          format: date
+          description: Date the arrangement begins.
+        endDate:
+          type: string
+          format: date
+          description: Date the arrangement ends, if applicable.
+        modalAmount:
+          type: number
+          minimum: 0
+          description: Amount applied per occurrence of the arrangement.
+        sourceTransferAmountType:
+          $ref: '#/components/schemas/TransferAmountType'
+        destinationTransferAmountType:
+          $ref: '#/components/schemas/TransferAmountType'
+        arrangementSource:
+          $ref: '#/components/schemas/ArrangementEndpoint'
+        arrangementDestination:
+          $ref: '#/components/schemas/ArrangementEndpoint'
+
+    TransferAmountType:
+      type: string
+      description: >
+        Method used to specify the value at an arrangement endpoint — either
+        a fixed amount, a percentage, or a pro-rata allocation across a defined
+        set of funds.
+      enum:
+        - AMOUNT
+        - PERCENT
+        - PRO_RATA_SELECTED_FUNDS
+        - PRO_RATA_VARIABLE_FUNDS
+        - PRO_RATA_ALL_FUNDS
+
+    ArrangementEndpoint:
+      type: object
+      description: >
+        Identifies the source or destination endpoint of a fund transfer
+        arrangement when the transfer is part of a systematic or recurring
+        program rather than a one-time transaction.
+      required:
+        - subAccountId
+      properties:
+        subAccountId:
+          type: string
+          maxLength: 100
+          description: Identifier of the sub-account associated with this arrangement endpoint.
+        transferAmount:
+          type: number
+          minimum: 0
+          description: >
+            Fixed dollar amount for this arrangement endpoint. Use this field
+            when the arrangement uses amount-based transfers. Mutually exclusive
+            with transferPercentage.
+        transferPercentage:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: >
+            Percentage allocation for this arrangement endpoint. Use this field
+            when the arrangement uses percentage-based transfers. Mutually exclusive
+            with transferAmount.
+      oneOf:
+        - required: [transferAmount]
+          not:
+            required: [transferPercentage]
+        - required: [transferPercentage]
+          not:
+            required: [transferAmount]
+
+    InvestProduct:
+      type: object
+      description: >
+        Optional investment product metadata associated with the fund transfer,
+        such as rate-lock information captured at the time of the request.
+      properties:
+        rateLockInfo:
+          type: string
+          maxLength: 100
+          description: Identifier or descriptor of the rate-lock applied to the transfer.
+        isLockedIn:
+          type: boolean
+          description: Indicates whether the associated rate is locked in.
+
+    AuditTransSummation:
+      type: object
+      description: >
+        Provides audit and reconciliation information for the fund transfer
+        transaction. This data is used to validate that the expected number
+        or total of transactional elements has been processed correctly.
+      properties:
+        auditTotalType:
+          type: string
+          description: The type of audit total being reported.
+          enum: [COUNT, SUM, MEAN]
+        auditTotal:
+          type: number
+          minimum: 0
+          description: Numeric value of the audit total corresponding to auditTotalType.
+        correlationGuid:
+          type: string
+          format: uuid
+          pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+          description: >
+            GUID used for reconciliation of this transaction within the
+            submitting firm's audit pipeline. Distinct from the transport-level
+            correlationId header.
+        correlationIdState:
+          type: string
+          description: Lifecycle state of the correlation identifier for this submission.
+          enum: [INITIAL_USAGE, ONGOING_USAGE, FINAL_USAGE]
+
+    FundTransferResponse:
+      type: object
+      description: >
+        Response returned when a fund transfer request is accepted for
+        asynchronous processing. This response confirms receipt of the request
+        but does not indicate final completion.
+      required:
+        - requestId
+        - status
+      properties:
+        requestId:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Server-assigned identifier for the fund transfer request.
+        status:
+          type: string
+          description: Initial disposition of the fund transfer request.
+          enum: [ACCEPTED, REJECTED]
+        effectiveDate:
+          type: string
+          format: date
+          description: Echoed effective date from the accepted request.
+        message:
+          type: string
+          maxLength: 500
+          description: >
+            Optional informational or error message explaining the
+            initial processing result.
+
+    GetFundTransferRequestStatus:
+      type: object
+      description: >
+        Represents the current processing status of a fund transfer request
+        that was submitted asynchronously. This resource is used for polling
+        and reconciliation when immediate confirmation is not available.
+      required:
+        - requestId
+        - status
+      properties:
+        requestId:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Server-assigned identifier for the fund transfer request.
+        status:
+          type: string
+          description: Current processing status of the fund transfer.
+          enum:
+            - IN_PROGRESS
+            - SUCCESS
+            - REJECTED
+        effectiveDate:
+          type: string
+          format: date
+          description: Effective date of the completed transfer, if applicable.
+        message:
+          type: string
+          maxLength: 500
+          description: >
+            Optional informational or error message explaining the
+            processing result.
+
+    Producer:
+      type: object
+      description: >
+        Identifies the advisor or producer associated with the fund transfer.
+        Producer information is used for audit, regulatory, and reporting purposes.
+      properties:
+        producerNumber:
+          type: string
+          maxLength: 100
+          description: Carrier-assigned unique identifier for the producer.
+        npn:
+          type: string
+          maxLength: 100
+          description: National Producer Number.
+        crdNumber:
+          type: string
+          maxLength: 100
+          description: Central Registration Depository number.
+
+    Party:
+      type: object
+      description: >
+        Represents a party associated with the policy involved in the fund
+        transfer. Parties may include owners, joint owners, beneficiaries,
+        or other related entities. A party is either an individual or an entity —
+        the `type` field discriminates between the two shapes.
+      required:
+        - type
+        - paymentForm
+        - allocationPercentage
+      properties:
+        type:
+          type: string
+          description: Discriminator identifying whether the party is an individual or an entity.
+          enum: [individual, entity]
+        paymentForm:
+          type: string
+          description: Payment form associated with the party for distributions.
+          enum: [DTCC, ACH, CHECK, WIRE, EXCHANGE]
+        allocationPercentage:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Allocation percentage assigned to this party.
+      oneOf:
+        - $ref: '#/components/schemas/IndividualParty'
+        - $ref: '#/components/schemas/EntityParty'
+      discriminator:
+        propertyName: type
+        mapping:
+          individual: '#/components/schemas/IndividualParty'
+          entity: '#/components/schemas/EntityParty'
+
+    IndividualParty:
+      description: Schema for individual party data.
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/IndividualIdentity'
+        - $ref: '#/components/schemas/PartyRelationship'
+
+    EntityParty:
+      description: Schema for entity party data.
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/EntityIdentity'
+        - $ref: '#/components/schemas/PartyRelationship'
+
+    IndividualIdentity:
+      description: Schema for individual identity data.
+      type: object
+      required: [type, firstName, lastName, taxId]
+      properties:
+        type:
+          type: string
+          const: individual
+          description: Discriminator value indicating an individual party.
+        firstName:
+          type: string
+          minLength: 1
+          maxLength: 105
+          pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
+        middleName:
+          type: string
+          minLength: 1
+          maxLength: 105
+          pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
+        lastName:
+          type: string
+          minLength: 1
+          maxLength: 105
+          pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
+        taxId:
+          type: string
+          maxLength: 9
+          description: Tax identifier (SSN or equivalent) for the individual.
+
+    PartyRelationship:
+      description: Schema for party relationship data.
+      type: object
+      required: [relationships]
+      properties:
+        relationships:
+          type: array
+          minItems: 1
+          maxItems: 2
+          description: Roles the party plays in relation to the policy.
+          items:
+            type: string
+            enum:
+              - owner
+              - jointOwner
+              - annuitant
+              - jointAnnuitant
+              - primaryBeneficiary
+              - contingentBeneficiary
+
+    EntityIdentity:
+      description: Schema for entity identity data.
+      type: object
+      required: [type, name, taxId]
+      properties:
+        type:
+          type: string
+          const: entity
+          description: Discriminator value indicating an entity party.
+        name:
+          type: string
+          minLength: 1
+          maxLength: 180
+          pattern: '^[\w=()*@#\s.,''\/~%$!;:&"®`\\?\-]{1,180}$'
+          description: Legal name of the entity.
+        taxId:
+          type: string
+          maxLength: 9
+          description: Tax identifier (EIN or equivalent) for the entity.
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        httpStatus:
+          type: integer
+          description: HTTP status code associated with this error.
+          minimum: 400
+          maximum: 599
+        code:
+          type: string
+          description: >
+            A structured error code that uniquely identifies the type of error.
+            Codes may follow a hierarchical format combining domain, category,
+            and subcategory (for example, "gateway.client.badrequest" or
+            "gateway.server.timeout").
+        timestamp:
+          type: string
+          format: date-time
+          description: Time when the error occurred.
+        message:
+          type: string
+          description: Message with specific error details.
+        validationErrors:
+          type: array
+          description: >
+            Logical rule violations or decision failures related to business
+            logic or business rules.
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                description: >
+                  Code classifying the error and identifying the type of
+                  business rule or decision failure.
+              message:
+                type: string
+                description: >
+                  Explanation of why the error occurred, including the
+                  specific business rule violated.

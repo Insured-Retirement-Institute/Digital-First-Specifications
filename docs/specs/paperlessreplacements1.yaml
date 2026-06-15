@@ -1,0 +1,773 @@
+openapi: 3.1.0
+info:
+  title: Paperless Replacements (RPL) API
+  version: 1.0.0
+servers:
+  - url: https://demo.api.dtcc.com/policy/v1
+  - url: https://iiex.apipse.dtcc.com/policy/v1
+  - url: https://iiex.apipse.dtcc.net/policy/v1
+  - url: https://iiex.api.dtcc.com/policy/v1
+  - url: https://iiex.api.dtcc.net/policy/v1
+security:
+  - basicAuth: []
+tags:
+  - name: Paperless Replacement
+paths:
+  /paperlessReplacement:
+    post:
+      tags:
+        - Paperless Replacement
+      summary: An API for Paperless Replacement
+      requestBody:
+        description: Request body to get Paperless Replacement information
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/replacements'
+            example:
+              messageInformation:
+                businessPurposeTypeCode: '288'
+                effectiveDate: '2024-03-11'
+                sender: '00005119'
+                receiver: '00005119'
+                trackingNumber: DTCC-RPL-GUID20240725-2024-07-29-156
+              insurerList:
+                - fullName: Jon Volpe
+                  roleCode: sender
+                  policy:
+                    policyNumber: '797897987'
+                    product:
+                      qualifiedPlanTypeCode: '3045'
+                      typeCode: '1'
+                - fullName: Jon Volpe
+                  roleCode: receiver
+                  policy:
+                    policyNumber: '797897987'
+                    product:
+                      qualifiedPlanTypeCode: '3045'
+                      typeCode: '1'
+                    partyList:
+                      - legalEntityTypeCode: Individual
+                        givenName: Jon
+                        surname: Volpe
+                        otherGivenName: test
+                        roleCode: HA
+                        partyIdentity:
+                          typeId: '3217'
+                          typeCode: '34'
+                      - legalEntityTypeCode: Individual
+                        givenName: Jon
+                        surname: Volpe
+                        roleCode: G2
+                        partyIdentity:
+                          typeId: '3217'
+                          typeCode: '34'
+              arrangement:
+                modalAmount: 50.25
+                modalPercentage: 1.4852
+                typeCode: 4I
+                subTypeCode: '6'
+                surrenderDateBasisCode: SD
+                startDate: '2025-03-11'
+              signatureInfo:
+                - roleCode: '07'
+                  jobTitle: '21'
+                  signedDate: '2024-03-11'
+                  fullName: Jon Volpe
+                  tpaSignedDate: '2024-04-15'
+                - roleCode: '09'
+                  jobTitle: '21'
+                  signedDate: '2024-03-11'
+                  fullName: Jon Volpe
+                  tpaSignedDate: '2024-04-15'
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/replacementsResponse'
+              example:
+                messageInformation:
+                  businessPurposeTypeCode: '288'
+                  effectiveDate: '2024-03-11'
+                  sender: '00000122'
+                  receiver: '00005119'
+                  trackingNumber: DTCC-TEST-GUID20240311001
+                messageStatus:
+                  statusCode: '200'
+        '400':
+          description: BadRequest
+          $ref: '#/components/responses/ErrorBadRequest'
+        '401':
+          description: Unauthorized
+          $ref: '#/components/responses/ErrorUnauthorized'
+        '403':
+          description: Forbidden
+          $ref: '#/components/responses/ErrorForbidden'
+        '404':
+          description: NotFound
+          $ref: '#/components/responses/ErrorNotFound'
+        '405':
+          description: MethodNotAllowed
+          $ref: '#/components/responses/ErrorMethodNotAllowed'
+        '406':
+          description: MethodNotAcceptable
+          $ref: '#/components/responses/ErrorMethodNotAcceptable'
+        '413':
+          description: PayloadTooLarge
+          $ref: '#/components/responses/ErrorPayloadTooLarge'
+        '415':
+          description: UnsupportedMediaType
+          $ref: '#/components/responses/ErrorUnsupportedMediaType'
+        '429':
+          description: TooManyRequests
+          $ref: '#/components/responses/ErrorTooManyRequests'
+        '500':
+          description: InternalServerError
+          $ref: '#/components/responses/ErrorInternalServerError'
+        '503':
+          description: ServiceUnavailable
+          $ref: '#/components/responses/ErrorServiceUnavailable'
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+        description:
+          type: string
+          examples:
+            - Invalid Request
+    replacements:
+      type: object
+      properties:
+        messageInformation:
+          $ref: '#/components/schemas/messageInformation'
+        arrangement:
+          description: Collection of arrangements for this holding.
+          $ref: '#/components/schemas/arrangement'
+        insurerList:
+          type: array
+          description: This object identifies information about the agency or the individual within the agency that is producing this business (policy).
+          items:
+            $ref: '#/components/schemas/insurer'
+          minItems: 2
+          maxItems: 2
+        signatureInfo:
+          type: array
+          description: This object holds the properties of Digital Signatures.
+          items:
+            $ref: '#/components/schemas/signatureInfo'
+          minItems: 1
+          maxItems: 20
+      required:
+        - messageInformation
+        - arrangement
+        - insurerList
+        - signatureInfo
+      propertyNames:
+        enum:
+          - messageInformation
+          - arrangement
+          - insurerList
+          - signatureInfo
+    messageInformation:
+      type: object
+      description: The Message Information Resource is designed to provide all the information about a message.
+      properties:
+        businessPurposeTypeCode:
+          type: string
+          enum:
+            - '288'
+          description: A code indicating the business event being submitted in this message.
+        effectiveDate:
+          format: date
+          type: string
+          description: The date on which this transaction takes effect.
+        sender:
+          type: string
+          description: this is to identify the sender of this particular transaction.
+          minLength: 8
+          maxLength: 8
+          pattern: (^[0-9]{8}$)(?<!^0+$)
+        receiver:
+          type: string
+          description: this is to identify the receiver of this particular transaction.
+          minLength: 8
+          maxLength: 8
+          pattern: (^[0-9]{8}$)(?<!^0+$)
+        trackingNumber:
+          type: string
+          description: This is an alphanumeric value used to identify a specific transaction.
+          minLength: 1
+          maxLength: 65
+      additionalProperties: false
+      required:
+        - businessPurposeTypeCode
+        - effectiveDate
+        - sender
+        - receiver
+        - trackingNumber
+    arrangement:
+      type: object
+      description: This object identifies information about the agency or the individual within the agency that is producing this business (policy).
+      properties:
+        modalAmount:
+          type: number
+          format: double
+          description: Modal premium, means the premium paid on a contract based on a premium term that could be annual, semi-annual, quarterly, monthly, or weekly.
+        modalPercentage:
+          type: number
+          description: Modal premium, means the premium paid on a contract based on a premium term that could be annual, semi-annual, quarterly, monthly, or weekly
+        subTypeCode:
+          type: string
+          description: Sub-types of arrangements.
+          enum:
+            - '4'
+            - '5'
+            - '6'
+            - '7'
+            - '8'
+            - '9'
+            - '10'
+            - '11'
+            - '12'
+            - '55'
+            - '56'
+            - '57'
+        typeCode:
+          type: string
+          description: Types of arrangements.
+          enum:
+            - 4I
+            - Q2
+            - Q3
+            - Q4
+            - QS
+        startDate:
+          type: string
+          format: date
+          description: Start date of current activity.
+        surrenderDateBasisCode:
+          type: string
+          description: This will represent Surrender Date instruction.
+          enum:
+            - UR
+            - SD
+      additionalProperties: false
+      required:
+        - modalAmount
+        - typeCode
+      allOf:
+        - if:
+            properties:
+              typeCode:
+                enum:
+                  - Q3
+            required:
+              - typeCode
+          then:
+            required:
+              - subTypeCode
+        - if:
+            properties:
+              typeCode:
+                enum:
+                  - Q2
+            required:
+              - typeCode
+          then:
+            not:
+              required:
+                - subTypeCode
+    insurer:
+      type: object
+      description: This object identifies information about the agency or the individual within the agency that is producing this business (policy).
+      properties:
+        roleCode:
+          type: string
+          description: This is an enumeration for potential answers to above question. Could be Yes/No or more extensive list depending on question.
+          enum:
+            - sender
+            - receiver
+        policy:
+          description: This object defines the details of a policy.
+          $ref: '#/components/schemas/policy'
+          required:
+            - policyNumber
+            - product
+      required:
+        - roleCode
+        - policy
+      allOf:
+        - $ref: '#/components/schemas/nameBase'
+      propertyNames:
+        enum:
+          - fullName
+          - roleCode
+          - policy
+    policy:
+      type: object
+      description: This object defines the details of a policy.
+      properties:
+        policyNumber:
+          type: string
+          description: The unique number assigned to the policy, or submission, being referenced.
+          minLength: 1
+          maxLength: 30
+          pattern: (^[0-9A-Za-z*@#\s.,'_/~%$!();:&amp;&quot;+&#x00ae;`\-\\?"=]{1,30}$)
+        product:
+          description: This object will contain all policy product details.
+          $ref: '#/components/schemas/product'
+          required:
+            - qualifiedPlanTypeCode
+            - typeCode
+        partyList:
+          type: array
+          description: This is the high level party object that other party/roles will inherit.
+          items:
+            allOf:
+              - $ref: '#/components/schemas/party'
+                if:
+                  properties:
+                    roleCode:
+                      not:
+                        enum:
+                          - PS
+                          - CE
+                then:
+                  required:
+                    - partyIdentity
+          minItems: 2
+          maxItems: 20
+      propertyNames:
+        enum:
+          - policyNumber
+          - product
+          - partyList
+    nameBase:
+      type: object
+      description: This object will contain information regarding supplemental(other) names for a party
+      properties:
+        fullName:
+          type: string
+          description: This is the full name of the party
+          minLength: 1
+          maxLength: 180
+        givenName:
+          type: string
+          description: A portion of an individuals name, also known as First Name.
+          minLength: 1
+          maxLength: 105
+        otherGivenName:
+          type: string
+          description: This indicates a persons professional designation/title. For example, C.P.A., P.H.D. President, etc.
+          minLength: 1
+          maxLength: 105
+        surname:
+          type: string
+          description: A portion of an individuals name, also known as Last Name or Family Name.
+          minLength: 1
+          maxLength: 105
+    product:
+      type: object
+      description: This object will contain all policy product details.
+      properties:
+        qualifiedPlanTypeCode:
+          type: string
+          description: Describes the applicable provision of tax law or regulatory compliance.
+          enum:
+            - '41'
+            - '36'
+            - '56'
+            - '80'
+            - '1030'
+            - '1040'
+            - '1075'
+            - '1080'
+            - '1090'
+            - '1314'
+            - '1315'
+            - '1316'
+            - '2000'
+            - '2005'
+            - '2010'
+            - '2040'
+            - '2050'
+            - '2060'
+            - '2070'
+            - '2075'
+            - '2090'
+            - '3000'
+            - '3010'
+            - '3045'
+            - '3050'
+            - '3055'
+            - '3210'
+            - '3215'
+            - '3216'
+            - '3217'
+            - '3220'
+            - '3230'
+            - '3235'
+            - '3300'
+            - '3400'
+            - '4000'
+            - '4002'
+            - '4005'
+        typeCode:
+          type: string
+          description: This identifies the type of product being provided.
+          enum:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+            - '99'
+      propertyNames:
+        enum:
+          - qualifiedPlanTypeCode
+          - typeCode
+    party:
+      type: object
+      description: This is the high level party object that other party/roles will inherit.
+      allOf:
+        - $ref: '#/components/schemas/partyRole'
+          if:
+            properties:
+              roleCode:
+                not:
+                  enum:
+                    - PS
+                    - CE
+                    - '69'
+          then:
+            properties:
+              partyIdentity:
+                required:
+                  - typeCode
+                  - typeId
+        - $ref: '#/components/schemas/nameBase'
+          if:
+            properties:
+              legalEntityTypeCode:
+                enum:
+                  - Organization
+            required:
+              - legalEntityTypeCode
+          then:
+            required:
+              - fullName
+        - $ref: '#/components/schemas/nameBase'
+          if:
+            properties:
+              legalEntityTypeCode:
+                enum:
+                  - Individual
+            required:
+              - legalEntityTypeCode
+          then:
+            required:
+              - givenName
+              - surname
+      properties:
+        legalEntityTypeCode:
+          type: string
+          description: A code identifying the legal designation of this company, person, or organization.
+          x-codeList: legalEntityTypeCodeList
+          enum:
+            - Organization
+            - Individual
+        partyIdentity:
+          type: object
+          $ref: '#/components/schemas/partyIdentity'
+      required:
+        - roleCode
+        - legalEntityTypeCode
+      propertyNames:
+        enum:
+          - legalEntityTypeCode
+          - givenName
+          - surname
+          - otherGivenName
+          - fullName
+          - partyIdentity
+          - roleCode
+    partyIdentity:
+      type: object
+      description: This object identifies the party Identity like SSN/CRD/DTCC Member Code.
+      properties:
+        typeCode:
+          type: string
+          description: A code identifying individual type of  unique identification.For example, in the USA - SSN or FEIN.
+          enum:
+            - '34'
+            - A3
+            - FI
+        typeId:
+          type: string
+          description: This is the unique Identifier for the party.
+          minLength: 4
+          maxLength: 4
+    partyRole:
+      type: object
+      description: This is the high level party role object used when having a generic party type.
+      properties:
+        roleCode:
+          type: string
+          description: This represents the role being played by a role player.
+          enum:
+            - HA
+            - OK
+            - JV
+            - G2
+            - HC
+            - HD
+            - PS
+            - CE
+            - PA
+            - '69'
+    signatureInfo:
+      type: object
+      description: This object holds the properties of Digital Signatures.
+      allOf:
+        - $ref: '#/components/schemas/nameBase'
+      properties:
+        roleCode:
+          type: string
+          description: This holds the details about digital signatures.
+          enum:
+            - '07'
+            - '08'
+            - '09'
+            - '12'
+            - '14'
+            - '15'
+        signedDate:
+          type: string
+          format: date
+          description: Date of submission.
+        tpaSignedDate:
+          type: string
+          format: date
+          description: This identifies the date the jobTitle (person or entity name) signed this transfer request.
+        jobTitle:
+          type: string
+          description: This holds the details about job tiltle.
+          enum:
+            - '14'
+            - '21'
+            - '22'
+            - '23'
+      propertyNames:
+        enum:
+          - fullName
+          - signedDate
+          - tpaSignedDate
+          - jobTitle
+          - roleCode
+    replacementsResponse:
+      type: object
+      properties:
+        messageInformation:
+          $ref: '#/components/schemas/messageInformationForResponse'
+        messageStatus:
+          $ref: '#/components/schemas/messageStatus'
+      additionalProperties: true
+      required:
+        - messageInformation
+        - messageStatus
+    messageInformationForResponse:
+      type: object
+      description: The Message Information Resource is designed to provide all the information about a message.
+      properties:
+        businessPurposeTypeCode:
+          type: string
+          enum:
+            - '288'
+          description: A code indicating the business event being submitted in this message.
+        effectiveDate:
+          format: date
+          type: string
+          description: The date on which this transaction takes effect.
+        receiver:
+          type: string
+          description: this is to identify the receiver of this particular transaction.
+          minLength: 8
+          maxLength: 8
+          pattern: (^[0-9]{8}$)(?<!^0+$)
+        sender:
+          type: string
+          description: this is to identify the sender of this particular transaction.
+          minLength: 8
+          maxLength: 8
+          pattern: (^[0-9]{8}$)(?<!^0+$)
+        trackingNumber:
+          type: string
+          description: This is an alphanumeric value used to identify a specific transaction.
+          minLength: 1
+          maxLength: 65
+      additionalProperties: false
+      required:
+        - businessPurposeTypeCode
+        - effectiveDate
+        - sender
+        - receiver
+        - trackingNumber
+    messageStatus:
+      type: object
+      description: This object is used in a response message to provide the complete status from the result of processing the matching request
+      properties:
+        statusCode:
+          type: string
+          description: A code  for response messages indicating the status or result following receipt of the request message.
+          minLength: 3
+          maxLength: 4
+          enum:
+            - '200'
+      additionalProperties: false
+      required:
+        - statusCode
+  responses:
+    ErrorBadRequest:
+      description: The server cannot or will not process the request due to an apparent client error (e.g., malformed request syntax, size too large, invalid request message framing, or deceptive request routing)
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Error'
+    ErrorUnauthorized:
+      description: The client did not provide valid security credentials and thus wasn't authenticated
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Error'
+    ErrorForbidden:
+      description: The client was authenticated but is not authorized to perform the request
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Error'
+    ErrorPayloadTooLarge:
+      description: The given request is larger than allowed
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Error'
+    ErrorMethodNotAllowed:
+      description: A request method is not supported for the requested resource; for example, a GET request on a form that requires data to be presented via POST, or a PUT request on a read-only resource.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Error'
+    ErrorMethodNotAcceptable:
+      description: The requested resource is capable of generating only content not acceptable according to the Accept headers sent in the request.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Error'
+    ErrorUnsupportedMediaType:
+      description: The request entity has a media type which the server or resource does not support. For example, the client uploads an image as image/svg+xml, but the server requires that images use a different format.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Error'
+    ErrorTooManyRequests:
+      description: The user has sent too many requests in a given amount of time
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Error'
+    ErrorInternalServerError:
+      description: An unexpected condition was encountered; please contact DTCC client support
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Error'
+    ErrorServiceUnavailable:
+      description: The server cannot handle the request at the moment. Check the API Specification for scheduled API downtimes
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Error'
+    ErrorNotFound:
+      description: The specified object was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+x-apiproxyspec:
+  pattern: dtcc-standard-pattern
+  apiinfo:
+    name: api-proxy-spv3.0.1-iiex-policy
+    displayname: Insurance Information Exchange - Policy API
+    description: Insurance Information Exchange - Policy API
+    deployto: ALL
+  patterninfo:
+    patterntype: sp
+    content-type: application/json
+    2way-ssl: 'yes'
+    keepalive-timeout: '180000'
+    connection-timeout: '180000'
+    timeout-millis: '180000'
+  envinfo:
+    DEV:
+      basepath: /policy/v1
+      targetserver: iiex-policy
+      targetpath: /iiexapi/v1
+      kvm:
+        dtcc-user-configuration: '{"spikeArrest":"1000000pm","quota":1000000,"quotaInterval":1,"quotaTimeUnit":"minute","dtccHeaderCount":30,"dtccUriSize":"200KB","headerLength":255,"payloadSize":"2MB","crsRole":"N"}'
+        dtcc-user-sysid-productid: '{"sysId":"IEX","productId":"915"}'
+    QAF:
+      basepath: /policy/v1
+      targetserver: iiex-policy
+      targetpath: /iiexapi/v1
+      kvm:
+        dtcc-user-configuration: '{"spikeArrest":"1000000pm","quota":1000000,"quotaInterval":1,"quotaTimeUnit":"minute","dtccHeaderCount":30,"dtccUriSize":"200KB","headerLength":255,"payloadSize":"2MB","crsRole":"N"}'
+        dtcc-user-sysid-productid: '{"sysId":"IEX","productId":"915"}'
+    QAPP:
+      basepath: /policy/v1
+      targetserver: iiex-policy
+      targetpath: /iiexapi/v1
+      kvm:
+        dtcc-user-configuration: '{"spikeArrest":"1000000pm","quota":1000000,"quotaInterval":1,"quotaTimeUnit":"minute","dtccHeaderCount":30,"dtccUriSize":"200KB","headerLength":255,"payloadSize":"2MB","crsRole":"N"}'
+        dtcc-user-sysid-productid: '{"sysId":"IEX","productId":"915"}'
+    PSE:
+      basepath: /policy/v1
+      targetserver: iiex-policy
+      targetpath: /iiexapi/v1
+      kvm:
+        dtcc-user-configuration: '{"spikeArrest":"1000000pm","quota":1000000,"quotaInterval":1,"quotaTimeUnit":"minute","dtccHeaderCount":30,"dtccUriSize":"200KB","headerLength":255,"payloadSize":"2MB","crsRole":"N"}'
+        dtcc-user-sysid-productid: '{"sysId":"IEX","productId":"916"}'
+    PNRP:
+      basepath: /policy/v1
+      targetserver: iiex-policy
+      targetpath: /iiexapi/v1
+      kvm:
+        dtcc-user-configuration: '{"spikeArrest":"1000000pm","quota":1000000,"quotaInterval":1,"quotaTimeUnit":"minute","dtccHeaderCount":30,"dtccUriSize":"200KB","headerLength":255,"payloadSize":"2MB","crsRole":"N"}'
+        dtcc-user-sysid-productid: '{"sysId":"IEX","productId":"915"}'

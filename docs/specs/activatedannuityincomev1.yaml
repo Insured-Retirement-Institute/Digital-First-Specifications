@@ -171,7 +171,7 @@ components:
     ActivatedAnnuityIncomeResponse:
       description: Schema for annuity income activation data
       type: object
-      required: [policyNumber, isIncomeRiderActivated]
+      required: [policyNumber, isIncomeActivated]
       properties:
         policyNumber:
           $ref: '#/components/schemas/policyNumber'
