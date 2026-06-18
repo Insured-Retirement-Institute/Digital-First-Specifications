@@ -115,10 +115,8 @@ Individual firms decide the versions they will support. Firms can support multip
 
 ### API Versioning
 - API's will utilize the major version at the URL level, and the minor/patch versions should have a head for X-Api-Version.  For example, an API with a version of 1.2.1 would have the following:
-  - URL: https://example-api.com/v1/products.
-  - Header: X-Api-Version: 1.2.1
-
-Individual firms decide the versions they will support. Firms can support multiple versions if they choose.
+-- URL: https://example-api.com/v1/products.
+-- Header: X-Api-Version: 1.2.1
 
 **Note: The standard will be effective going forward to include the full version in the header.  All existing API's will be updated before 12/31/2026.**
 
