@@ -124,17 +124,29 @@ paths:
                         branchName: 'Downtown Branch'
                       address:
                         addressId: 'Addr_RMD'
+                          description: Address identifier
                         addressType: 'RESIDENCE'
+                          description: Type of address
                         addressLine1: '300 Elm St'
+                          description: First line of the address
                         addressLine2: 'Unit 5'
+                          description: Second line of the address
                         addressLine3: 'Bldg A'
+                          description: Third line of the address
                         addressLine4: 'String'
+                          description: Fourth line of the address
                         addressLine5: 'String'
+                          description: Fifth line of the address
                         city: 'Chicago'
+                          description: City name
                         state: 'IL'
+                          description: State code (2-digit ISO)
                         zipCode: '60601'
+                          description: Zip code
                         zipCodeExtension: '1234'
+                          description: Zip code extension
                         country: 'US'
+                          description: Country code (2-digit ISO)
                   taxWithholdingInstructions:
                     - party:
                         taxId: '123456789'
