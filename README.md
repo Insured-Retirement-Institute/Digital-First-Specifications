@@ -114,11 +114,8 @@ All Digital-First specifications follow [Semantic Versioning (SemVer)](https://s
 Individual firms decide the versions they will support. Firms can support multiple versions if they choose.
 
 ### API Versioning
-- API's will utilize the major version at the URL level, and the minor/patch versions should have a head for X-Api-Version.  For example, an API with a version of 1.2.1 would have the following:
--- URL: https://example-api.com/v1/products.
--- Header: X-Api-Version: 1.2.1
 
-**Note: The standard will be effective going forward to include the full version in the header.  All existing API's will be updated before 12/31/2026.**
+- APIs will utilize versioning at the URL level. In this method, the API endpoint URL includes the major version number. For example, users wanting to retrieve all products from a database would send a request to https://example-api.com/v1/products. The specific version of an API can be specified as an optional header as outlined above.
 
 ### Messaging Versioning
 
