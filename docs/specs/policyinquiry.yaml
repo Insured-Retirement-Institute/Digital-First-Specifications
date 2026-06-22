@@ -2,10 +2,10 @@ openapi: 3.1.0
 info:
   title: Policy Inquiry
   version: 1.0.0
-  description: 'Provides comprehensive servicing and inquiry capabilities. These endpoints
+  description: Provides comprehensive servicing and inquiry capabilities. These endpoints
     allow clients to retrieve detailed information about a policy, financial values,
     parties, transactions, dates, riders, funds, producers, systematic programs, payouts,
-    and underlying assets.'
+    and underlying assets.
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
@@ -1600,20 +1600,25 @@ components:
         effectiveDate:
           type: string
           format: date
+          description: 'format: date'
         cusip:
           type: string
           minLength: 9
           maxLength: 9
           pattern: ^[0-9]{3}[A-Z0-9]{5}[0-9]$
+          description: 'minLength: 9; maxLength: 9; pattern: ^[0-9]{3}[A-Z0-9]{5}[0-9]$'
         carrierId:
           type: string
           maxLength: 10
+          description: 'maxLength: 10'
         carrierName:
           type: string
           maxLength: 200
+          description: 'maxLength: 200'
         policyLastRefreshDateTime:
           type: string
           format: date-time
+          description: 'format: date-time'
         product:
           $ref: '#/components/schemas/Product'
         qualificationType:
@@ -1647,6 +1652,16 @@ components:
           - Roth 401K
           - Roth 403b
           - Roth 457
+          description: "enum: [\n  \"Non-Qualified\",\n  \"Solo 401k\",\n  \"401k\"\
+            ,\n  \"403b\",\n  \"457 Deferred Compensation\",\n  \"Inherited IRA\"\
+            ,\n  \"IRA Spousal\",\n  \"Educational IRA\",\n  \"IRA\",\n  \"IRA Rollover\"\
+            ,\n  \"IRA Transfer\",\n  \"Roth IRA\",\n  \"Roth IRA - Inherited\",\n\
+            \  \"SEP IRA\",\n  \"SIMPLE IRA\",\n  \"Pension Plan\",\n  \"Cash Balance\
+            \ Plan-Defined Contributions\",\n  \"Solo Defined Benefit\",\n  \"Cash\
+            \ Balance Plan-Defined Benefit\",\n  \"Profit Sharing Plan\",\n  \"Money\
+            \ Purchase Plan\",\n  \"SAREP\",\n  \"401g\",\n  \"HR10\",\n  \"Welfare\
+            \ Benefit Plan\",\n  \"Roth 401K\",\n  \"Roth 403b\",\n  \"Roth 457\"\n\
+            ]"
         policyStatus:
           type: string
           enum:
@@ -1655,6 +1670,7 @@ components:
           - LAPSED
           - SURRENDERED
           - TERMINATED
+          description: 'enum: [PENDINGISSUED, ACTIVE, LAPSED, SURRENDERED, TERMINATED]'
         hasRestriction:
           type: boolean
         restrictions:
@@ -1668,12 +1684,15 @@ components:
           - FULLUNDERWRITING
           - SIMPLIFIED
           - GUARANTEED
+          description: 'enum: [FULLUNDERWRITING, SIMPLIFIED, GUARANTEED]'
         issueState:
           type: string
           pattern: ^[A-Z]{2}$
+          description: 'pattern: ^[A-Z]{2}$'
         currency:
           type: string
           pattern: ^[A-Z]{3}$
+          description: 'pattern: ^[A-Z]{3}$'
       allOf:
       - if:
           properties:
@@ -1783,6 +1802,7 @@ components:
         planCode:
           type: string
           pattern: ^[A-Za-z0-9]{1,50}$
+          description: 'pattern: ^[A-Za-z0-9._-]{1,50}$'
     Error:
       type: object
       properties:
@@ -1793,6 +1813,7 @@ components:
         timestamp:
           type: string
           format: date-time
+          description: 'format: date-time'
         message:
           type: string
           description: Message with specific error details.
@@ -1827,6 +1848,7 @@ components:
         valuesAsOfDate:
           type: string
           format: date
+          description: 'format: date'
         accountDesignation:
           type: string
           enum:
@@ -1835,12 +1857,15 @@ components:
           - TRUST
           - CUSTODIAL
           - OTHER
+          description: 'enum: [ INDIVIDUAL, JOINT, TRUST, CUSTODIAL, OTHER ]'
         jurisdiction:
           type: string
           pattern: ^[A-Z]{2}$
+          description: 'pattern: ^[A-Z]{2}$'
         sponsoringPlanSeparationDate:
           type: string
           format: date
+          description: 'format: date'
         payoutType:
           type: string
           enum:
@@ -1849,19 +1874,24 @@ components:
           - ANNUITIZED
           - ACCUMULATION
           - UNKNOWN
+          description: 'enum: [DEFERRED, IMMEDIATE, ANNUITIZED, ACCUMULATION, UNKNOWN]'
         totalDepositITD:
           type: number
           minimum: 0
           maximum: 9999999999.99
+          description: 'minimum: 0; maximum: 9999999999.99'
         surrenderChargeFreeDate:
           type: string
           format: date
+          description: 'format: date'
         digitalPaymentTypeCode:
           type: string
           pattern: ^[A-Za-z0-9._-]{1,100}$
+          description: 'pattern: ^[A-Za-z0-9._-]{1,100}$'
         digitalPaymentTypeDescription:
           type: string
           maxLength: 100
+          description: 'maxLength: 100'
         accountValues:
           type: object
           properties:
@@ -2052,12 +2082,15 @@ components:
         startIndex:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         itemsCount:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         totalItemsCount:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         funds:
           type: array
           items:
@@ -2077,33 +2110,42 @@ components:
                 - SWEEP
                 - LOAN
                 - OTHER
+                description: 'enum: [FIXED, INDEXED, VARIABLE, SWEEP, LOAN, OTHER]'
               fundId:
                 type: string
                 pattern: ^[A-Za-z0-9._-]{1,50}$
+                description: 'pattern: ^[A-Za-z0-9._-]{1,50}$'
               fundName:
                 type: string
                 maxLength: 200
+                description: 'maxLength: 200'
               fundPrice:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               fundValuationDate:
                 type: string
                 format: date
+                description: 'format: date'
               generalLedgerFundCode:
                 type: string
                 pattern: ^[A-Za-z0-9._-]{1,50}$
+                description: 'pattern: ^[A-Za-z0-9._-]{1,50}$'
               totalFundValue:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               interestGuaranteedPeriod:
                 type: integer
                 minimum: 0
+                description: 'minimum: 0'
               guaranteedMinimumInterestRate:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               assetClass:
                 type: string
                 enum:
@@ -2114,12 +2156,16 @@ components:
                 - CASH
                 - EQUITY
                 - OTHER
+                description: 'enum: [FIXED, VARIABLE, INDEXED, MODEL, CASH, EQUITY,
+                  OTHER]'
               productCode:
                 type: string
                 pattern: ^[A-Za-z0-9._-]{1,50}$
+                description: 'pattern: ^[A-Za-z0-9._-]{1,50}$'
               carrierCode:
                 type: string
                 pattern: ^[A-Za-z0-9._-]{1,50}$
+                description: 'pattern: ^[A-Za-z0-9._-]{1,50}$'
               investmentType:
                 type: string
                 enum:
@@ -2130,17 +2176,22 @@ components:
                 - SUBACCOUNT
                 - SEGMENT
                 - OTHER
+                description: 'enum: [FIXED, VARIABLE, INDEXED, MODEL, SUBACCOUNT,
+                  SEGMENT, OTHER]'
               openDate:
                 type: string
                 format: date
+                description: 'format: date'
               availableFundsAmount:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               capRate:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               isTransferSendAllowed:
                 type: boolean
               isWithdrawalsAllowed:
@@ -2149,19 +2200,23 @@ components:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               isTransferDestAllowed:
                 type: boolean
               guaranteedInterestRate:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               fundRestrictReason:
                 type: string
                 maxLength: 250
+                description: 'maxLength: 250'
               bonusRate:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               financialActivity:
                 type: string
                 enum:
@@ -2179,33 +2234,43 @@ components:
                 - DCA_OUT
                 - MVA_ADJUSTMENT
                 - OTHER
+                description: 'enum: [ PREMIUM_ALLOCATION, TRANSFER_IN, TRANSFER_OUT,
+                  INTEREST_CREDIT, DIVIDEND_CREDIT, FEE_DEBIT, CHARGE_DEBIT, UNIT_ADJUSTMENT,
+                  VALUE_ADJUSTMENT, REBALANCE, DCA_IN, DCA_OUT, MVA_ADJUSTMENT, OTHER]'
               isFinancialActivityReversed:
                 type: boolean
               appliesToCoverageId:
                 type: string
                 maxLength: 200
+                description: 'maxLength: 200'
               arrangementRefId:
                 type: string
                 maxLength: 200
+                description: 'maxLength: 200'
               financialActivityType:
                 type: string
                 enum:
                 - PERFORMANCE_LOCK
+                description: 'enum: [PERFORMANCE_LOCK]'
               financialActivityGrossAmount:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               financialEffectiveDate:
                 type: string
                 format: date
+                description: 'format: date'
               participationRate:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               participationDownsideRate:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               transferSendRestrictInfo:
                 type: object
                 description: Required when `isTransferSendAllowed` is false.
@@ -2227,12 +2292,15 @@ components:
                     - TERM_NOT_MET
                     - CARRIER_RESTRICTION
                     - OTHER
+                    description: 'maxLength: 250'
                   startDate:
                     type: string
                     format: date
+                    description: 'format: date'
                   endDate:
                     type: string
                     format: date
+                    description: 'format: date'
               transferDestRestrictInfo:
                 type: object
                 description: Required when `isTransferDestAllowed` is false.
@@ -2254,12 +2322,15 @@ components:
                     - PRODUCT_RULE_RESTRICTION
                     - CARRIER_RESTRICTION
                     - OTHER
+                    description: 'maxLength: 250'
                   startDate:
                     type: string
                     format: date
+                    description: 'format: date'
                   endDate:
                     type: string
                     format: date
+                    description: 'format: date'
               subAccountTerm:
                 type: string
                 pattern: ^\d+$
@@ -2269,26 +2340,32 @@ components:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               capThresholdRate:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               floorRate:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               mvaRate:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               marginRate:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               triggerRate:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               indexCreditingMethod:
                 type: string
                 enum:
@@ -2308,6 +2385,10 @@ components:
                 - DUAL_DIRECTIONAL
                 - UNCAPPED
                 - OTHER
+                description: 'enum: [ANNUAL_POINT_TO_POINT, MONTHLY_POINT_TO_POINT,
+                  DAILY_AVERAGE, MONTHLY_AVERAGE, TERM_END_POINT_TO_POINT, PERFORMANCE_TRIGGER,
+                  FIXED_RATE, DECLARED_RATE, SPREAD, PARTICIPATION_RATE, CAP_RATE,
+                  FLOOR_RATE, BUFFERED, DUAL_DIRECTIONAL, UNCAPPED, OTHER]'
               indexCreditingMode:
                 type: string
                 enum:
@@ -2318,9 +2399,12 @@ components:
                 - ANNUAL_RESET
                 - TERM_END
                 - OTHER
+                description: 'enum: [POINT_TO_POINT, MONTHLY_AVERAGE, MONTHLY_SUM,
+                  DAILY_AVERAGE, ANNUAL_RESET, TERM_END, OTHER]'
               indexType:
                 type: string
                 maxLength: 100
+                description: 'maxLength: 100'
               termPeriod:
                 type: string
                 pattern: ^\d+$
@@ -2330,21 +2414,26 @@ components:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               initialIndexBenchmarkValue:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               currentIndexBenchmarkValue:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               minimumCapRate:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               indexCreditingDate:
                 type: string
                 format: date
+                description: 'format: date'
               isLockFeatureEnabled:
                 type: boolean
               indexOptionPeriod:
@@ -2356,10 +2445,12 @@ components:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               thresholdPercent:
                 type: number
                 minimum: 0
                 maximum: 9999999999.99
+                description: 'minimum: 0; maximum: 9999999999.99'
               rateTier:
                 type: object
                 required:
@@ -2407,6 +2498,7 @@ components:
                       type: string
                       maxLength: 200
                       pattern: ^[A-Za-z0-9._-]{1,50}$
+                      description: 'pattern: ^[A-Za-z0-9._-]{1,50}$'
                     originalDepositAmount:
                       type: number
                       minimum: 0
@@ -2459,9 +2551,11 @@ components:
                     startDate:
                       type: string
                       format: date
+                      description: 'format: date'
                     endDate:
                       type: string
                       format: date
+                      description: 'format: date'
                     maxPrice:
                       type: number
                       minimum: 0
@@ -2535,12 +2629,15 @@ components:
         startIndex:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         itemsCount:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         totalItemsCount:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         parties:
           type: array
           items:
@@ -2568,6 +2665,7 @@ components:
             type: number
             minimum: 0
             maximum: 100
+            description: 'minimum: 0; maximum: 100'
           bank:
             $ref: '#/components/schemas/Bank'
           address:
@@ -2600,6 +2698,7 @@ components:
               - ACH
               - WIRE
               - DTCC
+              description: 'enum: [DTCC, ACH, CHECK, WIRE, EXCHANGE]'
           required:
           - paymentForm
         then:
@@ -2632,6 +2731,7 @@ components:
         commissionOption:
           type: string
           maxLength: 50
+          description: 'maxLength: 50'
         commission:
           $ref: '#/components/schemas/ProducerCommission'
         producerNumber:
@@ -2718,12 +2818,15 @@ components:
         startIndex:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         itemsCount:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         totalItemsCount:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
     SystematicProgram:
       type: object
       required:
@@ -2750,6 +2853,8 @@ components:
           - LOANREPAYMENT
           - REQUIREDMINIMUMDISTRIBUTION
           - PAYOUT
+          description: 'enum: [PAYMENT, WITHDRAWAL, LOANREPAYMENT, REQUIREDMINIMUMDISTRIBUTION,
+            PAYOUT]'
         allocationOptionType:
           type: string
           enum:
@@ -2761,6 +2866,8 @@ components:
           - DEFAULT
           - PECKINGORDER
           - EARNINGSONLY
+          description: 'enum: [PRORATA, DOLLAR, SPECIFYPERCENTAGE, SPECIFIEDFUNDS,
+            SPECIFIEDSEGMENTS, DEFAULT, PECKINGORDER, EARNINGSONLY]'
         paymentForm:
           type: string
           enum:
@@ -2782,21 +2889,28 @@ components:
           - QUARTERLY
           - ANNUAL
           - SINGLEPAYMENT
+          description: 'enum: [DAILY, EVERYTWOWEEKS, MONTHLY, SEMIANNUAL, QUARTERLY,
+            ANNUAL, SINGLEPAYMENT]'
         startDate:
           type: string
           format: date
+          description: 'format: date'
         endDate:
           type: string
           format: date
+          description: 'format: date'
         previousProgramDate:
           type: string
           format: date
+          description: 'format: date'
         optedNextProgramDate:
           type: string
           format: date
+          description: 'format: date'
         nextProgramDate:
           type: string
           format: date
+          description: 'format: date'
         amountType:
           type: string
           enum:
@@ -2807,6 +2921,8 @@ components:
           - WITHDRAWALUNTILBASIS
           - EARNINGSONLY
           - MODIFIEDEARNINGSONLY
+          description: 'enum: [AMOUNT, PERCENTAGE, MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS,
+            EARNINGSONLY, MODIFIEDEARNINGSONLY]'
         requestedAmount:
           type: number
           minimum: 0
@@ -2824,10 +2940,12 @@ components:
         externalArrangementId:
           type: string
           maxLength: 100
+          description: 'maxLength: 100'
         numOfModalOccurrences:
           type: integer
           minimum: 0
           maximum: 9999999999
+          description: 'minimum: 0;maximum: 9999999999.99'
         modalAmt:
           type: number
           minimum: 0
@@ -2847,6 +2965,8 @@ components:
           - SPECIFIED_FUNDS
           - ALL_FUNDS
           - OTHER
+          description: 'enum: [AMOUNT, PERCENTAGE, PRO_RATA, SPECIFIED_FUNDS, ALL_FUNDS,
+            OTHER]'
         destTransferAmtType:
           type: string
           enum:
@@ -2856,6 +2976,8 @@ components:
           - SPECIFIED_FUNDS
           - ALL_FUNDS
           - OTHER
+          description: 'enum: [AMOUNT, PERCENTAGE, PRO_RATA, SPECIFIED_FUNDS, ALL_FUNDS,
+            OTHER]'
         arrSource:
           type: string
           enum:
@@ -2880,6 +3002,7 @@ components:
         productCode:
           type: string
           pattern: ^[A-Za-z0-9._-]{1,50}$
+          description: 'pattern: ^[A-Za-z0-9._-]{1,50}$'
         parties:
           type: array
           items:
@@ -2921,11 +3044,14 @@ components:
                 - CHECK
                 - WIRE
                 - EXCHANGE
+                description: 'enum: [DTCC, ACH, CHECK, WIRE, EXCHANGE]'
       allOf:
       - if:
           properties:
             amountType:
               const: AMOUNT
+              description: 'enum: [AMOUNT, PERCENTAGE, MAX, FREEWITHDRAWALAMOUNT,
+                WITHDRAWALUNTILBASIS, EARNINGSONLY, MODIFIEDEARNINGSONLY]'
           required:
           - amountType
         then:
@@ -2938,6 +3064,8 @@ components:
           properties:
             amountType:
               const: PERCENTAGE
+              description: 'enum: [AMOUNT, PERCENTAGE, MAX, FREEWITHDRAWALAMOUNT,
+                WITHDRAWALUNTILBASIS, EARNINGSONLY, MODIFIEDEARNINGSONLY]'
           required:
           - amountType
         then:
@@ -2954,6 +3082,8 @@ components:
               - FREEWITHDRAWALAMOUNT
               - WITHDRAWALUNTILBASIS
               - EARNINGSONLY
+              description: 'enum: [AMOUNT, PERCENTAGE, MAX, FREEWITHDRAWALAMOUNT,
+                WITHDRAWALUNTILBASIS, EARNINGSONLY, MODIFIEDEARNINGSONLY]'
           required:
           - amountType
         then:
@@ -2979,6 +3109,7 @@ components:
         timestamp:
           type: string
           format: date-time
+          description: 'format: date-time'
         riderType:
           type: string
           enum:
@@ -2998,28 +3129,37 @@ components:
           - RIDER_INCREASE
           - OTHER
           - UNKNOWN
+          description: 'enum: [BASE, RIDER, INTEGRATED_RIDER, BENEFIT_RIDER, INCOME_RIDER,
+            DEATH_BENEFIT_RIDER, LTC_RIDER, GMWB_RIDER, GMDB_RIDER, GMAB_RIDER, CHARGE_RIDER,
+            DISCOUNT, BASE_INCREASE, RIDER_INCREASE, OTHER, UNKNOWN]'
         riderName:
           type: string
           maxLength: 200
+          description: 'maxLength: 200'
         isRiderElected:
           type: boolean
         riderCode:
           type: string
           pattern: ^[A-Za-z0-9._-]{1,50}$
+          description: 'pattern: ^[A-Za-z0-9._-]{1,50}$'
         underwritingStatus:
           type: string
           enum:
           - APPROVED
           - DECLINED
+          description: 'enum: [APPROVED, DECLINED]'
         effectiveDate:
           type: string
           format: date
+          description: 'format: date'
         exerciseDate:
           type: string
           format: date
+          description: 'format: date'
         terminationDate:
           type: string
           format: date
+          description: 'format: date'
         status:
           type: string
           enum:
@@ -3027,26 +3167,32 @@ components:
           - TERMINATED
           - PENDING
           - SUSPENDED
+          description: 'enum: [ACTIVE, TERMINATED, PENDING, SUSPENDED]'
         coverageId:
           type: string
           pattern: ^[A-Za-z0-9._-]{1,100}$
+          description: 'pattern: ^[A-Za-z0-9._-]{1,100}$'
         amount:
           type: number
           minimum: 0
           maximum: 9999999999.99
+          description: 'minimum: 0; maximum: 9999999999.99'
         annualBenefitAmount:
           type: number
           minimum: 0
           maximum: 9999999999.99
+          description: 'minimum: 0; maximum: 9999999999.99'
         riderBenefitAmount:
           type: number
           minimum: 0
           maximum: 9999999999.99
+          description: 'minimum: 0; maximum: 9999999999.99'
         riderBenefitPercent:
           type: number
           multipleOf: 0.01
           minimum: 0
           maximum: 100
+          description: 'multipleOf: 0.01, minimum: 0, maximum: 100'
         riderParticipants:
           type: array
           items:
@@ -3080,35 +3226,43 @@ components:
         maximumChronicIllnessBenefitPercentage:
           type: number
           minimum: 0
+          description: 'minimum: 0;'
         maximumPeriodicPaymentPeriod:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         riderPaymentDate:
           type: string
           format: date
+          description: 'format: date'
         remainingBenefit:
           type: number
           minimum: 0
           maximum: 9999999999.99
+          description: 'minimum: 0; maximum: 9999999999.99'
         isAdditionalBenefitUsedUp:
           type: boolean
         totalBenefit:
           type: number
           minimum: 0
           maximum: 9999999999.99
+          description: 'minimum: 0; maximum: 9999999999.99'
         payoutOption:
           type: string
           enum:
           - SINGLE
           - JOINT
+          description: 'enum: [SINGLE, JOINT]'
         benefitPercent:
           type: number
           minimum: 0
           maximum: 100
+          description: 'minimum: 0; maximum: 100'
         annualBenefitLimit:
           type: number
           minimum: 0
           maximum: 9999999999.99
+          description: 'minimum: 0; maximum: 9999999999.99'
         riderSubType:
           type: string
           pattern: ^[A-Za-z0-9_ -]{1,100}$
@@ -3121,6 +3275,7 @@ components:
           - JOINT
           - MULTIPLE
           - UNKNOWN
+          description: 'enum: [SINGLE, JOINT, MULTIPLE, UNKNOWN]'
         isParticipantIrrevocable:
           type: boolean
         additionalRiderClassification:
@@ -3145,12 +3300,15 @@ components:
         startIndex:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         itemsCount:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         totalItemsCount:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         riders:
           type: array
           items:
@@ -3161,12 +3319,15 @@ components:
         startIndex:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         itemsCount:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         totalItemsCount:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         incomeArrangements:
           type: array
           items:
@@ -3226,6 +3387,7 @@ components:
                     - INACTIVE
                     - PENDING
                     - ENDED
+                    description: 'enum: [ACTIVE, TERMINATED, PENDING, SUSPENDED]'
                   frequencyCode:
                     type: string
                     pattern: ^[A-Za-z0-9._-]{1,50}$
@@ -3242,9 +3404,12 @@ components:
                         enum:
                         - GROSS
                         - NET
+                        description: 'enum: [AMOUNT, PERCENTAGE, MAX, FREEWITHDRAWALAMOUNT,
+                          WITHDRAWALUNTILBASIS, EARNINGSONLY, MODIFIEDEARNINGSONLY]'
                       amountCode:
                         type: string
                         pattern: ^[A-Za-z0-9._-]{1,50}$
+                    description: 'minimum: 0; maximum: 9999999999.99'
                   adjustments:
                     type: object
                     properties:
@@ -3264,12 +3429,15 @@ components:
         startIndex:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         itemsCount:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         totalItemsCount:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         transactions:
           type: array
           items:
@@ -3288,21 +3456,28 @@ components:
               transactionId:
                 type: string
                 pattern: ^[A-Za-z0-9._-]{1,100}$
+                description: 'pattern: ^[A-Za-z0-9._-]{1,100}$, minLength: 1, maxLength:
+                  100'
               originalTransactionId:
                 type: string
                 pattern: ^[A-Za-z0-9._-]{1,100}$
+                description: 'pattern: ^[A-Za-z0-9._-]{1,100}$'
               partyPolicyChangeReferenceId:
                 type: string
                 pattern: ^[A-Za-z0-9._-]{1,100}$
+                description: 'pattern: ^[A-Za-z0-9._-]{1,100}$'
               partyPolicyNewReferenceId:
                 type: string
                 pattern: ^[A-Za-z0-9._-]{1,100}$
+                description: 'pattern: ^[A-Za-z0-9._-]{1,100}$'
               planCode:
                 type: string
                 pattern: ^[A-Za-z0-9._-]{1,50}$
+                description: 'pattern: ^[A-Za-z0-9._-]{1,50}$'
               parentId:
                 type: string
                 pattern: ^[A-Za-z0-9._-]{1,100}$
+                description: 'pattern: ^[A-Za-z0-9._-]{1,100}$'
               transactionType:
                 type: string
                 enum:
@@ -3337,18 +3512,31 @@ components:
                 - Reinstatement
                 - Lapse
                 - Other
+                description: 'enum: [SubsequentPayment, OneTimePremium, PartialWithdrawalOneTime,
+                  SystematicPartialWithdrawal, RequiredMinimumDistributionOneTime,
+                  SystematicRequiredMinimumDistribution, FullSurrender, FundTransfer,
+                  FundAllocationsChange, Sweep, DollarCostAverage, NewLoan, LoanRepaymentOneTime,
+                  SystematicLoanRepayment, Annuitization, SystematicAnnuityPayout,
+                  PayoutAmountChange, ServiceCharge, RiderCharge, ValueAdjustment,
+                  InterestCredit, AddressChange, EmailChange, PhoneNumberChange, BeneficiaryChange,
+                  OwnerChange, BankAccountChange, CommunicationPreferenceChange, Reinstatement,
+                  Lapse, Other]'
               requestDate:
                 type: string
                 format: date
+                description: 'format: date'
               effectiveDate:
                 type: string
                 format: date
+                description: 'format: date'
               processDate:
                 type: string
                 format: date
+                description: 'format: date'
               reversalDate:
                 type: string
                 format: date
+                description: 'format: date'
               status:
                 type: string
                 enum:
@@ -3358,6 +3546,7 @@ components:
                 - Reversed
                 - Canceled
                 - PendingReversal
+                description: 'enum: [ACTIVE, TERMINATED, PENDING, SUSPENDED]'
               transactionReason:
                 type: string
                 enum:
@@ -3384,8 +3573,15 @@ components:
                 - DISCOUNT
                 - CONTROLBUSINESSINDICATOR
                 - NATIONALCHANGEOFADDRESS
+                description: 'enum: [ONETIMEPREMIUM, GRACEPERIODPREMIUM, REINSTATEMENTPREMIUM,
+                  EXCHANGE1035, SURRENDER, AMOUNTEXCESSTOMEC, AMOUNTEXCESSTOGUIDELINE,
+                  CURRENTVALUE, COSTBASIS, GUIDELINESINGLEPREMIUM, GUIDELINELEVELPREMIUM,
+                  SEVENPAYPREMIUM, TOTALYTDPREMIUMAMOUNT, FACEDECREASECOVERAGE, INITIALPREMIUMEXPIRATION,
+                  COMPLIANCE, STARTINGPRICE, LUMPSUM, FIVEYEARDEFERRAL, SPOUSALCONTINUATION,
+                  DISCOUNT, CONTROLBUSINESSINDICATOR, NATIONALCHANGEOFADDRESS]'
               transactionAmounts:
                 $ref: '#/components/schemas/TransactionAmounts'
+                description: object; see child fields
               charges:
                 type: array
                 items:
@@ -3424,11 +3620,13 @@ components:
               timestamp:
                 type: string
                 format: date-time
+                description: 'format: date-time'
               isReverseInitiated:
                 type: boolean
               version:
                 type: integer
                 format: int32
+                description: 'format: int32'
               externalIdentifiers:
                 type: object
                 properties:
@@ -3441,6 +3639,7 @@ components:
                   externalArrangementId:
                     type: string
                     pattern: ^[A-Za-z0-9._-]{1,100}$
+                    description: 'maxLength: 100'
     TransactionAmounts:
       type: object
       description: Details of financial amounts associated with the transaction
@@ -3470,6 +3669,8 @@ components:
           - FREEWITHDRAWALAMOUNT
           - WITHDRAWALUNTILBASIS
           - EARNINGSONLY
+          description: 'enum: [AMOUNT, PERCENTAGE, MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS,
+            EARNINGSONLY, MODIFIEDEARNINGSONLY]'
         disbursementType:
           type: string
           enum:
@@ -3494,6 +3695,8 @@ components:
           properties:
             amountType:
               const: AMOUNT
+              description: 'enum: [AMOUNT, PERCENTAGE, MAX, FREEWITHDRAWALAMOUNT,
+                WITHDRAWALUNTILBASIS, EARNINGSONLY, MODIFIEDEARNINGSONLY]'
           required:
           - amountType
         then:
@@ -3506,6 +3709,8 @@ components:
           properties:
             amountType:
               const: PERCENTAGE
+              description: 'enum: [AMOUNT, PERCENTAGE, MAX, FREEWITHDRAWALAMOUNT,
+                WITHDRAWALUNTILBASIS, EARNINGSONLY, MODIFIEDEARNINGSONLY]'
           required:
           - amountType
         then:
@@ -3522,6 +3727,8 @@ components:
               - FREEWITHDRAWALAMOUNT
               - WITHDRAWALUNTILBASIS
               - EARNINGSONLY
+              description: 'enum: [AMOUNT, PERCENTAGE, MAX, FREEWITHDRAWALAMOUNT,
+                WITHDRAWALUNTILBASIS, EARNINGSONLY, MODIFIEDEARNINGSONLY]'
           required:
           - amountType
         then:
@@ -3539,12 +3746,15 @@ components:
         startIndex:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         itemsCount:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         totalItemsCount:
           type: integer
           minimum: 0
+          description: 'minimum: 0'
         underlyingAssets:
           type: array
           items:
@@ -3894,9 +4104,11 @@ components:
         startDate:
           type: string
           format: date
+          description: 'format: date'
         endDate:
           type: string
           format: date
+          description: 'format: date'
         phoneType:
           type: string
           enum:
@@ -3946,9 +4158,11 @@ components:
         startDate:
           type: string
           format: date
+          description: 'format: date'
         endDate:
           type: string
           format: date
+          description: 'format: date'
         emailType:
           type: string
           enum:
@@ -3977,9 +4191,11 @@ components:
         startDate:
           type: string
           format: date
+          description: 'format: date'
         endDate:
           type: string
           format: date
+          description: 'format: date'
         identificationType:
           type: string
           enum:
