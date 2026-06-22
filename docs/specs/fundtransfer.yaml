@@ -920,16 +920,19 @@ components:
           minLength: 1
           maxLength: 105
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
+          description: First name of the party
         middleName:
           type: string
           minLength: 1
           maxLength: 105
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
+          description: Middle name of the party
         lastName:
           type: string
           minLength: 1
           maxLength: 105
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
+          description: Last name of the party
         taxId:
           type: string
           maxLength: 9
