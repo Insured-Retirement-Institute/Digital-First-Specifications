@@ -3,11 +3,16 @@
 This repository contains:
 
 * Published OpenAPI specifications for the Digital-First standards
+* Published AsyncAPI specifications for Digital-First messaging and event-driven APIs
 * Style Guide and Versioning conventions used for all OpenAPI specifications
 
 ## Published OpenAPI Specifications
 
 Once a working group's API specification has been reviewed and approved by the [Governance Committee](https://www.irionline.org/member-programs/operations-technology/committee-hub/governance/), the OpenAPI specification is moved into this repository and published at [specs.dfa.irionline.org](https://specs.dfa.irionline.org), which is the published GitHub Page of this repository.
+
+## Published AsyncAPI Specifications
+
+Once a working group's messaging specification has been reviewed and approved by the [Governance Committee](https://www.irionline.org/member-programs/operations-technology/committee-hub/governance/), the AsyncAPI specification is moved into this repository and published at [specs.dfa.irionline.org](https://specs.dfa.irionline.org), which is the published GitHub Page of this repository.
 
 ## Style Guide
 
@@ -240,18 +245,111 @@ Data definitions
   - **_taxId_**
   - **_name_** (for business/entity)
 
-## API Versioning
+## Versioning
 
-- APIs will utilize versioning at the URL level. In this method, the API endpoint URL includes the major version number. For example, users wanting to retrieve all products from a database would send a request to https://example-api.com/v1/products. The specific version of an API can be specified as an optional header as outlined above.
-- Release changes will institute [Semantic Versioning (SemVer)](https://semver.org/) for the versioning scheme to conveys the meaning about the changes in a release. To summarize, given a version number MAJOR.MINOR.PATCH, increment the:
-  - MAJOR version when you make incompatible API changes (ex: breaking change, addition of required field or deprecation of an existing field)
-  - MINOR version when you add functionality in a backward compatible manner (ex: addition of optional fields or possible values)
-  - PATCH version when you make backward compatible bug fixes
-  - Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
- 
+All Digital-First specifications follow [Semantic Versioning (SemVer)](https://semver.org/) to convey the meaning of changes in a release. Given a version number MAJOR.MINOR.PATCH, increment the:
+
+- **MAJOR** version when you make incompatible changes (for example, breaking changes, addition of a required field, or deprecation of an existing field)
+- **MINOR** version when you add functionality in a backward compatible manner (for example, addition of optional fields or possible values)
+- **PATCH** version when you make backward compatible bug fixes
+- Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format (for example, `-rc.1`, `-beta`)
+
+Individual firms decide the versions they will support. Firms can support multiple versions if they choose.
+
+### API Versioning
+- API's will utilize the major version at the URL level, and the minor/patch versions should have a head for X-Api-Version.  For example, an API with a version of 1.2.1 would have the following:
+  - URL: https://example-api.com/v1/products.
+  - Header: X-Api-Version: 1.2.1
+
+Individual firms decide the versions they will support. Firms can support multiple versions if they choose.
+
+**Note: The standard will be effective going forward to include the full version in the header.  All existing API's will be updated before 12/31/2026.**
+
+### Messaging Versioning
+
+Messaging standards apply Semantic Versioning through two levels of versioning that serve distinct purposes:
+
+- **Topic version** = MAJOR version (API version / contract boundary)
+- **Payload version** = MINOR version (backward-compatible evolution within a topic)
+
+This ensures safe evolution of event contracts, consumer protection from breaking changes, and scalable governance across domains.
+
+**Messaging specs should include both the topic and payload versions in each definition**
+
+#### Topic (Taxonomy) Versioning
+
+**Standard format:**
+
+```
+<domain>.<entity>.<eventType>.v<version>
+```
+
+**Examples:**
+
+```
+policy.contract.created.v1
+policy.contract.created.v2
+```
+
+**Purpose**
+
+- Defines the contract boundary
+- Controls routing and subscription behavior
+- Separates breaking changes
+
+
+#### Payload Versioning
+
+**Standard format (within message metadata):**
+
+```json
+{
+  "eventType": "policy.contract.created",
+  "version": "1.2"
+}
+```
+
+**Purpose**
+
+- Tracks schema evolution within a stable contract
+- Supports minor enhancements
+- Maintains backward compatibility
+
+
+#### Combined Example
+
+**Topic:**
+
+```
+policy.contract.created.v1
+```
+
+**Message:**
+
+```json
+{
+  "eventId": "12345",
+  "eventTimestamp": "2026-06-09T10:15:00Z",
+  "eventType": "policy.contract.created",
+  "version": "1.2",
+  "sourceSystem": "policy-admin",
+  "correlationId": "abc-789",
+  "payload": {
+    "contractId": "C10001",
+    "policyNumber": "P98765",
+    "issueDate": "2026-06-01",
+    "customerId": "U12345"
+  }
+}
+```
+
 ## API definition format
 
 API definitions will utilize [OpenAPI 3.1.X](https://swagger.io/specification/) specifications
+
+## Messaging and Event driven definition format
+
+Message driven definitions will utilize [AsyncAPI 3.1.X](https://www.asyncapi.com/docs/reference/specification/v3.1.0) specifications
 
 ## Tagging & Releases
 
@@ -289,6 +387,12 @@ Include assets if relevant—binaries, installable packages, archives, etc. (Git
 **Pull-request merges to `main` require two approvers.** All changes destined for the stable branch must be merged via a pull request and receive at least two approvals before merging.
 
 **Restrict tagging and releasing to authorized maintainers.** Only individuals with appropriate permissions (e.g., maintainers) may approve and create releases or tags. This ensures quality control and prevents accidental or unauthorized releases.
+
+## Messaging Governance
+- Topic version is mandatory for all events
+- Payload version is manadatory for all events
+- Consumers must opt-in to receive each event type
+
 ## Implementation Considerations
 
 ### Versioning
@@ -306,6 +410,7 @@ Include assets if relevant—binaries, installable packages, archives, etc. (Git
 ### Authentication
 
 - Individual firms decide the authentication mechanism they will support. Parties are free to decide how their integrations will authenticate with one another.
+
 
 ## Change subsmissions and reporting issues and bugs
 
