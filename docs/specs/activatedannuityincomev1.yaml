@@ -176,33 +176,40 @@ components:
         policyNumber:
           $ref: '#/components/schemas/policyNumber'
         cusip:
+          description: Use to be associated with the policy to ensure a unique policy and cusip match.
           type: string
           examples: 
             - "037833100"
         isIncomeActivated:
+          description: Is Income started on this policy?
           type: boolean
         lastPaymentDate:
+          description: Date of last payment
           type: string
           format: date
           examples: 
             - "2024-03-11"
         netPaymentAmount:
+          description: The net amount is the value after deductions have been applied. It represents the final amount payable or receivable once taxes, fees, discounts, or other adjustments have been subtracted from the gross amount.
           type: number
           format: float
           examples: 
             - 5000.00
         grossPaymentAmount:
+          description: The gross amount is the total value before any deductions are applied. It represents the full amount due or earned, such as the total cost, revenue, or payment, without subtracting taxes, fees, discounts, or other adjustments.
           type: number
           format: float
           examples: 
             - 2500.00
         paymentsPerYear:
+          description: How many times per year is this income repeating? This will be used with the last payment date to determine how to represent the income for planning.
           type: integer
           minimum: 1
           maximum: 365
           examples: 
             - 24
         incomeType:
+          description: Used to identify the type of income. This is not an exhaustive list but a broad grouping to help clasify for the FP the type of income.
           type: string
           enum:
             - annuitized
@@ -216,10 +223,12 @@ components:
       required: [firmId]
       properties:
         firmId:
+          description: Send firm ID first - send all policies under this FirmID
           type: string
           examples: 
             - "12345"
         npn:
+          description: National Producer Number
           type: string
           examples: 
             - "257893456"
@@ -253,10 +262,12 @@ components:
           examples: 
             - "complete"
         firmId:
+          description: Send firm ID first - send all policies under this FirmID
           type: string
           examples: 
             - "12345"
         npn:
+          description: National Producer Number
           type: string
           examples: 
             - "257893456"
