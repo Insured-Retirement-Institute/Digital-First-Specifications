@@ -1621,6 +1621,7 @@ components:
           description: 'format: date-time'
         product:
           $ref: '#/components/schemas/Product'
+          description: Product metadata for this policy
         qualificationType:
           type: string
           enum:
@@ -1673,6 +1674,7 @@ components:
           description: 'enum: [PENDINGISSUED, ACTIVE, LAPSED, SURRENDERED, TERMINATED]'
         hasRestriction:
           type: boolean
+          description: Restriction status on the policy
         restrictions:
           type: array
           description: Required when `hasRestriction` is true.
@@ -1946,6 +1948,9 @@ components:
               maximum: 9999999999.99
           required:
           - endingAccountValue
+          description: Represents consolidated financial values associated with the
+            policy, including account balances, surrender values, and other valuation
+            metrics used for reporting and servicing decisions.
         loanValues:
           type: object
           properties:
@@ -1983,6 +1988,8 @@ components:
               type: number
               minimum: 0
               maximum: 9999999999.99
+          description: Provides details related to any outstanding loans against the
+            policy, including balances, limits, and accrued interest amounts.(if applicable)
         withdrawalValues:
           type: object
           required:
@@ -2012,11 +2019,16 @@ components:
               type: number
               minimum: 0
               maximum: 9999999999.99
+          description: Defines available withdrawal-related values and limits, including
+            allowable withdrawal amounts and usage of free withdrawal provisions.
         marketValueAdjustment:
           type: object
           properties:
             isMarketValueAdjusted:
               type: boolean
+          description: Indicates whether a market value adjustment (MVA) applies to
+            the policy and signals that withdrawal or surrender values may be adjusted
+            based on prevailing interest rate conditions.
         rmdInfo:
           type: object
           properties:
@@ -2028,8 +2040,11 @@ components:
               type: number
               minimum: 0
               maximum: 9999999999.99
+          description: RMD related values(if applicable)
         authorization:
           $ref: '#/components/schemas/Authorization'
+          description: Identifies those entities that are allowed to complete financial
+            and non-financial transactions.
     Authorization:
       type: object
       required:
@@ -2068,6 +2083,8 @@ components:
                 - allTransactions
             isAuthorizationSignatureRequired:
               type: boolean
+          description: Describes all the transactions that may be performed by the
+            entitites.
     AuthorizationEntity:
       type: object
       properties:
@@ -2076,6 +2093,7 @@ components:
           maxLength: 100
         isAllAgentsAuthorized:
           type: boolean
+          description: Identifier if all agents are permitted.
     PolicyFunds:
       type: object
       properties:
@@ -2194,8 +2212,11 @@ components:
                 description: 'minimum: 0; maximum: 9999999999.99'
               isTransferSendAllowed:
                 type: boolean
+                description: Indicates whether funds can be transferred into this
+                  fund based on restrictions, or fund status.
               isWithdrawalsAllowed:
                 type: boolean
+                description: True if withdrawals from this fund/sub-account are allowed.
               capAmount:
                 type: number
                 minimum: 0
@@ -2203,6 +2224,8 @@ components:
                 description: 'minimum: 0; maximum: 9999999999.99'
               isTransferDestAllowed:
                 type: boolean
+                description: Indicates whether funds can be transferred out of this
+                  fund based on fund-level restrictions.
               guaranteedInterestRate:
                 type: number
                 minimum: 0
@@ -2239,6 +2262,7 @@ components:
                   VALUE_ADJUSTMENT, REBALANCE, DCA_IN, DCA_OUT, MVA_ADJUSTMENT, OTHER]'
               isFinancialActivityReversed:
                 type: boolean
+                description: True indicates that the financial activity has been reversed.
               appliesToCoverageId:
                 type: string
                 maxLength: 200
@@ -2436,6 +2460,9 @@ components:
                 description: 'format: date'
               isLockFeatureEnabled:
                 type: boolean
+                description: True if the fund has a lock feature enabled (rate lock/index
+                  lock). If this is true then rateLockInfo value is required, else
+                  it is not required.
               indexOptionPeriod:
                 type: string
                 pattern: ^\d+$
@@ -2623,6 +2650,8 @@ components:
                 not:
                   required:
                   - rateLockInfo
+          description: Represents the collection of funds or sub-accounts associated
+            with the policy, including their balances, values, and investment characteristics.
     PartiesList:
       type: object
       properties:
@@ -2642,6 +2671,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Party'
+          description: Represents all individuals or entities associated with the
+            policy, including their identity, relationship to the contract, and role
+            in policy servicing or benefit distribution.
     Party:
       description: The parties object represents policy parties such as owners, annuitants,
         beneficiaries, payees, trustees, and agents, together with their identity,
@@ -2711,6 +2743,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PolicyProducer'
+          description: Represents the set of producers associated with the policy,
+            including their identifying information and commission-related attributes
         startIndex:
           type: integer
           minimum: 0
@@ -2734,6 +2768,9 @@ components:
           description: 'maxLength: 50'
         commission:
           $ref: '#/components/schemas/ProducerCommission'
+          description: Defines commission-related details assigned to the producer,
+            including identifiers and allocation percentages that determine how compensation
+            is distributed for the policy
         producerNumber:
           type: string
           maxLength: 50
@@ -3045,6 +3082,9 @@ components:
                 - WIRE
                 - EXCHANGE
                 description: 'enum: [DTCC, ACH, CHECK, WIRE, EXCHANGE]'
+          description: Represents all individuals or entities associated with the
+            policy, including their identity, relationship to the contract, and role
+            in policy servicing or benefit distribution.
       allOf:
       - if:
           properties:
@@ -3138,6 +3178,8 @@ components:
           description: 'maxLength: 200'
         isRiderElected:
           type: boolean
+          description: Indicates the election status of the rider on the policy, specifying
+            whether the policyholder has formally elected to include the rider
         riderCode:
           type: string
           pattern: ^[A-Za-z0-9._-]{1,50}$
@@ -3242,6 +3284,7 @@ components:
           description: 'minimum: 0; maximum: 9999999999.99'
         isAdditionalBenefitUsedUp:
           type: boolean
+          description: Indicates whether the ADL benefit is utilised on the contract.
         totalBenefit:
           type: number
           minimum: 0
@@ -3278,6 +3321,7 @@ components:
           description: 'enum: [SINGLE, JOINT, MULTIPLE, UNKNOWN]'
         isParticipantIrrevocable:
           type: boolean
+          description: Irrevocable Ind
         additionalRiderClassification:
           type: string
           pattern: ^[A-Za-z0-9_ -]{1,100}$
@@ -3313,6 +3357,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Rider'
+          description: Represents the set of rider benefits or additional features
+            attached to the base policy, including their status, coverage details,
+            and associated benefit values.
     PayoutsList:
       type: object
       properties:
@@ -3423,6 +3470,8 @@ components:
                       value:
                         type: string
                         pattern: ^-?\d+(\.\d+)?$
+          description: List of income arrangements (annuitization + payout) for the
+            policy; empty if none.
     TransactionsList:
       type: object
       properties:
@@ -3623,6 +3672,13 @@ components:
                 description: 'format: date-time'
               isReverseInitiated:
                 type: boolean
+                description: A boolean flag that applies only to financial transactions.
+                  When set to true, it allows a backdated transaction to be processed.
+                  This triggers a reversal on the policy to the earliest transaction
+                  on the specified effective date, applies the new transaction, and
+                  then reprocesses all subsequent transactions (similar to (R&R) process).
+                  This ensures that the policy`s financial history remains accurate
+                  and aligned with the backdated change.
               version:
                 type: integer
                 format: int32
@@ -3844,6 +3900,8 @@ components:
                 enum:
                 - DEBIT
                 - CREDIT
+          description: List of underlying asset/fund-level breakdown records tied
+            to a transaction activity.
     TaxWithholdingInstruction:
       type: object
       description: Tax withholding instructions. Exactly one of dollar or percentage
