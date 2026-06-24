@@ -409,19 +409,26 @@ components:
               type: object
               properties:
                 cusip:
+                  description: CUSIP
                   $ref: '#/components/schemas/cusip'
                 isActionNeeded:
+                  description: Indicator that at least one section requires action
                   type: boolean
                 actionSections:
+                  description: Sections needing action
                   $ref: '#/components/schemas/actionSections'
                 productName:
+                  description: Product name
                   type: string
                   maxLength: 180
                 isQualified:
+                  description: Is policy tax plan qualified?
                   type: boolean
                 producers:
+                  description: List of producer records associated with the policy
                   $ref: '#/components/schemas/Producers'
                 parties:
+                  description: List of individuals or entities related to the policy
                   type: array
                   minItems: 1
                   items:
@@ -429,15 +436,19 @@ components:
                       - $ref: "#/components/schemas/IndividualParty"
                       - $ref: "#/components/schemas/EntityParty"
                 signedDate:
+                  description: Signed date of policy
                   type: string
                   format: date
                 receivedDate:
+                  description: Received date of policy
                   type: string
                   format: date
                 rateEffectiveDate:
+                  description: Rate effective date of policy
                   type: string
                   format: date
                 fundsHeldUntilDate:
+                  description: Funds held until date
                   type: string
                   format: date
     CanSellNotification:
@@ -470,6 +481,7 @@ components:
                 - $ref: '#/components/schemas/Suitability'
               properties:
                 actionSections:
+                  description: Sections needing action
                   $ref: '#/components/schemas/actionSections'
     
     SuitabilityDecisionNotification:
@@ -485,22 +497,29 @@ components:
             notification:
               properties:
                 status:
+                  description: Application status
                   enum: [awaitingReview, inProgress, completed, notApplicable]
                 isActionNeeded:
+                  description: Indicator that at least one section requires action
                   type: boolean
                 actionSections:
+                  description: Sections needing action
                   $ref: '#/components/schemas/actionSections'
                 startDate:
+                  description: Start date
                   type: string
                   format: date
                 endDate:
+                  description: End date
                   type: string
                   format: date
                 note:
+                  description: Note
                   type: string
                   minLength: 1
                   maxLength: 2000
                 isApproved:
+                  description: If status is completed, this field denotes whether suitability was approved or declined
                   type: boolean
     
     DocReviewNotification:
@@ -519,6 +538,7 @@ components:
                 - type: object
                   properties:
                     actionSections:
+                      description: Sections needing action
                       $ref: '#/components/schemas/actionSections'
     
     FundingActionNotification:
@@ -536,6 +556,7 @@ components:
                 - $ref: '#/components/schemas/TransferNotificationBase'
               properties:
                 reason:
+                  description: Reason for cancellation
                   type: string
                   enum: [awaitingFundsFromCedingCompany, contactTheCarrier, fundingDiscrepancy, nigoAtCedingCarrier, noFundsReceivedCash, pendingReg60, other]
     
@@ -554,16 +575,20 @@ components:
                 - $ref: '#/components/schemas/TransferNotificationBase'
               properties:
                 nextActivityDate:
+                  description: Next activity date
                   type: string
                   format: date
                 note:
+                  description: Note
                   type: string
                   minLength: 1
                   maxLength: 2000
                 methodOfInitiation:
+                  description: Initiation method
                   type: string
                   enum: [fax, email, mail, replacement]
                 referenceNumber:
+                  description: Reference number
                   type: string        
     
     SourceTypeNotification:
@@ -596,9 +621,11 @@ components:
                 - $ref: '#/components/schemas/TransferNotificationBase'
               properties:
                 nextActivityDate:
+                  description: Next activity date
                   type: string
                   format: date
                 note:
+                  description: Note
                   type: string
                   minLength: 1
                   maxLength: 2000
@@ -622,18 +649,23 @@ components:
                 - $ref: '#/components/schemas/TransferNotificationBase'
               properties:
                 anticipatedAmount:
+                  description: Anticipated amount
                   type: number
                   format: float
                 receivedAmount:
+                  description: Received amount
                   type: number
                   format: float
                 receivedDate:
+                  description: Received date of policy
                   type: string
                   format: date
                 status:
+                  description: Application status
                   type: string
                   enum: [inProgress, complete]
                 effectiveDate:
+                  description: Effective date of policy
                   type: string
                   format: date
     
@@ -651,13 +683,17 @@ components:
               type: object
               properties:
                 isActionNeeded:
+                  description: Indicator that at least one section requires action
                   type: boolean
                 actionSections:
+                  description: Sections needing action
                   $ref: '#/components/schemas/actionSections'
                 startDate:
+                  description: Start date
                   type: string
                   format: date
                 note:
+                  description: Note
                   type: string
                   minLength: 1
                   maxLength: 2000
@@ -665,12 +701,15 @@ components:
                   type: object
                   properties:
                     sentDate:
+                      description: Delivery sent date
                       type: string
                       format: date
                     method:
+                      description: Delivery method
                       type: string
                       enum: [fedex, ups, electronicDelivery, handDelivery, usps]
                     trackingNumber:
+                      description: Delivery tracking number
                       type: string
                       minLength: 1
                       maxLength: 65
@@ -688,14 +727,18 @@ components:
             notification:
               properties:
                 actionSections:
+                  description: Sections needing action
                   $ref: '#/components/schemas/actionSections'
                 initiator:
+                  description: Who initiated cancellation
                   type: string
                   enum: [advisor, carrier, client]
                 cancelledDate:
+                  description: Cancellation date
                   type: string
                   format: date
                 reason:
+                  description: Reason for cancellation
                   type: string    
 
     TransferNotificationBase:
@@ -704,26 +747,33 @@ components:
       required: [isActionNeeded, status]  
       properties:
         actionSections:
+          description: Sections needing action
           $ref: '#/components/schemas/actionSections'
         startDate:
+          description: Start date
           type: string
           format: date
         isActionNeeded:
+          description: Indicator that at least one section requires action
           type: boolean
         status:
+          description: Application status
           type: string
           enum: [awaitingReview, inProgress, completed]
         note:
+          description: Note
           type: string
           minLength: 1
           maxLength: 2000
         sources:
+          description: Lists sources of funding
           type: array
           items:
             type: object
             required: [method, type]
             properties:
               method:
+                description: Delivery method
                 type: string
                 enum:
                   - anotherPolicy
@@ -736,6 +786,7 @@ components:
                   - payrollDeduction
                   - wireTransfer
               type:
+                description: Type of party
                 type: string
                 enum:
                   - contribution
@@ -748,14 +799,18 @@ components:
                   - partial1035Exchange
                   - qualifiedTransfer
               isActionNeeded:
+                description: Indicator that at least one section requires action
                 type: boolean
               anticipatedAmount:
+                description: Anticipated amount
                 type: number
                 format: float
               status:
+                description: Application status
                 type: string
                 enum: [inProgress, complete]
               reason:
+                description: Reason for cancellation
                 type: string
                 enum:
                   - awaitingFundsFromCedingCompany
@@ -766,9 +821,11 @@ components:
                   - pendingReg60
                   - other
               effectiveDate:
+                description: Effective date of policy
                 type: string
                 format: date
               note:
+                description: Note
                 type: string
                 minLength: 1
                 maxLength: 2000
@@ -778,8 +835,10 @@ components:
                 maxLength: 180
                 pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,180}$
               accountNumber:
+                description: Ceding company account number
                 type: string
               startDate:
+                description: Start date
                 type: string
                 format: date
 
@@ -801,24 +860,29 @@ components:
       type: object
       properties:
         type:
+          description: Type of party
           type: string
           const: individual
         firstName:
+          description: Party’s first name
           type: string
           minLength: 1
           maxLength: 105
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,105}$
         middleName:
+          description: Party’s middle name
           type: string
           minLength: 1
           maxLength: 105
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,105}$
         lastName:
+          description: Party’s last name
           type: string
           minLength: 1
           maxLength: 105
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,105}$
         taxId:
+          description: Party’s tax identification number
           type: string
           maxLength: 9
     IndividualProducer:
@@ -830,12 +894,15 @@ components:
         - type: object
           properties:
             npn:
+              description: National Producer Number
               type: string
               maxLength: 10
             crdNumber:
+              description: Central Registration Depository number
               type: string
               maxLength: 10
             relationships:
+              description: Relationship(s) this party has to the policy
               type: array
               minItems: 1
               maxItems: 30
@@ -858,14 +925,17 @@ components:
       required: [type, name]
       properties:
         type:
+          description: Type of party
           type: string
           const: entity
         name:
+          description: Entity name
           type: string
           minLength: 1
           maxLength: 180
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,180}$
         taxId:
+          description: Party’s tax identification number
           type: string
     EntityProducer:
       description: Schema for entity producer data
@@ -876,12 +946,15 @@ components:
         - type: object
           properties:
             npn:
+              description: National Producer Number
               type: string
               maxLength: 10
             crdNumber:
+              description: Central Registration Depository number
               type: string
               maxLength: 10
             relationships:
+              description: Relationship(s) this party has to the policy
               type: array
               minItems: 1
               maxItems: 25
@@ -904,6 +977,7 @@ components:
       required: [relationships]
       properties:
         relationships:
+          description: Relationship(s) this party has to the policy
           type: array
           minItems: 1
           maxItems: 2
@@ -929,27 +1003,34 @@ components:
       required: [status,isActionNeeded]
       properties:
         status:
+          description: Application status
           type: string
           enum: [awaitingReview, inProgress, completed]
         isActionNeeded:
+          description: Indicator that at least one section requires action
           type: boolean
         startDate:
+          description: Start date
           type: string
           format: date
         endDate:
+          description: End date
           type: string
           format: date
         note:
+          description: Note
           type: string
           minLength: 1
           maxLength: 2000
         issues:
+          description: List of issues that need to be addressed
           type: array
           items:
             type: object
             required: [type]
             properties:
               type:
+                description: Type of party
                 type: string
                 enum:
                   - trainingIncompleteMissing
@@ -959,6 +1040,7 @@ components:
                   - agentNotLicensed
                   - other
               note:
+                description: Note
                 type: string
                 minLength: 1
                 maxLength: 2000
@@ -966,12 +1048,15 @@ components:
                 type: object
                 properties:
                   npn:
+                    description: National Producer Number
                     type: string
                     maxLength: 10
                   crdNumber:
+                    description: Central Registration Depository number
                     type: string
                     maxLength: 10
                   taxId:
+                    description: Party’s tax identification number
                     type: string
                     maxLength: 9
     Suitability:
@@ -980,27 +1065,34 @@ components:
       required: [status,isActionNeeded]
       properties:
         status:
+          description: Application status
           type: string
           enum: [awaitingReview, inProgress, completed, notApplicable]
         isActionNeeded:
+          description: Indicator that at least one section requires action
           type: boolean
         startDate:
+          description: Start date
           type: string
           format: date
         endDate:
+          description: End date
           type: string
           format: date
         reason:
+          description: Reason for cancellation
           type: string
           enum:
             - moreInformationNeeded
             - notSuitableForClient
             - other
         note:
+          description: Note
           type: string
           minLength: 1
           maxLength: 2000
         dueDate:
+          description: Due date
           type: string
           format: date
         isApproved:
@@ -1012,26 +1104,33 @@ components:
       required: [status,isActionNeeded]
       properties:
         status:
+          description: Application status
           type: string
           enum: [awaitingReview, inProgress, completed]
         isActionNeeded:
+          description: Indicator that at least one section requires action
           type: boolean
         startDate:
+          description: Start date
           type: string
           format: date
         endDate:
+          description: End date
           type: string
           format: date
         note:
+          description: Note
           type: string
           minLength: 1
           maxLength: 2000
         issues:
+          description: List of issues that need to be addressed
           type: array
           items:
             type: object
             properties:
               reason:
+                description: Reason for cancellation
                 type: string
                 enum:
                   - applicationIssue
@@ -1042,17 +1141,21 @@ components:
                   - needClarity
                   - other
               formName:
+                description: Form name
                 type: string
                 minLength: 1
                 maxLength: 200
               formNumber:
+                description: Form number
                 type: string
                 minLength: 1
                 maxLength: 100
               dueDate:
+                description: Due date
                 type: string
                 format: date
               note:
+                description: Note
                 type: string
                 minLength: 1
                 maxLength: 2000
@@ -1061,11 +1164,14 @@ components:
       required: [isElectronic]
       properties:
         platform:
+          description: Platform of application origin
           type: string
           maxLength: 50
         isElectronic:
+          description: Is application electronic?
           type: boolean
         id:
+          description: ID of application origin
           type: string
           maxLength: 65
 
@@ -1084,6 +1190,7 @@ components:
       enum: [received, inProgress, completed, cancelled]
 
     actionSections:
+      description: Sections needing action
       type: array
       items:
         type: string
@@ -1097,6 +1204,7 @@ components:
           type: string
           description: Globally unique identifier for this notification event
         policyNumber:
+          description: Policy number
           type: string
         id:
           type: string
@@ -1104,4 +1212,5 @@ components:
         applicationOrigin:
           $ref: '#/components/schemas/applicationOrigin'
         status:
+          description: Application status
           $ref: '#/components/schemas/notificationStatus'
