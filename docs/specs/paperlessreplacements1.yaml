@@ -148,6 +148,7 @@ components:
       type: object
       properties:
         messageInformation:
+          description: The Message Information Resource is designed to provide the header information about the message.
           $ref: '#/components/schemas/messageInformation'
         arrangement:
           description: Collection of arrangements for this holding.
@@ -576,8 +577,10 @@ components:
       type: object
       properties:
         messageInformation:
+          description: The Message Information Resource is designed to provide the header information about the message.
           $ref: '#/components/schemas/messageInformationForResponse'
         messageStatus:
+          description: The Message Information Resource is designed to provide the header information about the message.
           $ref: '#/components/schemas/messageStatus'
       additionalProperties: true
       required:
