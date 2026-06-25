@@ -631,9 +631,11 @@ components:
       properties:
         effectiveDate:
           type: string
+          description: when the transaction was originally scheduled or expected to happen, can be a non-business day
           format: date
         nsccParticipantId:
           type: string
+          description: Unique identifier for the participant
           maxLength: 100
         externalArrangementId:
           type: string
@@ -641,6 +643,7 @@ components:
           maxLength: 100
         actionIndicator:
           type: string
+          description: indicates the action to be taken
           enum: [N, O, C]
         cusip:
           type: string
@@ -733,14 +736,18 @@ components:
       properties:
         effectiveDate:
           type: string
+          description: when the transaction was originally scheduled or expected to happen, can be a non-business day
           format: date
         nsccParticipantId:
           type: string
+          description: Unique identifier for the participant
           maxLength: 100
         externalArrangementId:
           type: string
+          description: Arrangement ID from external system
         actionIndicator:
           type: string
+          description: indicates the action to be taken
           enum: [N, O, C]
         cusip:
           type: string
@@ -1153,6 +1160,7 @@ components:
           enum: [CREATED, REJECTED]
         effectiveDate:
           type: string
+          description: when the transaction was originally scheduled or expected to happen, can be a non-business day
           format: date
       required: [requestId, status]
 
@@ -1169,6 +1177,7 @@ components:
           enum: [IN_PROGRESS, SUCCESS, REJECTED]
         effectiveDate:
           type: string
+          description: when the transaction was originally scheduled or expected to happen, can be a non-business day
           format: date
         message:
           type: string
