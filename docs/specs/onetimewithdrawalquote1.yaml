@@ -437,6 +437,7 @@ paths:
                       isirc72qPenaltyApplied: false
                       taxablePortionRule: 'LIFO'
                     parties:
+                      description: The parties object represents the policy parties relevant to the withdrawal (owners, annuitants, beneficiaries, etc.), along with their identity, relationship, and payout instructions.
                     - taxId: '123456789'
                       firstName: 'Taylor'
                       middleName: 'A'
@@ -515,6 +516,7 @@ paths:
                       isirc72qPenaltyApplied: false
                       taxablePortionRule: 'LIFO'
                     parties:
+                      description: The parties object represents the policy parties relevant to the withdrawal (owners, annuitants, beneficiaries, etc.), along with their identity, relationship, and payout instructions.
                     - taxId: '123456789'
                       firstName: 'Taylor'
                       middleName: 'A'
@@ -729,9 +731,11 @@ components:
         Request to perform a one-time partial withdrawal.
       properties:
         effectiveDate:
+          description: when the transaction was originally scheduled or expected to happen, can be a non-business day
           type: string
           format: date
         nsccParticipantId:
+          description: Unique identifier for the participant
           type: string
           maxLength: 100
         cusip:
@@ -755,22 +759,27 @@ components:
         rmdInfo:
           $ref: '#/components/schemas/RmdInfo'
         payeeOrBeneficiary:
+          description: The payeeOrBeneficiary object represents how the withdrawal proceeds are distributed and to whom. It includes payment form, allocation rules for each payee.
           type: array        
           items:
             $ref: '#/components/schemas/PayeeOrBeneficiary'
         parties:
+          description: The parties object represents the policy parties relevant to the withdrawal (owners, annuitants, beneficiaries, etc.), along with their identity, relationship, and payout instructions.
           type: array
           items:
             $ref: '#/components/schemas/Party'
         taxWithholdingInstructions:
+          description: List of tax withholding instruction entries
           type: array
           items:
             $ref: '#/components/schemas/TaxWithholdingInstruction'
         charges:
+          description: List of charges/deductions applied in the quote
           type: array
           items:
             $ref: '#/components/schemas/Charges'
         isOverride:
+          description: Override rules if true
           type: boolean
       required:
         - effectiveDate
@@ -781,6 +790,7 @@ components:
               allocationOption:
                 const: SPECIFIEDFUNDS
               transactionAmounts:
+                description: Quoted amounts including charges, taxes, and net payment
                 type: object
                 properties:
                   amountType:
@@ -805,6 +815,7 @@ components:
               allocationOption:
                 const: SPECIFIEDFUNDS
               transactionAmounts:
+                description: Quoted amounts including charges, taxes, and net payment
                 type: object
                 properties:
                   amountType:
@@ -830,9 +841,11 @@ components:
       description: Request payload to compute a full surrender quote. Mirrors the Full Surrender submission shape.
       properties:
         effectiveDate:
+          description: when the transaction was originally scheduled or expected to happen, can be a non-business day
           type: string
           format: date
         nsccParticipantId:
+          description: Unique identifier for the participant
           type: string
           maxLength: 100
         cusip:
@@ -846,22 +859,27 @@ components:
         transactionAmounts:
           $ref: '#/components/schemas/TransactionAmountsFullRequest'
         payeeOrBeneficiary:
+          description: The payeeOrBeneficiary object represents how the withdrawal proceeds are distributed and to whom. It includes payment form, allocation rules for each payee.
           type: array
           items:
             $ref: '#/components/schemas/PayeeOrBeneficiaryRequest'
         parties:
+          description: The parties object represents the policy parties relevant to the withdrawal (owners, annuitants, beneficiaries, etc.), along with their identity, relationship, and payout instructions.
           type: array
           items:
             $ref: '#/components/schemas/PartyRequest'
         taxWithholdingInstructions:
+          description: List of tax withholding instruction entries
           type: array
           items:
             $ref: '#/components/schemas/TaxWithholdingInstruction'
         charges:
+          description: List of charges/deductions applied in the quote
           type: array
           items:
             $ref: '#/components/schemas/Charges'
         isOverride:
+          description: Override rules if true
           type: boolean
       required:
         - effectiveDate
@@ -1179,17 +1197,21 @@ components:
       required: [status, policyNumber, effectiveDate, transactionAmounts]
       properties:
         status:
+          description: Overall quote processing outcome
           type: string
           enum: [SUCCESS, FAILURE]
         errors:
+          description: Errors returned when status=FAILURE
           type: array
           items:
             $ref: '#/components/schemas/ErrorItem'
         policyNumber:
+          description: Unique policy number
           type: string
           minLength: 1
           maxLength: 30
         effectiveDate:
+          description: when the transaction was originally scheduled or expected to happen, can be a non-business day
           type: string
           format: date
         cusip:
@@ -1199,40 +1221,49 @@ components:
           pattern: '^[0-9]{3}[A-Z0-9]{5}[0-9]$'
           description: unique identification code. Optional; REQUIRED only when policyNumber is not globally unique.
         freeWithdrawalAmount:
+          description: Carrier-reported free / surrender-free amount available as-of the effective date
           type: number
           minimum: 0
           maximum: 9999999999.99
         remainingFreeWithdrawalAmount:
+          description: Free withdrawal amount still remaining after deducting what’s already used
           type: number
           minimum: 0
           maximum: 9999999999.99
         tenPercentOfPurchasePayments:
+          description: 10% of purchase payments (premium)
           type: number
           minimum: 0
           maximum: 9999999999.99
         freeAmountGain:
+          description: Portion of free amount attributable to gain/earnings
           type: number
           minimum: 0
           maximum: 9999999999.99
         freeAmountPremium:
+          description: Portion of free amount attributable to premium/basis
           type: number
           minimum: 0
           maximum: 9999999999.99
         transactionAmounts:
           $ref: '#/components/schemas/TransactionAmountsFullSurrender'
         charges:
+          description: List of charges/deductions applied in the quote
           type: array
           items:
             $ref: '#/components/schemas/Charge'
         taxWithheldAmounts:
+          description: Withholding amounts by party and jurisdiction
           type: array
           items:
             $ref: '#/components/schemas/TaxWithheldAmount'
         payeeOrBeneficiary:
+          description: The payeeOrBeneficiary object represents how the withdrawal proceeds are distributed and to whom. It includes payment form, allocation rules for each payee.
           type: array
           items:
             $ref: '#/components/schemas/PayeeOrBeneficiary'
         parties:
+          description: The parties object represents the policy parties relevant to the withdrawal (owners, annuitants, beneficiaries, etc.), along with their identity, relationship, and payout instructions.
           type: array
           items:
             $ref: '#/components/schemas/Party'
@@ -1254,6 +1285,7 @@ components:
             required: [errors]
             properties:
               errors:
+                description: Errors returned when status=FAILURE
                 type: array
                 minItems: 1
                 items:
@@ -1264,17 +1296,21 @@ components:
       required: [status, policyNumber, effectiveDate, transactionAmounts]
       properties:
         status:
+          description: Overall quote processing outcome
           type: string
           enum: [SUCCESS, FAILURE]
         errors:
+          description: Errors returned when status=FAILURE
           type: array
           items:
             $ref: '#/components/schemas/ErrorItem'
         policyNumber:
+          description: Unique policy number
           type: string
           minLength: 1
           maxLength: 30
         effectiveDate:
+          description: when the transaction was originally scheduled or expected to happen, can be a non-business day
           type: string
           format: date
         cusip:
@@ -1284,40 +1320,49 @@ components:
           pattern: '^[0-9]{3}[A-Z0-9]{5}[0-9]$'
           description: unique identification code. Optional; REQUIRED only when policyNumber is not globally unique.
         freeWithdrawalAmount:
+          description: Carrier-reported free / surrender-free amount available as-of the effective date
           type: number
           minimum: 0
           maximum: 9999999999.99
         remainingFreeWithdrawalAmount:
+          description: Free withdrawal amount still remaining after deducting what’s already used
           type: number
           minimum: 0
           maximum: 9999999999.99
         tenPercentOfPurchasePayments:
+          description: 10% of purchase payments (premium)
           type: number
           minimum: 0
           maximum: 9999999999.99
         freeAmountGain:
+          description: Portion of free amount attributable to gain/earnings
           type: number
           minimum: 0
           maximum: 9999999999.99
         freeAmountPremium:
+          description: Portion of free amount attributable to premium/basis
           type: number
           minimum: 0
           maximum: 9999999999.99
         transactionAmounts:
           $ref: '#/components/schemas/TransactionAmountsPartials'
         charges:
+          description: List of charges/deductions applied in the quote
           type: array
           items:
             $ref: '#/components/schemas/Charge'
         taxWithheldAmounts:
+          description: Withholding amounts by party and jurisdiction
           type: array
           items:
             $ref: '#/components/schemas/TaxWithheldAmount'
         payeeOrBeneficiary:
+          description: The payeeOrBeneficiary object represents how the withdrawal proceeds are distributed and to whom. It includes payment form, allocation rules for each payee.
           type: array
           items:
             $ref: '#/components/schemas/PayeeOrBeneficiary'
         parties:
+          description: The parties object represents the policy parties relevant to the withdrawal (owners, annuitants, beneficiaries, etc.), along with their identity, relationship, and payout instructions.
           type: array
           items:
             $ref: '#/components/schemas/Party'
@@ -1341,6 +1386,7 @@ components:
             required: [errors]
             properties:
               errors:
+                description: Errors returned when status=FAILURE
                 type: array
                 minItems: 1
                 items:
