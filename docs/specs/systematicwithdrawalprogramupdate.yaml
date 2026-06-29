@@ -508,12 +508,15 @@ components:
       properties:
         producerNumber:
           type: string
+          description: "Carrier assigned unique identifier"
           maxLength: 100
         npn:
           type: string
+          description: "National Producer Number"
           maxLength: 100
         crdNumber:
           type: string
+          description: "Central Registration Depository number"
           maxLength: 100
 
     IndividualParty:
@@ -568,6 +571,7 @@ components:
       properties:
         relationships:
           type: array
+          description: "An array of strings specifying the relationship(s) of the party to the policy."
           minItems: 1
           maxItems: 2
           items:
@@ -640,8 +644,10 @@ components:
         effectiveDate:
           type: string
           format: date
+          description: "when the transaction was originally scheduled or expected to happen, can be a non-business day"
         nsccParticipantId:
           type: string
+          description: "Unique identifier for the participant"
           maxLength: 100
         cusip:
           type: string
@@ -655,6 +661,7 @@ components:
           description: Defines the format of how the funds are removed
         actionIndicator:
           type: string
+          description: "indicates the action to be taken"
           enum: [N, O, C]
         systematicProgram:
           allOf:
@@ -663,6 +670,10 @@ components:
               properties:
                 arrangementType:
                   type: string
+                  description: |
+                    Indicates the type of financial arrangement being set up or updated for the systematic
+                    program, such as a recurring payment, withdrawal, loan repayment, required minimum
+                    distribution, or payout.
                   enum: [PAYMENT, WITHDRAWAL, LOANREPAYMENT, PAYOUT]
       required:
         - effectiveDate
@@ -737,8 +748,10 @@ components:
         effectiveDate:
           type: string
           format: date
+          description: "when the transaction was originally scheduled or expected to happen, can be a non-business day"
         nsccParticipantId:
           type: string
+          description: "Unique identifier for the participant"
           maxLength: 100
         cusip:
           type: string
@@ -751,6 +764,7 @@ components:
           description: Defines the format of how the funds are removed
         actionIndicator:
           type: string
+          description: "indicates the action to be taken"
           enum: [N, O, C]
         systematicProgram:
           allOf:
@@ -759,6 +773,10 @@ components:
               properties:
                 arrangementType:
                   type: string
+                  description: |
+                    Indicates the type of financial arrangement being set up or updated for the systematic
+                    program, such as a recurring payment, withdrawal, loan repayment, required minimum
+                    distribution, or payout.
                   enum: [REQUIREDMINIMUMDISTRIBUTION]
                 rmdInfo:
                   $ref: '#/components/schemas/rmdInfo'
@@ -901,27 +919,35 @@ components:
         startDate:
           type: string
           format: date
+          description: "start date of the Program/Transaction"
         endDate:
           type: string
           format: date
+          description: "end date of the Program/Transaction"
         previousTransactionDate:
           type: string
           format: date
+          description: "The date on which the most recent transaction was executed under the systematic program"
         nextTransactionDate:
           type: string
           format: date
+          description: "The date on which the next scheduled Transaction is planned to occur under the systematic program"
         payee:
           type: array
+          description: "List of payees for allocation"
           items:
             $ref: '#/components/schemas/Payee'
         parties:
           type: array
+          description: "Party to the policy (not a producer)"
           items:
             $ref: '#/components/schemas/SystematicParty'
         producer:
           $ref: '#/components/schemas/Producer'
+          description: "Information about the producer submitting the request"
         fundDistributions:
           type: array
+          description: "Detailed allocation of funds"
           items:
             $ref: '#/components/schemas/FundDistribution'
       required:
@@ -972,8 +998,10 @@ components:
       properties:
         bank:
           $ref: '#/components/schemas/Bank'
+          description: "Financial institution details"
         taxWithholdingInstructions:
           type: array
+          description: "List of tax withholding instruction entries"
           items:
             $ref: '#/components/schemas/TaxWithholdingInstruction'
 
@@ -990,11 +1018,13 @@ components:
           maxLength: 100
         accountStatus:
           type: string
+          description: "Account Status"
           enum:
             - ACTIVEBANKACCOUNT
             - TERMINATEDBANKACCOUNT
         accountType:
           type: string
+          description: "Account Type"
           enum:
             - CHECKING
             - SAVINGS
@@ -1004,10 +1034,12 @@ components:
             - CERTIFICATEOFDEPOSITACCOUNT
         accountNumber:
           type: string
+          description: "Account Number"
           pattern: '^\d{4,17}$'
           maxLength: 17
         routingNumber:
           type: string
+          description: "Routing Number"
           pattern: '^\d{9}$'
         branchName:
           type: string
@@ -1027,6 +1059,7 @@ components:
           maxLength: 9
         taxWithholdingType:
           type: string
+          description: "Type of tax withholding"
           enum:
             - FEDERAL
             - STATE
@@ -1034,6 +1067,7 @@ components:
             - BACKUP
         taxRateToUse:
           type: string
+          description: "Mode of payment"
           enum:
             - NOWITHHOLDINGELECTED
             - USEVALUESENTERED
@@ -1041,6 +1075,7 @@ components:
             - USEDEFAULTTABLE
         filingStatus:
           type: string
+          description: "Tax filing status"
           enum:
             - SINGLE
             - DOMESTICPARTNERSHIP
@@ -1051,18 +1086,22 @@ components:
             - DIVORCED
         dollar:
           type: number
+          description: "Computed tax amount"
           minimum: 0
           maximum: 9999999999.99
         percentage:
           type: number
+          description: "Computed tax percentage"
           minimum: 0
           maximum: 100
         exemptions:
           type: integer
+          description: "Requested exemptions value"
           minimum: 0
           maximum: 99
         taxJurisdiction:
           type: string
+          description: "Jurisdiction for tax purposes.If taxwithholdingType=STATE this field should be mandatory"
           maxLength: 50
       required:
         - taxWithholdingType
@@ -1089,6 +1128,7 @@ components:
       properties:
         paymentForm:
           type: string
+          description: "Mode of payment"
           enum: [DTCC, ACH, CHECK, WIRE, EXCHANGE]
         allocationPercentage:
           type: number
@@ -1097,8 +1137,10 @@ components:
           maximum: 100
         bank:
           $ref: '#/components/schemas/Bank'
+          description: "Financial institution details"
         address:
           $ref: '#/components/schemas/Address'
+          description: "Physical or mailing address details"
       required:
         - paymentForm
         - allocationPercentage
@@ -1112,36 +1154,47 @@ components:
           maxLength: 100
         addressType:
           type: string
+          description: "Address Type"
           enum: [RESIDENCE, BUSINESS, POBOXSEASONAL, APO, DPO, FPO]
         addressLine1:
           type: string
+          description: "First Line of the address"
           maxLength: 100
         addressLine2:
           type: string
+          description: "Second line of the address"
           maxLength: 100
         addressLine3:
           type: string
+          description: "Third line of the address"
           maxLength: 100
         addressLine4:
           type: string
+          description: "Fourth Line of the address"
           maxLength: 100
         addressLine5:
           type: string
+          description: "Fifth Line of the address"
           maxLength: 100
         city:
           type: string
+          description: "Name of the city"
           maxLength: 100
         state:
           type: string
+          description: "Name of the state"
           pattern: '^[A-Z]{2}$'
         zipCode:
           type: string
+          description: "Zip Code"
           pattern: '^[0-9A-Za-z -]{3,10}$'
         zipCodeExtension:
           type: string
+          description: "zip code extension"
           pattern: '^[0-9A-Za-z]{1,4}$'
         country:
           type: string
+          description: "Country"
           pattern: '^[A-Z]{2}$'
       required:
         - addressType
@@ -1203,6 +1256,7 @@ components:
         effectiveDate:
           type: string
           format: date
+          description: "when the transaction was originally scheduled or expected to happen, can be a non-business day"
       required: [requestId, status]
 
     GetWithdrawalRequestStatus:
@@ -1219,6 +1273,7 @@ components:
         effectiveDate:
           type: string
           format: date
+          description: "when the transaction was originally scheduled or expected to happen, can be a non-business day"
         message:
           type: string
           description: Technical message with specific error details for developers identify the type of error quickly.
