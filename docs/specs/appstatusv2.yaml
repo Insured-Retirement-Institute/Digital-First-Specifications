@@ -375,6 +375,7 @@ components:
         maximum: 1000
   schemas:
     cusip:
+      description: 9 characters with only letters and numbers allowed
       type: string
       minLength: 9
       maxLength: 9
@@ -385,9 +386,11 @@ components:
       type: object
       properties:
         type:
+          description: Constant with the value of individual
           type: string
           const: individual
         firstName:
+          description: Max 180 characters
           type: string
           minLength: 1
           maxLength: 105
@@ -398,11 +401,13 @@ components:
           maxLength: 105
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,105}$
         lastName:
+          description: Max 180 characters
           type: string
           minLength: 1
           maxLength: 105
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,105}$
         taxId:
+          description: length: 9
           type: string
           maxLength: 9
     IndividualProducer:
@@ -414,12 +419,15 @@ components:
         - type: object
           properties:
             npn:
+              description: Max 10 characters
               type: string
               maxLength: 10
             crdNumber:
+              description: Max 10 characters
               type: string
               maxLength: 10
             relationships:
+              description: primaryAgent, secondaryAgent, additionAgent, investment Advisor Representative
               type: array
               minItems: 1
               maxItems: 30
@@ -442,14 +450,17 @@ components:
       required: [type, name]
       properties:
         type:
+          description: Constant with the value of individual
           type: string
           const: entity
         name:
+          description: Max 180 characters
           type: string
           minLength: 1
           maxLength: 180
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,180}$
         taxId:
+          description: length: 9
           type: string
     EntityProducer:
       description: Schema for entity producer data
@@ -460,12 +471,15 @@ components:
         - type: object
           properties:
             npn:
+              description: Max 10 characters
               type: string
               maxLength: 10
             crdNumber:
+              description: Max 10 characters
               type: string
               maxLength: 10
             relationships:
+              description: primaryAgent, secondaryAgent, additionAgent, investment Advisor Representative
               type: array
               minItems: 1
               maxItems: 25
@@ -488,6 +502,7 @@ components:
       required: [relationships]
       properties:
         relationships:
+          description: primaryAgent, secondaryAgent, additionAgent, investment Advisor Representative
           type: array
           minItems: 1
           maxItems: 2
@@ -521,17 +536,21 @@ components:
       required: [status,isActionNeeded]
       properties:
         status:
+          description: Enum: received, inProgress, completed, cancelled
           type: string
           enum: [awaitingReview, inProgress, completed]
         isActionNeeded:
           type: boolean
         startDate:
+          description: yyyy-mm-dd
           type: string
           format: date
         endDate:
+          description: yyyy-mm-dd
           type: string
           format: date
         note:
+          description: 1-2000 characters
           type: string
           minLength: 1
           maxLength: 2000
@@ -542,6 +561,7 @@ components:
             required: [type]
             properties:
               type:
+                description: Constant with the value of individual
                 type: string
                 enum:
                   - trainingIncompleteMissing
@@ -551,6 +571,7 @@ components:
                   - agentNotLicensed
                   - other
               note:
+                description: 1-2000 characters
                 type: string
                 minLength: 1
                 maxLength: 2000
@@ -558,12 +579,15 @@ components:
                 type: object
                 properties:
                   npn:
+                    description: Max 10 characters
                     type: string
                     maxLength: 10
                   crdNumber:
+                    description: Max 10 characters
                     type: string
                     maxLength: 10
                   taxId:
+                    description: length: 9
                     type: string
                     maxLength: 9
     Suitability:
@@ -572,27 +596,33 @@ components:
       required: [status,isActionNeeded]
       properties:
         status:
+          description: Enum: received, inProgress, completed, cancelled
           type: string
           enum: [awaitingReview, inProgress, completed, notApplicable]
         isActionNeeded:
           type: boolean
         startDate:
+          description: yyyy-mm-dd
           type: string
           format: date
         endDate:
+          description: yyyy-mm-dd
           type: string
           format: date
         reason:
+          description: Enum: moreInformationNeeded, notSuitableForClient, other
           type: string
           enum:
             - moreInformationNeeded
             - notSuitableForClient
             - other
         note:
+          description: 1-2000 characters
           type: string
           minLength: 1
           maxLength: 2000
         dueDate:
+          description: yyyy-mm-dd
           type: string
           format: date
         isApproved:
@@ -604,17 +634,21 @@ components:
       required: [status,isActionNeeded]
       properties:
         status:
+          description: Enum: received, inProgress, completed, cancelled
           type: string
           enum: [awaitingReview, inProgress, completed]
         isActionNeeded:
           type: boolean
         startDate:
+          description: yyyy-mm-dd
           type: string
           format: date
         endDate:
+          description: yyyy-mm-dd
           type: string
           format: date
         note:
+          description: 1-2000 characters
           type: string
           minLength: 1
           maxLength: 2000
@@ -624,6 +658,7 @@ components:
             type: object
             properties:
               reason:
+                description: Enum: moreInformationNeeded, notSuitableForClient, other
                 type: string
                 enum:
                   - applicationIssue
@@ -642,9 +677,11 @@ components:
                 minLength: 1
                 maxLength: 100
               dueDate:
+                description: yyyy-mm-dd
                 type: string
                 format: date
               note:
+                description: 1-2000 characters
                 type: string
                 minLength: 1
                 maxLength: 2000
@@ -654,17 +691,21 @@ components:
       required: [isActionNeeded, status]  
       properties:
         startDate:
+          description: yyyy-mm-dd
           type: string
           format: date
         endDate:
+          description: yyyy-mm-dd
           type: string
           format: date
         isActionNeeded:
           type: boolean
         status:
+          description: Enum: received, inProgress, completed, cancelled
           type: string
           enum: [awaitingReview, inProgress, completed]
         note:
+          description: 1-2000 characters
           type: string
           minLength: 1
           maxLength: 2000
@@ -687,6 +728,7 @@ components:
                   - payrollDeduction
                   - wireTransfer
               type:
+                description: Constant with the value of individual
                 type: string
                 enum:
                   - contribution
@@ -707,12 +749,15 @@ components:
                 type: number
                 format: float
               receivedDate:
+                description: yyyy-mm-dd
                 type: string
                 format: date
               status:
+                description: Enum: received, inProgress, completed, cancelled
                 type: string
                 enum: [inProgress, complete]
               reason:
+                description: Enum: moreInformationNeeded, notSuitableForClient, other
                 type: string
                 enum:
                   - awaitingFundsFromCedingCompany
@@ -723,9 +768,11 @@ components:
                   - pendingReg60
                   - other
               effectiveDate:
+                description: yyyy-mm-dd
                 type: string
                 format: date
               note:
+                description: 1-2000 characters
                 type: string
                 minLength: 1
                 maxLength: 2000
@@ -734,6 +781,7 @@ components:
                 required: [name, accountNumber]
                 properties:
                   name:
+                    description: Max 180 characters
                     type: string
                     minLength: 1
                     maxLength: 180
@@ -741,6 +789,7 @@ components:
                   accountNumber:
                     type: string
                   startDate:
+                    description: yyyy-mm-dd
                     type: string
                     format: date
                   referenceNumber:
@@ -749,6 +798,7 @@ components:
                     type: string
                     format: date
                   note:
+                    description: 1-2000 characters
                     type: string
                     minLength: 1
                     maxLength: 2000
@@ -762,10 +812,12 @@ components:
       required: [policyNumber,applicationOrigin,cusip,status,statusDate]
       properties:
         policyNumber:
+          description: 1-30 characters
           type: string
           minLength: 1
           maxLength: 30
         associatedFirmId:
+          description: 1-65 characters
           type: string
         applicationOrigin:
           type: object
@@ -779,13 +831,16 @@ components:
               type: string
               maxLength: 65
         cusip:
+          description: 9 characters with only letters and numbers allowed
           $ref: '#/components/schemas/cusip'
         productName:
+          description: Max 180 characters
           type: string
           maxLength: 180
         isQualified:
           type: boolean
         status:
+          description: Enum: received, inProgress, completed, cancelled
           type: string
           enum: [received, inProgress, completed, cancelled]
         statusDate:
@@ -807,6 +862,7 @@ components:
                 - handDelivery
                 - usps
             trackingNumber:
+              description: 1-65 characters
               type: string
         caseManager:
           type: object
@@ -826,8 +882,10 @@ components:
             websiteURL:
               type: string
         producers:
+          description: Array of  Individual Producer and Entity Producer (see types below)
           $ref: "#/components/schemas/Producers"
         parties:
+          description: Array of Individual Party and Entity Party objects (see types below).  Max of 2
           $ref: "#/components/schemas/Parties"
     Policy:
       description: Schema for policy data
@@ -838,26 +896,33 @@ components:
         isActionNeeded:
           type: boolean
         actionSections:
+          description: Enum: suitability, cansellvalidation, documentReview, funding.  Required if isActionNeeded is true
           type: array
           items:
             type: string
             enum: [suitability, cansellvalidation, documentReview, funding]
         signedDate:
+          description: yyyy-mm-dd
           type: string
           format: date
         receivedDate:
+          description: yyyy-mm-dd
           type: string
           format: date
         issuedDate:
+          description: yyyy-mm-dd
           type: string
           format: date
         effectiveDate:
+          description: yyyy-mm-dd
           type: string
           format: date
         rateEffectiveDate:
+          description: yyyy-mm-dd
           type: string
           format: date
         fundsHeldUntilDate:
+          description: yyyy-mm-dd
           type: string
           format: date
         cancellation:
@@ -871,6 +936,7 @@ components:
               type: string
               format: date
             reason:
+              description: Enum: moreInformationNeeded, notSuitableForClient, other
               type: string
               minLength: 1
               maxLength: 2000
@@ -893,6 +959,7 @@ components:
           type: integer
           maximum: 1000
         policies:
+          description: Array of Policy Objects
           $ref: "#/components/schemas/Policies"
     DetailApplicationStatus:
       description: Schema for detail application status
@@ -911,6 +978,7 @@ components:
             documentReviews:
               $ref: "#/components/schemas/DocumentReview"
             suitability:
+              description: See Suitability
               $ref: "#/components/schemas/Suitability"
             fundings:
               $ref: "#/components/schemas/Funding"
@@ -933,36 +1001,45 @@ components:
         totalItemsCount:
           type: integer
         applicationStatuses:
+          description: Array of Policy Summary objects.  See Policy Summary for details
           $ref: "#/components/schemas/SummaryApplicationStatuses"
     SearchSummaryApplicationStatusesRequest:
       description: Schema for searching summary application statuses
       type: object
       properties:
         policyNumber:
+          description: 1-30 characters
           type: string
           minLength: 1
           maxLength: 30
         associatedFirmId:
+          description: 1-65 characters
           type: string
           minLength: 1
           maxLength: 65
         cusip:
+          description: 9 characters with only letters and numbers allowed
           $ref: '#/components/schemas/cusip'
         producerNumber:
+          description: Max 30 characters
           type: string
           maxLength: 30
         npn: 
+          description: Max 10 characters
           type: string
           maxLength: 10
         crdNumber:
+          description: Max 10 characters
           type: string
           maxLength: 10
         partyTaxId:
+          description: length: 9
           type: string
           maxLength: 9
         applicationOriginId:
           type: string
         trackingNumber:
+          description: 1-65 characters
           type: string
           minLength: 1
           maxLength: 65
