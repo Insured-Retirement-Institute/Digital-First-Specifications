@@ -13,16 +13,16 @@ paths:
       summary: Search for summary application statuses
       description: Retrieve summary application statuses based on search criteria.
       tags:
-        - Application Status
+      - Application Status
       parameters:
-        - $ref: '#/components/parameters/correlationId'
-        - $ref: '#/components/parameters/senderParticipantId'
-        - $ref: '#/components/parameters/receiverParticipantId'
-        - $ref: '#/components/parameters/brokerNumber'
-        - $ref: '#/components/parameters/orderBy'
-        - $ref: '#/components/parameters/sortOrder'
-        - $ref: '#/components/parameters/start'
-        - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/senderParticipantId'
+      - $ref: '#/components/parameters/receiverParticipantId'
+      - $ref: '#/components/parameters/brokerNumber'
+      - $ref: '#/components/parameters/orderBy'
+      - $ref: '#/components/parameters/sortOrder'
+      - $ref: '#/components/parameters/start'
+      - $ref: '#/components/parameters/limit'
       requestBody:
         content:
           application/json:
@@ -40,26 +40,26 @@ paths:
   /v1/application-statuses:
     get:
       operationId: getApplicationStatuses
-      summary: Retrieve summary application statuses 
+      summary: Retrieve summary application statuses
       description: Retrieve all summary application statuses.
       tags:
-        - Application Status
+      - Application Status
       parameters:
-        - $ref: '#/components/parameters/correlationId'
-        - $ref: '#/components/parameters/senderParticipantId'
-        - $ref: '#/components/parameters/receiverParticipantId'
-        - $ref: '#/components/parameters/brokerNumber'
-        - $ref: '#/components/parameters/associatedFirmId'
-        - $ref: '#/components/parameters/cusip'
-        - $ref: '#/components/parameters/producerNumber'
-        - $ref: '#/components/parameters/npn'
-        - $ref: '#/components/parameters/crdNumber'
-        - $ref: '#/components/parameters/applicationOriginId'
-        - $ref: '#/components/parameters/trackingNumber'
-        - $ref: '#/components/parameters/orderBy'
-        - $ref: '#/components/parameters/sortOrder'
-        - $ref: '#/components/parameters/start'
-        - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/senderParticipantId'
+      - $ref: '#/components/parameters/receiverParticipantId'
+      - $ref: '#/components/parameters/brokerNumber'
+      - $ref: '#/components/parameters/associatedFirmId'
+      - $ref: '#/components/parameters/cusip'
+      - $ref: '#/components/parameters/producerNumber'
+      - $ref: '#/components/parameters/npn'
+      - $ref: '#/components/parameters/crdNumber'
+      - $ref: '#/components/parameters/applicationOriginId'
+      - $ref: '#/components/parameters/trackingNumber'
+      - $ref: '#/components/parameters/orderBy'
+      - $ref: '#/components/parameters/sortOrder'
+      - $ref: '#/components/parameters/start'
+      - $ref: '#/components/parameters/limit'
       responses:
         "200":
           description: Policy application statuses successfully retrieved
@@ -75,14 +75,14 @@ paths:
       summary: Retrieve application status
       description: Retrieve application status for a policy with complete status details.
       tags:
-        - Application Status
+      - Application Status
       parameters:
-        - $ref: '#/components/parameters/correlationId'
-        - $ref: '#/components/parameters/senderParticipantId'
-        - $ref: '#/components/parameters/receiverParticipantId'
-        - $ref: '#/components/parameters/brokerNumber'
-        - $ref: '#/components/parameters/policyNumber'
-        - $ref: '#/components/parameters/associatedFirmId'
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/senderParticipantId'
+      - $ref: '#/components/parameters/receiverParticipantId'
+      - $ref: '#/components/parameters/brokerNumber'
+      - $ref: '#/components/parameters/policyNumber'
+      - $ref: '#/components/parameters/associatedFirmId'
       responses:
         "200":
           description: Policy application status successfully retrieved
@@ -102,23 +102,23 @@ paths:
       summary: Retrieve policies
       description: Retrieve all policies.
       tags:
-        - Policy
+      - Policy
       parameters:
-        - $ref: '#/components/parameters/correlationId'
-        - $ref: '#/components/parameters/senderParticipantId'
-        - $ref: '#/components/parameters/receiverParticipantId'
-        - $ref: '#/components/parameters/brokerNumber'
-        - $ref: '#/components/parameters/associatedFirmId'
-        - $ref: '#/components/parameters/cusip'
-        - $ref: '#/components/parameters/producerNumber'
-        - $ref: '#/components/parameters/npn'
-        - $ref: '#/components/parameters/crdNumber'
-        - $ref: '#/components/parameters/applicationOriginId'
-        - $ref: '#/components/parameters/trackingNumber'
-        - $ref: '#/components/parameters/orderBy'
-        - $ref: '#/components/parameters/sortOrder'
-        - $ref: '#/components/parameters/start'
-        - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/senderParticipantId'
+      - $ref: '#/components/parameters/receiverParticipantId'
+      - $ref: '#/components/parameters/brokerNumber'
+      - $ref: '#/components/parameters/associatedFirmId'
+      - $ref: '#/components/parameters/cusip'
+      - $ref: '#/components/parameters/producerNumber'
+      - $ref: '#/components/parameters/npn'
+      - $ref: '#/components/parameters/crdNumber'
+      - $ref: '#/components/parameters/applicationOriginId'
+      - $ref: '#/components/parameters/trackingNumber'
+      - $ref: '#/components/parameters/orderBy'
+      - $ref: '#/components/parameters/sortOrder'
+      - $ref: '#/components/parameters/start'
+      - $ref: '#/components/parameters/limit'
       responses:
         "200":
           description: Policies successfully retrieved
@@ -136,14 +136,14 @@ paths:
       summary: Retrieve a policy
       description: Retrieve summary application-status of a policy without the details of the statuses of each activity associated with the application
       tags:
-        - Policy
+      - Policy
       parameters:
-        - $ref: '#/components/parameters/correlationId'
-        - $ref: '#/components/parameters/senderParticipantId'
-        - $ref: '#/components/parameters/receiverParticipantId'
-        - $ref: '#/components/parameters/brokerNumber'
-        - $ref: '#/components/parameters/policyNumber'
-        - $ref: '#/components/parameters/associatedFirmId'
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/senderParticipantId'
+      - $ref: '#/components/parameters/receiverParticipantId'
+      - $ref: '#/components/parameters/brokerNumber'
+      - $ref: '#/components/parameters/policyNumber'
+      - $ref: '#/components/parameters/associatedFirmId'
       responses:
         "200":
           description: Policy successfully retrieved
@@ -163,14 +163,14 @@ paths:
       summary: Retrieve policy funding data
       description: Retrieve funding data of a policy.
       tags:
-        - Policy
+      - Policy
       parameters:
-        - $ref: '#/components/parameters/correlationId'
-        - $ref: '#/components/parameters/senderParticipantId'
-        - $ref: '#/components/parameters/receiverParticipantId'
-        - $ref: '#/components/parameters/brokerNumber'
-        - $ref: '#/components/parameters/policyNumber'
-        - $ref: '#/components/parameters/associatedFirmId'
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/senderParticipantId'
+      - $ref: '#/components/parameters/receiverParticipantId'
+      - $ref: '#/components/parameters/brokerNumber'
+      - $ref: '#/components/parameters/policyNumber'
+      - $ref: '#/components/parameters/associatedFirmId'
       responses:
         "200":
           description: Policy funding successfully retrieved
@@ -190,14 +190,14 @@ paths:
       summary: Retrieve policy document review data
       description: Retrieve document review data of a policy.
       tags:
-        - Policy
+      - Policy
       parameters:
-        - $ref: '#/components/parameters/correlationId'
-        - $ref: '#/components/parameters/senderParticipantId'
-        - $ref: '#/components/parameters/receiverParticipantId'
-        - $ref: '#/components/parameters/brokerNumber'
-        - $ref: '#/components/parameters/policyNumber'
-        - $ref: '#/components/parameters/associatedFirmId'
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/senderParticipantId'
+      - $ref: '#/components/parameters/receiverParticipantId'
+      - $ref: '#/components/parameters/brokerNumber'
+      - $ref: '#/components/parameters/policyNumber'
+      - $ref: '#/components/parameters/associatedFirmId'
       responses:
         "200":
           description: Policy document review successfully retrieved
@@ -217,14 +217,14 @@ paths:
       summary: Retrieve policy suitability data
       description: Retrieve suitability data of a policy.
       tags:
-        - Policy
+      - Policy
       parameters:
-        - $ref: '#/components/parameters/correlationId'
-        - $ref: '#/components/parameters/senderParticipantId'
-        - $ref: '#/components/parameters/receiverParticipantId'
-        - $ref: '#/components/parameters/brokerNumber'
-        - $ref: '#/components/parameters/policyNumber'
-        - $ref: '#/components/parameters/associatedFirmId'
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/senderParticipantId'
+      - $ref: '#/components/parameters/receiverParticipantId'
+      - $ref: '#/components/parameters/brokerNumber'
+      - $ref: '#/components/parameters/policyNumber'
+      - $ref: '#/components/parameters/associatedFirmId'
       responses:
         "200":
           description: Policy suitability successfully retrieved
@@ -244,14 +244,14 @@ paths:
       summary: Retrieve policy can sell validation data
       description: Retrieve can sell valiation data of a policy.
       tags:
-        - Policy
+      - Policy
       parameters:
-        - $ref: '#/components/parameters/correlationId'
-        - $ref: '#/components/parameters/senderParticipantId'
-        - $ref: '#/components/parameters/receiverParticipantId'
-        - $ref: '#/components/parameters/brokerNumber'
-        - $ref: '#/components/parameters/policyNumber'
-        - $ref: '#/components/parameters/associatedFirmId'
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/senderParticipantId'
+      - $ref: '#/components/parameters/receiverParticipantId'
+      - $ref: '#/components/parameters/brokerNumber'
+      - $ref: '#/components/parameters/policyNumber'
+      - $ref: '#/components/parameters/associatedFirmId'
       responses:
         "200":
           description: Policy can sell validation successfully retrieved
@@ -406,7 +406,7 @@ components:
   schemas:
     IndividualIdentity:
       description: Schema for individual identity data
-      required: [firstName,lastName]
+      required: [firstName, lastName]
       type: object
       properties:
         type:
@@ -435,32 +435,35 @@ components:
       type: object
       required: [relationships]
       allOf:
-        - $ref: "#/components/schemas/IndividualIdentity"
-        - type: object
-          properties:
-            npn:
+      - $ref: "#/components/schemas/IndividualIdentity"
+      - type: object
+        properties:
+          npn:
+            type: string
+            description: National Producer Number
+            maxLength: 10
+          crdNumber:
+            type: string
+            description: Central Registration Depository number
+            maxLength: 10
+          relationships:
+            type: array
+            description: Relationship(s) this producer has to the policy
+            minItems: 1
+            maxItems: 30
+            items:
               type: string
-              maxLength: 10
-            crdNumber:
-              type: string
-              maxLength: 10
-            relationships:
-              type: array
-              minItems: 1
-              maxItems: 30
-              items:
-                type: string
-                enum:
-                  - primaryAgent
-                  - secondaryAgent
-                  - additionalAgent
-                  - investmentAdvisorRepresentative
+              enum:
+              - primaryAgent
+              - secondaryAgent
+              - additionalAgent
+              - investmentAdvisorRepresentative
     IndividualParty:
       description: Schema for individual party data
       type: object
       allOf:
-        - $ref: "#/components/schemas/IndividualIdentity"
-        - $ref: "#/components/schemas/PartyRelationship"
+      - $ref: "#/components/schemas/IndividualIdentity"
+      - $ref: "#/components/schemas/PartyRelationship"
     EntityIdentity:
       description: Schema for entity identity data
       type: object
@@ -473,7 +476,7 @@ components:
           type: string
           minLength: 1
           maxLength: 180
-          pattern: ^[a-zA-Z0-9=()=*@#\\s.,'_/~%$!();:&amp;&quot;+&#x00ae;®`\\-\\\\?\"=]{1,180} 
+          pattern: ^[a-zA-Z0-9=()=*@#\\s.,'_/~%$!();:&amp;&quot;+&#x00ae;®`\\-\\\\?\"=]{1,180}
         taxId:
           type: string
     EntityProducer:
@@ -481,31 +484,34 @@ components:
       type: object
       required: [relationships]
       allOf:
-        - $ref: "#/components/schemas/EntityIdentity"
-        - type: object
-          properties:
-            npn:
+      - $ref: "#/components/schemas/EntityIdentity"
+      - type: object
+        properties:
+          npn:
+            type: string
+            description: National Producer Number
+            maxLength: 10
+          crdNumber:
+            type: string
+            description: Central Registration Depository number
+            maxLength: 10
+          relationships:
+            type: array
+            description: Relationship(s) this producer has to the policy
+            minItems: 1
+            maxItems: 25
+            items:
               type: string
-              maxLength: 10
-            crdNumber:
-              type: string
-              maxLength: 10
-            relationships:
-              type: array
-              minItems: 1
-              maxItems: 25
-              items:
-                type: string
-                enum:
-                  - brokerageGeneralAgency
-                  - registeredInvestmentAdvisoryFirm
-                  - independentMarketingOrganization
+              enum:
+              - brokerageGeneralAgency
+              - registeredInvestmentAdvisoryFirm
+              - independentMarketingOrganization
     EntityParty:
       description: Schema for entity party data
       type: object
       allOf:
-        - $ref: "#/components/schemas/EntityIdentity"
-        - $ref: "#/components/schemas/PartyRelationship"
+      - $ref: "#/components/schemas/EntityIdentity"
+      - $ref: "#/components/schemas/PartyRelationship"
     PartyRelationship:
       description: Schema for party relationship data
       type: object
@@ -513,69 +519,78 @@ components:
       properties:
         relationships:
           type: array
+          description: Relationship(s) this party has to the policy
           minItems: 1
           maxItems: 2
           items:
             type: string
             enum:
-              - owner
-              - jointOwner
-              - annuitant
-              - jointAnnuitant
-              - primaryBeneficiary
-              - contingentBeneficiary
+            - owner
+            - jointOwner
+            - annuitant
+            - jointAnnuitant
+            - primaryBeneficiary
+            - contingentBeneficiary
     Producers:
       description: Schema for producers data
       type: array
       items:
         anyOf:
-          - $ref: "#/components/schemas/IndividualProducer"
-          - $ref: "#/components/schemas/EntityProducer"
-    Parties:  
+        - $ref: "#/components/schemas/IndividualProducer"
+        - $ref: "#/components/schemas/EntityProducer"
+    Parties:
       description: Schema for parties data
       type: array
       minItems: 1
       items:
         anyOf:
-          - $ref: "#/components/schemas/IndividualParty"
-          - $ref: "#/components/schemas/EntityParty"
+        - $ref: "#/components/schemas/IndividualParty"
+        - $ref: "#/components/schemas/EntityParty"
     CanSellValidation:
       description: Schema for policy can sell validation data
       type: object
-      required: [status,isActionNeeded]
+      required: [status, isActionNeeded]
       properties:
         status:
           type: string
+          description: Validation status
           enum: [awaitingReview, inProgress, completed]
         isActionNeeded:
           type: boolean
+          description: Action needed?
         startDate:
           type: string
+          description: Start date
           format: date
         endDate:
           type: string
+          description: End date
           format: date
         note:
           type: string
+          description: Note
           minLength: 1
           maxLength: 2000
         issues:
           type: array
+          description: List of issues that need to be addressed
           items:
             type: object
             required: [type]
             properties:
               type:
                 type: string
+                description: Issue type
                 enum:
-                  - trainingIncompleteMissing
-                  - trainingExpired
-                  - agentNotAppointedForSale
-                  - jitAppointmentInProgress
-                  - agentNotLicensed
-                  - other
+                - trainingIncompleteMissing
+                - trainingExpired
+                - agentNotAppointedForSale
+                - jitAppointmentInProgress
+                - agentNotLicensed
+                - other
               note:
                 type: string
+                description: Issue note
                 minLength: 1
                 maxLength: 2000
               affectedProducer:
@@ -583,60 +598,75 @@ components:
                 properties:
                   npn:
                     type: string
+                    description: Producer NPN
                     maxLength: 10
                   crdNumber:
                     type: string
+                    description: Producer CRD
                     maxLength: 10
                   taxId:
                     type: string
+                    description: Producer Tax ID
                     maxLength: 9
     Suitability:
       description: Schema for policy suitability data
       type: object
-      required: [status,isActionNeeded]
+      required: [status, isActionNeeded]
       properties:
         status:
           type: string
+          description: Suitability status
           enum: [awaitingReview, inProgress, completed, notApplicable]
         isActionNeeded:
           type: boolean
+          description: Action needed?
         startDate:
           type: string
+          description: Start date
           format: date
         endDate:
           type: string
+          description: End date
           format: date
         reason:
           type: string
+          description: Reason
           enum:
-            - moreInformationNeeded
-            - notSuitableForClient
-            - other
+          - moreInformationNeeded
+          - notSuitableForClient
+          - other
         note:
           type: string
+          description: Note
           minLength: 1
           maxLength: 2000
         dueDate:
           type: string
+          description: Due date
           format: date
     DocumentReview:
       description: Schema for policy document review data
       type: object
-      required: [status,isActionNeeded]
+      required: [status, isActionNeeded]
       properties:
         status:
           type: string
+          description: Document review status
           enum: [awaitingReview, inProgress, completed]
         isActionNeeded:
           type: boolean
+          description: Action needed?
         startDate:
           type: string
+          description: Start date
           format: date
         endDate:
           type: string
+          description: End date
           format: date
         note:
           type: string
+          description: Note
           minLength: 1
           maxLength: 2000
         issues:
@@ -646,108 +676,129 @@ components:
             properties:
               reason:
                 type: string
+                description: Reason
                 enum:
-                  - applicationIssue
-                  - contactCarrier
-                  - incompleteForm
-                  - missingForm
-                  - missingSignature
-                  - needClarity
-                  - other
+                - applicationIssue
+                - contactCarrier
+                - incompleteForm
+                - missingForm
+                - missingSignature
+                - needClarity
+                - other
               formName:
                 type: string
+                description: Form name
                 minLength: 1
                 maxLength: 200
               formNumber:
                 type: string
+                description: Form number
                 minLength: 1
                 maxLength: 100
               dueDate:
                 type: string
+                description: Due date
                 format: date
               note:
                 type: string
+                description: Note
                 minLength: 1
                 maxLength: 2000
     Funding:
       description: Schema for policy funding data
       type: object
-      required: [isActionNeeded, status]  
+      required: [isActionNeeded, status]
       properties:
         startDate:
           type: string
+          description: Start date
           format: date
         endDate:
           type: string
+          description: End date
           format: date
         isActionNeeded:
           type: boolean
+          description: Action needed?
         status:
           type: string
+          description: Funding status
           enum: [awaitingReview, inProgress, completed]
         note:
           type: string
+          description: Note
           minLength: 1
           maxLength: 2000
         sources:
           type: array
+          description: Lists sources of funding
           items:
             type: object
-            required: [method,type]
+            required: [method, type]
             properties:
               method:
                 type: string
+                description: Funding method
                 enum:
-                  - anotherPolicy
-                  - check
-                  - clearinghouse
-                  - creditCard
-                  - debitCard
-                  - digitalPayment
-                  - electronicFundTransfer
-                  - payrollDeduction
-                  - wireTransfer
+                - anotherPolicy
+                - check
+                - clearinghouse
+                - creditCard
+                - debitCard
+                - digitalPayment
+                - electronicFundTransfer
+                - payrollDeduction
+                - wireTransfer
               type:
                 type: string
+                description: Funding type
                 enum:
-                  - contribution
-                  - directRollover
-                  - employeeContribution
-                  - employerContribution
-                  - full1035Exchange
-                  - indirectRollover
-                  - nonQualifiedTransferOfAssets
-                  - partial1035Exchange
-                  - qualifiedTransfer
+                - contribution
+                - directRollover
+                - employeeContribution
+                - employerContribution
+                - full1035Exchange
+                - indirectRollover
+                - nonQualifiedTransferOfAssets
+                - partial1035Exchange
+                - qualifiedTransfer
               isActionNeeded:
                 type: boolean
+                description: Action needed?
               anticipatedAmount:
                 type: number
+                description: Anticipated amount
                 format: float
               receivedAmount:
                 type: number
+                description: Received amount
                 format: float
               receivedDate:
                 type: string
+                description: Received date
                 format: date
               status:
                 type: string
+                description: Status
                 enum: [inProgress, complete]
               reason:
                 type: string
+                description: Reason
                 enum:
-                  - awaitingFundsFromCedingCompany
-                  - contactTheCarrier
-                  - fundingDiscrepancy
-                  - nigoAtCedingCarrier
-                  - noFundsReceivedCash
-                  - pendingReg60
-                  - other
+                - awaitingFundsFromCedingCompany
+                - contactTheCarrier
+                - fundingDiscrepancy
+                - nigoAtCedingCarrier
+                - noFundsReceivedCash
+                - pendingReg60
+                - other
               effectiveDate:
                 type: string
+                description: Effective date
                 format: date
               note:
                 type: string
+                description: Note
                 minLength: 1
                 maxLength: 2000
               cedingCompany:
@@ -756,139 +807,174 @@ components:
                 properties:
                   name:
                     type: string
+                    description: Ceding company name
                     minLength: 1
                     maxLength: 180
-                    pattern:  ^[a-zA-Z0-9=()=*@#\\s.,'_/~%$!();:&amp;&quot;+&#x00ae;®`\\-\\\\?\"=]{1,180}
+                    pattern: ^[a-zA-Z0-9=()=*@#\\s.,'_/~%$!();:&amp;&quot;+&#x00ae;®`\\-\\\\?\"=]{1,180}
                   accountNumber:
                     type: string
+                    description: Ceding company account number
                   startDate:
                     type: string
+                    description: Start date
                     format: date
                   referenceNumber:
                     type: string
+                    description: Reference number
                   nextActivityDate:
                     type: string
+                    description: Next activity date
                     format: date
                   note:
                     type: string
+                    description: Note
                     minLength: 1
                     maxLength: 2000
 
     PolicySummary:
       description: Schema for policy summary data
       type: object
-      required: [policyNumber,applicationOrigin,cusip,status,isActionNeeded,signedDate]
+      required: [policyNumber, applicationOrigin, cusip, status, isActionNeeded, signedDate]
       properties:
         policyNumber:
           type: string
+          description: Policy number
           minLength: 1
           maxLength: 30
         associatedFirmId:
           type: string
+          description: Associated firm ID
         applicationOrigin:
           type: object
           properties:
             platform:
               type: string
+              description: Platform of application origin
               maxLength: 50
             isElectronic:
               type: boolean
+              description: Is application electronic?
             id:
               type: string
+              description: ID of application origin
               maxLength: 65
         cusip:
           type: string
+          description: CUSIP
           minLength: 9
           maxLength: 9
           pattern: (^[a-zA-Z0-9](9)$)
         productName:
           type: string
+          description: Product name
           maxLength: 180
         isQualified:
           type: boolean
+          description: Is policy tax plan qualified?
         status:
           type: string
+          description: Application status
           enum: [received, inProgress, completed, cancelled]
         delivery:
           type: object
           properties:
             sentDate:
               type: string
+              description: Delivery sent date
               format: date
             method:
               type: string
+              description: Delivery method
               enum:
-                - fedex
-                - ups
-                - electronicDelivery
-                - handDelivery
-                - usps
+              - fedex
+              - ups
+              - electronicDelivery
+              - handDelivery
+              - usps
             trackingNumber:
               type: string
+              description: Delivery tracking number
         caseManager:
           type: object
           required: [fullName, phoneNumber]
           properties:
             fullName:
               type: string
+              description: Full name of case manager
               minLength: 1
               maxLength: 180
-              pattern:  ^[a-zA-Z0-9=()=*@#\\s.,'_/~%$!();:&amp;&quot;+&#x00ae;®`\\-\\\\?\"=]{1,180}
+              pattern: ^[a-zA-Z0-9=()=*@#\\s.,'_/~%$!();:&amp;&quot;+&#x00ae;®`\\-\\\\?\"=]{1,180}
             phoneNumber:
               type: string
+              description: Phone number of case manager
               minLength: 10
               maxLength: 15
             emailAddress:
               type: string
+              description: Email address of case manager
             websiteURL:
               type: string
+              description: Website URL of case manager
         producers:
           $ref: "#/components/schemas/Producers"
+          description: List of producer records associated with the policy
         parties:
           $ref: "#/components/schemas/Parties"
+          description: List of individuals or entities related to the policy
     Policy:
       description: Schema for policy data
       type: object
       allOf:
-        - $ref: '#/components/schemas/PolicySummary'
+      - $ref: '#/components/schemas/PolicySummary'
       properties:
         isActionNeeded:
           type: boolean
+          description: Indicator that at least one section requires action
         actionSections:
           type: array
+          description: Sections needing action
           items:
             type: string
             enum: [suitability, cansellvalidation, documentReview, funding]
         signedDate:
           type: string
+          description: Signed date of policy
           format: date
         receivedDate:
           type: string
+          description: Received date of policy
           format: date
         issuedDate:
           type: string
+          description: Issued date of policy
           format: date
         effectiveDate:
           type: string
+          description: Effective date of policy
           format: date
         rateEffectiveDate:
           type: string
+          description: Rate effective date of policy
           format: date
         fundsHeldUntilDate:
           type: string
+          description: Funds held until date
           format: date
         cancellation:
           type: object
-          required: [initiator,cancelledDate]
+          required: [initiator, cancelledDate]
           properties:
             initiator:
               type: string
+              description: Who initiated cancellation
               enum: [advisor, carrier, client]
             cancelledDate:
               type: string
+              description: Cancellation date
               format: date
             reason:
               type: string
+              description: Reason for cancellation
               minLength: 1
               maxLength: 2000
         delivery:
@@ -896,17 +982,20 @@ components:
           properties:
             sentDate:
               type: string
+              description: Delivery sent date
               format: date
             method:
               type: string
+              description: Delivery method
               enum:
-                - fedex
-                - ups
-                - electronicDelivery
-                - handDelivery
-                - usps
+              - fedex
+              - ups
+              - electronicDelivery
+              - handDelivery
+              - usps
             trackingNumber:
               type: string
+              description: Delivery tracking number
               minLength: 1
               maxLength: 65
         caseManager:
@@ -915,38 +1004,47 @@ components:
           properties:
             fullName:
               type: string
+              description: Full name of case manager
               minLength: 1
               maxLength: 180
-              pattern:  ^[a-zA-Z0-9=()=*@#\\s.,'_/~%$!();:&amp;&quot;+&#x00ae;®`\\-\\\\?\"=]{1,180}
+              pattern: ^[a-zA-Z0-9=()=*@#\\s.,'_/~%$!();:&amp;&quot;+&#x00ae;®`\\-\\\\?\"=]{1,180}
             phoneNumber:
               type: string
+              description: Phone number of case manager
               minLength: 10
               maxLength: 15
             emailAddress:
               type: string
+              description: Email address of case manager
             websiteURL:
-              type: string        
+              type: string
+              description: Website URL of case manager
         producers:
           $ref: "#/components/schemas/Producers"
+          description: List of producer records associated with the policy
         parties:
           $ref: "#/components/schemas/Parties"
+          description: List of individuals or entities related to the policy
     Policies:
       description: Schema for policies
       type: array
       items:
         allOf:
-          - $ref: '#/components/schemas/PolicySummary'
-          - type: object
+        - $ref: '#/components/schemas/PolicySummary'
+        - type: object
     PoliciesPagedResult:
       description: Schema for the paged result of policies
       type: object
       properties:
         startIndex:
           type: integer
+          description: Starting index of records returned
         itemsCount:
           type: integer
+          description: Total number of records returned
         totalItemsCount:
           type: integer
+          description: Total number of records available for search
           maximum: 1000
         policies:
           $ref: "#/components/schemas/Policies"
@@ -954,22 +1052,23 @@ components:
       description: Schema for detail application status
       type: object
       allOf:
-        - type: object
-          properties:
-            correlationId:
-              type: string
-              description: Correlation ID for tracking the request    
-        - $ref: '#/components/schemas/Policy'
-        - type: object
-          properties:
-            canSellValidations:
-              $ref: "#/components/schemas/CanSellValidation"
-            documentReviews:
-              $ref: "#/components/schemas/DocumentReview"
-            suitability:
-              $ref: "#/components/schemas/Suitability"
-            fundings:
-              $ref: "#/components/schemas/Funding"
+      - type: object
+        properties:
+          correlationId:
+            type: string
+            description: Correlation ID for tracking the request
+      - $ref: '#/components/schemas/Policy'
+      - type: object
+        properties:
+          canSellValidations:
+            $ref: "#/components/schemas/CanSellValidation"
+          documentReviews:
+            $ref: "#/components/schemas/DocumentReview"
+          suitability:
+            $ref: "#/components/schemas/Suitability"
+            description: Information on Suitability Status
+          fundings:
+            $ref: "#/components/schemas/Funding"
     SummaryApplicationStatuses:
       description: Schema for application statuses
       type: array
@@ -981,13 +1080,17 @@ components:
       properties:
         correlationId:
           type: string
+          description: 'Correlation ID for tracking the request '
         startIndex:
           type: integer
+          description: Starting index of records returned
         itemsCount:
           type: integer
+          description: Total number of records returned
           maximum: 1000
         totalItemsCount:
           type: integer
+          description: Total number of records available for search
         applicationStatuses:
           $ref: "#/components/schemas/SummaryApplicationStatuses"
     SearchSummaryApplicationStatusesRequest:
@@ -996,10 +1099,12 @@ components:
       properties:
         policyNumber:
           type: string
+          description: Policy number
           minLength: 1
           maxLength: 30
         associatedFirmId:
           type: string
+          description: Associated firm ID
           minLength: 1
           maxLength: 65
         cusip:
@@ -1010,19 +1115,24 @@ components:
         producerNumber:
           type: string
           maxLength: 30
-        npn: 
+        npn:
           type: string
+          description: National Producer Number
           maxLength: 10
         crdNumber:
           type: string
+          description: Central Registration Depository number
           maxLength: 10
         partyTaxId:
           type: string
+          description: Producer’s tax identification number
           maxLength: 9
         applicationOriginId:
           type: string
+          description: Platform of application origin
         trackingNumber:
           type: string
+          description: Delivery tracking number
           minLength: 1
           maxLength: 65
       additionalProperties: false
