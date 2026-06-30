@@ -407,7 +407,7 @@ components:
           maxLength: 105
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,105}$
         taxId:
-          description: length: 9
+          description: "length: 9"
           type: string
           maxLength: 9
     IndividualProducer:
@@ -460,7 +460,7 @@ components:
           maxLength: 180
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,180}$
         taxId:
-          description: length: 9
+          description: "length: 9"
           type: string
     EntityProducer:
       description: Schema for entity producer data
@@ -587,7 +587,7 @@ components:
                     type: string
                     maxLength: 10
                   taxId:
-                    description: length: 9
+                    description: "length: 9"
                     type: string
                     maxLength: 9
     Suitability:
@@ -1033,7 +1033,7 @@ components:
           type: string
           maxLength: 10
         partyTaxId:
-          description: length: 9
+          description: "length: 9"
           type: string
           maxLength: 9
         applicationOriginId:
