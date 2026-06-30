@@ -362,7 +362,7 @@ components:
           type: string
       associatedFirmId:
         name: associatedFirmId
-        description: Optional query parameter for the associated firm ID
+        description: Optional query parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms.
         in: query
         required: false
         schema:
@@ -894,7 +894,7 @@ components:
         - type: object
           properties:
             npn:
-              description: National Producer Number
+              description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
               type: string
               maxLength: 10
             crdNumber:
