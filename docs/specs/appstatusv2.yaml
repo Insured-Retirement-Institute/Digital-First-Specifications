@@ -261,7 +261,7 @@ components:
         type: string
     brokerNumber:
       name: brokerNumber
-      description: Optional custom header identifying the broker number of the call
+      description: Optional custom header identifying the broker number of the call. The number used to identify the firm level entity.
       in: header
       required: false
       schema:
@@ -277,7 +277,7 @@ components:
         maxLength: 30
     associatedFirmId:
       name: associatedFirmId
-      description: Optional query parameter for the associated firm ID
+      description: Optional query parameter for the associated firm ID. The ID used to further identify a firm who is doing business on behalf of multiple distribution firms.
       in: query
       required: false
       schema:
@@ -293,7 +293,7 @@ components:
         $ref: '#/components/schemas/cusip'
     producerNumber:
       name: producerNumber
-      description: Optional query parameter for the carrier assigned unique identifier.
+      description: Optional query parameter for the carrier assigned unique identifier. The unique identifier assigned to a producer by a distributor and carrier.
       in: query
       required: false
       schema:
@@ -301,7 +301,7 @@ components:
         maxLength: 30
     npn:
       name: npn
-      description: Optional query parameter for the National Producer Number
+      description: Optional query parameter for the unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.    
       in: query
       required: false
       schema:
@@ -536,7 +536,7 @@ components:
       required: [status,isActionNeeded]
       properties:
         status:
-          description: Enum: received, inProgress, completed, cancelled
+          description: "Enum: awaitingReview, inProgress, completed"
           type: string
           enum: [awaitingReview, inProgress, completed]
         isActionNeeded:
@@ -596,7 +596,7 @@ components:
       required: [status,isActionNeeded]
       properties:
         status:
-          description: Enum: received, inProgress, completed, cancelled
+          description: "Enum: awaitingReview, inProgress, completed"
           type: string
           enum: [awaitingReview, inProgress, completed, notApplicable]
         isActionNeeded:
@@ -610,7 +610,7 @@ components:
           type: string
           format: date
         reason:
-          description: Enum: moreInformationNeeded, notSuitableForClient, other
+          description: "Enum: moreInformationNeeded, notSuitableForClient, other"
           type: string
           enum:
             - moreInformationNeeded
@@ -634,7 +634,7 @@ components:
       required: [status,isActionNeeded]
       properties:
         status:
-          description: Enum: received, inProgress, completed, cancelled
+          description: "Enum: awaitingReview, inProgress, completed"
           type: string
           enum: [awaitingReview, inProgress, completed]
         isActionNeeded:
@@ -658,7 +658,7 @@ components:
             type: object
             properties:
               reason:
-                description: Enum: moreInformationNeeded, notSuitableForClient, other
+                description: "Enum: moreInformationNeeded, notSuitableForClient, other"
                 type: string
                 enum:
                   - applicationIssue
@@ -701,7 +701,7 @@ components:
         isActionNeeded:
           type: boolean
         status:
-          description: Enum: received, inProgress, completed, cancelled
+          description: "Enum: awaitingReview, inProgress, completed"
           type: string
           enum: [awaitingReview, inProgress, completed]
         note:
@@ -753,11 +753,11 @@ components:
                 type: string
                 format: date
               status:
-                description: Enum: received, inProgress, completed, cancelled
+                description: "Enum: awaitingReview, inProgress, completed"
                 type: string
                 enum: [inProgress, complete]
               reason:
-                description: Enum: moreInformationNeeded, notSuitableForClient, other
+                description: "Enum: moreInformationNeeded, notSuitableForClient, other"
                 type: string
                 enum:
                   - awaitingFundsFromCedingCompany
@@ -840,7 +840,7 @@ components:
         isQualified:
           type: boolean
         status:
-          description: Enum: received, inProgress, completed, cancelled
+          description: "Enum: awaitingReview, inProgress, completed"
           type: string
           enum: [received, inProgress, completed, cancelled]
         statusDate:
@@ -896,7 +896,7 @@ components:
         isActionNeeded:
           type: boolean
         actionSections:
-          description: Enum: suitability, cansellvalidation, documentReview, funding.  Required if isActionNeeded is true
+          description: "Enum: suitability, cansellvalidation, documentReview, funding.  Required if isActionNeeded is true"
           type: array
           items:
             type: string
@@ -936,7 +936,7 @@ components:
               type: string
               format: date
             reason:
-              description: Enum: moreInformationNeeded, notSuitableForClient, other
+              description: "Enum: moreInformationNeeded, notSuitableForClient, other"
               type: string
               minLength: 1
               maxLength: 2000
