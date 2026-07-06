@@ -536,7 +536,6 @@ components:
       required: [status,isActionNeeded]
       properties:
         status:
-          description: Enum: received, inProgress, completed, cancelled
           type: string
           enum: [awaitingReview, inProgress, completed]
         isActionNeeded:
