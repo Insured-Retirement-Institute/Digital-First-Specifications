@@ -536,7 +536,6 @@ components:
       required: [status,isActionNeeded]
       properties:
         status:
-          description: Enum: received, inProgress, completed, cancelled
           type: string
           enum: [awaitingReview, inProgress, completed]
         isActionNeeded:
@@ -596,7 +595,6 @@ components:
       required: [status,isActionNeeded]
       properties:
         status:
-          description: Enum: received, inProgress, completed, cancelled
           type: string
           enum: [awaitingReview, inProgress, completed, notApplicable]
         isActionNeeded:
@@ -610,7 +608,6 @@ components:
           type: string
           format: date
         reason:
-          description: Enum: moreInformationNeeded, notSuitableForClient, other
           type: string
           enum:
             - moreInformationNeeded
@@ -634,7 +631,6 @@ components:
       required: [status,isActionNeeded]
       properties:
         status:
-          description: Enum: received, inProgress, completed, cancelled
           type: string
           enum: [awaitingReview, inProgress, completed]
         isActionNeeded:
@@ -658,7 +654,6 @@ components:
             type: object
             properties:
               reason:
-                description: Enum: moreInformationNeeded, notSuitableForClient, other
                 type: string
                 enum:
                   - applicationIssue
@@ -701,7 +696,6 @@ components:
         isActionNeeded:
           type: boolean
         status:
-          description: Enum: received, inProgress, completed, cancelled
           type: string
           enum: [awaitingReview, inProgress, completed]
         note:
@@ -753,11 +747,9 @@ components:
                 type: string
                 format: date
               status:
-                description: Enum: received, inProgress, completed, cancelled
                 type: string
                 enum: [inProgress, complete]
               reason:
-                description: Enum: moreInformationNeeded, notSuitableForClient, other
                 type: string
                 enum:
                   - awaitingFundsFromCedingCompany
@@ -840,7 +832,6 @@ components:
         isQualified:
           type: boolean
         status:
-          description: Enum: received, inProgress, completed, cancelled
           type: string
           enum: [received, inProgress, completed, cancelled]
         statusDate:
@@ -896,7 +887,7 @@ components:
         isActionNeeded:
           type: boolean
         actionSections:
-          description: Enum: suitability, cansellvalidation, documentReview, funding.  Required if isActionNeeded is true
+          description: Required if isActionNeeded is true
           type: array
           items:
             type: string
@@ -936,7 +927,6 @@ components:
               type: string
               format: date
             reason:
-              description: Enum: moreInformationNeeded, notSuitableForClient, other
               type: string
               minLength: 1
               maxLength: 2000
