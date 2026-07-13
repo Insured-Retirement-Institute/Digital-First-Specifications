@@ -437,7 +437,6 @@ paths:
                       isirc72qPenaltyApplied: false
                       taxablePortionRule: 'LIFO'
                     parties:
-                      description: The parties object represents the policy parties relevant to the withdrawal (owners, annuitants, beneficiaries, etc.), along with their identity, relationship, and payout instructions.
                     - taxId: '123456789'
                       firstName: 'Taylor'
                       middleName: 'A'
@@ -516,7 +515,6 @@ paths:
                       isirc72qPenaltyApplied: false
                       taxablePortionRule: 'LIFO'
                     parties:
-                      description: The parties object represents the policy parties relevant to the withdrawal (owners, annuitants, beneficiaries, etc.), along with their identity, relationship, and payout instructions.
                     - taxId: '123456789'
                       firstName: 'Taylor'
                       middleName: 'A'
