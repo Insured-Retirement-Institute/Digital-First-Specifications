@@ -403,6 +403,7 @@ components:
         - type: object
           properties:
             eventType:
+              description: Identifies the event type or triggered activity being communicated for push notifications
               type: string
               const: applicationStatus.v1.applicationReceived
             notification:
@@ -459,6 +460,7 @@ components:
         - type: object
           properties:
             eventType:
+              description: Identifies the event type or triggered activity being communicated for push notifications
               type: string
               const: applicationStatus.v1.canSellActionNeeded
             notification:
@@ -474,6 +476,7 @@ components:
         - type: object
           properties:
             eventType:
+              description: Identifies the event type or triggered activity being communicated for push notifications
               type: string
               const: applicationStatus.v1.suitabilityActionNeeded
             notification:
@@ -492,6 +495,7 @@ components:
         - type: object
           properties:
             eventType:
+              description: Identifies the event type or triggered activity being communicated for push notifications
               type: string
               const: applicationStatus.v1.suitabilityApproved
             notification:
@@ -530,6 +534,7 @@ components:
         - type: object
           properties:
             eventType:
+              description: Identifies the event type or triggered activity being communicated for push notifications
               type: string
               const: applicationStatus.v1.documentReviewActionNeeded
             notification:
@@ -549,6 +554,7 @@ components:
         - type: object
           properties:
             eventType:
+              description: Identifies the event type or triggered activity being communicated for push notifications
               type: string
               const: applicationStatus.v1.fundingActionNeeded
             notification:
@@ -568,6 +574,7 @@ components:
         - type: object
           properties:
             eventType:
+              description: Identifies the event type or triggered activity being communicated for push notifications
               type: string
               const: applicationStatus.v1.fundingTransferRequestSent
             notification:
@@ -599,6 +606,7 @@ components:
         - type: object
           properties:
             eventType:
+              description: Identifies the event type or triggered activity being communicated for push notifications
               type: string
               const: applicationStatus.v1.fundingSourceTypeUpdated
             notification:
@@ -613,6 +621,7 @@ components:
         - type: object
           properties:
             eventType:
+              description: Identifies the event type or triggered activity being communicated for push notifications
               type: string
               const: applicationStatus.v1.fundingTransferFollowedUp
             notification:
@@ -630,6 +639,7 @@ components:
                   minLength: 1
                   maxLength: 2000
                 transferSentDate:
+                  description: Date upon which the transfer request was sent from the receiving to the ceding carrier.
                   type: string
                   format: date
     
@@ -641,6 +651,7 @@ components:
         - type: object
           properties:
             eventType:
+              description: Identifies the event type or triggered activity being communicated for push notifications
               type: string
               const: applicationStatus.v1.fundingReceived
             notification: 
@@ -677,6 +688,7 @@ components:
         - type: object
           properties:
             eventType:
+                description: Identifies the event type or triggered activity being communicated for push notifications
                 type: string
                 const: applicationStatus.v1.applicationCompleted
             notification:
@@ -698,6 +710,7 @@ components:
                   minLength: 1
                   maxLength: 2000
                 delivery:
+                  description: Pertains to delivery of the issued policy/contract
                   type: object
                   properties:
                     sentDate:
@@ -722,6 +735,7 @@ components:
         - type: object
           properties:
             eventType:
+              description: Identifies the event type or triggered activity being communicated for push notifications
               type: string
               const: applicationStatus.v1.applicationCancelled
             notification:
@@ -830,6 +844,7 @@ components:
                 minLength: 1
                 maxLength: 2000
               cedingCompanyName:
+                description: Name of the company holding the existing contract to be replaced.
                 type: string
                 minLength: 1
                 maxLength: 180
@@ -1045,6 +1060,7 @@ components:
                 minLength: 1
                 maxLength: 2000
               affectedProducer:
+                description: Producer for which the CanSell issue exists
                 type: object
                 properties:
                   npn:
@@ -1160,6 +1176,7 @@ components:
                 minLength: 1
                 maxLength: 2000
     applicationOrigin:
+      description: Platform of application origin
       type: object
       required: [isElectronic]
       properties:
@@ -1210,6 +1227,7 @@ components:
           type: string
           description: Unique identifier for the application
         applicationOrigin:
+          description: Platform of application origin
           $ref: '#/components/schemas/applicationOrigin'
         status:
           description: Application status
