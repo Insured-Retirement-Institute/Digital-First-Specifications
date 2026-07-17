@@ -94,6 +94,7 @@ components:
           maxLength: 105
           pattern: '^[A-Za-z\s''\-]{1,105}$'
         middleName:
+          description: This is the middle name of the producer
           type: string
           minLength: 1
           maxLength: 105
@@ -316,8 +317,10 @@ components:
         - errorMessage
       properties:
         errorCode:
+          description: The unique code identifying the type of error
           type: string
         errorMessage:
+          description: Human-readable message explaining what went wrong
           type: string
         correlationId:
           type: string
