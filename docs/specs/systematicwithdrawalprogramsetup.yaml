@@ -587,15 +587,55 @@ components:
           type: string
           maxLength: 9
 
+    rmdInfo:
+      type: object
+      description: required minimum distribution (rmd) details for the systematic program
+      properties:
+        rmdTaxYear:
+          type: integer
+          description: The tax year this rmd withdrawal is for (e.g., 2025).
+          minimum: 1900
+          maximum: 2100
+        rmdAgeAtDistribution:
+          type: integer
+          description: The age of the rmd owner on the distribution date, in whole years.
+          minimum: 0
+          maximum: 150
+        rmdSpouseDoB:
+          type: string
+          format: date
+          description: Date of birth of the spouse used for rmd calculations, if applicable.
+        rmdRequestedAmount:
+          type: number
+          description: Portion of this withdrawal that should count toward rmd for rmdTaxYear.
+          minimum: 0
+          maximum: 9999999999.99
+        rmdCalculationMethod:
+          type: string
+          description: The method or IRS table used to calculate the rmd.
+          enum: [UNIFORM_LIFETIME_TABLE, JOINT_LIFE, SINGLE_LIFE, OTHER]
+        rmdPriorYearEndValue:
+          type: number
+          description: Contract value as of 12/31 of the prior year used as the base for rmd calculation.
+          minimum: 0
+          maximum: 9999999999.99
+      required:
+        - rmdTaxYear
+        - rmdRequestedAmount
+        - rmdCalculationMethod
+        - rmdAgeAtDistribution
+        
     SubmitSystematicWithdrawalRequest:
       type: object
       description: Request - SubmitSystematicWithdrawalRequest
       properties:
         effectiveDate:
           type: string
+          description: when the transaction was originally scheduled or expected to happen, can be a non-business day
           format: date
         nsccParticipantId:
           type: string
+          description: Unique identifier for the participant
           maxLength: 100
         externalArrangementId:
           type: string
@@ -603,6 +643,7 @@ components:
           maxLength: 100
         actionIndicator:
           type: string
+          description: indicates the action to be taken
           enum: [N, O, C]
         cusip:
           type: string
@@ -695,14 +736,18 @@ components:
       properties:
         effectiveDate:
           type: string
+          description: when the transaction was originally scheduled or expected to happen, can be a non-business day
           format: date
         nsccParticipantId:
           type: string
+          description: Unique identifier for the participant
           maxLength: 100
         externalArrangementId:
           type: string
+          description: Arrangement ID from external system
         actionIndicator:
           type: string
+          description: indicates the action to be taken
           enum: [N, O, C]
         cusip:
           type: string
@@ -1102,44 +1147,6 @@ components:
           not:
             required: [requestedAmount]
 
-    rmdInfo:
-      type: object
-      description: required minimum distribution (rmd) details for the systematic program
-      properties:
-        rmdTaxYear:
-          type: integer
-          description: The tax year this rmd withdrawal is for (e.g., 2025).
-          minimum: 1900
-          maximum: 2100
-        rmdAgeAtDistribution:
-          type: integer
-          description: The age of the rmd owner on the distribution date, in whole years.
-          minimum: 0
-          maximum: 150
-        rmdSpouseDoB:
-          type: string
-          format: date
-          description: Date of birth of the spouse used for rmd calculations, if applicable.
-        rmdRequestedAmount:
-          type: number
-          description: Portion of this withdrawal that should count toward rmd for rmdTaxYear.
-          minimum: 0
-          maximum: 9999999999.99
-        rmdCalculationMethod:
-          type: string
-          description: The method or IRS table used to calculate the rmd.
-          enum: [UNIFORM_LIFETIME_TABLE, JOINT_LIFE, SINGLE_LIFE, OTHER]
-        rmdPriorYearEndValue:
-          type: number
-          description: Contract value as of 12/31 of the prior year used as the base for rmd calculation.
-          minimum: 0
-          maximum: 9999999999.99
-      required:
-        - rmdTaxYear
-        - rmdRequestedAmount
-        - rmdCalculationMethod
-        - rmdAgeAtDistribution
-
     WithdrawalRequestStatus:
       type: object
       description: Withdrawal request status resource created by the POST.
@@ -1153,6 +1160,7 @@ components:
           enum: [CREATED, REJECTED]
         effectiveDate:
           type: string
+          description: when the transaction was originally scheduled or expected to happen, can be a non-business day
           format: date
       required: [requestId, status]
 
@@ -1169,6 +1177,7 @@ components:
           enum: [IN_PROGRESS, SUCCESS, REJECTED]
         effectiveDate:
           type: string
+          description: when the transaction was originally scheduled or expected to happen, can be a non-business day
           format: date
         message:
           type: string

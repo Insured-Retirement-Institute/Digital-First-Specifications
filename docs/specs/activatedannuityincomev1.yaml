@@ -1,27 +1,27 @@
 openapi: 3.1.0
 info:
-  title: Active Annuity Income API
+  title: Activated Annuity Income API
   version: "1.0.0"
   description: APIs for managing income activation of policies
 paths:
   /v1/policies/{policyNumber}/income-activation:
     get:
-      operationId: getAnnuityIncomeActivationByPolicyNumber
-      summary: Get Annuity Income Activation By PolicyNumber.
-      description: Get Annuity Income Activation By PolicyNumber.
+      operationId: getActivatedAnnuityIncomeByPolicyNumber
+      summary: Get Activated Annuity Income By PolicyNumber.
+      description: Get Activated Annuity Income By PolicyNumber.
       tags:
-        - Annuity Income Activation
+        - Activated Annuity Income
       parameters:
         - $ref: '#/components/parameters/policyNumber'
         - $ref: '#/components/parameters/cusip'
         - $ref: '#/components/parameters/correlationId'
       responses:
           "200":
-            description: Annuity Income Activation retrieved successfully.
+            description: Activated Annuity Income retrieved successfully.
             content:
               application/json:
                 schema:
-                     $ref: '#/components/schemas/AnnuityIncomeActivationResponse'
+                     $ref: '#/components/schemas/ActivatedAnnuityIncomeResponse'
           "400":
             description: Bad Request
           "401":
@@ -39,21 +39,21 @@ paths:
 
   /v1/income-activation/searches: 
     post:
-      operationId: getBulkActiveAnnuityIncomeSearch
-      summary: Bulk Active Annuity Income Search
-      description: Bulk Active Annuity Income Search by firmId and/or npn.
+      operationId: getBulkActivatedAnnuityIncomeSearch
+      summary: Bulk Activated Annuity Income Search
+      description: Bulk Activated Annuity Income Search by firmId and/or npn.
       tags:
-        - Bulk Active Annuity Income Search
+        - Bulk Activated Annuity Income Search
       parameters:
         - $ref: '#/components/parameters/correlationId'
       requestBody:
         content:
               application/json:
                 schema:
-                  $ref: '#/components/schemas/BulkAnnuityIncomeRequest'
+                  $ref: '#/components/schemas/BulkActivatedAnnuityIncomeRequest'
       responses:
           "202":
-            description: Bulk Annuity Income request is accepted.
+            description: Bulk Activated Annuity Income request is accepted.
           "400":
             description: Bad Request
           "401":
@@ -71,46 +71,46 @@ paths:
 
   /v1/income-activation/event-notification:
     post:
-      operationId: postBulkActiveAnnuityIncomeSearchStatus
-      summary: Bulk Active Annuity Income Search Status Notification
-      description: Bulk Active Annuity Income Search Status Notification
+      operationId: postBulkActivatedAnnuityIncomeSearchStatus
+      summary: Bulk Activated Annuity Income Search Status Notification
+      description: Bulk Activated Annuity Income Search Status Notification
       tags:
-        - Bulk Active Annuity Income Search Status Notification
+        - Bulk Activated Annuity Income Search Status Notification
       parameters:
         - $ref: '#/components/parameters/correlationId'
       requestBody:
         content:
               application/json:
                 schema:
-                  $ref: '#/components/schemas/BulkAnnuityIncomeNotificationRequest'
+                  $ref: '#/components/schemas/BulkActivatedAnnuityIncomeNotificationRequest'
       responses:
           "200":
-            description: Bulk Annuity Income Search Status
+            description: Bulk Activated Annuity Income Search Status
           "503":
             description: Service Unavailable
 
 
   /v1/income-activation/results: 
     post:
-      operationId: gettBulkActiveAnnuityIncomeResults
-      summary: Bulk Active Annuity Income Results
-      description: Bulk Annuity Income Results
+      operationId: gettBulkActivatedAnnuityIncomeResults
+      summary: Bulk Activated Annuity Income Results
+      description: Bulk Activated Annuity Income Results
       tags:
-        - Bulk Annuity Income Results
+        - Bulk Activated Annuity Income Results
       parameters:
         - $ref: '#/components/parameters/correlationId'
       requestBody:
         content:
               application/json:
                 schema:
-                  $ref: '#/components/schemas/BulkAnnuityIncomeRequest'
+                  $ref: '#/components/schemas/BulkActivatedAnnuityIncomeRequest'
       responses:
           "200":
-            description: Bulk Annuity Incomes retrieved successfully.
+            description: Bulk Activated Annuity Incomes retrieved successfully.
             content:
               application/json:
                 schema:
-                    $ref: '#/components/schemas/BulkAnnuityIncomeResponse'
+                    $ref: '#/components/schemas/BulkActivatedAnnuityIncomeResponse'
           "400":
             description: Bad Request
           "401":
@@ -156,53 +156,64 @@ components:
       maxLength: 9
       pattern:  ^[0-9]{3}[A-Z0-9]{5}[0-9]$
     policyNumber:
+      description: Policy number of the contract
       type: string
       minLength: 1
       maxLength: 30
       examples: 
             - "P78A21423"
     startIndex:
+      description: The starting of the index
       type: integer
     itemsCount:
+      description: The number of items
       type: integer
     totalAvailableItemsCount:
+      description: The total number of items
       type: integer
 
-    AnnuityIncomeActivationResponse:
+    ActivatedAnnuityIncomeResponse:
       description: Schema for annuity income activation data
       type: object
-      required: [policyNumber, isIncomeRiderActivated]
+      required: [policyNumber, isIncomeActivated]
       properties:
         policyNumber:
           $ref: '#/components/schemas/policyNumber'
         cusip:
+          description: Use to be associated with the policy to ensure a unique policy and cusip match.
           type: string
           examples: 
             - "037833100"
         isIncomeActivated:
+          description: Is Income started on this policy?
           type: boolean
         lastPaymentDate:
+          description: Date of last payment
           type: string
           format: date
           examples: 
             - "2024-03-11"
         netPaymentAmount:
+          description: The net amount is the value after deductions have been applied. It represents the final amount payable or receivable once taxes, fees, discounts, or other adjustments have been subtracted from the gross amount.
           type: number
           format: float
           examples: 
             - 5000.00
         grossPaymentAmount:
+          description: The gross amount is the total value before any deductions are applied. It represents the full amount due or earned, such as the total cost, revenue, or payment, without subtracting taxes, fees, discounts, or other adjustments.
           type: number
           format: float
           examples: 
             - 2500.00
         paymentsPerYear:
+          description: How many times per year is this income repeating? This will be used with the last payment date to determine how to represent the income for planning.
           type: integer
           minimum: 1
           maximum: 365
           examples: 
             - 24
         incomeType:
+          description: Used to identify the type of income. This is not an exhaustive list but a broad grouping to help clasify for the FP the type of income.
           type: string
           enum:
             - annuitized
@@ -210,21 +221,23 @@ components:
             - scheduledPayments
             - rmd
 
-    BulkAnnuityIncomeRequest:
+    BulkActivatedAnnuityIncomeRequest:
       description: Schema for policy income activation data
       type: object
       required: [firmId]
       properties:
         firmId:
+          description: Send firm ID first - send all policies under this FirmID
           type: string
           examples: 
             - "12345"
         npn:
+          description: National Producer Number
           type: string
           examples: 
             - "257893456"
 
-    BulkAnnuityIncomeResponse:
+    BulkActivatedAnnuityIncomeResponse:
       description: Schema for bulk policy income response
       type: object
       properties:
@@ -241,22 +254,25 @@ components:
       description: Schema for bulk annuity income response
       type: array
       items:
-        $ref: '#/components/schemas/AnnuityIncomeActivationResponse'
+        $ref: '#/components/schemas/ActivatedAnnuityIncomeResponse'
 
-    BulkAnnuityIncomeNotificationRequest:
+    BulkActivatedAnnuityIncomeNotificationRequest:
       description: Schema for annuity income activation data
       type: object
       required: [status]
       properties:
         status:
+          description: Status
           type: string
           examples: 
             - "complete"
         firmId:
+          description: Send firm ID first - send all policies under this FirmID
           type: string
           examples: 
             - "12345"
         npn:
+          description: National Producer Number
           type: string
           examples: 
             - "257893456"

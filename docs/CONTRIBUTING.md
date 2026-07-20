@@ -5,7 +5,7 @@ This document explains how to manage multiple API documentation pages using GitH
 ## Table of Contents
 - [Overview](#overview)
 - [Directory Structure](#directory-structure)
-- [How the Index.html Works](#how-the-indexhtml-works)
+- [How the Site Works](#how-the-site-works)
 - [Adding New API Documentation](#adding-new-api-documentation)
 - [Adding Versioned API Documentation](#adding-versioned-api-documentation)
 - [Publishing to GitHub Pages](#publishing-to-github-pages)
@@ -21,89 +21,109 @@ This project uses GitHub Pages to host API documentation generated with Swagger 
 
 ## Directory Structure
 
-Recommended structure for your documentation:
-
 ```
 docs/
-├── index.html           # Main HTML file that loads Swagger UI
+├── index.html           # API catalog landing page
+├── api-viewer.html      # Swagger UI viewer (loads and renders specs)
 ├── css/
-│   └── custom.css       # Custom styling (optional)
-├── openapi.yaml         # Main API specification
-├── v2/
-│   └── openapi.yaml     # Version 2 of the main API
-├── another-api/
-│   ├── openapi.yaml     # Another API specification
-│   └── v2/
-│       └── openapi.yaml # Version 2 of another API
+│   └── custom.css       # Custom styling
+├── specs/
+│   ├── appstatusv1.yaml
+│   ├── appstatusv2.yaml
+│   └── ...              # All OpenAPI specification files
 └── favicon.png          # Site favicon
 ```
 
-## How the Index.html Works
+## How the Site Works
 
-The `index.html` file is the entry point to your API documentation. It contains:
+The site is split into two pages:
 
-1. **API Selector:** A dropdown menu that allows users to switch between different API specifications
-2. **Version Selector:** A dropdown menu that shows available versions for the selected API
-3. **Swagger UI Container:** Where the actual API documentation is rendered
+**[`index.html`](index.html)** is the API catalog. It displays a card for each available API with links to its documentation. When a user clicks "View Documentation," they are sent to `api-viewer.html` with query parameters identifying the API and version (e.g. `api-viewer.html?api=appstatus.yaml&version=v2`).
 
-The JavaScript in the file:
-- Defines available APIs and their versions
-- Populates the version selector based on the selected API
-- Loads the selected API specification into Swagger UI
+**[`api-viewer.html`](api-viewer.html)** is the Swagger UI viewer. It reads the `api` and `version` query parameters from the URL, looks up the corresponding spec file path in the `apiDefinitions` object, and renders it using Swagger UI. It also provides API and version selector dropdowns for switching between specs without returning to the catalog.
 
 ## Adding New API Documentation
 
 To add a new API specification:
 
-1. Add your OpenAPI YAML/JSON file to the `docs` directory (or a subdirectory)
-2. Update the `apiDefinitions` object in `index.html` to include your new API:
+1. Add your OpenAPI YAML file to the `docs/specs/` directory.
+
+2. Add an entry to the `apiDefinitions` object in [`api-viewer.html`](api-viewer.html):
 
 ```javascript
 const apiDefinitions = {
-  "openapi.yaml": {
-    name: "Producer Readiness API",
+  // ... existing entries ...
+  "your-api.yaml": {
+    name: "Your API Name",
     versions: {
-      "v1": { path: "openapi.yaml", displayName: "v1.0.0" }
-    }
-  },
-  "another-api/openapi.yaml": {
-    name: "Another API",
-    versions: {
-      "v1": { path: "another-api/openapi.yaml", displayName: "v1.0.0" }
+      "v1": { path: "specs/your-api.yaml", displayName: "v1.0.0" }
     }
   }
 };
 ```
 
-3. Add an option to the API selector in the HTML:
+3. Add an `<option>` to the API selector dropdown in [`api-viewer.html`](api-viewer.html):
 
 ```html
 <select id="api-selector" onchange="loadSelectedAPI()">
-  <option value="openapi.yaml">Producer Readiness API</option>
-  <option value="another-api/openapi.yaml">Another API</option>
+  <!-- existing options -->
+  <option value="your-api.yaml">Your API Name</option>
 </select>
+```
+
+4. Add a card to the API grid in [`index.html`](index.html):
+
+```html
+<div class="api-card">
+    <div class="api-card-header">
+        <h3>Your API Name</h3>
+    </div>
+    <p>Short description of the API.</p>
+    <div class="api-versions-container">
+        <div class="api-versions">
+            <span>Active Version:</span>
+            <ul>
+                <li><a href="api-viewer.html?api=your-api.yaml&version=v1">v1.0.0</a></li>
+            </ul>
+            <span>Previous Versions:</span>
+        </div>
+    </div>
+    <a href="api-viewer.html?api=your-api.yaml&version=v1" class="btn btn-primary">View Documentation</a>
+</div>
 ```
 
 ## Adding Versioned API Documentation
 
 To add a new version of an existing API:
 
-1. Create a subdirectory for the version (e.g., `v2/`) and add your OpenAPI file there
-2. Update the `apiDefinitions` object to include the new version:
+1. Add the new version's YAML file to `docs/specs/` (e.g. `your-api-v2.yaml`).
+
+2. Add the new version to the existing entry in the `apiDefinitions` object in [`api-viewer.html`](api-viewer.html):
 
 ```javascript
-const apiDefinitions = {
-  "openapi.yaml": {
-    name: "Producer Readiness API",
-    versions: {
-      "v1": { path: "openapi.yaml", displayName: "v1.0.0" },
-      "v2": { path: "v2/openapi.yaml", displayName: "v2.0.0" }
-    }
+"your-api.yaml": {
+  name: "Your API Name",
+  versions: {
+    "v1": { path: "specs/your-api.yaml", displayName: "v1.0.0" },
+    "v2": { path: "specs/your-api-v2.yaml", displayName: "v2.0.0" }
   }
-};
+}
 ```
 
-The version selector will automatically appear when multiple versions are available for an API.
+The version selector in `api-viewer.html` will automatically appear when multiple versions are available for an API.
+
+3. Update the card in [`index.html`](index.html) to show the new active version and move the old version to "Previous Versions":
+
+```html
+<span>Active Version:</span>
+<ul>
+    <li><a href="api-viewer.html?api=your-api.yaml&version=v2">v2.0.0</a></li>
+</ul>
+<span>Previous Versions:</span>
+<ul>
+    <li><a href="api-viewer.html?api=your-api.yaml&version=v1">v1.0.0</a></li>
+</ul>
+```
 
 ## Publishing to GitHub Pages
 
@@ -118,7 +138,7 @@ To publish your API documentation to GitHub Pages:
 You can customize the appearance of the documentation by:
 
 1. Adding custom CSS in `docs/css/custom.css`
-2. Modifying the Swagger UI configuration in `index.html`:
+2. Modifying the Swagger UI configuration in [`api-viewer.html`](api-viewer.html):
 
 ```javascript
 window.ui = SwaggerUIBundle({
@@ -134,9 +154,8 @@ window.ui = SwaggerUIBundle({
   ],
   layout: "StandaloneLayout",
   // Add customizations here:
-  docExpansion: 'list', // Controls the default expansion setting
+  displayRequestDuration: true,
   defaultModelsExpandDepth: -1, // Hide the models by default
-  displayRequestDuration: true, // Display the request duration
   filter: true // Enable filtering operations
 });
 ```

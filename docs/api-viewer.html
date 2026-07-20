@@ -21,11 +21,14 @@
                         <option value="appstatus.yaml">Application Status API</option>
                         <option value="appstatuspushNotifications1.yaml">Application Status Push Notifications API</option>
                         <option value="producertraining.yaml">Producer Training Update</option>
-                        <option value="policyincome.yaml">Policy Income API</option>
+                        <option value="activatedannuityincome.yaml">Activated Annuity Income API</option>
                         <option value="onetimewithdrawal1.yaml">One-Time Withdrawals API</option>
                         <option value="onetimewithdrawalquote1.yaml">One-Time Withdrawal Quote API</option>
                         <option value="systematicwithdrawalprogramsetup.yaml">Systematic Withdrawal Program Setup API</option>
                         <option value="systematicwithdrawalprogramupdate.yaml">Systematic Withdrawal Program Update API</option>
+                        <option value="paperlessreplacements1.yaml">Paperless Replacements (RPL) API</option>
+                        <option value="fundtransfer.yaml">Fund Transfer API</option>
+                        <option value="policyinquiry.yaml">Policy Inquiry API</option>
                         <!-- Add more options as you add more APIs -->
                         <!-- <option value="another-api/openapi.yaml">Another API</option> -->
                     </select>
@@ -60,6 +63,10 @@
                     "v2": {
                         path: "specs/appstatusv2.yaml",
                         displayName: "v2.0.0"
+                    },
+                    "v3": {
+                        path: "specs/appstatusv3.yaml",
+                        displayName: "v3.0.0"
                     }
                 }
             },
@@ -82,11 +89,11 @@
                     }
                 }
             },
-            "policyincome.yaml": {
-                name: "Policy Income API",
+            "activatedannuityincome.yaml": {
+                name: "Activated Annuity Income API",
                 versions: {
                     "v1": {
-                        path: "specs/activeannuityincomev1.yaml",
+                        path: "specs/activatedannuityincomev1.yaml",
                         displayName: "v1.0.0"
                     }
                 }
@@ -126,8 +133,36 @@
                         displayName: "v1.0.0"
                     }
                 }
+            },
+            "paperlessreplacements1.yaml": {
+                name: "Paperless Replacements (RPL) API",
+                versions: {
+                    "v1": {
+                        path: "specs/paperlessreplacements1.yaml",
+                        displayName: "v1.0.0"
+                    }
+                }
+            },
+            "fundtransfer.yaml": {
+                name: "Fund Transfer API",
+                versions: {
+                    "v1": {
+                        path: "specs/fundtransfer.yaml",
+                        displayName: "v1.0.0"
+                    }
+                }
+            },
+            "policyinquiry.yaml": {
+                name: "Policy Inquiry API",
+                versions: {
+                    "v1": {
+                        path: "specs/policyinquiry.yaml",
+                        displayName: "v1.0.0"
+                    }
+                }
             }
         };
+        // Add more APIs to the end of the object above as you add more APIs
 
         function populateVersionSelector(apiKey) {
             const versionSelector = document.getElementById('version-selector');
