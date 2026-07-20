@@ -156,16 +156,20 @@ components:
       maxLength: 9
       pattern:  ^[0-9]{3}[A-Z0-9]{5}[0-9]$
     policyNumber:
+      description: Policy number of the contract
       type: string
       minLength: 1
       maxLength: 30
       examples: 
             - "P78A21423"
     startIndex:
+      description: The starting of the index
       type: integer
     itemsCount:
+      description: The number of items
       type: integer
     totalAvailableItemsCount:
+      description: The total number of items
       type: integer
 
     ActivatedAnnuityIncomeResponse:
@@ -258,6 +262,7 @@ components:
       required: [status]
       properties:
         status:
+          description: Status
           type: string
           examples: 
             - "complete"
