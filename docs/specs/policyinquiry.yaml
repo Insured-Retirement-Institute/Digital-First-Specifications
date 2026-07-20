@@ -2140,6 +2140,7 @@ components:
       type: object
       properties:
         authorizationEntity:
+          description: Identifies the parties/entities allowed to initiate transactions on the policy.
           type: string
           maxLength: 100
         isAllAgentsAuthorized:
@@ -2568,7 +2569,7 @@ components:
                     description: Rate that pays interest at increasingly higher rates as the account balance increases.
                   rateType:
                     type: string
-                    description: Identifies the type of rate that has been locked for the fund or sub‑account. This indicates the classification of the applied crediting rate (e.g., declared rate, guaranteed rate, indexed strategy rate type) during the lock period. Enum values normalized to uppercase underscore style for consistency.
+                    description: Identifies the type of rate that has been locked for the fund or sub‑account.
                     enum:
                     - PARTICIPATION
                     - DOWNSIDE_PARTICIPATION
@@ -2686,7 +2687,8 @@ components:
                 type: object
                 description: Required when `isLockFeatureEnabled` is true.
                 properties:
-                  rateType:
+                  rateType: 
+                    description: Identifies the type of rate that has been locked for the fund or sub‑account.
                     type: string
                     maxLength: 100
                   lockStartDate:
@@ -3157,6 +3159,7 @@ components:
           description: Legacy DD abbreviation retained; represents arrangement source.
             Arrangement source retained per DD naming.
         taxWithholdingInstructions:
+          description: List of tax withholding instruction entries.
           type: array
           items:
             $ref: '#/components/schemas/TaxWithholdingInstruction'
@@ -3194,6 +3197,7 @@ components:
                 description: Role of the party within the systematic program. Uses
                   PascalCase values to align with the PartyRole filter vocabulary.
               taxId:
+                description: Tax Identification Number for the party (individual or entity).
                 type: string
                 maxLength: 9
                 pattern: ^[0-9]{9}$
@@ -3204,6 +3208,7 @@ components:
                 minimum: 0
                 maximum: 100
               bankId:
+                description: Bank identifier.
                 type: string
                 maxLength: 100
               addressId:
@@ -3409,11 +3414,13 @@ components:
                 minimum: 0
                 maximum: 150
               taxId:
+                description: Tax Identification Number for the party (individual or entity).
                 type: string
                 maxLength: 9
                 pattern: ^[0-9]{9}$
                 minLength: 9
         charge:
+          description: List of charges/deductions.
           type: object
           properties:
             riderExerciseCharge:
@@ -3644,6 +3651,7 @@ components:
                     type: object
                     properties:
                       value:
+                        description: Income payment amount (raw DTCC decimal string).
                         type: string
                         pattern: ^-?\d+(\.\d+)?$
                       amountType:
@@ -3699,6 +3707,7 @@ components:
           description: Total number of records available that match the request criteria,
             independent of pagination.
         transactions:
+          description: Transactions that may be performed by the authorized entities.
           type: array
           items:
             type: object
@@ -3855,6 +3864,7 @@ components:
                 $ref: '#/components/schemas/TransactionAmounts'
                 description: Details of financial amounts associated with the transaction
               charges:
+                description: List of charges/deductions.
                 type: array
                 items:
                   type: object
@@ -3891,6 +3901,7 @@ components:
                       minimum: 0
                       maximum: 9999999999.99
               taxWithholdingInstructions:
+                description: List of tax withholding instruction entries.
                 type: array
                 items:
                   $ref: '#/components/schemas/TaxWithholdingInstruction'
@@ -4286,6 +4297,7 @@ components:
           maxLength: 100
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\\?\-]{1,100}$
         taxId:
+          description: Tax Identification Number for the party (individual or entity).
           type: string
           maxLength: 9
           pattern: ^[0-9]{9}$
