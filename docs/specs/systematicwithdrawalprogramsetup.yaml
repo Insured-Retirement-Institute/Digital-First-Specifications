@@ -497,12 +497,15 @@ components:
       description: Information about the producer submitting the request
       properties:
         producerNumber:
+          description: Carrier-assigned unique identifier for the producer.
           type: string
           maxLength: 100
         npn:
+          description: National Producer Number.
           type: string
           maxLength: 100
         crdNumber:
+          description: The Central Registiration Depository (CRD) number assigned by FINRA to identify the financial professional.
           type: string
           maxLength: 100
 
@@ -529,21 +532,26 @@ components:
       type: object
       properties:
         type:
+          description: Indicates whether the party is an individual or an entity.
           type: string
           const: individual
         firstName:
+          description: First name of the party.
           type: string
           minLength: 1
           maxLength: 105
         middleName:
+          description: Middle name of the party.
           type: string
           minLength: 1
           maxLength: 105
         lastName:
+          description: Last name of the party.
           type: string
           minLength: 1
           maxLength: 105
         taxId:
+          description: Tax Identification Number
           type: string
           maxLength: 9
 
@@ -554,6 +562,7 @@ components:
         - relationships
       properties:
         relationships:
+          description: An array of strings specifying the relationship(s) of the party to the policy.
           type: array
           minItems: 1
           maxItems: 2
@@ -576,14 +585,17 @@ components:
         - taxId
       properties:
         type:
+          description: Indicates whether the party is an individual or an entity.
           type: string
           const: entity
         name:
+          description: Entity name of the party.
           type: string
           minLength: 1
           maxLength: 100
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,100}$'
         taxId:
+          description: Tax Identification Number
           type: string
           maxLength: 9
 
@@ -656,11 +668,13 @@ components:
           enum: [PRORATA, DOLLAR, SPECIFYPERCENTAGE, SPECIFIEDFUNDS, SPECIFIEDSEGMENTS, DEFAULT, PECKINGORDER, EARNINGSONLY]
           description: Defines the format of how the funds are removed
         systematicProgram:
+          description: Systematic Program.
           allOf:
             - $ref: '#/components/schemas/SystematicProgram'
             - type: object
               properties:
                 arrangementType:
+                  description: Indicates the type of financial arrangement being set up or updated for the systematic program, such as a recurring payment, withdrawal, loan repayment, required minimum distribution, or payout.
                   type: string
                   enum: [PAYMENT, WITHDRAWAL, LOANREPAYMENT, PAYOUT]
       required:
@@ -674,6 +688,7 @@ components:
               allocationOption:
                     const: SPECIFIEDFUNDS
               systematicProgram:
+                description: Systematic Program.
                 type: object
                 properties:
                   amountType:
@@ -684,9 +699,11 @@ components:
           then:
             properties:
               systematicProgram:
+                description: Systematic Program.
                 type: object
                 properties:
                   fundDistributions:
+                    description: Detailed allocation of funds.
                     type: array
                     items:
                       allOf:
@@ -695,8 +712,10 @@ components:
             not:
               properties:
                 systematicProgram:
+                  description: Systematic Program.
                   properties:
                     fundDistributions:
+                      description: Detailed allocation of funds.
                       items:
                         required: [requestedPercentage]
         - if:
@@ -704,6 +723,7 @@ components:
               allocationOption:
                     const: SPECIFIEDFUNDS
               systematicProgram:
+                description: Systematic Program.
                 type: object
                 properties:
                   amountType:
@@ -714,9 +734,11 @@ components:
           then:
             properties:
               systematicProgram:
+                description: Systematic Program.
                 type: object
                 properties:
                   fundDistributions:
+                    description: Detailed allocation of funds.
                     type: array
                     items:
                       allOf:
@@ -725,8 +747,10 @@ components:
             not:
               properties:
                 systematicProgram:
+                  description: Systematic Program.
                   properties:
                     fundDistributions:
+                      description: Detailed allocation of funds.
                       items:
                         required: [requestedAmount]
 
@@ -760,11 +784,13 @@ components:
           enum: [PRORATA, DOLLAR, SPECIFYPERCENTAGE, SPECIFIEDFUNDS, SPECIFIEDSEGMENTS, DEFAULT, PECKINGORDER, EARNINGSONLY]
           description: Defines the format of how the funds are removed
         systematicProgram:
+          description: Systematic Program.
           allOf:
             - $ref: '#/components/schemas/SystematicProgram'
             - type: object
               properties:
                 arrangementType:
+                  description: Indicates the type of financial arrangement being set up or updated for the systematic program, such as a recurring payment, withdrawal, loan repayment, required minimum distribution, or payout.
                   type: string
                   enum: [REQUIREDMINIMUMDISTRIBUTION]
                 rmdInfo:
@@ -780,6 +806,7 @@ components:
               allocationOption:
                     const: SPECIFIEDFUNDS
               systematicProgram:
+                description: Systematic Program.
                 type: object
                 properties:
                   amountType:
@@ -790,9 +817,11 @@ components:
           then:
             properties:
               systematicProgram:
+                description: Systematic Program.
                 type: object
                 properties:
                   fundDistributions:
+                    description: Detailed allocation of funds.
                     type: array
                     items:
                       allOf:
@@ -801,8 +830,10 @@ components:
             not:
               properties:
                 systematicProgram:
+                  description: Systematic Program.
                   properties:
                     fundDistributions:
+                      description: Detailed allocation of funds.
                       items:
                         required: [requestedPercentage]
         - if:
@@ -810,6 +841,7 @@ components:
               allocationOption:
                     const: SPECIFIEDFUNDS
               systematicProgram:
+                description: Systematic Program.
                 type: object
                 properties:
                   amountType:
@@ -820,9 +852,11 @@ components:
           then:
             properties:
               systematicProgram:
+                description: Systematic Program.
                 type: object
                 properties:
                   fundDistributions:
+                    description: Detailed allocation of funds.
                     type: array
                     items:
                       allOf:
@@ -831,8 +865,10 @@ components:
             not:
               properties:
                 systematicProgram:
+                  description: Systematic Program.
                   properties:
                     fundDistributions:
+                      description: Detailed allocation of funds.
                       items:
                         required: [requestedAmount]
 
@@ -866,6 +902,7 @@ components:
           description: To indicate if the transaction is N="Net" or G="Gross"
           enum: [N, G]
         requestedAmount:
+          description: Requested amount value.
           type:
             - number
             - "null"
@@ -881,28 +918,35 @@ components:
           description: Indicates how often the systematic program executes
           enum: [DAILY, EVERYTWOWEEKS, MONTHLY, SEMIANNUAL, QUARTERLY, ANNUAL]
         startDate:
+          description: start date of the Program/Transaction.
           type: string
           format: date
         endDate:
+          description: End date.
           type: string
           format: date
         previousTransactionDate:
+          description: The date on which the most recent transaction was executed under the systematic program.
           type: string
           format: date
         nextTransactionDate:
+          description: The date on which the next scheduled Transaction is planned to occur under the systematic program.
           type: string
           format: date
         payee:
+          description: List of payees for allocation.
           type: array
           items:
             $ref: '#/components/schemas/Payee'
         parties:
+          description: Party to the policy (not a producer).
           type: array
           items:
             $ref: '#/components/schemas/SystematicParty'
         producer:
           $ref: '#/components/schemas/Producer'
         fundDistributions:
+          description: Detailed allocation of funds.
           type: array
           items:
             $ref: '#/components/schemas/FundDistribution'
@@ -936,9 +980,9 @@ components:
               required:
                 - requestedAmount
         - if:
-          properties:
-            amountType:
-              enum: [MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS, EARNINGSONLY]
+            properties:
+              amountType:
+                enum: [MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS, EARNINGSONLY]
           then:
             required: [amountType]
             not:
@@ -947,6 +991,7 @@ components:
                 - required: [requestedPercentage]
                 
     Payee:
+      description: List of payees for allocation.
       type: object
       anyOf:
         - $ref: '#/components/schemas/IndividualIdentity'
@@ -998,8 +1043,8 @@ components:
       description: List of tax withholding instruction entries
       properties:
         taxId:
-          type: string
           description: Tax Identification Number
+          type: string
           maxLength: 9
         taxWithholdingType:
           type: string
