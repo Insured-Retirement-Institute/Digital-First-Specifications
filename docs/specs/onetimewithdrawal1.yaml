@@ -1328,9 +1328,11 @@ components:
           description: Current status of the withdrawal request.
           enum: [CREATED, REJECTED]
         effectiveDate:
+          description: When the transaction was originally scheduled or expected to happen, can be a non-business day.
           type: string
           format: date
         transactionSubType:
+          description: Required for one-time partial withdrawal quotes. Not used for full surrenders.  For one-time RMD quotes, select transactionSubType as RMD.
           type: string
           enum: [specified-withdrawal, surrender-free, rider-free, interest-only, rmd]
       required: [requestId, status]
@@ -1347,9 +1349,11 @@ components:
           description: Current status of the withdrawal request.
           enum: [IN_PROGRESS, SUCCESS, REJECTED]
         effectiveDate:
+          description: When the transaction was originally scheduled or expected to happen, can be a non-business day.
           type: string
           format: date
         transactionSubType:
+          description: Required for one-time partial withdrawal quotes. Not used for full surrenders.  For one-time RMD quotes, select transactionSubType as RMD.
           type: string
           enum: [specified-withdrawal, surrender-free, rider-free, interest-only, rmd]
         message:
