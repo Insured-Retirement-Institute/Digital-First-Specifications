@@ -745,12 +745,14 @@ components:
         producer:
           $ref: '#/components/schemas/Producer'
         transactionAmounts:
+          description: Quoted amounts including charges, taxes, and net payment
           $ref: '#/components/schemas/TransactionAmountsRequest'
         allocationOption:
           type: string
           enum: [PRORATA, DOLLAR, SPECIFYPERCENTAGE, SPECIFIEDFUNDS, SPECIFIEDSEGMENTS, DEFAULT, PECKINGORDER, EARNINGSONLY]
           description: Defines the format of how the funds are removed
         fundDistributions:
+          description: Detailed allocation of funds
           type: array
           items:
             $ref: '#/components/schemas/FundDistribution'
@@ -792,6 +794,7 @@ components:
                 type: object
                 properties:
                   amountType:
+                    description: Indicates the method used to calculate the transfer value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction.
                     const: PERCENTAGE
                 required: [amountType]
             required: [allocationOption, transactionAmounts]
@@ -800,6 +803,7 @@ components:
               - fundDistributions
             properties:
               fundDistributions:
+                description: Detailed allocation of funds
                 type: array
                 items:
                   allOf:
@@ -817,6 +821,7 @@ components:
                 type: object
                 properties:
                   amountType:
+                    description: Indicates the method used to calculate the transfer value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction.
                     const: AMOUNT
                 required: [amountType]
             required: [allocationOption, transactionAmounts]
@@ -825,6 +830,7 @@ components:
               - fundDistributions
             properties:
               fundDistributions:
+                description: Detailed allocation of funds
                 type: array
                 items:
                   allOf:
@@ -855,6 +861,7 @@ components:
         producer:
           $ref: '#/components/schemas/Producer'
         transactionAmounts:
+          description: Quoted amounts including charges, taxes, and net payment
           $ref: '#/components/schemas/TransactionAmountsFullRequest'
         payeeOrBeneficiary:
           description: The payeeOrBeneficiary object represents how the withdrawal proceeds are distributed and to whom. It includes payment form, allocation rules for each payee.
@@ -887,20 +894,25 @@ components:
       description: Details of financial amounts associated with the partial withdrawal request
       properties:
         requestedAmount:
+          description: Requested amount value
           type: number
           minimum: 0
           maximum: 9999999999.99
         requestedPercentage:
+          description: Requested Percentage value
           type: number
           minimum: 0
           maximum: 100
         amountType:
+          description: Indicates the method used to calculate the transfer value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction.
           type: string
           enum: [AMOUNT, PERCENTAGE, MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS, EARNINGSONLY]
         disbursementType:
+          description: Type of amount for withdrawal such as Gross or Net.
           type: string
           enum: [GROSS, NET]
         disbursementPaymentForm:
+          description: Type of disbursement method such as DTCC, EFT, etc.
           type: string
           enum: [DTCC, EFT, ACH, CHECK, WIRE]
       required:
@@ -910,6 +922,7 @@ components:
         - if:
             properties:
               amountType:
+                description: Indicates the method used to calculate the transfer value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction.
                 const: AMOUNT
             required:
               - amountType
@@ -922,6 +935,7 @@ components:
         - if:
             properties:
               amountType:
+                description: Indicates the method used to calculate the transfer value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction.
                 const: PERCENTAGE
             required:
               - amountType
@@ -932,9 +946,10 @@ components:
               required:
                 - requestedAmount
         - if:
-          properties:
-            amountType:
-              enum: [MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS, EARNINGSONLY]
+            properties:
+              amountType:
+                description: Indicates the method used to calculate the transfer value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction.
+                enum: [MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS, EARNINGSONLY]
           then:
             required: [amountType]
             not:
@@ -947,9 +962,11 @@ components:
       description: Details of financial amounts associated with the full surrender request
       properties:
         disbursementType:
+          description: Type of amount for withdrawal such as Gross or Net.
           type: string
           enum: [GROSS, NET]
         disbursementPaymentForm:
+          description: Type of disbursement method such as DTCC, EFT, etc.
           type: string
           enum: [DTCC, EFT, ACH, CHECK, WIRE]
       required:
@@ -961,19 +978,24 @@ components:
         The payeeOrBeneficiary object represents how the withdrawal proceeds are distributed and to whom. It includes payment form, allocation rules for each payee.
       properties:
         paymentForm:
+          description: Mode of payment
           type: string
           enum: [DTCC, ACH, CHECK, WIRE, EXCHANGE]
         allocationPercentage:
+          description: Allocation percentage.
           type: number
           minimum: 0
           maximum: 100
         party:
+          description: Common party identity fields.
           anyOf:
             - $ref: '#/components/schemas/IndividualIdentity'
             - $ref: '#/components/schemas/EntityIdentity'
         bank:
+          description: Financial institution details.
           $ref: '#/components/schemas/Bank'
         address:
+          description: Physical or mailing address details.
           $ref: '#/components/schemas/Address'
 
     PartyRequest:
@@ -985,15 +1007,19 @@ components:
         - $ref: '#/components/schemas/EntityParty'
       properties:
         paymentForm:
+          description: Mode of payment
           type: string
           enum: [DTCC, ACH, CHECK, WIRE, EXCHANGE]
         allocationPercentage:
+          description: Allocation percentage.
           type: number
           minimum: 0
           maximum: 100
         bank:
+          description: Financial institution details.
           $ref: '#/components/schemas/Bank'
         address:
+          description: Physical or mailing address details.
           $ref: '#/components/schemas/Address'
       required:
         - paymentForm
@@ -1004,12 +1030,15 @@ components:
       description: Information about the producer submitting the request
       properties:
         producerNumber:
+          description: Carrier-assigned unique identifier for the producer.
           type: string
           maxLength: 100
         npn:
+          description: National Producer Number
           type: string
           maxLength: 100
         crdNumber:
+          description: The Central Registration Depository (CRD) number assigned by FINRA to identify the financial professional.
           type: string
           maxLength: 100
 
@@ -1028,10 +1057,12 @@ components:
           minimum: 0
           maximum: 9999999999.99
         requestedAmount:
+          description: Requested amount value
           type: [number, 'null']
           minimum: 0
           maximum: 9999999999.99
         requestedPercentage:
+          description: Requested Percentage value
           type: number
           minimum: 0
           maximum: 100
@@ -1048,55 +1079,71 @@ components:
       description: Details of fees and deductions requested to be applied
       properties:
         chargeType:
+          description: Carrier-defined or product-defined charge label (e.g., COSTOFINSURANCE, EXPENSECHARGE, UNITEXPENSECHARGE, RIDERCHARGE, SURRENDERCHARGE, WITHDRAWALCHARGE).
           type: string
           enum: [COSTOFINSURANCE, EXPENSECHARGE, UNITEXPENSECHARGE, RIDERCHARGE, SURRENDERCHARGE, WITHDRAWALCHARGE]
         isChargeWaived:
+          description: Indicates if charge is waived.
           type: boolean
         chargeWaiverReason:
+          description: Reason for charge waiver.
           type: string
           maxLength: 100
 
     Address:
+      description: Physical or mailing address details.
       type: object
       properties:
         addressId:
+          description: Address identifier.
           type: string
           maxLength: 100
         addressType:
+          description: Type of address.
           type: string
           enum: [RESIDENCE, BUSINESS, POBOXSEASONAL, APO, DPO, FPO]
           maxLength: 30
         addressLine1:
+          description: First line of the address.
           type: string
           maxLength: 100
         addressLine2:
+          description: Second line of the address.
           type: string
           maxLength: 100
         addressLine3:
+          description: Third line of the address.
           type: string
           maxLength: 100
         addressLine4:
+          description: Fourth line of the address.
           type: string
           maxLength: 100
         addressLine5:
+          description: Fifth line of the address.
           type: string
           maxLength: 100
         city:
+          description: City name.
           type: string
           maxLength: 100
         state:
+          description: State code (2-digit ISO).
           type: string
           maxLength: 2
           pattern: '^[A-Z]{2}$'
         zipCode:
+          description: Zip code.
           type: string
           maxLength: 10
           pattern: '^[0-9A-Za-z -]{3,10}$'
         zipCodeExtension:
+          description: Zip code extension.
           type: string
           maxLength: 4
           pattern: '^[0-9A-Za-z]{1,4}$'
         country:
+          description: Country code (2-digit ISO).
           type: string
           maxLength: 2
           pattern: '^[A-Z]{2}$'
@@ -1108,29 +1155,37 @@ components:
         - zipCode
 
     Bank:
+      description: Financial institution details.
       type: object
       properties:
         bankId:
+          description: Bank identifier.
           type: string
           maxLength: 100
         nameOnAccount:
+          description: Name on the bank account.
           type: string
           maxLength: 100
         accountStatus:
+          description: Status of the bank account.
           type: string
           enum: [ACTIVEBANKACCOUNT, TERMINATEDBANKACCOUNT]
         accountType:
+          description: Type of the bank account.
           type: string
           enum: [CHECKING, SAVINGS, CREDITCARDACCOUNT, DEBITCARDACCOUNT, BROKERAGEACCOUNT, CERTIFICATEOFDEPOSITACCOUNT]
         accountNumber:
+          description: Bank account number.
           type: string
           maxLength: 17
           pattern: '^\d{4,17}$'
         routingNumber:
+          description: Routing number.
           type: string
           maxLength: 9
           pattern: '^\d{9}$'
         branchName:
+          description: Branch name.
           type: string
           maxLength: 100
       required:
@@ -1144,16 +1199,20 @@ components:
       description: List of tax withholding instruction entries
       properties:
         party:
+          description: Common party identity fields.
           anyOf:
             - $ref: '#/components/schemas/IndividualIdentity'
             - $ref: '#/components/schemas/EntityIdentity'
         taxWithholdingType:
+          description: Type of tax withholding.
           type: string
           enum: [FEDERAL, STATE, NRA, BACKUP]
         taxRateToUse:
+          description: Selected tax rate source.
           type: string
           enum: [NOWITHHOLDINGELECTED, USEVALUESENTERED, NOWITHHOLDINGALLOWED, USEDEFAULTTABLE]
         filingStatus:
+          description: Tax filing status.
           type: string
           enum: [SINGLE, DOMESTICPARTNERSHIP, DEFAULT, MARRIED, HEADOFHOUSEHOLD, WIDOWED, DIVORCED]
         dollar:
@@ -1167,10 +1226,12 @@ components:
           minimum: 0
           maximum: 100
         exemptions:
+          description: Requested exemptions value
           type: integer
           minimum: 0
           maximum: 99
         taxJurisdiction:
+          description: Jurisdiction for tax purposes. If taxWithholdingType=STATE this field should be mandatory.
           type: string
           maxLength: 50
       required:
@@ -1185,6 +1246,7 @@ components:
         - if:
             properties:
               taxWithholdingType:
+                description: Type of tax withholding.
                 const: STATE
           then:
             required:
@@ -1244,6 +1306,7 @@ components:
           minimum: 0
           maximum: 9999999999.99
         transactionAmounts:
+          description: Quoted amounts including charges, taxes, and net payment
           $ref: '#/components/schemas/TransactionAmountsFullSurrender'
         charges:
           description: List of charges/deductions applied in the quote
@@ -1343,6 +1406,7 @@ components:
           minimum: 0
           maximum: 9999999999.99
         transactionAmounts:
+          description: Quoted amounts including charges, taxes, and net payment
           $ref: '#/components/schemas/TransactionAmountsPartials'
         charges:
           description: List of charges/deductions applied in the quote
@@ -1395,44 +1459,55 @@ components:
       required: [appliedAmount, totalChargeAmount, totalTaxWithheldAmount, netPaymentAmount, disbursementType, disbursementPaymentForm]
       properties:
         appliedAmount:
+          description: Applied amount
           type: number
           minimum: 0
           maximum: 9999999999.99
         taxableAmount:
+          description: The amount of the transaction that is taxable
           type: number
           minimum: 0
           maximum: 9999999999.99
         totalChargeAmount:
+          description: The total charge amount of the transaction
           type: number
           minimum: 0
           maximum: 9999999999.99
         totalTaxWithheldAmount:
+          description: The total amount of tax withheld from the transaction
           type: number
           minimum: 0
           maximum: 9999999999.99
         netPaymentAmount:
+          description: The net amount is the value after deductions have been applied. It represents the final amount payable or receivable once taxes, fees, discounts, or other adjustments have been subtracted from the gross amount.
           type: number
           minimum: 0
           maximum: 9999999999.99
         disbursementType:
+          description: Type of amount for withdrawal such as Gross or Net.
           type: string
           enum: [GROSS, NET]
         disbursementPaymentForm:
+          description: Type of disbursement method such as DTCC, EFT, etc.
           type: string
           enum: [DTCC, ACH, CHECK, WIRE]
         grossPaymentAmount:
+          description: The gross amount is the total value before any deductions are applied. It represents the full amount due or earned, such as the total cost, revenue, or payment, without subtracting taxes, fees, discounts, or other adjustments.
           type: number
           minimum: 0
           maximum: 9999999999.99
         cashSurrenderValue:
+          description: Cash surrender value
           type: number
           minimum: 0
           maximum: 9999999999.99
         accumulatedCashValue:
+          description: The accumulated cash value
           type: number
           minimum: 0
           maximum: 9999999999.99
         grossCashValueAmount:
+          description: Gross amount of the cash value
           type: number
           minimum: 0
           maximum: 9999999999.99
@@ -1442,13 +1517,16 @@ components:
       required: [amountType]
       properties:
         amountType:
+          description: Indicates the method used to calculate the transfer value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction.
           type: string
           enum: [AMOUNT, PERCENTAGE, MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS, EARNINGSONLY]
         requestedAmount:
+          description: Requested amount value
           type: number
           minimum: 0
           maximum: 9999999999.99
         requestedPercentage:
+          description: Requested Percentage value
           type: number
           minimum: 0
           maximum: 100
@@ -1457,6 +1535,7 @@ components:
           - if:
               properties:
                 amountType:
+                  description: Indicates the method used to calculate the transfer value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction.
                   const: AMOUNT
               required:
                 - amountType
@@ -1469,6 +1548,7 @@ components:
           - if:
               properties:
                 amountType:
+                  description: Indicates the method used to calculate the transfer value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction.
                   const: PERCENTAGE
               required:
                 - amountType
@@ -1479,9 +1559,10 @@ components:
                 required:
                   - requestedAmount
           - if:
-            properties:
-              amountType:
-                enum: [MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS, EARNINGSONLY]
+              properties:
+                amountType:
+                  description: Indicates the method used to calculate the transfer value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction.
+                  enum: [MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS, EARNINGSONLY]
             then:
               required: [amountType]
               not:
@@ -1498,18 +1579,23 @@ components:
           description: Carrier-defined or product-defined charge label (e.g., SURRENDERCHARGE, ADMINISTRATIVE, LOANPAYOFF).
           maxLength: 50
         chargeAmount:
+          description: The amount of the charge applied for this transaction.
           type: number
           minimum: 0
           maximum: 9999999999.99
         chargeCategory:
+          description: The category of the charge
           type: string
           enum: [FEE, TAX, LOAN_DEDUCTION, ADJUSTMENT]
         isChargeWaived:
+          description: Indicates if charge is waived.
           type: boolean
         chargeWaiverReason:
+          description: Reason for charge waiver.
           type: string
           maxLength: 100
         isMvaApplied:
+          description: Indicates if MVA is applied.
           type: boolean
         loanDeduction:
           $ref: '#/components/schemas/LoanDeduction'
@@ -1517,6 +1603,7 @@ components:
         - if:
             properties:
               chargeCategory:
+                description: The category of the charge
                 const: LOAN_DEDUCTION
             required: [chargeCategory]
           then:
@@ -1530,20 +1617,25 @@ components:
       description: Loan-related deductions that reduce the net disbursement.
       properties:
         loanType:
+          description: The type of the loan
           type: string
           enum: [POLICY_LOAN, AUTOMATIC_PREMIUM_LOAN, LOAN_REPAYMENT, LOAN_INTEREST, PREFERRED, OTHER]
         loanInterestType:
+          description: The type of interest on the loan
           type: string
           enum: [FIXED, VARIABLE, INDEXED, OTHER]
         loanPrincipalDeductedAmount:
+          description: The amount of the loan principal that is deducted.
           type: number
           minimum: 0
           maximum: 9999999999.99
         loanInterestDeductedAmount:
+          description: The amount of the loan interest that is deducted
           type: number
           minimum: 0
           maximum: 9999999999.99
         loanPayoffIndicator:
+          description: Indicator for the loan payoff
           type: boolean
 
     TaxWithheldAmount:
@@ -1551,16 +1643,20 @@ components:
       required: [taxWithholdingType, withholdAmount, taxId]
       properties:
         taxId:
+          description: Tax Identification Number for the party (individual or entity).
           type: string
           maxLength: 9
         taxWithholdingType:
+          description: Type of tax withholding.
           type: string
           enum: [FEDERAL, STATE, NRA, BACKUP]
         withholdAmount:
+          description: Amount of tax withholding
           type: number
           minimum: 0
           maximum: 9999999999.99
         withheldTaxableAmount:
+          description: The taxable portion of the payment that this withholding was calculated against.
           type: number
           minimum: 0
           maximum: 9999999999.99
@@ -1571,17 +1667,21 @@ components:
         The payeeOrBeneficiary object represents how the withdrawal proceeds are distributed and to whom. It includes payment form, allocation rules for each payee.
       required: [paymentForm, allocationPercentage, disbursementAmount, taxId]
       properties:
-        taxId:
+        taxId:  
+          description: Tax Identification Number for the party (individual or entity).
           type: string
           maxLength: 9
         paymentForm:
+          description: Mode of payment
           type: string
           enum: [DTCC, CREDITCARD, ACH, CHECK, WIRE, EXCHANGE]
         allocationPercentage:
+          description: Allocation percentage.
           type: number
           minimum: 0
           maximum: 100
         disbursementAmount:
+          description: The amount of the disbursement.
           type: number
           minimum: 0
           maximum: 9999999999.99
@@ -1591,20 +1691,26 @@ components:
       description: TEFRA/TEMRA and related tax qualification fields returned with the quote.
       properties:
         isTefraApplicable:
+          description: Indicates if tefra is applied.
           type: boolean
         isTemraApplicable:
+          description: Indicates if temra is applied.
           type: boolean
         tefraValue:
+          description: Tefra value
           type: number
           minimum: 0
           maximum: 9999999999.99
         temraValue:
+          description: Temra value
           type: number
           minimum: 0
           maximum: 9999999999.99
         isirc72qPenaltyApplied:
+          description: Indicates if the IRC72Q penalty is applied
           type: boolean
         taxablePortionRule:
+          description: Taxable portion rule
           type: string
           enum: [LIFO, FIFO]
 
@@ -1617,9 +1723,11 @@ components:
         - $ref: '#/components/schemas/EntityParty'
       properties:
         paymentForm:
+          description: Mode of payment
           type: string
           enum: [DTCC, CREDITCARD, ACH, CHECK, WIRE, EXCHANGE]
         allocationPercentage:
+          description: Allocation percentage.
           type: number
           minimum: 0
           maximum: 100
@@ -1647,24 +1755,29 @@ components:
       type: object
       properties:
         type:
+          description: Indicates whether the party is an individual or an entity.
           type: string
           const: individual
         firstName:
+          description: First name of the individual
           type: string
           minLength: 1
           maxLength: 105
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
         middleName:
+          description: Middle name of the individual
           type: string
           minLength: 1
           maxLength: 105
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
         lastName:
+          description: Last name of the individual
           type: string
           minLength: 1
           maxLength: 105
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
         taxId:
+          description: Tax Identification Number for the party (individual or entity).
           type: string
           maxLength: 9
 
@@ -1674,6 +1787,7 @@ components:
       required: [relationships]
       properties:
         relationships:
+          description: An array of strings specifying the relationship(s) of the party to the policy.
           type: array
           minItems: 1
           maxItems: 2
@@ -1687,14 +1801,17 @@ components:
       required: [type, name, taxId]
       properties:
         type:
+          description: Indicates whether the party is an individual or an entity.
           type: string
           const: entity
         name:
+          description: Name of the entity
           type: string
           minLength: 1
           maxLength: 100
           pattern: '^[\w=()*@#\s.,''\/~%$!;:&"®`\\?\-]{1,100}$'
         taxId:
+          description: Tax Identification Number for the party (individual or entity).
           type: string
           maxLength: 9
 
@@ -1703,40 +1820,50 @@ components:
       description: RMD details specific to partial one-time withdrawals
       properties:
         rmdTaxYear:
+          description: The tax year this RMD withdrawal is for (for example, 2025). Used to decide which year's RMD requirement the withdrawal is satisfying.
           type: integer
           minimum: 1900
           maximum: 2100
         rmdAgeAtDistribution:
+          description: The age of the RMD owner on the distribution date, in whole years. If not sent, the carrier or platform may calculate it from date of birth.
           type: integer
           minimum: 0
           maximum: 150
         rmdSpouseDoB:
+          description: The date of birth of the spouse of owner/annuitant.
           type: string
           format: date
         rmdRequestedAmount:
+          description: Portion of this withdrawal that should count toward rmd for rmdTaxYear.
           type: number
           minimum: 0
           maximum: 9999999999.99
         rmdCalculationMethod:
+          description: The method or IRS table used to calculate the RMD. Used mainly for audit/explanation.
           type: string
           enum: [UNIFORM_LIFETIME_TABLE, JOINT_LIFE, SINGLE_LIFE, OTHER]
         rmdPriorYearEndValue:
+          description: The contract value as of 12/31 of the prior year used as the base for RMD calculation. Including this allows downstream systems to re-check or explain the RMD math.
           type: number
           minimum: 0
           maximum: 9999999999.99
         calculatedAnnualRmdAmount:
+          description: The annual amount of the RMD
           type: number
           minimum: 0
           maximum: 9999999999.99
         remainingRmdAmountAfterThisQuote:
+          description: The amount of RMD remaining after this quote
           type: number
           minimum: 0
           maximum: 9999999999.99
         rmdWithdrawalAmountThisYear:
+          description: The RMD withdrawal amount for this current year
           type: number
           minimum: 0
           maximum: 9999999999.99
         totalRMDAmountRemaining:
+          description: Remaining dollar amount that must still be withdrawn this calendar year to fully satisfy the Required Minimum Distribution.
           type: number
           minimum: 0
           maximum: 9999999999.99
@@ -1746,13 +1873,17 @@ components:
       type: object
       properties:
         errorCode:
+          description: The unique code identifying the type of error
           type: string
         error:
+          description: Error returned when status=FAILURE
           type: string
         errorDescription:
+          description: Description of the error
           type: string
 
     Error:
+      description: Error returned when status=FAILURE
       type: object
       properties:
         httpStatus:
