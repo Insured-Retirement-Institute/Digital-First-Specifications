@@ -542,24 +542,29 @@ components:
       type: object
       properties:
         type:
+          description: Indicates whether the party is an individual or an entity.
           type: string
           const: individual
         firstName:
+          description: First name of the party.
           type: string
           minLength: 1
           maxLength: 105
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
         middleName:
+          description: Middle name of the party.
           type: string
           minLength: 1
           maxLength: 105
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
         lastName:
+          description: Last name of the party.
           type: string
           minLength: 1
           maxLength: 105
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
         taxId:
+          description: Tax Identification Number for the party (individual or entity).
           type: string
           maxLength: 9
 
@@ -593,14 +598,17 @@ components:
         - taxId
       properties:
         type:
+          description: Indicates whether the party is an individual or an entity.
           type: string
           const: entity
         name:
+          description: Entity name of the party.
           type: string
           minLength: 1
           maxLength: 100
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,100}$'
         taxId:
+          description: Tax Identification Number for the party (individual or entity).
           type: string
           maxLength: 9
 
@@ -664,6 +672,7 @@ components:
           description: "indicates the action to be taken"
           enum: [N, O, C]
         systematicProgram:
+          description: Systematic Program.
           allOf:
             - $ref: '#/components/schemas/SystematicProgram'
             - type: object
@@ -685,6 +694,7 @@ components:
               allocationOption:
                     const: SPECIFIEDFUNDS
               systematicProgram:
+                description: Systematic Program.
                 type: object
                 properties:
                   amountType:
@@ -695,6 +705,7 @@ components:
           then:
             properties:
               systematicProgram:
+                description: Systematic Program.
                 type: object
                 properties:
                   fundDistributions:
@@ -706,6 +717,7 @@ components:
             not:
               properties:
                 systematicProgram:
+                  description: Systematic Program.
                   properties:
                     fundDistributions:
                       items:
@@ -715,6 +727,7 @@ components:
               allocationOption:
                     const: SPECIFIEDFUNDS
               systematicProgram:
+                description: Systematic Program.
                 type: object
                 properties:
                   amountType:
@@ -725,6 +738,7 @@ components:
           then:
             properties:
               systematicProgram:
+                description: Systematic Program.
                 type: object
                 properties:
                   fundDistributions:
@@ -736,6 +750,7 @@ components:
             not:
               properties:
                 systematicProgram:
+                  description: Systematic Program.
                   properties:
                     fundDistributions:
                       items:
@@ -767,6 +782,7 @@ components:
           description: "indicates the action to be taken"
           enum: [N, O, C]
         systematicProgram:
+          description: Systematic Program.
           allOf:
             - $ref: '#/components/schemas/SystematicProgram'
             - type: object
@@ -790,6 +806,7 @@ components:
               allocationOption:
                     const: SPECIFIEDFUNDS
               systematicProgram:
+                description: Systematic Program.
                 type: object
                 properties:
                   amountType:
@@ -800,6 +817,7 @@ components:
           then:
             properties:
               systematicProgram:
+                description: Systematic Program.
                 type: object
                 properties:
                   fundDistributions:
@@ -811,6 +829,7 @@ components:
             not:
               properties:
                 systematicProgram:
+                  description: Systematic Program.
                   properties:
                     fundDistributions:
                       items:
@@ -820,6 +839,7 @@ components:
               allocationOption:
                     const: SPECIFIEDFUNDS
               systematicProgram:
+                description: Systematic Program.
                 type: object
                 properties:
                   amountType:
@@ -830,6 +850,7 @@ components:
           then:
             properties:
               systematicProgram:
+                description: Systematic Program.
                 type: object
                 properties:
                   fundDistributions:
@@ -841,12 +862,14 @@ components:
             not:
               properties:
                 systematicProgram:
+                  description: Systematic Program.
                   properties:
                     fundDistributions:
                       items:
                         required: [requestedAmount]
 
     SystematicProgram:
+      description: Systematic Program.
       type: object
       properties:
         paymentForm:
@@ -980,9 +1003,9 @@ components:
               required:
                 - requestedAmount
         - if:
-          properties:
-            amountType:
-              enum: [MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS, EARNINGSONLY]
+            properties:
+              amountType:
+                enum: [MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS, EARNINGSONLY]
           then:
             required: [amountType]
             not:
@@ -1054,7 +1077,8 @@ components:
     TaxWithholdingInstruction:
       type: object
       properties:
-        taxId:
+        taxId: 
+          description: Tax Identification Number for the party (individual or entity).
           type: string
           maxLength: 9
         taxWithholdingType:
