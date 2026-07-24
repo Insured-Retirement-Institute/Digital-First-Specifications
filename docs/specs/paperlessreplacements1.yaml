@@ -139,8 +139,10 @@ components:
       type: object
       properties:
         code:
+          description: Code
           type: integer
-        description:
+        description: 
+          description: Description
           type: string
           examples:
             - Invalid Request
