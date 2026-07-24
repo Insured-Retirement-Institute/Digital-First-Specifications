@@ -407,6 +407,7 @@ components:
               type: string
               const: applicationStatus.v1.applicationReceived
             notification:
+              description: Notification
               type: object
               properties:
                 cusip:
@@ -464,6 +465,7 @@ components:
               type: string
               const: applicationStatus.v1.canSellActionNeeded
             notification:
+              description: Notification
               allOf:
                 - $ref: '#/components/schemas/CanSellValidation'
     
@@ -480,6 +482,7 @@ components:
               type: string
               const: applicationStatus.v1.suitabilityActionNeeded
             notification:
+              description: Notification
               allOf:
                 - $ref: '#/components/schemas/Suitability'
               properties:
@@ -499,6 +502,7 @@ components:
               type: string
               const: applicationStatus.v1.suitabilityApproved
             notification:
+              description: Notification
               properties:
                 status:
                   description: Application status
@@ -538,6 +542,7 @@ components:
               type: string
               const: applicationStatus.v1.documentReviewActionNeeded
             notification:
+              description: Notification
               allOf:
                 - $ref: '#/components/schemas/DocumentReview'
                 - type: object
@@ -558,6 +563,7 @@ components:
               type: string
               const: applicationStatus.v1.fundingActionNeeded
             notification:
+              description: Notification
               allOf:
                 - $ref: '#/components/schemas/TransferNotificationBase'
               properties:
@@ -578,6 +584,7 @@ components:
               type: string
               const: applicationStatus.v1.fundingTransferRequestSent
             notification:
+              description: Notification
               allOf:
                 - $ref: '#/components/schemas/TransferNotificationBase'
               properties:
@@ -610,6 +617,7 @@ components:
               type: string
               const: applicationStatus.v1.fundingSourceTypeUpdated
             notification:
+              description: Notification
               allOf:
                 - $ref: '#/components/schemas/TransferNotificationBase'
     
@@ -625,6 +633,7 @@ components:
               type: string
               const: applicationStatus.v1.fundingTransferFollowedUp
             notification:
+              description: Notification
               type: object
               allOf:
                 - $ref: '#/components/schemas/TransferNotificationBase'
@@ -655,6 +664,7 @@ components:
               type: string
               const: applicationStatus.v1.fundingReceived
             notification: 
+              description: Notification
               type: object                 
               allOf:
                 - $ref: '#/components/schemas/TransferNotificationBase'
@@ -692,6 +702,7 @@ components:
                 type: string
                 const: applicationStatus.v1.applicationCompleted
             notification:
+              description: Notification
               type: object
               properties:
                 isActionNeeded:
@@ -739,6 +750,7 @@ components:
               type: string
               const: applicationStatus.v1.applicationCancelled
             notification:
+              description: Notification
               properties:
                 actionSections:
                   description: Sections needing action
@@ -1196,8 +1208,10 @@ components:
       type: object
       properties:
         totalEvents:
+          description: Total Events
           type: integer
         events:
+          description: Events
           type: array
           items:
             - $ref: "#/components/schemas/notificationMetadata"
