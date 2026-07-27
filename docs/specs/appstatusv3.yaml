@@ -344,6 +344,7 @@ components:
         maximum: 1000
   schemas:
     cusip:
+      description: CUSIP
       type: string
       minLength: 9
       maxLength: 9
@@ -354,24 +355,29 @@ components:
       type: object
       properties:
         type:
+          description: Indicates whether the party is an individual or an entity.
           type: string
           const: individual
         firstName:
+          description: This is the first name of the individual
           type: string
           minLength: 1
           maxLength: 105
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,105}$
         middleName:
+          description: This is the middle name of the individual
           type: string
           minLength: 1
           maxLength: 105
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,105}$
         lastName:
+          description: This is the last name of the individual
           type: string
           minLength: 1
           maxLength: 105
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,105}$
         taxId:
+          description: Tax Identification Number for the individual or entity
           type: string
           maxLength: 9
     IndividualProducer:
@@ -383,12 +389,15 @@ components:
         - type: object
           properties:
             npn:
+              description: National Producer Number
               type: string
               maxLength: 10
             crdNumber:
+              description: The Central Registiration Depository (CRD) number assigned by FINRA to identify the financial professional.
               type: string
               maxLength: 10
             relationships:
+              description: primaryAgent, secondaryAgent, additionAgent, investment Advisor Representative
               type: array
               minItems: 1
               maxItems: 30
@@ -411,14 +420,17 @@ components:
       required: [type, name]
       properties:
         type:
+          description: Indicates whether the party is an individual or an entity.
           type: string
           const: entity
         name:
+          description: Entity name
           type: string
           minLength: 1
           maxLength: 180
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,180}$
         taxId:
+          description: Tax Identification Number for the individual or entity
           type: string
     EntityProducer:
       description: Schema for entity producer data
@@ -429,12 +441,15 @@ components:
         - type: object
           properties:
             npn:
+              description: National Producer Number
               type: string
               maxLength: 10
             crdNumber:
+              description: The Central Registiration Depository (CRD) number assigned by FINRA to identify the financial professional.
               type: string
               maxLength: 10
             relationships:
+              description: primaryAgent, secondaryAgent, additionAgent, investment Advisor Representative
               type: array
               minItems: 1
               maxItems: 25
@@ -457,6 +472,7 @@ components:
       required: [relationships]
       properties:
         relationships:
+          description: primaryAgent, secondaryAgent, additionAgent, investment Advisor Representative
           type: array
           minItems: 1
           maxItems: 2
@@ -490,27 +506,34 @@ components:
       required: [status,isActionNeeded]
       properties:
         status:
+          description: Validation status
           type: string
           enum: [awaitingReview, inProgress, completed]
         isActionNeeded:
+          description: Indicator that at least one section requires action
           type: boolean
         startDate:
+          description: Start date
           type: string
           format: date
         endDate:
+          description: End date
           type: string
           format: date
         note:
+          description: Note about the can-sell validation
           type: string
           minLength: 1
           maxLength: 2000
         issues:
+          description: List of issues that need to be addressed
           type: array
           items:
             type: object
             required: [type]
             properties:
               type:
+                description: Type of CanSell issue
                 type: string
                 enum:
                   - trainingIncompleteMissing
@@ -520,19 +543,24 @@ components:
                   - agentNotLicensed
                   - other
               note:
+                description: Note about the issue
                 type: string
                 minLength: 1
                 maxLength: 2000
               affectedProducer:
+                description: Producer for which the CanSell issue exists
                 type: object
                 properties:
                   npn:
+                    description: National Producer Number
                     type: string
                     maxLength: 10
                   crdNumber:
+                    description: The Central Registiration Depository (CRD) number assigned by FINRA to identify the financial professional.
                     type: string
                     maxLength: 10
                   taxId:
+                    description: Tax Identification Number for the producer
                     type: string
                     maxLength: 9
     Suitability:
@@ -541,27 +569,34 @@ components:
       required: [status,isActionNeeded]
       properties:
         status:
+          description: Suitability status
           type: string
           enum: [awaitingReview, inProgress, completed, notApplicable]
         isActionNeeded:
+          description: Indicator that at least one section requires action
           type: boolean
         startDate:
+          description: Start date
           type: string
           format: date
         endDate:
+          description: End date
           type: string
           format: date
         reason:
+          description: Reason suitability requires action
           type: string
           enum:
             - moreInformationNeeded
             - notSuitableForClient
             - other
         note:
+          description: Note about the suitability review
           type: string
           minLength: 1
           maxLength: 2000
         dueDate:
+          description: Due date
           type: string
           format: date
         isApproved:
@@ -573,26 +608,33 @@ components:
       required: [status,isActionNeeded]
       properties:
         status:
+          description: Document review status
           type: string
           enum: [awaitingReview, inProgress, completed]
         isActionNeeded:
+          description: Indicator that at least one section requires action
           type: boolean
         startDate:
+          description: Start date
           type: string
           format: date
         endDate:
+          description: End date
           type: string
           format: date
         note:
+          description: Note about the document review
           type: string
           minLength: 1
           maxLength: 2000
         issues:
+          description: List of issues that need to be addressed
           type: array
           items:
             type: object
             properties:
               reason:
+                description: Reason the document review issue was raised
                 type: string
                 enum:
                   - applicationIssue
@@ -603,17 +645,21 @@ components:
                   - needClarity
                   - other
               formName:
+                description: Form name
                 type: string
                 minLength: 1
                 maxLength: 200
               formNumber:
+                description: Form number
                 type: string
                 minLength: 1
                 maxLength: 100
               dueDate:
+                description: Due date
                 type: string
                 format: date
               note:
+                description: Note about the document review issue
                 type: string
                 minLength: 1
                 maxLength: 2000
@@ -623,27 +669,34 @@ components:
       required: [isActionNeeded, status]  
       properties:
         startDate:
+          description: Start date
           type: string
           format: date
         endDate:
+          description: End date
           type: string
           format: date
         isActionNeeded:
+          description: Indicator that at least one section requires action
           type: boolean
         status:
+          description: Funding status
           type: string
           enum: [awaitingReview, inProgress, completed]
         note:
+          description: Note about the funding
           type: string
           minLength: 1
           maxLength: 2000
         sources:
+          description: Lists sources of funding
           type: array
           items:
             type: object
             required: [method,type]
             properties:
               method:
+                description: Funding method
                 type: string
                 enum:
                   - anotherPolicy
@@ -656,6 +709,7 @@ components:
                   - payrollDeduction
                   - wireTransfer
               type:
+                description: Type of funding transaction
                 type: string
                 enum:
                   - contribution
@@ -668,20 +722,26 @@ components:
                   - partial1035Exchange
                   - qualifiedTransfer
               isActionNeeded:
+                description: Indicator that this funding source requires action
                 type: boolean
-              anticipatedAmount:
+              anticipatedAmount: 
+                description: Anticipated amount
                 type: number
                 format: float
               receivedAmount:
+                description: Received amount 
                 type: number
                 format: float
               receivedDate:
+                description: Received date
                 type: string
                 format: date
               status:
+                description: Status of the funding source
                 type: string
                 enum: [inProgress, complete]
               reason:
+                description: Reason the funding is delayed or flagged
                 type: string
                 enum:
                   - awaitingFundsFromCedingCompany
@@ -692,36 +752,46 @@ components:
                   - pendingReg60
                   - other
               effectiveDate:
+                description: Effective date of policy
                 type: string
                 format: date
               note:
+                description: Note about the funding source
                 type: string
                 minLength: 1
                 maxLength: 2000
               cedingCompany:
+                description: Name of the company holding the existing contract to be replaced.
                 type: object
                 required: [name, accountNumber]
                 properties:
                   name:
+                    description: Ceding company name
                     type: string
                     minLength: 1
                     maxLength: 180
                     pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,180}$
                   accountNumber:
+                    description: Ceding company account number
                     type: string
                   startDate:
+                    description: Start date
                     type: string
                     format: date
                   referenceNumber:
+                    description: Reference number
                     type: string
                   nextActivityDate:
+                    description: Next activity date
                     type: string
                     format: date
                   note:
+                    description: Note about the ceding company
                     type: string
                     minLength: 1
                     maxLength: 2000
                   methodOfInitiation:
+                    description: Initiation method
                     type: string
                     enum: [fax, email, mail, replacement]
 
@@ -731,43 +801,56 @@ components:
       required: [policyNumber,applicationOrigin,cusip,status,statusDate]
       properties:
         policyNumber:
+          description: Policy number
           type: string
           minLength: 1
           maxLength: 30
         associatedFirmId:
+          description: Associated firm ID
           type: string
         applicationOrigin:
+          description: Platform of application origin
           type: object
           properties:
             platform:
+              description: Platform of application origin
               type: string
               maxLength: 50
             isElectronic:
+              description: Is application electronic?
               type: boolean
             id:
+              description: ID of application origin
               type: string
               maxLength: 65
         cusip:
+          description: CUSIP
           $ref: '#/components/schemas/cusip'
         productName:
+          description: Product name
           type: string
           maxLength: 180
         isQualified:
+          description: Is policy tax plan qualified?
           type: boolean
         status:
+          description: Application status
           type: string
           enum: [received, inProgress, completed, cancelled]
         statusDate:
-          description: 
+          description: Date of the application status
           type: string
           format: date
         delivery:
+          description: Pertains to delivery of the issued policy/contract
           type: object
           properties:
             sentDate:
+              description: Delivery sent date
               type: string
               format: date
             method:
+              description: Delivery method
               type: string
               enum:
                 - fedex
@@ -776,12 +859,15 @@ components:
                 - handDelivery
                 - usps
             trackingNumber:
+              description: Delivery tracking number
               type: string
         caseManager:
+          description: Case manager
           type: object
           required: [fullName, phoneNumber]
           properties:
             fullName:
+              description: Full name of case manager
               type: string
               minLength: 1
               maxLength: 180
@@ -791,8 +877,10 @@ components:
               minLength: 10
               maxLength: 15
             emailAddress:
+              description: Email address of the party.
               type: string
             websiteURL:
+              description: Website URL of case manager
               type: string
         producers:
           $ref: "#/components/schemas/Producers"
@@ -805,41 +893,53 @@ components:
         - $ref: '#/components/schemas/PolicySummary'
       properties:
         isActionNeeded:
+          description: Indicator that at least one section requires action
           type: boolean
-        actionSections:
+        actionSections: 
+          description: Required if isActionNeeded is true
           type: array
           items:
             type: string
             enum: [suitability, cansellvalidation, documentReview, funding]
         signedDate:
+          description: Signed date of policy
           type: string
           format: date
         receivedDate:
+          description: Received date
           type: string
           format: date
         issuedDate:
+          description: Issued date of policy
           type: string
           format: date
         effectiveDate:
+          description: Effective date of policy
           type: string
           format: date
         rateEffectiveDate:
+          description: Rate effective date of policy
           type: string
           format: date
         fundsHeldUntilDate:
+          description: Funds held until date
           type: string
           format: date
         cancellation:
+          description: Details about the policy cancellation
           type: object
           required: [initiator,cancelledDate]
           properties:
             initiator:
+              description: Who initiated cancellation
               type: string
               enum: [advisor, carrier, client]
             cancelledDate:
+              description: Cancellation date
               type: string
               format: date
             reason:
+              description: Reason for the cancellation
               type: string
               minLength: 1
               maxLength: 2000
@@ -855,10 +955,13 @@ components:
       type: object
       properties:
         startIndex:
+          description: The starting of the index
           type: integer
         itemsCount:
+          description: Total number of records returned
           type: integer
         totalItemsCount:
+          description: Total number of records available for search
           type: integer
           maximum: 1000
         policies:
@@ -893,13 +996,17 @@ components:
       type: object
       properties:
         correlationId:
+          description: Correlation ID for tracking the request
           type: string
         startIndex:
+          description: The starting of the index
           type: integer
         itemsCount:
+          description: Total number of records returned
           type: integer
           maximum: 1000
         totalItemsCount:
+          description: Total number of records available for search
           type: integer
         applicationStatuses:
           $ref: "#/components/schemas/SummaryApplicationStatuses"
@@ -908,34 +1015,44 @@ components:
       type: object
       properties:
         policyNumber:
+          description: Policy number
           type: string
           minLength: 1
           maxLength: 30
         associatedFirmId:
+          description: Associated firm ID
           type: string
           minLength: 1
           maxLength: 65
         cusip:
+          description: CUSIP
           $ref: '#/components/schemas/cusip'
         producerNumber:
+          description: Carrier-assigned unique identifier for the producer.
           type: string
           maxLength: 30
         npn: 
+          description: National Producer Number
           type: string
           maxLength: 10
         crdNumber:
+          description: The Central Registiration Depository (CRD) number assigned by FINRA to identify the financial professional.
           type: string
           maxLength: 10
         partyTaxId:
+          description: Party’s tax identification number
           type: string
           maxLength: 9
         applicationOriginId:
+          description: Optional query parameter for the application origin ID
           type: string
         trackingNumber:
+          description: Optional query parameter for the delivery tracking number
           type: string
           minLength: 1
           maxLength: 65
         finishedCutoffDays:
+          description: Optional query parameter for when a completed or cancelled policy is to drop off
           type: integer
           default: 7
       additionalProperties: false
