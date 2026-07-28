@@ -3,6 +3,9 @@
  *
  * Parses an OpenAPI 3.x specification and generates a per-endpoint
  * field instance data dictionary with JSON and Excel outputs.
+ * Supports both REST paths and OpenAPI 3.1 webhooks.
+ *
+ * Modified by Cursor
  */
 
 import SwaggerParser from '@apidevtools/swagger-parser';
@@ -70,7 +73,8 @@ interface OpenAPISpec {
     version: string;
     description?: string;
   };
-  paths: Record<string, PathItem>;
+  paths?: Record<string, PathItem>;
+  webhooks?: Record<string, PathItem>;
   components?: {
     schemas?: Record<string, Schema>;
     parameters?: Record<string, Parameter>;
@@ -550,6 +554,110 @@ function sanitizeOperationId(method: string, path: string): string {
   return `${method}_${path.replace(/[^a-zA-Z0-9]/g, '_')}`.replace(/_+/g, '_');
 }
 
+const HTTP_METHODS = ['get', 'post', 'put', 'patch', 'delete'] as const;
+
+function processPathItem(
+  pathUrl: string,
+  pathItem: PathItem,
+  endpoints: EndpointSummary[],
+  fieldInstances: FieldInstance[]
+): void {
+  const pathParams = pathItem.parameters || [];
+
+  for (const method of HTTP_METHODS) {
+    const operation = pathItem[method];
+    if (!operation) continue;
+
+    const operationId = operation.operationId || sanitizeOperationId(method, pathUrl);
+    const tags = (operation.tags || []).join(', ');
+    const summary = operation.summary || '';
+    const description = operation.description || '';
+
+    const requestMediaTypes: string[] = [];
+    if (operation.requestBody?.content) {
+      requestMediaTypes.push(...Object.keys(operation.requestBody.content));
+    }
+
+    const responseCodesAndMediaTypes: string[] = [];
+    if (operation.responses) {
+      for (const [code, response] of Object.entries(operation.responses)) {
+        const mediaTypes = response.content ? Object.keys(response.content) : [];
+        if (mediaTypes.length > 0) {
+          responseCodesAndMediaTypes.push(`${code}: ${mediaTypes.join(', ')}`);
+        } else {
+          responseCodesAndMediaTypes.push(code);
+        }
+      }
+    }
+
+    const allParams = [...pathParams, ...(operation.parameters || [])];
+
+    endpoints.push({
+      method: method.toUpperCase(),
+      path: pathUrl,
+      operationId,
+      tags,
+      summary,
+      description,
+      requestMediaTypes: requestMediaTypes.join(', '),
+      responseCodesAndMediaTypes: responseCodesAndMediaTypes.join('; '),
+      parameterCount: allParams.length
+    });
+
+    const baseCtx = {
+      operationId,
+      method: method.toUpperCase(),
+      path: pathUrl,
+      tags,
+      summary
+    };
+
+    for (const param of allParams) {
+      fieldInstances.push(...processParameter(param, baseCtx));
+    }
+
+    if (operation.requestBody?.content) {
+      for (const [mediaType, mediaTypeObj] of Object.entries(operation.requestBody.content)) {
+        if (mediaTypeObj.schema) {
+          const schemaName = getSchemaName(mediaTypeObj.schema);
+          const ctx: FlattenContext = {
+            ...baseCtx,
+            location: 'request_body',
+            httpStatus: '',
+            mediaType,
+            sourceRef: `requestBody.content.${mediaType}.schema`,
+            requiredFields: new Set(mediaTypeObj.schema.required || [])
+          };
+
+          fieldInstances.push(...flattenSchema(mediaTypeObj.schema, '', ctx, schemaName));
+        }
+      }
+    }
+
+    if (operation.responses) {
+      for (const [statusCode, response] of Object.entries(operation.responses)) {
+        if (response.content) {
+          for (const [mediaType, mediaTypeObj] of Object.entries(response.content)) {
+            if (mediaTypeObj.schema) {
+              const schemaName = getSchemaName(mediaTypeObj.schema);
+              const ctx: FlattenContext = {
+                ...baseCtx,
+                location: 'response_body',
+                httpStatus: statusCode,
+                mediaType,
+                sourceRef: `responses.${statusCode}.content.${mediaType}.schema`,
+                requiredFields: new Set(mediaTypeObj.schema.required || [])
+              };
+
+              fieldInstances.push(...flattenSchema(mediaTypeObj.schema, '', ctx, schemaName));
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 async function generateDataDictionary(): Promise<void> {
   const specsDir = path.join(__dirname, '..', 'docs', 'specs');
   const publicDir = path.join(__dirname, '..', 'docs');
@@ -582,110 +690,17 @@ async function generateDataDictionary(): Promise<void> {
     const endpoints: EndpointSummary[] = [];
     const schemas: SchemaSummary[] = [];
 
-    // Process paths
-    for (const [pathUrl, pathItem] of Object.entries(api.paths)) {
-      const pathParams = pathItem.parameters || [];
+    // Process REST paths
+    if (api.paths) {
+      for (const [pathUrl, pathItem] of Object.entries(api.paths)) {
+        processPathItem(pathUrl, pathItem, endpoints, fieldInstances);
+      }
+    }
 
-      const methods = ['get', 'post', 'put', 'patch', 'delete'] as const;
-
-      for (const method of methods) {
-        const operation = pathItem[method];
-        if (!operation) continue;
-
-        const operationId = operation.operationId || sanitizeOperationId(method, pathUrl);
-        const tags = (operation.tags || []).join(', ');
-        const summary = operation.summary || '';
-        const description = operation.description || '';
-
-        // Collect request media types
-        const requestMediaTypes: string[] = [];
-        if (operation.requestBody?.content) {
-          requestMediaTypes.push(...Object.keys(operation.requestBody.content));
-        }
-
-        // Collect response codes and media types
-        const responseCodesAndMediaTypes: string[] = [];
-        if (operation.responses) {
-          for (const [code, response] of Object.entries(operation.responses)) {
-            const mediaTypes = response.content ? Object.keys(response.content) : [];
-            if (mediaTypes.length > 0) {
-              responseCodesAndMediaTypes.push(`${code}: ${mediaTypes.join(', ')}`);
-            } else {
-              responseCodesAndMediaTypes.push(code);
-            }
-          }
-        }
-
-        // Count parameters
-        const allParams = [...pathParams, ...(operation.parameters || [])];
-
-        // Add endpoint summary
-        endpoints.push({
-          method: method.toUpperCase(),
-          path: pathUrl,
-          operationId,
-          tags,
-          summary,
-          description,
-          requestMediaTypes: requestMediaTypes.join(', '),
-          responseCodesAndMediaTypes: responseCodesAndMediaTypes.join('; '),
-          parameterCount: allParams.length
-        });
-
-        const baseCtx = {
-          operationId,
-          method: method.toUpperCase(),
-          path: pathUrl,
-          tags,
-          summary
-        };
-
-        // Process parameters (path-level + operation-level)
-        for (const param of allParams) {
-          fieldInstances.push(...processParameter(param, baseCtx));
-        }
-
-        // Process request body
-        if (operation.requestBody?.content) {
-          for (const [mediaType, mediaTypeObj] of Object.entries(operation.requestBody.content)) {
-            if (mediaTypeObj.schema) {
-              const schemaName = getSchemaName(mediaTypeObj.schema);
-              const ctx: FlattenContext = {
-                ...baseCtx,
-                location: 'request_body',
-                httpStatus: '',
-                mediaType,
-                sourceRef: `requestBody.content.${mediaType}.schema`,
-                requiredFields: new Set(mediaTypeObj.schema.required || [])
-              };
-
-              fieldInstances.push(...flattenSchema(mediaTypeObj.schema, '', ctx, schemaName));
-            }
-          }
-        }
-
-        // Process responses
-        if (operation.responses) {
-          for (const [statusCode, response] of Object.entries(operation.responses)) {
-            if (response.content) {
-              for (const [mediaType, mediaTypeObj] of Object.entries(response.content)) {
-                if (mediaTypeObj.schema) {
-                  const schemaName = getSchemaName(mediaTypeObj.schema);
-                  const ctx: FlattenContext = {
-                    ...baseCtx,
-                    location: 'response_body',
-                    httpStatus: statusCode,
-                    mediaType,
-                    sourceRef: `responses.${statusCode}.content.${mediaType}.schema`,
-                    requiredFields: new Set(mediaTypeObj.schema.required || [])
-                  };
-
-                  fieldInstances.push(...flattenSchema(mediaTypeObj.schema, '', ctx, schemaName));
-                }
-              }
-            }
-          }
-        }
+    // Process OpenAPI 3.1 webhooks (same Path Item structure as paths)
+    if (api.webhooks) {
+      for (const [webhookName, pathItem] of Object.entries(api.webhooks)) {
+        processPathItem(`webhook:${webhookName}`, pathItem, endpoints, fieldInstances);
       }
     }
 
