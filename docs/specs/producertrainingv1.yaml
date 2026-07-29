@@ -73,7 +73,8 @@ components:
       properties:
         producer:
           $ref: '#/components/schemas/Producer'
-        courses:
+        courses: 
+          description: The number of courses taken
           type: array
           minItems: 1
           maxItems: 12
