@@ -326,11 +326,13 @@ components:
 
   schemas:
     cusip:
+      description: CUSIP
       type: string
       minLength: 9
       maxLength: 9
       pattern: ^[0-9]{3}[A-Z0-9]{5}[0-9]$
     policyNumber:
+      description: Policy Number
       type: string
       minLength: 1
       maxLength: 30
@@ -341,35 +343,43 @@ components:
       required: [policyNumber, isIncomeActivated]
       properties:
         policyNumber:
+          description: Policy Number
           $ref: '#/components/schemas/policyNumber'
         cusip:
+          description: CUSIP
           type: string
           examples:
             - "037833100"
         isIncomeActivated:
+          description: Indicates whether income has been activated or not
           type: boolean
         lastPaymentDate:
+          description: The date of the last payment
           type: string
           format: date
           examples:
             - "2024-03-11"
         netPaymentAmount:
+          description: The net amount is the value after deductions have been applied. It represents the final amount payable or receivable once taxes, fees, discounts, or other adjustments have been subtracted from the gross amount.
           type: number
           format: float
           examples:
             - 5000.00
         grossPaymentAmount:
+          description: The gross amount is the total value before any deductions are applied. It represents the full amount due or earned, such as the total cost, revenue, or payment, without subtracting taxes, fees, discounts, or other adjustments.
           type: number
           format: float
           examples:
             - 2500.00
         paymentsPerYear:
+          description: The number of payments sent per year
           type: integer
           minimum: 1
           maximum: 365
           examples:
             - 24
         incomeType:
+          description: The type of income
           type: string
           enum:
             - annuitized
@@ -383,10 +393,12 @@ components:
       required: [firmId]
       properties:
         firmId:
+          description: Firm identification
           type: string
           examples:
             - "12345"
         npn:
+          description: National Producer Number
           type: string
           examples:
             - "257893456"
@@ -404,10 +416,12 @@ components:
           examples:
             - "complete"
         firmId:
+          description: Firm identification
           type: string
           examples:
             - "12345"
         npn:
+          description: National Producer Number
           type: string
           examples:
             - "257893456"
