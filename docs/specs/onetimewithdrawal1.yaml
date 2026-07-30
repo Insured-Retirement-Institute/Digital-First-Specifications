@@ -674,6 +674,7 @@ components:
           - if:
               properties:
                 amountType:
+                  description: Specifies how the withdrawal amount is provided by the user. For example as a dollar amount, a percentage, or the maximum allowed amount.
                   const: AMOUNT
               required:
                 - amountType
@@ -686,6 +687,7 @@ components:
           - if:
               properties:
                 amountType:
+                  description: Specifies how the withdrawal amount is provided by the user. For example as a dollar amount, a percentage, or the maximum allowed amount.
                   const: PERCENTAGE
               required:
                 - amountType
@@ -698,6 +700,7 @@ components:
           - if:
             properties:
               amountType:
+                description: Specifies how the withdrawal amount is provided by the user. For example as a dollar amount, a percentage, or the maximum allowed amount.
                 enum: [MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS, EARNINGSONLY]
             then:
               required: [amountType]
@@ -1219,6 +1222,7 @@ components:
                 type: object
                 properties:
                   amountType:
+                    description: Specifies how the withdrawal amount is provided by the user. For example as a dollar amount, a percentage, or the maximum allowed amount.
                     const: PERCENTAGE
                 required: [amountType]
             required: [allocationOption, transactionAmounts]
@@ -1243,6 +1247,7 @@ components:
                 type: object
                 properties:
                   amountType:
+                    description: Specifies how the withdrawal amount is provided by the user. For example as a dollar amount, a percentage, or the maximum allowed amount.
                     const: AMOUNT
                 required: [amountType]
             required: [allocationOption, transactionAmounts]
