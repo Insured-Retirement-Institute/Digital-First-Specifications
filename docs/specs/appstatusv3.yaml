@@ -873,6 +873,7 @@ components:
               maxLength: 180
               pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,180}$
             phoneNumber:
+              description: Phone number of the party.
               type: string
               minLength: 10
               maxLength: 15
