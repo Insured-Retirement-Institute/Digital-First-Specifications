@@ -123,6 +123,49 @@ webhooks:
                     signedDate: "2026-06-01"
                     receivedDate: "2026-06-02"
                     rateEffectiveDate: "2026-06-02"
+              entityPartyExample:
+                summary: Entity-owned application, showing the entity party and producer shape
+                description: >-
+                  Entity producers and parties are identified by a single `name`
+                  property, not by `firstName`/`middleName`/`lastName`. Only
+                  parties with `type: individual` carry name-part properties.
+                value:
+                  eventId: evt-550e8400-e29b-41d4-a716-446655440014
+                  policyNumber: P987654322
+                  id: APP-2026-001235
+                  applicationOrigin:
+                    platform: DigitalFirst
+                    isElectronic: true
+                    id: DF-APP-001235
+                  status: received
+                  eventType: applicationStatus.v1.applicationReceived
+                  notification:
+                    cusip: "401B23458"
+                    isActionNeeded: false
+                    productName: Secure Income Annuity Plus
+                    isQualified: false
+                    producers:
+                      - type: entity
+                        name: Northstar Brokerage General Agency
+                        npn: "9876543210"
+                        crdNumber: "1122334"
+                        relationships:
+                          - brokerageGeneralAgency
+                    parties:
+                      - type: entity
+                        name: Doe Family Revocable Trust
+                        taxId: "987654321"
+                        relationships:
+                          - owner
+                      - type: individual
+                        firstName: John
+                        middleName: Quincy
+                        lastName: Doe
+                        relationships:
+                          - annuitant
+                    signedDate: "2026-06-01"
+                    receivedDate: "2026-06-02"
+                    rateEffectiveDate: "2026-06-02"
       responses:
         "200":
           description: Notification received successfully
@@ -130,7 +173,7 @@ webhooks:
           description: Unauthorized
         "403":
           description: Forbidden
-  
+
   canSellActionNeeded:
     post:
       summary: Can Sell Action Needed Notification
@@ -717,6 +760,7 @@ components:
               type: string
               const: applicationStatus.v1.applicationReceived
             notification:
+              description: Notification
               type: object
               properties:
                 cusip:
@@ -743,9 +787,7 @@ components:
                   type: array
                   minItems: 1
                   items:
-                    anyOf:
-                      - $ref: "#/components/schemas/IndividualParty"
-                      - $ref: "#/components/schemas/EntityParty"
+                    $ref: "#/components/schemas/Party"
                 signedDate:
                   description: Signed date of policy
                   type: string
@@ -774,6 +816,7 @@ components:
               type: string
               const: applicationStatus.v1.canSellActionNeeded
             notification:
+              description: Notification
               allOf:
                 - $ref: '#/components/schemas/CanSellValidation'
     
@@ -790,6 +833,7 @@ components:
               type: string
               const: applicationStatus.v1.suitabilityActionNeeded
             notification:
+              description: Notification
               allOf:
                 - $ref: '#/components/schemas/Suitability'
               properties:
@@ -809,6 +853,7 @@ components:
               type: string
               const: applicationStatus.v1.suitabilityApproved
             notification:
+              description: Notification
               properties:
                 status:
                   description: Application status
@@ -848,6 +893,7 @@ components:
               type: string
               const: applicationStatus.v1.documentReviewActionNeeded
             notification:
+              description: Notification
               allOf:
                 - $ref: '#/components/schemas/DocumentReview'
                 - type: object
@@ -868,6 +914,7 @@ components:
               type: string
               const: applicationStatus.v1.fundingActionNeeded
             notification:
+              description: Notification
               allOf:
                 - $ref: '#/components/schemas/TransferNotificationBase'
               properties:
@@ -888,6 +935,7 @@ components:
               type: string
               const: applicationStatus.v1.fundingTransferRequestSent
             notification:
+              description: Notification
               allOf:
                 - $ref: '#/components/schemas/TransferNotificationBase'
               properties:
@@ -920,6 +968,7 @@ components:
               type: string
               const: applicationStatus.v1.fundingSourceTypeUpdated
             notification:
+              description: Notification
               allOf:
                 - $ref: '#/components/schemas/TransferNotificationBase'
     
@@ -935,6 +984,7 @@ components:
               type: string
               const: applicationStatus.v1.fundingTransferFollowedUp
             notification:
+              description: Notification
               type: object
               allOf:
                 - $ref: '#/components/schemas/TransferNotificationBase'
@@ -965,6 +1015,7 @@ components:
               type: string
               const: applicationStatus.v1.fundingReceived
             notification: 
+              description: Notification
               type: object                 
               allOf:
                 - $ref: '#/components/schemas/TransferNotificationBase'
@@ -1002,6 +1053,7 @@ components:
                 type: string
                 const: applicationStatus.v1.applicationCompleted
             notification:
+              description: Notification
               type: object
               properties:
                 isActionNeeded:
@@ -1049,6 +1101,7 @@ components:
               type: string
               const: applicationStatus.v1.applicationCancelled
             notification:
+              description: Notification
               properties:
                 actionSections:
                   description: Sections needing action
@@ -1181,7 +1234,7 @@ components:
             value: "401B23458"
     IndividualIdentity:
       description: Schema for individual identity data
-      required: [firstName,lastName]
+      required: [type,firstName,lastName]
       type: object
       properties:
         type:
@@ -1296,6 +1349,32 @@ components:
       allOf:
         - $ref: "#/components/schemas/EntityIdentity"
         - $ref: "#/components/schemas/PartyRelationship"
+    Party:
+      description: >-
+        An individual or an entity related to the policy. The `type` property
+        selects the shape: `individual` uses first/middle/last name, `entity`
+        uses a single `name`.
+      oneOf:
+        - $ref: "#/components/schemas/IndividualParty"
+        - $ref: "#/components/schemas/EntityParty"
+      discriminator:
+        propertyName: type
+        mapping:
+          individual: "#/components/schemas/IndividualParty"
+          entity: "#/components/schemas/EntityParty"
+      examples:
+        - type: individual
+          firstName: John
+          middleName: Quincy
+          lastName: Doe
+          relationships:
+            - owner
+            - annuitant
+        - type: entity
+          name: Smith & Associates
+          taxId: "123456789"
+          relationships:
+            - primaryBeneficiary
     PartyRelationship:
       description: Schema for party relationship data
       type: object
@@ -1315,13 +1394,36 @@ components:
               - jointAnnuitant
               - primaryBeneficiary
               - contingentBeneficiary
+    Producer:
+      description: >-
+        An individual or an entity acting as a producer on the policy. The
+        `type` property selects the shape: `individual` uses first/middle/last
+        name, `entity` uses a single `name`.
+      oneOf:
+        - $ref: "#/components/schemas/IndividualProducer"
+        - $ref: "#/components/schemas/EntityProducer"
+      discriminator:
+        propertyName: type
+        mapping:
+          individual: "#/components/schemas/IndividualProducer"
+          entity: "#/components/schemas/EntityProducer"
+      examples:
+        - type: individual
+          firstName: Jane
+          lastName: Smith
+          npn: "1234567890"
+          relationships:
+            - primaryAgent
+        - type: entity
+          name: Smith & Associates
+          npn: "1234567890"
+          relationships:
+            - brokerDealer
     Producers:
       description: Schema for producers data
       type: array
       items:
-        anyOf:
-          - $ref: "#/components/schemas/IndividualProducer"
-          - $ref: "#/components/schemas/EntityProducer"
+        $ref: "#/components/schemas/Producer"
     CanSellValidation:
       description: Schema for policy can sell validation data
       type: object
@@ -1506,8 +1608,10 @@ components:
       type: object
       properties:
         totalEvents:
+          description: Total Events
           type: integer
         events:
+          description: Events
           type: array
           items:
             - $ref: "#/components/schemas/notificationMetadata"
