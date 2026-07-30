@@ -1,5 +1,5 @@
 openapi: 3.1.0
-# Modified by Cursor: added webhook request body examples
+
 info:
   title: Annuity Application Status Push Notifications
   description: Webhooks for notifying about changes in annuity application status
@@ -27,6 +27,25 @@ paths:
             application/json:
               schema: 
                 $ref: '#/components/schemas/reconciliation'
+              example:
+                totalEvents: 2
+                events:
+                  - eventId: evt-550e8400-e29b-41d4-a716-446655440001
+                    policyNumber: P987654321
+                    id: APP-2026-001234
+                    applicationOrigin:
+                      platform: DigitalFirst
+                      isElectronic: true
+                      id: DF-APP-001234
+                    status: received
+                  - eventId: evt-550e8400-e29b-41d4-a716-446655440002
+                    policyNumber: P987654322
+                    id: APP-2026-001235
+                    applicationOrigin:
+                      platform: DigitalFirst
+                      isElectronic: true
+                      id: DF-APP-001235
+                    status: inProgress
         "401":
           description: Unauthorized
         "403":
@@ -43,7 +62,7 @@ paths:
       - $ref: '#/components/parameters/eventId'
       responses:
         "200":
-          description: event retrieved successfully
+          description: event retrieved successfully.
           content:
             application/json:
               schema:
@@ -60,6 +79,71 @@ paths:
                   - $ref: '#/components/schemas/FundingReceivedNotification'
                   - $ref: '#/components/schemas/ApplicationCompletedNotification'
                   - $ref: '#/components/schemas/ApplicationCancelledNotification'
+              example:
+                eventId: evt-550e8400-e29b-41d4-a716-446655440001
+                policyNumber: P987654321
+                id: APP-2026-001234
+                applicationOrigin:
+                  platform: DigitalFirst
+                  isElectronic: true
+                  id: DF-APP-001234
+                status: received
+                eventType: applicationStatus.v1.applicationReceived
+                notification:
+                  cusip: "401B23458"
+                  isActionNeeded: false
+                  productName: Secure Income Annuity Plus
+                  isQualified: true
+              examples:
+                applicationReceivedReplay:
+                  summary: Application received event payload
+                  value:
+                    eventId: evt-550e8400-e29b-41d4-a716-446655440001
+                    policyNumber: P987654321
+                    id: APP-2026-001234
+                    applicationOrigin:
+                      platform: DigitalFirst
+                      isElectronic: true
+                      id: DF-APP-001234
+                    status: received
+                    eventType: applicationStatus.v1.applicationReceived
+                    notification:
+                      cusip: "401B23458"
+                      isActionNeeded: false
+                      productName: Secure Income Annuity Plus
+                      isQualified: true
+                canSellActionNeededReplay:
+                  summary: Can-sell action needed event payload
+                  value:
+                    eventId: evt-550e8400-e29b-41d4-a716-446655440002
+                    policyNumber: P987654321
+                    id: APP-2026-001234
+                    applicationOrigin:
+                      platform: DigitalFirst
+                      isElectronic: true
+                      id: DF-APP-001234
+                    status: inProgress
+                    eventType: applicationStatus.v1.canSellActionNeeded
+                    notification:
+                      status: inProgress
+                      isActionNeeded: true
+                      startDate: "2026-06-03"
+                applicationCancelledReplay:
+                  summary: Application cancelled event payload
+                  value:
+                    eventId: evt-550e8400-e29b-41d4-a716-446655440012
+                    policyNumber: P987654321
+                    id: APP-2026-001234
+                    applicationOrigin:
+                      platform: DigitalFirst
+                      isElectronic: true
+                      id: DF-APP-001234
+                    status: cancelled
+                    eventType: applicationStatus.v1.applicationCancelled
+                    notification:
+                      initiator: client
+                      cancelledDate: "2026-06-18"
+                      reason: Client elected to pursue alternative product
 webhooks:
   applicationReceived:
     post:
@@ -75,9 +159,49 @@ webhooks:
         content:
           application/json:
             schema:
-              type: object
-              allOf:
-              - $ref: '#/components/schemas/ApplicationReceivedNotification'
+              $ref: '#/components/schemas/ApplicationReceivedNotification'
+            example:
+              eventId: evt-550e8400-e29b-41d4-a716-446655440001
+              policyNumber: P987654321
+              id: APP-2026-001234
+              applicationOrigin:
+                platform: DigitalFirst
+                isElectronic: true
+                id: DF-APP-001234
+              status: received
+              eventType: applicationStatus.v1.applicationReceived
+              notification:
+                cusip: "401B23458"
+                isActionNeeded: false
+                productName: Secure Income Annuity Plus
+                isQualified: true
+                producers:
+                  - type: individual
+                    firstName: Jane
+                    lastName: Smith
+                    npn: "1234567890"
+                    relationships:
+                      - primaryAgent
+                  - type: entity
+                    name: Smith & Associates
+                    npn: "1234567890"
+                    relationships:
+                      - brokerDealer
+                parties:
+                  - type: individual
+                    firstName: John
+                    lastName: Doe
+                    relationships:
+                      - owner
+                      - annuitant
+                  - type: entity
+                    name: Smith & Associates
+                    npn: "1234567890"
+                    relationships:
+                      - primaryBeneficiary
+                signedDate: "2026-06-01"
+                receivedDate: "2026-06-02"
+                rateEffectiveDate: "2026-06-02"
             examples:
               applicationReceivedExample:
                 summary: New application received with policy number assigned
@@ -188,9 +312,28 @@ webhooks:
         content:
           application/json:
             schema:
-              type: object
-              allOf:
-              - $ref: '#/components/schemas/CanSellNotification'
+              $ref: '#/components/schemas/CanSellNotification'
+            example:
+              eventId: evt-550e8400-e29b-41d4-a716-446655440002
+              policyNumber: P9876543212
+              id: APP-2026-001234
+              applicationOrigin:
+                platform: DigitalFirst
+                isElectronic: true
+                id: DF-APP-001234
+              status: inProgress
+              eventType: applicationStatus.v1.canSellActionNeeded
+              notification:
+                status: inProgress
+                isActionNeeded: true
+                startDate: "2026-06-03"
+                issues:
+                  - type: trainingExpired
+                    note: Producer training expired on 2026-05-01
+                    affectedProducer:
+                      npn: "1234567890"
+                  - type: other
+                    note: Other reason for can-sell action needed
             examples:
               canSellActionNeededExample:
                 summary: Can-sell validation requires producer action
@@ -237,8 +380,26 @@ webhooks:
         content:
           application/json:
             schema:
-              type: object
               $ref: '#/components/schemas/SuitabilityActionNotification'
+            example:
+              eventId: evt-550e8400-e29b-41d4-a716-446655440003
+              policyNumber: P987654321
+              id: APP-2026-001234
+              applicationOrigin:
+                platform: DigitalFirst
+                isElectronic: true
+                id: DF-APP-001234
+              status: inProgress
+              eventType: applicationStatus.v1.suitabilityActionNeeded
+              notification:
+                status: inProgress
+                isActionNeeded: true
+                startDate: "2026-06-04"
+                dueDate: "2026-06-11"
+                reason: moreInformationNeeded
+                note: Client financial profile documentation required
+                actionSections:
+                  - suitability
             examples:
               suitabilityActionNeededExample:
                 summary: Suitability review requires additional information
@@ -283,8 +444,24 @@ webhooks:
         content:
           application/json:
             schema:
-              type: object
               $ref: '#/components/schemas/SuitabilityDecisionNotification'
+            example:
+              eventId: evt-550e8400-e29b-41d4-a716-446655440004
+              policyNumber: P987654321
+              id: APP-2026-001234
+              applicationOrigin:
+                platform: DigitalFirst
+                isElectronic: true
+                id: DF-APP-001234
+              status: inProgress
+              eventType: applicationStatus.v1.suitabilityApproved
+              notification:
+                status: completed
+                isActionNeeded: false
+                startDate: "2026-06-04"
+                endDate: "2026-06-15"
+                isApproved: true
+                note: Suitability review completed successfully
             examples:
               suitabilityApprovedExample:
                 summary: Suitability review completed and approved
@@ -327,8 +504,29 @@ webhooks:
         content:
           application/json:
             schema:
-              type: object
               $ref: '#/components/schemas/DocReviewNotification'
+            example:
+              eventId: evt-550e8400-e29b-41d4-a716-446655440005
+              policyNumber: P987654321
+              id: APP-2026-001234
+              applicationOrigin:
+                platform: DigitalFirst
+                isElectronic: true
+                id: DF-APP-001234
+              status: inProgress
+              eventType: applicationStatus.v1.documentReviewActionNeeded
+              notification:
+                status: inProgress
+                isActionNeeded: true
+                startDate: "2026-06-05"
+                actionSections:
+                  - documentReview
+                issues:
+                  - reason: missingSignature
+                    formName: Application for Annuity
+                    formNumber: APP-1001
+                    dueDate: "2026-06-12"
+                    note: Owner signature required on page 3
             examples:
               documentReviewActionNeededExample:
                 summary: Document review identified missing signature
@@ -376,8 +574,32 @@ webhooks:
         content:
           application/json:
             schema:
-              type: object
               $ref: '#/components/schemas/FundingActionNotification'
+            example:
+              eventId: evt-550e8400-e29b-41d4-a716-446655440006
+              policyNumber: P987654321
+              id: APP-2026-001234
+              applicationOrigin:
+                platform: DigitalFirst
+                isElectronic: true
+                id: DF-APP-001234
+              status: inProgress
+              eventType: applicationStatus.v1.fundingActionNeeded
+              notification:
+                isActionNeeded: true
+                status: inProgress
+                startDate: "2026-06-06"
+                actionSections:
+                  - funding
+                reason: awaitingFundsFromCedingCompany
+                sources:
+                  - method: anotherPolicy
+                    type: full1035Exchange
+                    isActionNeeded: true
+                    anticipatedAmount: 250000.00
+                    status: inProgress
+                    cedingCompanyName: Legacy Life Insurance Co
+                    accountNumber: POL-123456789
             examples:
               fundingActionNeededExample:
                 summary: Funding action required from ceding carrier
@@ -428,8 +650,32 @@ webhooks:
         content:
           application/json:
             schema:
-              type: object
               $ref: '#/components/schemas/TransferRequestNotification'
+            example:
+              eventId: evt-550e8400-e29b-41d4-a716-446655440007
+              policyNumber: P987654321
+              id: APP-2026-001234
+              applicationOrigin:
+                platform: DigitalFirst
+                isElectronic: true
+                id: DF-APP-001234
+              status: inProgress
+              eventType: applicationStatus.v1.fundingTransferRequestSent
+              notification:
+                isActionNeeded: false
+                status: inProgress
+                startDate: "2026-06-07"
+                nextActivityDate: "2026-06-21"
+                methodOfInitiation: fax
+                referenceNumber: TRF-2026-004567
+                note: 1035 exchange transfer request faxed to ceding carrier
+                sources:
+                  - method: anotherPolicy
+                    type: full1035Exchange
+                    anticipatedAmount: 250000.00
+                    status: inProgress
+                    cedingCompanyName: Legacy Life Insurance Co
+                    accountNumber: POL-123456789
             examples:
               fundingTransferRequestSentExample:
                 summary: Transfer request sent to ceding carrier
@@ -480,8 +726,28 @@ webhooks:
         content:
           application/json:
             schema:
-              type: object
               $ref: '#/components/schemas/SourceTypeNotification'
+            example:
+              eventId: evt-550e8400-e29b-41d4-a716-446655440008
+              policyNumber: P987654321
+              id: APP-2026-001234
+              applicationOrigin:
+                platform: DigitalFirst
+                isElectronic: true
+                id: DF-APP-001234
+              status: inProgress
+              eventType: applicationStatus.v1.fundingSourceTypeUpdated
+              notification:
+                isActionNeeded: false
+                status: inProgress
+                startDate: "2026-06-08"
+                sources:
+                  - method: anotherPolicy
+                    type: directRollover
+                    anticipatedAmount: 150000.00
+                    status: inProgress
+                    cedingCompanyName: Prior Carrier Inc
+                    accountNumber: IRA-987654321
             examples:
               fundingSourceTypeUpdatedExample:
                 summary: Funding source type determined for transfer
@@ -528,8 +794,31 @@ webhooks:
         content:
           application/json:
             schema:
-              type: object
               $ref: '#/components/schemas/NewFollowUpNotification'
+            example:
+              eventId: evt-550e8400-e29b-41d4-a716-446655440009
+              policyNumber: P987654321
+              id: APP-2026-001234
+              applicationOrigin:
+                platform: DigitalFirst
+                isElectronic: true
+                id: DF-APP-001234
+              status: inProgress
+              eventType: applicationStatus.v1.fundingTransferFollowedUp
+              notification:
+                isActionNeeded: true
+                status: inProgress
+                startDate: "2026-06-09"
+                nextActivityDate: "2026-06-16"
+                transferSentDate: "2026-06-07"
+                note: Follow-up call scheduled with ceding carrier
+                sources:
+                  - method: anotherPolicy
+                    type: full1035Exchange
+                    anticipatedAmount: 250000.00
+                    status: inProgress
+                    cedingCompanyName: Legacy Life Insurance Co
+                    accountNumber: POL-123456789
             examples:
               fundingTransferFollowedUpExample:
                 summary: Follow-up action created for pending transfer
@@ -579,8 +868,32 @@ webhooks:
         content:
           application/json:
             schema:
-              type: object
               $ref: '#/components/schemas/FundingReceivedNotification'
+            example:
+              eventId: evt-550e8400-e29b-41d4-a716-446655440010
+              policyNumber: P987654321
+              id: APP-2026-001234
+              applicationOrigin:
+                platform: DigitalFirst
+                isElectronic: true
+                id: DF-APP-001234
+              status: inProgress
+              eventType: applicationStatus.v1.fundingReceived
+              notification:
+                isActionNeeded: false
+                status: completed
+                startDate: "2026-06-06"
+                anticipatedAmount: 250000.00
+                receivedAmount: 240000.00
+                receivedDate: "2026-06-15"
+                effectiveDate: "2026-06-15"
+                sources:
+                  - method: anotherPolicy
+                    type: full1035Exchange
+                    anticipatedAmount: 250000.00
+                    status: complete
+                    cedingCompanyName: Legacy Life Insurance Co
+                    accountNumber: POL-123456789
             examples:
               fundingReceivedExample:
                 summary: Funding received and policy effective
@@ -631,8 +944,25 @@ webhooks:
         content:
           application/json:
             schema:
-              type: object
               $ref: '#/components/schemas/ApplicationCompletedNotification'
+            example:
+              eventId: evt-550e8400-e29b-41d4-a716-446655440011
+              policyNumber: P987654321
+              id: APP-2026-001234
+              applicationOrigin:
+                platform: DigitalFirst
+                isElectronic: true
+                id: DF-APP-001234
+              status: completed
+              eventType: applicationStatus.v1.applicationCompleted
+              notification:
+                isActionNeeded: false
+                startDate: "2026-06-02"
+                note: Policy issued and delivered to owner
+                delivery:
+                  sentDate: "2026-06-20"
+                  method: fedex
+                  trackingNumber: "7946 1234 5678"
             examples:
               applicationCompletedExample:
                 summary: Application completed and policy delivered
@@ -676,8 +1006,21 @@ webhooks:
         content:
           application/json:
             schema:
-              type: object
               $ref: '#/components/schemas/ApplicationCancelledNotification'
+            example:
+              eventId: evt-550e8400-e29b-41d4-a716-446655440012
+              policyNumber: P987654321
+              id: APP-2026-001234
+              applicationOrigin:
+                platform: DigitalFirst
+                isElectronic: true
+                id: DF-APP-001234
+              status: cancelled
+              eventType: applicationStatus.v1.applicationCancelled
+              notification:
+                initiator: client
+                cancelledDate: "2026-06-18"
+                reason: Client elected to pursue alternative product
             examples:
               applicationCancelledExample:
                 summary: Application cancelled by client request
@@ -1220,18 +1563,12 @@ components:
                 type: string
                 format: date
 
-
-
-    ####### Models #######
     cusip:
       description: Generally used to identify financial instruments based on ABA standard CUSIP, but defined here with relaxed constraints to allow for annuity products that are not issued with standard ABA CUSIPs
       type: string
       minLength: 1
       pattern:  ^[0-9]{3}[A-Z0-9]{5}[0-9]$
-      examples:
-        - standardCusip:
-            description: ABA Standard CUSIP
-            value: "401B23458"
+      example: "401B23458"
     IndividualIdentity:
       description: Schema for individual identity data
       required: [type,firstName,lastName]

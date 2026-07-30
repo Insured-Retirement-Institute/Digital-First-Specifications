@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>IRI API Documentation</title>
-    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@4.5.0/swagger-ui.css" />
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui.css" />
     <link rel="stylesheet" type="text/css" href="./css/custom.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -48,8 +48,8 @@
     <div id="swagger-ui"></div>
 
     <!-- Swagger UI Bundle -->
-    <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-bundle.js" charset="UTF-8"></script>
-    <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-standalone-preset.js" charset="UTF-8"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui-bundle.js" charset="UTF-8"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui-standalone-preset.js" charset="UTF-8"></script>
     <script>
         // Define available APIs and their versions
         const apiDefinitions = {
@@ -210,6 +210,8 @@
                 layout: "StandaloneLayout",
                 displayRequestDuration: true,
                 defaultModelsExpandDepth: -1,
+                defaultModelRendering: 'example',
+                defaultModelExpandDepth: 10,
                 filter: true
             });
         }
