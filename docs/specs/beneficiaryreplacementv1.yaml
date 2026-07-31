@@ -1,0 +1,809 @@
+openapi: 3.1.0
+info:
+  title: Beneficiary Replacement
+  version: 1.0.0
+  description: 'Direction-neutral annuity event exchange specification intended for
+    use by both Distributors and Carriers.
+    
+    Any party MAY act as sender by POSTing a BeneficiaryEventEnvelope to the receiver''s
+    endpoint.
+    
+    Business correlation for beneficiary proposal outcome MUST use beneficiaryTransactionId.
+    
+    Outcomes are communicated asynchronously by the Carrier using BOOKED or REJECTED
+    events.'
+    
+license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+paths:
+  /v1/beneficiary/events:
+    post:
+      summary: Inbound Beneficiary Events
+      description: 'Accepts beneficiary proposal (PROPOSED), confirmation (BOOKED),
+        and rejection (REJECTED) events.
+
+        A 202 ACCEPTED indicates the event was accepted for processing (idempotency
+        + envelope/schema validation).
+
+        Business outcome is communicated asynchronously via BOOKED or REJECTED events
+        correlated by beneficiaryTransactionId.'
+      operationId: postBeneficiaryEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BeneficiaryEventEnvelope'
+      responses:
+        '202':
+          $ref: '#/components/responses/Accepted'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  headers:
+    correlationId:
+      description: Correlates this response to downstream processing for end-to-end request tracing.
+      schema:
+        type: string
+        maxLength: 100
+  responses:
+    Accepted:
+      description: Event accepted for processing
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EventAck'
+    BadRequest:
+      description: Invalid request (envelope/schema/required fields)
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Authentication required or failed
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Authenticated but not permitted
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Conflict:
+      description: Idempotency conflict (duplicate eventId with different payload)
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    UnsupportedMediaType:
+      description: Unsupported Content-Type
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    UnprocessableEntity:
+      description: Request is syntactically valid but cannot be accepted for processing
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    TooManyRequests:
+      description: Throttled
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InternalServerError:
+      description: Internal server error
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    EventEnvelopeBase:
+      type: object
+      required:
+        - eventId
+        - eventType
+        - eventTimestamp
+        - senderParticipantId
+        - receiverParticipantId
+        - payload
+      properties:
+        eventId:
+          type: string
+          description: Unique delivery identifier used for idempotency. Must be unique per sender for deduplication.
+        eventType:
+          type: string
+          description: Fully qualified event type name (e.g., insurance.annuity.beneficiary.proposed.v1).
+        eventTimestamp:
+          type: string
+          format: date-time
+          description: Timestamp when the event was produced by the originating system (UTC, ISO-8601 with 'Z' suffix).
+        senderParticipantId:
+          type: string
+          minLength: 8
+          maxLength: 8
+          pattern: '^[0-9]{8}$'
+          description: Unique identifier for the carrier or distributor sending this event. NSCC or DTCC participant ID.
+        receiverParticipantId:
+          type: string
+          minLength: 8
+          maxLength: 8
+          pattern: '^[0-9]{8}$'
+          description: Unique identifier for the carrier or distributor receiving this event. NSCC or DTCC participant ID.
+        replayOfEventId:
+          type: string
+          description: Optional reference to the original eventId when replaying or retrying a failed transmission.
+        payload:
+          type: object
+          description: Domain-specific payload containing business data. Concrete shape is defined by domain-specific envelopes (e.g., BeneficiaryEvent).
+
+    BeneficiaryEventEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/EventEnvelopeBase'
+        - type: object
+          properties:
+            eventType:
+              type: string
+              enum:
+                - insurance.annuity.beneficiary.proposed.v1
+                - insurance.annuity.beneficiary.booked.v1
+                - insurance.annuity.beneficiary.rejected.v1
+              description: Type of beneficiary event (PROPOSED, BOOKED, or REJECTED).
+            payload:
+              type: object
+              description: Domain-specific payload containing business data. Concrete shape is defined by domain-specific envelopes (e.g., BeneficiaryEvent).  
+              $ref: '#/components/schemas/BeneficiaryEvent'
+
+    BeneficiaryEvent:
+      description: Beneficiary event payload. Shape depends on beneficiaryEventType discriminator (PROPOSED, BOOKED, or REJECTED).
+      oneOf:
+        - $ref: '#/components/schemas/BeneficiaryProposedEvent'
+        - $ref: '#/components/schemas/BeneficiaryBookedEvent'
+        - $ref: '#/components/schemas/BeneficiaryRejectedEvent'
+      discriminator:
+        propertyName: beneficiaryEventType
+        mapping:
+          PROPOSED: '#/components/schemas/BeneficiaryProposedEvent'
+          BOOKED: '#/components/schemas/BeneficiaryBookedEvent'
+          REJECTED: '#/components/schemas/BeneficiaryRejectedEvent'
+
+    BeneficiaryEventBase:
+      type: object
+      required:
+        - beneficiaryEventId
+        - beneficiaryTransactionId
+        - beneficiaryEventType
+        - sourceSystem
+        - processedTimestamp
+        - contract
+        - beneficiaries
+      properties:
+        beneficiaryEventId:
+          type: string
+          description: Business identifier for this beneficiary event. Used for audit and reconciliation; not used for idempotency.
+        beneficiaryTransactionId:
+          type: string
+          maxLength: 65
+          description: Business transaction identifier that correlates proposed beneficiary changes with their booked or rejected outcomes across events.
+        beneficiaryEventType:
+          type: string
+          enum:
+            - PROPOSED
+            - BOOKED
+            - REJECTED
+          description: |
+            Business classification of the beneficiary event.
+            SHALL correspond to the eventType in the enclosing event envelope according to the following mapping:
+              insurance.annuity.beneficiary.proposed.v1 -> PROPOSED
+              insurance.annuity.beneficiary.booked.v1 -> BOOKED
+              insurance.annuity.beneficiary.rejected.v1 -> REJECTED
+            Receivers SHALL reject events where eventType and beneficiaryEventType are inconsistent.
+        sourceSystem:
+          type: string
+          enum:
+            - DISTRIBUTOR
+            - CARRIER
+          description: Originating system that created this event (DISTRIBUTOR or CARRIER).
+        processedTimestamp:
+          type: string
+          format: date-time
+          description: Timestamp when this event was processed by the originating system (UTC, ISO-8601 with 'Z' suffix).
+        effectiveDate:
+          type: string
+          format: date
+          description: Effective date of the beneficiary change. Optional; carrier is authoritative when present.
+        requestorContext:
+          $ref: '#/components/schemas/RequestorContext'
+          description: Context about the role and authority under which the beneficiary change was requested. requestorContext SHALL be present for PROPOSED events and MAY be omitted for BOOKED and REJECTED events.
+        beneficiaryTypesInScope:
+          type: array
+          uniqueItems: true
+          description: 
+            Defines the beneficiary types that are intended to be replaced by this request. Only the beneficiaryTypes included in this array are updated. Existing beneficiaryTypes not included remain unchanged. If not provided, consumers SHALL infer the scope from the beneficiaryTypes present in the payload.Values in this array MUST be unique.
+          items:
+            type: string
+            enum:
+              - PRIMARY
+              - CONTINGENT
+          minItems: 1 
+        contract:
+          $ref: '#/components/schemas/Contract'
+          description: Policy contract information (contract number and optional associated firm ID).
+        beneficiaries:
+          type: array
+          minItems: 1
+          description: Array of beneficiary designations. At least one beneficiary must be provided.
+          items:
+            $ref: '#/components/schemas/Beneficiary'
+
+    BeneficiaryProposedEvent:
+      allOf:
+        - $ref: '#/components/schemas/BeneficiaryEventBase'
+        - type: object
+          required:
+            - requestorContext
+          properties:
+            beneficiaryEventType:
+              type: string
+              enum:
+                - PROPOSED
+              description: Discriminator value for PROPOSED event type.
+
+    BeneficiaryBookedEvent:
+      allOf:
+        - $ref: '#/components/schemas/BeneficiaryEventBase'
+        - type: object
+          properties:
+            beneficiaryEventType:
+              type: string
+              enum:
+                - BOOKED
+              description: Discriminator value for BOOKED event type.
+
+    BeneficiaryRejectedEvent:
+      allOf:
+        - $ref: '#/components/schemas/BeneficiaryEventBase'
+        - type: object
+          required:
+            - rejection
+          properties:
+            beneficiaryEventType:
+              type: string
+              enum:
+                - REJECTED
+              description: Discriminator value for REJECTED event type.
+            rejection:
+              $ref: '#/components/schemas/RejectionDetails'
+              description: Rejection details including code, message, and field-level errors.
+
+    RequestorContext:
+      type: object
+      additionalProperties: false
+      required:
+            - requestorRole
+      properties:
+        requestorRole:
+          type: string
+          description: Role or capacity of the party requesting the beneficiary change (e.g., owner, attorney-in-fact, trustee).
+          enum:
+            - OWNER
+            - POWER_OF_ATTORNEY
+            - TRUSTEE
+            - AUTHORIZED_REPRESENTATIVE
+        authorityType:
+          type: string
+          description: Type of legal authority or documentation being relied upon when the requestor is acting on behalf of the owner.
+          enum:
+            - POA
+            - TRUST_DOCUMENTATION
+            - COURT_ORDER
+            - GUARDIANSHIP
+            - OTHER
+        authorityReference:
+          type: string
+          description: Reference identifier to supporting authority documentation (e.g., document ID, case number, or external reference).
+        submissionChannel:
+          type: string
+          description: Originating channel or system from which the beneficiary change request was submitted.
+          enum:
+            - CLIENT_PORTAL
+            - ADVISOR_PORTAL
+            - MOBILE_APP
+            - CALL_CENTER
+            - PAPER
+            - BATCH
+            - API
+            - THIRD_PARTY_PLATFORM
+            - OTHER
+        requestedByPartyId:
+          type: string
+          description: Optional stable party identifier for the requestor when available (e.g., advisor ID, customer ID).
+
+    RejectionDetails:
+      type: object
+      additionalProperties: false
+      required:
+        - rejectionCode
+        - rejectionMessage
+      properties:
+        rejectionCode:
+          $ref: '#/components/schemas/BeneficiaryDxErrorCode'
+          description: Structured error code classifying the rejection reason.
+        rejectionMessage:
+          type: string
+          maxLength: 500
+          description: Human-readable rejection message explaining why the beneficiary change was not accepted.
+        fieldErrors:
+          type: array
+          description: Optional array of field-level validation errors encountered during processing.
+          items:
+            $ref: '#/components/schemas/FieldError'
+
+    FieldError:
+      type: object
+      additionalProperties: false
+      required:
+        - path
+        - message
+      properties:
+        path:
+          type: string
+          description: JSONPath-like pointer identifying the field with an error (e.g., $.beneficiaries[0].percent).
+        code:
+          $ref: '#/components/schemas/BeneficiaryDxErrorCode'
+          description: Structured error code for this field error.
+        message:
+          type: string
+          description: Descriptive error message for this field.
+
+    Contract:
+      type: object
+      additionalProperties: false
+      required:
+        - contractNumber
+      properties:
+        contractNumber:
+          type: string
+          description: Unique policy or contract number identifying the annuity contract.
+        associatedFirmId:
+          type: string
+          description: Optional identifier for the firm associated with this contract (e.g., distributor firm ID).
+
+    Beneficiary:
+      type: object
+      additionalProperties: false
+      required:
+        - beneficiaryType
+        - relationshipType
+        - percent
+        - name
+      properties:
+        beneficiaryId:
+          type: string
+          description: Optional unique identifier for this beneficiary designation record.
+        beneficiaryType:
+          type: string
+          enum:
+            - PRIMARY
+            - CONTINGENT
+          description: Classification of beneficiary (PRIMARY, CONTINGENT).
+        relationshipType:
+          type: string
+          description: Standardized relationship classification aligned with DTCC Contract Entity Relationship codes. 			
+          enum:
+          - PARENT
+          - CHILD
+          - FATHER
+          - MOTHER
+          - SON
+          - DAUGHTER
+          - BROTHER
+          - SISTER
+          - EX_HUSBAND
+          - EX_WIFE
+          - STEP_MOTHER
+          - STEP_FATHER
+          - STEP_BROTHER
+          - STEP_SISTER
+          - GRANDFATHER
+          - GRANDMOTHER
+          - FATHER_IN_LAW
+          - SIBLING
+          - SON_IN_LAW
+          - DAUGHTER_IN_LAW
+          - BROTHER_IN_LAW
+          - SISTER_IN_LAW
+          - DOMESTIC_PARTNER
+          - HALF_SISTER
+          - COUSIN
+          - SIGNIFICANT_OTHER
+          - AUNT
+          - NEPHEW
+          - NIECE
+          - SPOUSE
+          - HUSBAND
+          - WIFE
+          - MOTHER_IN_LAW
+          - HALF_BROTHER
+          - UNCLE
+          - DEPENDENT
+          - EMPLOYEE
+          - EMPLOYER
+          - FIANCEE
+          - FOSTER_PARENT
+          - FRIEND
+          - GRAND_CHILD
+          - GRAND_PARENT
+          - GUARDIAN
+          - TRUSTEE
+          - OTHER
+          - OTHER_FAMILY
+          - SELF
+          - ALL_RELATIONSHIPS_ACCEPTABLE
+          - ALL_BUT_SELF
+        relationshipDescription:
+          type: string
+          maxLength: 180
+          description: Free-form description of relationship when relationshipType is OTHER, OTHER_FAMILY or additional detail is required.
+        designationSuccessionType:
+          type: string
+          enum:
+            - PER_CAPITA
+            - PER_STIRPES
+          description: Method for beneficiary distribution if a primary beneficiary predeceases (PER_CAPITA = equal per person; PER_STIRPES = by family line).
+        percent:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Percentage of contract value allocated to this beneficiary.
+        isIrrevocable:
+          type: boolean
+          description: Indicates whether this beneficiary designation is irrevocable (cannot be changed without beneficiary consent).
+        dob:
+          type: string
+          format: date
+          description: Date of birth of the beneficiary (optional; may be required by carrier policy).
+        name:
+          $ref: '#/components/schemas/BeneficiaryName'
+          description: Name of the beneficiary (individual or entity).
+        address:
+          $ref: '#/components/schemas/Address'
+          description: Optional mailing or residential address for the beneficiary.
+        phones:
+          type: array
+          description: Optional array of phone numbers for the beneficiary.
+          items:
+            $ref: '#/components/schemas/Phone'
+        emails:
+          type: array
+          description: Optional array of email addresses for the beneficiary.
+          items:
+            $ref: '#/components/schemas/Email'
+
+    BeneficiaryName:
+      type: object
+      additionalProperties: false
+      properties:
+        firstName:
+          type: string
+          minLength: 1
+          maxLength: 105
+          pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
+          description: First name of the individual beneficiary.
+        middleName:
+          type: string
+          minLength: 1
+          maxLength: 105
+          pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
+          description: Middle name or initial of the individual beneficiary.
+        lastName:
+          type: string
+          minLength: 1
+          maxLength: 105
+          pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
+          description: Last name or surname of the individual beneficiary.
+        entityName:
+          type: string
+          minLength: 1
+          maxLength: 180
+          pattern: '^[\w=()*@#\s.,''\/~%$!;:&"®`\\?\-]{1,180}$'
+          description: Legal name of the entity beneficiary (trust, organization, estate, etc.).
+      oneOf:
+        - required:
+            - firstName
+            - lastName
+          description: Either individual name (firstName + lastName) or entity name is required.
+        - required:
+            - entityName
+
+    Address:
+      type: object
+      additionalProperties: false
+      required:
+        - addressType
+        - addressLine1
+        - city
+        - state
+        - zipCode
+        - country
+      properties:
+        addressId:
+          type: string
+          maxLength: 100
+          description: Optional internal identifier for this address record.
+        addressType:
+          type: string
+          maxLength: 30
+          enum:
+            - RESIDENCE
+            - BUSINESS
+            - POBOXSEASONAL
+            - APO
+            - DPO
+            - FPO
+          description: Type of address (RESIDENCE, BUSINESS, PO BOX, APO, DPO, FPO).
+        addressLine1:
+          type: string
+          maxLength: 100
+          description: Primary address line (street address, PO box, etc.).
+        addressLine2:
+          type: string
+          maxLength: 100
+          description: Secondary address line (apartment, suite, etc.).
+        addressLine3:
+          type: string
+          maxLength: 100
+          description: Tertiary address line (if needed).
+        addressLine4:
+          type: string
+          maxLength: 100
+          description: Quaternary address line (if needed).
+        addressLine5:
+          type: string
+          maxLength: 100
+          description: Quinary address line (if needed).
+        city:
+          type: string
+          maxLength: 100
+          description: City or municipality name.
+        state:
+          type: string
+          maxLength: 2
+          pattern: '^[A-Z]{2}$'
+          description: Two-character state or province code (uppercase).
+        zipCode:
+          type: string
+          maxLength: 10
+          pattern: '^[0-9A-Za-z -]{3,10}$'
+          description: Postal code (3-10 alphanumeric characters, may include hyphens or spaces).
+        zipCodeExtension:
+          type: string
+          maxLength: 4
+          pattern: '^[0-9A-Za-z]{1,4}$'
+          description: Extended postal code (e.g., +4 in US ZIP format).
+        country:
+          type: string
+          maxLength: 2
+          pattern: '^[A-Z]{2}$'
+          description: Two-character ISO country code (uppercase).
+
+    Phone:
+      type: object
+      additionalProperties: false
+      required:
+        - countryCode
+        - areaCode
+        - dialNumber
+      properties:
+        startDate:
+          type: string
+          format: date
+          description: Date this phone number became active.
+        endDate:
+          type: string
+          format: date
+          description: Date this phone number ceased to be active.
+        phoneType:
+          type: string
+          enum:
+            - MOBILE
+            - HOME
+            - BUSINESS
+            - CLAIMCENTER
+            - CUSTOMERSERVICE
+            - CORPORATEOFFICE
+            - FAX
+            - UNKNOWN
+            - OTHER
+          description: Type or purpose of the phone number.
+        countryCode:
+          type: string
+          pattern: '^\+?[0-9]{1,3}$'
+          description: Country calling code (1-3 digits, may include leading +).
+        areaCode:
+          type: string
+          pattern: '^[0-9]{2,5}$'
+          description: Area or region code (2-5 digits; supports domestic and international numbering plans).
+        dialNumber:
+          type: string
+          pattern: '^[0-9]{4,12}$'
+          description: Main phone number digits (4-12 digits).
+        extension:
+          type: string
+          pattern: '^[A-Za-z0-9-]{1,10}$'
+          description: Optional phone extension or internal number.
+        bestTime:
+          type: string
+          enum:
+            - MORNING
+            - AFTERNOON
+            - EVENING
+            - ANYTIME
+          description: Preferred time to contact the beneficiary.
+        timezone:
+          type: string
+          pattern: '^[A-Za-z_]+/[A-Za-z_]+(?:/[A-Za-z_]+)?$'
+          description: IANA timezone identifier for the phone number (e.g., America/New_York).
+        isPreferred:
+          type: boolean
+          description: Indicates whether this is the preferred phone number for the beneficiary.
+        phoneId:
+          type: string
+          pattern: '^[A-Za-z0-9._-]{1,100}$'
+          description: Optional unique identifier for this phone record.
+
+    Email:
+      type: object
+      additionalProperties: false
+      required:
+        - emailAddress
+      properties:
+        startDate:
+          type: string
+          format: date
+          description: Date this email address became active.
+        endDate:
+          type: string
+          format: date
+          description: Date this email address ceased to be active.
+        emailType:
+          type: string
+          enum:
+            - PERSONAL
+            - BUSINESS
+            - CUSTOMERSERVICE
+            - OTHER
+          description: Type or purpose of the email address.
+        emailAddress:
+          type: string
+          format: email
+          pattern: '^[^@\s]+@[^@\s]+\.[^@\s]+$'
+          description: Valid email address for the beneficiary.
+        isPreferred:
+          type: boolean
+          description: Indicates whether this is the preferred email address for the beneficiary.
+        emailId:
+          type: string
+          pattern: '^[A-Za-z0-9._-]{1,100}$'
+          description: Optional unique identifier for this email record.
+
+    EventAck:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - ACCEPTED
+          description: Status of the event receipt (ACCEPTED = event has been accepted for processing).
+        receivedTimestamp:
+          type: string
+          format: date-time
+          description: Timestamp when the event was received by the system (UTC, ISO-8601 with 'Z' suffix).
+
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - httpStatus
+        - code
+        - message
+      properties:
+        httpStatus:
+          type: integer
+          description: HTTP status code associated with this error.
+          minimum: 400
+          maximum: 599
+        code:
+          type: string
+          description: A structured error code that uniquely identifies the type of error. Codes may follow a hierarchical format combining domain, category, and subcategory (for example, "gateway.client.badrequest" or "gateway.server.timeout").
+          pattern: '^[a-z]+\.[a-z]+(\.[a-z]+)?$'
+        timestamp:
+          type: string
+          format: date-time
+          description: Time when the error occurred.
+        message:
+          type: string
+          description: End-user-friendly explanation, safe to show in portals or consumer-facing apps.
+        userMessage:
+          type: string
+          description: Safe, user-friendly message suitable for display to end users.
+        correlationId:
+          type: string
+          description: Carries forward the inbound request's correlation ID header to enable end-to-end traceability.
+        validationErrors:
+          type: array
+          description: Array describing domain/business rule violations; each entry requires its own code and message.
+          items:
+            $ref: '#/components/schemas/FieldError'
+
+    BeneficiaryDxErrorCode:
+      type: string
+      description: Standard error codes for beneficiary data exchange operations. Codes are prefixed by domain (DX_ for transport/envelope; BENE_ for business rules).
+      enum:
+        - DX_INVALID_REQUEST
+        - DX_UNSUPPORTED_MEDIA_TYPE
+        - DX_UNSUPPORTED_EVENT_TYPE
+        - DX_DUPLICATE_EVENT_ID
+        - DX_UNAUTHORIZED
+        - DX_FORBIDDEN
+        - DX_RATE_LIMITED
+        - DX_UNPROCESSABLE
+        - DX_INTERNAL_ERROR
+        - BENE_CONTRACT_NOT_FOUND
+        - BENE_CONTRACT_NOT_ELIGIBLE
+        - BENE_PENDING_TRANSACTION_EXISTS
+        - BENE_ALLOCATION_INVALID
+        - BENE_INVALID_BENEFICIARY
+        - BENE_INVALID_RELATIONSHIP
+        - BENE_IRREVOCABLE_CONSTRAINT
+        - BENE_EFFECTIVE_DATE_INVALID
