@@ -2504,8 +2504,6 @@ components:
                     enum:
                     - PARTICIPATION
                     - DOWNSIDE_PARTICIPATION
-                    description: Enum values normalized to uppercase underscore style
-                      for consistency.
               fundSegments:
                 description: Represents segment-level details within a fund.
                 type: array
@@ -2717,9 +2715,6 @@ components:
             - CHECK
             - WIRE
             - EXCHANGE
-            description: Party-level payment form. `EXCHANGE` is retained only for
-              party-level exchange servicing scenarios; recurring disbursement schemas
-              intentionally use the narrower ACH/EFT/CHECK/WIRE/DTCC vocabularies.
           allocationPercentage:
             description: Specifies the percentage share of benefits, proceeds, or transaction allocation assigned to the party
             type: number
@@ -2955,7 +2950,7 @@ components:
           - PECKINGORDER
           - EARNINGSONLY
         paymentForm:
-          description: Party-level payment form. `EXCHANGE` is retained only for party-level exchange servicing scenarios; recurring disbursement schemas intentionally use the narrower ACH/EFT/CHECK/WIRE/DTCC vocabularies.
+          description: Party-level payment form. `EXCHANGE` is retained only for party-level exchange servicing scenarios; recurring disbursement schemas intentionally use the narrower ACH/EFT/CHECK/WIRE/DTCC vocabularies. Recurring systematic-program payment form. `EFT` is valid here; `EXCHANGE` is intentionally excluded because exchange handling is party-specific rather than a recurring disbursement mode.
           type: string
           enum:
           - DTCC
@@ -2963,9 +2958,6 @@ components:
           - ACH
           - CHECK
           - WIRE
-          description: Recurring systematic-program payment form. `EFT` is valid here;
-            `EXCHANGE` is intentionally excluded because exchange handling is party-specific
-            rather than a recurring disbursement mode.
         frequency:
           description: Indicates how often the systematic program is scheduled to run, such as daily, every two weeks, monthly, semiannual, quarterly, annual, or single payment.
           type: string
@@ -4350,7 +4342,7 @@ components:
           type: string
           maxLength: 255
         issueState:
-          description: Values represent USPS state, territory, and military mail codes.
+          description: Values represent USPS state, territory, and military mail codes.  
           type: string
           enum:
           - AA
@@ -4413,7 +4405,6 @@ components:
           - WV
           - WI
           - WY
-          description: Values represent USPS state, territory, and military mail codes.
         issueCountry:
           type: string
           enum:
