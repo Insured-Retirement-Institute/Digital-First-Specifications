@@ -1,0 +1,49 @@
+name: PR Checks
+
+# Runs the same build that "Build and Deploy Data Dictionary" runs on main,
+# so a spec that breaks the build is caught on the pull request instead of
+# after the merge.
+
+on:
+  pull_request:
+    branches:
+      - main
+  merge_group:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One run per PR; superseded runs are cancelled.
+concurrency:
+  group: pr-checks-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build data dictionary
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        uses: ./.github/actions/build-dictionary
+
+      # Human-readable copy: a plain zip of ./docs you can unzip and open.
+      - name: Upload built site for inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: data-dictionary-preview
+          path: ./docs
+          retention-days: 7
+
+      # Exercises the same packaging step the deploy workflow runs, so a
+      # failure in it (bad path, symlink, size) surfaces on the PR. Produces
+      # the Pages-format tarball; nothing consumes it, so it expires in a day.
+      # No `pages:` permission needed — this action only tars and uploads.
+      - name: Package Pages artifact (packaging check only)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './docs'
+          retention-days: 1

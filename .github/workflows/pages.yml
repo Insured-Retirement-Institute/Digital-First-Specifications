@@ -24,17 +24,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build data dictionary
-        run: npm run build:dictionary
+      # Same composite action the PR check runs, so a green PR check means
+      # this build step will behave identically on main.
+      - name: Build
+        uses: ./.github/actions/build-dictionary
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
