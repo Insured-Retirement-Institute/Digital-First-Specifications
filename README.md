@@ -8,11 +8,7 @@ This repository contains:
 
 ## Published OpenAPI Specifications
 
-Once a working group's API specification has been reviewed and approved by the [Governance Committee](https://www.irionline.org/member-programs/operations-technology/committee-hub/governance/), the OpenAPI specification is moved into this repository and published at [specs.dfa.irionline.org](https://specs.dfa.irionline.org), which is the published GitHub Page of this repository.
-
-## Published AsyncAPI Specifications
-
-Once a working group's messaging specification has been reviewed and approved by the [Governance Committee](https://www.irionline.org/member-programs/operations-technology/committee-hub/governance/), the AsyncAPI specification is moved into this repository and published at [specs.dfa.irionline.org](https://specs.dfa.irionline.org), which is the published GitHub Page of this repository.
+Once a working group's API specification has been reviewed and approved by the [Governance Committee](https://www.irionline.org/about-iri/committees/operations-technology/), the OpenAPI specification is moved into this repository and published at [specs.dfa.irionline.org](https://specs.dfa.irionline.org), which is the published GitHub Page of this repository.
 
 ## Style Guide
 
