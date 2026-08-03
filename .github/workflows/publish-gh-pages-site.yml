@@ -1,4 +1,4 @@
-name: Build and Deploy Data Dictionary
+name: Publish GitHub Pages site
 
 on:
   push:
@@ -24,10 +24,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Same composite action the PR check runs, so a green PR check means
-      # this build step will behave identically on main.
-      - name: Build
-        uses: ./.github/actions/build-dictionary
+      # Same setup action and same npm script the PR check runs, so a green PR
+      # check means this build will behave identically on main.
+      - name: Setup Node and dependencies
+        uses: ./.github/actions/setup-node-deps
+
+      - name: Build data dictionary
+        run: npm run build:dictionary
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
