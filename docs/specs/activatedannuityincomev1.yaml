@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Activated Annuity Income API
-  version: "1.0.0"
+  version: "1.0.1"
   description: |
     APIs for managing income activation of policies.
     Includes single policy lookup, searches, data-ready notifications,
