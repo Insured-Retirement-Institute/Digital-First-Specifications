@@ -1,0 +1,69 @@
+name: PR Checks
+
+# Runs the same build that "Publish GitHub Pages site" runs on main, so a spec
+# that breaks the build is caught on the pull request instead of after the
+# merge, plus strict OpenAPI validation that the build itself does not
+# perform.
+
+on:
+  pull_request:
+    branches:
+      - main
+  merge_group:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One run per PR; superseded runs are cancelled.
+concurrency:
+  group: pr-checks-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # The validation is deliberately a separate job from the build, and deliberately absent from
+  # the Pages workflow: a spec that is schema-invalid but still builds should
+  # block a merge, not a deploy.
+  validate:
+    name: Validate OpenAPI specs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node and dependencies
+        uses: ./.github/actions/setup-node-deps
+
+      - name: Validate specs
+        run: npm run validate:specs
+
+  build:
+    name: Build data dictionary
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node and dependencies
+        uses: ./.github/actions/setup-node-deps
+
+      - name: Build data dictionary
+        run: npm run build:dictionary
+
+      # Human-readable copy: a plain zip of ./docs you can unzip and open.
+      - name: Upload built site for inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: data-dictionary-preview
+          path: ./docs
+          retention-days: 7
+
+      # Exercises the same packaging step the deploy workflow runs, so a
+      # failure in it (bad path, symlink, size) surfaces on the PR. Produces
+      # the Pages-format tarball; nothing consumes it, so it expires in a day.
+      # No `pages:` permission needed — this action only tars and uploads.
+      - name: Package Pages artifact (packaging check only)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './docs'
+          retention-days: 1

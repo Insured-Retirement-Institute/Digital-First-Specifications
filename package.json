@@ -6,6 +6,7 @@
   "//": "Modified by Cursor: added local debugging scripts (2026-02-09)",
   "scripts": {
     "build:dictionary": "tsx scripts/generate-dictionary.ts",
+    "validate:specs": "tsx scripts/validate-specs.ts",
     "debug:dictionary": "node --inspect-brk --enable-source-maps --import tsx scripts/generate-dictionary.ts",
     "debug": "npm run debug:dictionary",
     "build": "npm run build:dictionary"

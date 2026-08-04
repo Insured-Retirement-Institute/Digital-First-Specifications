@@ -396,6 +396,24 @@ Include assets if relevant—binaries, installable packages, archives, etc. (Git
 **Pull-request merges to `main` require two approvers.** All changes destined for the stable branch must be merged via a pull request and receive at least two approvals before merging.
 
 **Restrict tagging and releasing to authorized maintainers.** Only individuals with appropriate permissions (e.g., maintainers) may approve and create releases or tags. This ensures quality control and prevents accidental or unauthorized releases.
+
+### Automated pull-request checks
+
+Every pull request targeting `main` runs the **PR Checks** workflow, which reports two independent checks:
+
+- **Validate OpenAPI specs** — validates every file in `docs/specs/` against the OpenAPI 3.1 schema. This is stricter than what the published spec viewer requires, so it catches structural defects that would otherwise render without complaint (for example, a required `description` left empty, or a key indented at the wrong level).
+- **Build data dictionary** — regenerates the data dictionary and packages the site the same way the publish workflow does, so a specification that breaks publication is caught on the pull request instead of after the merge.
+
+Run both locally before opening a pull request:
+
+```bash
+npm ci
+npm run validate:specs
+npm run build:dictionary
+```
+
+See [Validating Specifications](docs/CONTRIBUTING.md#validating-specifications) for how to interpret validation errors.
+
 ## Implementation Considerations
 
 ### Versioning

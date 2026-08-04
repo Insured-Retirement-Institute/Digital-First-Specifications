@@ -1,4 +1,4 @@
-name: Build and Deploy Data Dictionary
+name: Publish GitHub Pages site
 
 on:
   push:
@@ -24,14 +24,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
+      # Same setup action and same npm script the PR check runs, so a green PR
+      # check means this build will behave identically on main.
+      - name: Setup Node and dependencies
+        uses: ./.github/actions/setup-node-deps
 
       - name: Build data dictionary
         run: npm run build:dictionary
