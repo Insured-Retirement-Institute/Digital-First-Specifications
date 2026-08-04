@@ -1,0 +1,75 @@
+openapi: 3.0.3 # update version
+info:
+  title: Prudential Error Domain #remove Prudential
+  version: 1.1.7 # reset version number since this is for new IRI spec
+  description: Prudential Common Error structure #remove Prudential
+
+components:
+  ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          description: |
+            A structured error code that uniquely identifies the type of error. This can follow a hierarchical format:
+            - `<domain>`: The logical domain (e.g., "gateway")
+            - `<category>`: The error category (e.g., "client" or "server")
+            - `<subcategory>`: A specific error identifier (e.g., "badrequest", "timeout")
+          format: regex
+          pattern: "^[a-zA-Z]+\\.[a-zA-Z]+\\.[a-zA-Z]+$"
+          example: gateway.client.badRequest
+        message:
+          type: string
+          description: Technical message with specific error details for developers identify the type of error quickly.
+          example: "Validation failed for the input data: field 'email' is required."
+        userMessage:
+          type: string
+          description: End-user readable message to describe the error in simple terms.
+          example: "Please provide a valid email address in the request."
+        trackingId:
+          type: string
+          description: Unique identifier to correlate the error to its corresponding request. This tracking id will be used for debugging/monitoring.
+          format: uuid
+          example: a37e4b01-3f66-4e92-825b-505a42accd3f
+        documentationUrl:
+          type: string
+          description: Link to documentation about the error - linking to error-specific documentation.
+          format: uri
+          example: "https://example.com/docs/errors/invalid-request"
+        transient:
+          type: boolean
+          description: Indicates if the error is temporary
+          example: true
+        validationErrors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                description: Name of the field on which error has occurred
+                example: email
+              location:
+                type: string
+                description: The specific location where the error occured.
+                example: body.email
+              reason:
+                type: string
+                description: Details about why the error occurred
+                example: "Validation failed for the input data: field 'email' is required."
+        businessErrors:
+          type: array
+          description: Logical business rule violations or decision failures related to business logic or rules
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                description: Code to classify the business error & Identifies the type of business rule or decision failure.
+              message:
+                type: string
+                description: Why the business error occurred / Specific business rule violation
+                example: Valid email is required
+      required:
+        - code
+        - message
