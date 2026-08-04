@@ -13,7 +13,7 @@ info:
     Outcomes are communicated asynchronously by the Carrier using BOOKED or REJECTED
     events.'
     
-license:
+  license:
     name: MIT
     url: https://opensource.org/licenses/MIT
 
