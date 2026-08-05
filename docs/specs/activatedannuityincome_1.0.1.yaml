@@ -1,0 +1,517 @@
+openapi: 3.1.0
+info:
+  title: Activated Annuity Income API
+  version: "1.0.1"
+  description: |
+    APIs for managing income activation of policies.
+    Includes single policy lookup, searches, data-ready notifications,
+    and file download capabilities.
+
+paths:
+  /v1/policies/{policyNumber}/income-activation:
+    get:
+      operationId: getActivatedAnnuityIncomeByPolicyNumber
+      summary: Get Policy Income Activation By PolicyNumber.
+      description: Get Policy Income Activation By PolicyNumber.
+      tags:
+        - Annuity Income Activation
+      parameters:
+        - $ref: '#/components/parameters/policyNumber'
+        - $ref: '#/components/parameters/cusip'
+        - $ref: '#/components/parameters/correlationId'
+      responses:
+        "200":
+          description: Policy Income Activation retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivatedAnnuityIncomeResponse'
+        '400': { $ref: '#/components/responses/BadRequestError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '405': { $ref: '#/components/responses/MethodNotAllowedError' }
+        '429': { $ref: '#/components/responses/TooManyRequestsError' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '502': { $ref: '#/components/responses/BadGatewayError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailableError' }
+        '504': { $ref: '#/components/responses/GatewayTimeoutError' }
+
+  /v1/income-activation/bulk-searches:
+    post:
+      operationId: postBulkActivatedAnnuityIncomeSearch
+      summary: Bulk Activated Annuity Income Search Request
+      description: |
+        Accepts a searches request from the Requestor. The Hub validates the request,
+        forwards it to the Data Provider, and returns HTTP 202 Accepted.
+        The Requestor will be notified later when data is ready.
+      tags:
+        - Bulk Data Request
+      parameters:
+        - $ref: '#/components/parameters/correlationId'
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkActivatedAnnuityIncomeRequest'
+      responses:
+        "202":
+          description:  Accepted - request accepted for processing.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [requestId, status]
+                properties:
+                  requestId:
+                    type: string
+                    description: Server-assigned identifier for the request.
+                  status:
+                    type: string
+                    enum: [Accepted]
+                    description: Acknowledgement status.
+        '400': { $ref: '#/components/responses/BadRequestError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '405': { $ref: '#/components/responses/MethodNotAllowedError' }
+        '422': { $ref: '#/components/responses/UnprocessableEntityError' }
+        '429': { $ref: '#/components/responses/TooManyRequestsError' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '502': { $ref: '#/components/responses/BadGatewayError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailableError' }
+        '504': { $ref: '#/components/responses/GatewayTimeoutError' }
+
+  /v1/income-activation/event-notification:
+    post:
+      operationId: postDataReadyEventNotification
+      summary: Data Ready Event Notification from Data Provider
+      description: |
+        Receives a notification from the Data Provider indicating that the requested
+        bulk data is ready for download.
+      tags:
+        - Data Ready Notification
+      parameters:
+        - $ref: '#/components/parameters/correlationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkActivatedAnnuityIncomeNotificationRequest'
+      responses:
+        "200":
+          description: Notification acknowledged successfully.
+        '400': { $ref: '#/components/responses/BadRequestError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '405': { $ref: '#/components/responses/MethodNotAllowedError' }
+        '422': { $ref: '#/components/responses/UnprocessableEntityError' }
+        '429': { $ref: '#/components/responses/TooManyRequestsError' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '502': { $ref: '#/components/responses/BadGatewayError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailableError' }
+        '504': { $ref: '#/components/responses/GatewayTimeoutError' }
+
+
+  /v1/income-activation/bulk-searches/results/{fileId}:
+    get:
+      operationId: getIncomeActivationFile
+      summary: Download bulk data file
+      description: |
+        Downloads a bulk data file from DTCC Hub storage. This endpoint is called
+        using the downloadUrl provided in the Data Status Notification.
+        Clients MUST NOT construct this URL manually — always use the
+        downloadUrl value as-is received as part of the data ready Notification request.
+
+        This endpoint documents the expected behavior, response codes, and
+        content types for both Data Requestors and Data Providers implementing
+        the same download pattern.
+      tags:
+        - Bulk File Download
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          description: Opaque file identifier (embedded in the downloadUrl).
+          schema:
+            type: string
+        - $ref: '#/components/parameters/correlationId'
+      responses:
+        "200":
+          description: File downloaded successfully.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Disposition:
+              description: Attachment filename
+              schema:
+                type: string
+                examples:
+                  - "attachment; filename=\"a1b2c3d4-e5f6-7890-abcd-ef1234567890.zip\""
+            Content-Type:
+              description: File MIME type
+              schema:
+                type: string
+                examples:
+                  - "application/zip"
+                  - "text/plain"
+        "403":
+          description: Forbidden — access denied. Requestor is not authorized to download this file.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Not Found — file is not yet available for download.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "410":
+          description: Gone — file has expired and is no longer available.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '405': { $ref: '#/components/responses/MethodNotAllowedError' }
+        '429': { $ref: '#/components/responses/TooManyRequestsError' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '502': { $ref: '#/components/responses/BadGatewayError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailableError' }
+        '504': { $ref: '#/components/responses/GatewayTimeoutError' }
+
+components:
+  parameters:
+    policyNumber:
+      name: policyNumber
+      description: Required path parameter for the policy number.
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/policyNumber'
+    cusip:
+      name: cusip
+      description: Optional query parameter for the CUSIP.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/cusip'
+    correlationId:
+      name: correlationId
+      description: Optional client-supplied identifier to trace the request.
+      in: header
+      required: false
+      schema:
+        type: string
+        maxLength: 100
+  responses:
+    BadRequestError:
+      description: Bad Request
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnauthorizedError:
+      description: Unauthorized
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ForbiddenError:
+      description: Forbidden
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFoundError:
+      description: Not Found
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    MethodNotAllowedError:
+      description: Method Not Allowed
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnprocessableEntityError:
+      description: Unprocessable Entity
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TooManyRequestsError:
+      description: Too Many Requests
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description: Internal Server Error
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadGatewayError:
+      description: Bad Gateway
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ServiceUnavailableError:
+      description: Service Unavailable
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GatewayTimeoutError:
+      description: Gateway Timeout
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  headers:
+    correlationId:
+      description: Correlates this response to requests and downstream logs.
+      schema:
+        type: string
+        maxLength: 100
+
+  schemas:
+    cusip:
+      description: CUSIP
+      type: string
+      minLength: 9
+      maxLength: 9
+      pattern: ^[0-9]{3}[A-Z0-9]{5}[0-9]$
+    policyNumber:
+      description: Policy Number
+      type: string
+      minLength: 1
+      maxLength: 30
+
+    ActivatedAnnuityIncomeResponse:
+      description: Schema for policy income activation data
+      type: object
+      required: [policyNumber, isIncomeActivated]
+      properties:
+        policyNumber:
+          description: Policy Number
+          $ref: '#/components/schemas/policyNumber'
+        cusip:
+          description: CUSIP
+          type: string
+          examples:
+            - "037833100"
+        isIncomeActivated:
+          description: Indicates whether income has been activated or not
+          type: boolean
+        lastPaymentDate:
+          description: The date of the last payment
+          type: string
+          format: date
+          examples:
+            - "2024-03-11"
+        netPaymentAmount:
+          description: The net amount is the value after deductions have been applied. It represents the final amount payable or receivable once taxes, fees, discounts, or other adjustments have been subtracted from the gross amount.
+          type: number
+          format: float
+          examples:
+            - 5000.00
+        grossPaymentAmount:
+          description: The gross amount is the total value before any deductions are applied. It represents the full amount due or earned, such as the total cost, revenue, or payment, without subtracting taxes, fees, discounts, or other adjustments.
+          type: number
+          format: float
+          examples:
+            - 2500.00
+        paymentsPerYear:
+          description: The number of payments sent per year
+          type: integer
+          minimum: 1
+          maximum: 365
+          examples:
+            - 24
+        incomeType:
+          description: The type of income
+          type: string
+          enum:
+            - annuitized
+            - incomeRiders
+            - scheduledPayments
+            - rmd
+
+    BulkActivatedAnnuityIncomeRequest:
+      description: Bulk search request by firmId and/or npn
+      type: object
+      required: [firmId]
+      properties:
+        firmId:
+          description: Firm identification
+          type: string
+          examples:
+            - "12345"
+        npn:
+          description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
+          type: string
+          examples:
+            - "257893456"
+
+    BulkActivatedAnnuityIncomeNotificationRequest:
+      description: |
+        Notification from the Data Provider that bulk data is ready for download.
+        Contains one or more data entries, each with its own location, type, and expiration.
+      type: object
+      required: [status, dataDetails]
+      properties:
+        status:
+          type: string
+          description: Status of the data preparation
+          examples:
+            - "complete"
+        firmId:
+          description: Firm identification
+          type: string
+          examples:
+            - "12345"
+        npn:
+          description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
+          type: string
+          examples:
+            - "257893456"
+        dataDetails:
+          type: array
+          description: List of data entries provided by the Data Provider
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/DataDetail'
+
+    DataDetail:
+      description: |
+        A single file entry with its download URL, type, and metadata.
+        The downloadUrl corresponds to the GET /v1/income-activation/bulk-searches/results/{fileId}
+        endpoint. Clients call the downloadUrl as-is without modification.
+      type: object
+      required: [downloadUrl]
+      properties:
+        downloadUrl:
+          type: string
+          format: uri
+          description: >
+            Full URL to download the file from the Hub. The Requestor (or Hub)
+            calls this URL directly via GET. Use it as provided.
+          maxLength: 2048
+          examples:
+            - "https://hub.example.com/v1/income-activation/bulk-searches/results/a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        dataType:
+          type: string
+          description: Type of file being provided.
+          enum:
+            - ZIP
+            - TXT
+        dataLocationType:
+          type: string
+          description: Storage type where the file is hosted.
+        urlExpiresAt:
+          type: string
+          format: date-time
+          description: >
+            Absolute timestamp after which the download URL is no longer valid.
+            Unambiguous — does not require the client to know when the duration started.
+          examples:
+            - "2025-06-15T18:30:00Z"
+        checksum:
+          type: string
+          pattern: ^[a-fA-F0-9]{64}$
+          description: SHA-256 checksum of the file for integrity verification.
+        fileSizeBytes:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Expected size of the file in bytes, to enable capacity planning and progress reporting.
+        checksumAlgorithm:
+          type: string
+          default: SHA-256
+          description: Algorithm used to compute the checksum. Included to allow future algorithm evolution without breaking changes.
+          examples: 
+            - "SHA-256"
+
+    Error:
+      type: object
+      properties:
+        httpStatus:
+          type: integer
+          description: HTTP status code associated with this error
+          minimum: 400
+          maximum: 599
+        code:
+          type: string
+          description: >
+            A structured error code that uniquely identifies the type of error. This can follow a hierarchical format:
+            - `<domain>`: The logical domain (e.g., "gateway")
+            - `<category>`: The error category (e.g., "client" or "server")
+            - `<subcategory>`: A specific error identifier (e.g., "badrequest", "timeout")
+        timestamp:
+          type: string
+          format: date-time
+          description: Create or Update timestamp of transaction event
+        message:
+          type: string
+          description: Message with specific error details.
+        validationErrors:
+          type: array
+          description: Logical rule violations or decision failures related to business logic or rules
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                description: Code to classify the error & Identifies the type of business rule or decision failure.
+              message:
+                type: string
+                description: Why the error occurred / Specific business rule violation
+      required:
+        - code
+        - message
