@@ -17,21 +17,20 @@
             <nav class="api-selector-nav">
                 <div class="selector-group">
                     <label for="api-selector">API:</label>
-                    <select id="api-selector" onchange="loadSelectedAPI()">
-                        <option value="appstatus.yaml">Application Status API</option>
-                        <option value="appstatuspushNotifications1.yaml">Application Status Push Notifications API</option>
-                        <option value="producertraining.yaml">Producer Training Update</option>
-                        <option value="activatedannuityincome.yaml">Activated Annuity Income API</option>
-                        <option value="onetimewithdrawal1.yaml">One-Time Withdrawals API</option>
-                        <option value="onetimewithdrawalquote1.yaml">One-Time Withdrawal Quote API</option>
-                        <option value="systematicwithdrawalprogramsetup.yaml">Systematic Withdrawal Program Setup API</option>
-                        <option value="systematicwithdrawalprogramupdate.yaml">Systematic Withdrawal Program Update API</option>
-                        <option value="paperlessreplacements1.yaml">Paperless Replacements (RPL) API</option>
-                        <option value="fundtransfer.yaml">Fund Transfer API</option>
-                        <option value="policyinquiry.yaml">Policy Inquiry API</option>
-                        <option value="beneficiaryreplacementv1.yaml">Beneficiary Replacement API</option>
+                    <select id="api-selector" onchange="onApiChange()">
+                        <option value="appstatus">Application Status API</option>
+                        <option value="appstatuspushNotifications">Application Status Push Notifications API</option>
+                        <option value="producertraining">Producer Training Update</option>
+                        <option value="activatedannuityincome">Activated Annuity Income API</option>
+                        <option value="onetimewithdrawal">One-Time Withdrawals API</option>
+                        <option value="onetimewithdrawalquote">One-Time Withdrawal Quote API</option>
+                        <option value="systematicwithdrawalprogramsetup">Systematic Withdrawal Program Setup API</option>
+                        <option value="systematicwithdrawalprogramupdate">Systematic Withdrawal Program Update API</option>
+                        <option value="paperlessreplacements">Paperless Replacements (RPL) API</option>
+                        <option value="fundtransfer">Fund Transfer API</option>
+                        <option value="policyinquiry">Policy Inquiry API</option>
+                        <option value="beneficiaryreplacement">Beneficiary Replacement API</option>
                         <!-- Add more options as you add more APIs -->
-                        <!-- <option value="another-api/openapi.yaml">Another API</option> -->
                     </select>
                 </div>
                 <div class="selector-group">
@@ -52,9 +51,10 @@
     <script src="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui-bundle.js" charset="UTF-8"></script>
     <script src="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui-standalone-preset.js" charset="UTF-8"></script>
     <script>
-        // Define available APIs and their versions
+        // API keys are opaque catalog IDs (not filenames). Spec files are under versions.*.path.
+        // Order the specs from oldest to newest as the last version is the default in the dropdown.
         const apiDefinitions = {
-            "appstatus.yaml": {
+            "appstatus": {
                 name: "Application Status API",
                 versions: {
                     "v1": {
@@ -71,7 +71,7 @@
                     }
                 }
             },
-            "appstatuspushNotifications1.yaml": {
+            "appstatuspushNotifications": {
                 name: "Application Status Push Notifications API",
                 versions: {
                     "v1": {
@@ -80,8 +80,7 @@
                     }
                 }
             },
-
-            "producertraining.yaml": {
+            "producertraining": {
                 name: "Producer Training Update",
                 versions: {
                     "v1": {
@@ -90,7 +89,7 @@
                     }
                 }
             },
-            "activatedannuityincome.yaml": {
+            "activatedannuityincome": {
                 name: "Activated Annuity Income API",
                 versions: {
                     "v1": {
@@ -99,7 +98,7 @@
                     }
                 }
             },
-            "onetimewithdrawal1.yaml": {
+            "onetimewithdrawal": {
                 name: "One-Time Withdrawals API",
                 versions: {
                     "v1": {
@@ -108,7 +107,7 @@
                     }
                 }
             },
-            "onetimewithdrawalquote1.yaml": {
+            "onetimewithdrawalquote": {
                 name: "One-Time Withdrawal Quote API",
                 versions: {
                     "v1": {
@@ -117,7 +116,7 @@
                     }
                 }
             },
-            "systematicwithdrawalprogramsetup.yaml": {
+            "systematicwithdrawalprogramsetup": {
                 name: "Systematic Withdrawal Program Setup API",
                 versions: {
                     "v1": {
@@ -126,7 +125,7 @@
                     }
                 }
             },
-            "systematicwithdrawalprogramupdate.yaml": {
+            "systematicwithdrawalprogramupdate": {
                 name: "Systematic Withdrawal Program Update API",
                 versions: {
                     "v1": {
@@ -135,7 +134,7 @@
                     }
                 }
             },
-            "paperlessreplacements1.yaml": {
+            "paperlessreplacements": {
                 name: "Paperless Replacements (RPL) API",
                 versions: {
                     "v1": {
@@ -144,7 +143,7 @@
                     }
                 }
             },
-            "fundtransfer.yaml": {
+            "fundtransfer": {
                 name: "Fund Transfer API",
                 versions: {
                     "v1": {
@@ -153,7 +152,7 @@
                     }
                 }
             },
-            "policyinquiry.yaml": {
+            "policyinquiry": {
                 name: "Policy Inquiry API",
                 versions: {
                     "v1": {
@@ -166,7 +165,7 @@
                     }
                 }
             },
-            "beneficiaryreplacementv1.yaml": {
+            "beneficiaryreplacement": {
                 name: "Beneficiary Replacement API",
                 versions: {
                     "v1": {
@@ -178,6 +177,20 @@
         };
         // Add more APIs to the end of the object above as you add more APIs
 
+        // Accept legacy ?api=foo.yaml bookmarks by stripping the suffix.
+        function resolveApiKey(apiParam) {
+            if (!apiParam) return null;
+            if (apiDefinitions[apiParam]) return apiParam;
+            if (apiParam.endsWith('.yaml')) {
+                const withoutSuffix = apiParam.slice(0, -5);
+                if (apiDefinitions[withoutSuffix]) return withoutSuffix;
+            }
+            return null;
+        }
+
+        // Rebuild the Version dropdown for the given API key from apiDefinitions above.
+        // Options are inserted in object-key order (convention: oldest → newest).
+        // Hides the Version control entirely when the API has only one version.
         function populateVersionSelector(apiKey) {
             const versionSelector = document.getElementById('version-selector');
             versionSelector.innerHTML = '';
@@ -194,6 +207,23 @@
                 const versionSelectorGroup = versionSelector.closest('.selector-group');
                 versionSelectorGroup.style.display = Object.keys(versions).length > 1 ? 'flex' : 'none';
             }
+        }
+
+        // API selectordropdown onchange handler. Must rebuild versions before loading —
+        // otherwise the Version dropdown still holds the previous API's version key
+        // (e.g. "v3"), the lookup fails, and Swagger tries to fetch the raw API key.
+        // After rebuilding, select the last option (newest) then load that spec.
+        function onApiChange() {
+            const selectedAPI = document.getElementById('api-selector').value;
+            populateVersionSelector(selectedAPI);
+
+            // Prefer the newest version (last key; versions are listed oldest → newest).
+            const versionSelector = document.getElementById('version-selector');
+            if (versionSelector.options.length > 0) {
+                versionSelector.selectedIndex = versionSelector.options.length - 1;
+            }
+
+            loadSelectedAPI();
         }
 
         function loadSelectedAPI() {
@@ -237,10 +267,10 @@
             const versionParam = urlParams.get('version');
 
             const apiSelector = document.getElementById('api-selector');
+            const resolvedApi = resolveApiKey(apiParam);
 
-            // If API is specified in URL and exists in our definitions
-            if (apiParam && apiDefinitions[apiParam]) {
-                apiSelector.value = apiParam;
+            if (resolvedApi) {
+                apiSelector.value = resolvedApi;
             }
 
             const selectedAPI = apiSelector.value;
@@ -251,6 +281,9 @@
             // If version is specified in URL and exists for the selected API
             if (versionParam && apiDefinitions[selectedAPI]?.versions[versionParam]) {
                 versionSelector.value = versionParam;
+            } else if (versionSelector.options.length > 0) {
+                // Default to newest when URL has no usable version
+                versionSelector.selectedIndex = versionSelector.options.length - 1;
             }
 
             loadSelectedAPI();
