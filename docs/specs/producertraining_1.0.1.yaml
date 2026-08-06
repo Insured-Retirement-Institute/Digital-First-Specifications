@@ -5,7 +5,7 @@ info:
   description: |
     APIs enabling training vendors, carriers, and distributors to transmit
     producer training completion information.
-  version: 1.0.0
+  version: 1.0.1
   license:
     name: MIT
     url: https://github.com/Insured-Retirement-Institute/Pending-Case/blob/main/LICENSE
