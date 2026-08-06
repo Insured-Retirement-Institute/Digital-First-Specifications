@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Policy Transactions API - Update Systematic Withdrawal & Update Systematic RMD
-  version: 1.0.0
+  version: 1.0.1
   description: |
     API to update a systematic withdrawal and Systematic RMD on a policy.
   license:
