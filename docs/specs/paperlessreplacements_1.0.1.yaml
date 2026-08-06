@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Paperless Replacements (RPL) API
-  version: 1.0.0
+  version: 1.0.1
 servers:
   - url: https://demo.api.dtcc.com/policy/v1
   - url: https://iiex.apipse.dtcc.com/policy/v1
