@@ -3,7 +3,7 @@ openapi: 3.1.0
 info:
   title: Annuity Application Status Push Notifications
   description: Webhooks for notifying about changes in annuity application status
-  version: 1.0.0
+  version: 1.0.1
   license:
     name: MIT
     url: https://github.com/Insured-Retirement-Institute/Pending-Case/blob/main/LICENSE
