@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Policy Transactions API - SetUp Systematic Withdrawal & SetUp Systematic RMD
-  version: 1.0.0
+  version: 1.0.1
   description:  |
     Single-file API spec for creating Systematic Withdrawal and Systematic RMD arrangements.
   license:
