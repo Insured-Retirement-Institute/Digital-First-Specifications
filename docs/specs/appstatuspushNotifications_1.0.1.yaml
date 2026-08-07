@@ -1083,7 +1083,7 @@ components:
           format: date-time
       eventId:
         name: eventId
-        description: Globally unique id for requested event to return
+        description: Globally unique identifier for this notification event
         in: path
         required: true
         schema: 
@@ -1579,19 +1579,19 @@ components:
           type: string
           const: individual
         firstName:
-          description: Party’s first name
+          description: First name of the individual
           type: string
           minLength: 1
           maxLength: 105
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,105}$
         middleName:
-          description: Party’s middle name
+          description: Middle name of the individual
           type: string
           minLength: 1
           maxLength: 105
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,105}$
         lastName:
-          description: Party’s last name
+          description: Last name of the individual
           type: string
           minLength: 1
           maxLength: 105
@@ -1644,7 +1644,7 @@ components:
           type: string
           const: entity
         name:
-          description: Entity name
+          description: Name of the entity
           type: string
           minLength: 1
           maxLength: 180
@@ -1661,7 +1661,7 @@ components:
         - type: object
           properties:
             npn:
-              description: National Producer Number
+              description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
               type: string
               maxLength: 10
             crdNumber:
@@ -1813,7 +1813,7 @@ components:
                 type: object
                 properties:
                   npn:
-                    description: National Producer Number
+                    description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
                     type: string
                     maxLength: 10
                   crdNumber:
