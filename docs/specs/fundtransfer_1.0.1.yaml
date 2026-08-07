@@ -190,7 +190,7 @@ components:
         type: string
         maxLength: 100
     AssociatedFirmId:
-      description: Associated firm ID
+      description: Optional query parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms.
       name: associatedFirmId
       in: query
       required: false
@@ -377,10 +377,7 @@ components:
           description: Date on which the fund transfer should take effect.
         allocationOption:
           type: string
-          description: >
-            Indicates the allocation method to be applied to the transfer,
-            such as pro-rata across funds, dollar-based, or a specified set
-            of funds or segments.
+          description: Indicates the allocation method, such as pro-rata across funds, dollar-based, or a specified set of funds or segments.
           enum:
             - PRO_RATA
             - DOLLAR
@@ -400,7 +397,7 @@ components:
         nsccParticipantId:
           type: string
           maxLength: 100
-          description: NSCC participant identifier for the submitting firm.
+          description: Unique identifier for the submitting firm or participant within the NSCC network.
         transactionAmounts:
           $ref: '#/components/schemas/TransactionAmounts'
         funds:
@@ -417,7 +414,7 @@ components:
           $ref: '#/components/schemas/Producer'
         parties:
           type: array
-          description: Parties associated with the policy involved in this transfer.
+          description: The parties object represents the policy parties relevant to the withdrawal (owners, annuitants, beneficiaries, etc.), along with their identity, relationship, and payout instructions.
           items:
             $ref: '#/components/schemas/Party'
         investProduct:
@@ -468,11 +465,7 @@ components:
       properties:
         amountType:
           type: string
-          description: >
-            Indicates the method used to calculate the transfer value, such as
-            a specified dollar amount, a percentage of contract value, or a full
-            rebalance. This value drives how amounts are specified throughout
-            the transaction.
+          description: Indicates the method used to calculate the transaction value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction.
           enum:
             - FULL_REBALANCE
             - FUND_BALANCE_TRANSFER
@@ -480,10 +473,7 @@ components:
             - SPECIFIED_AMOUNT
         requestedAmount:
           type: number
-          description: >
-            The dollar amount to be transferred when the transaction is
-            amount-based. Required when amountType is SPECIFIED_AMOUNT
-            and must not be provided for other amount types.
+          description: Amount requested by the user. If amountType = AMOUNT, then requestedAmount is required, and requestedPercentage must NOT be present.
           minimum: 0
         requestedPercentage:
           type: number
@@ -609,10 +599,7 @@ components:
           type: number
           minimum: 0
           maximum: 9999999999.99
-          description: >
-            Dollar amount to transfer from this segment. Use this field for
-            amount-based transfers. Mutually exclusive with requestedPercentage.
-            Not allowed for FULL_REBALANCE transfers.
+          description: Amount requested by the user. If amountType = AMOUNT, then requestedAmount is required, and requestedPercentage must NOT be present.
         requestedPercentage:
           type: number
           minimum: 0
@@ -793,7 +780,7 @@ components:
           type: string
           minLength: 1
           maxLength: 100
-          description: Server-assigned identifier for the fund transfer request.
+          description: Server-assigned identifier for the request.
         status:
           type: string
           description: Initial disposition of the fund transfer request.
@@ -805,9 +792,7 @@ components:
         message:
           type: string
           maxLength: 500
-          description: >
-            Optional informational or error message explaining the
-            initial processing result.
+          description: Message with specific error details.
 
     GetFundTransferRequestStatus:
       type: object
@@ -823,7 +808,7 @@ components:
           type: string
           minLength: 1
           maxLength: 100
-          description: Server-assigned identifier for the fund transfer request.
+          description: Server-assigned identifier for the request.
         status:
           type: string
           description: Current processing status of the fund transfer.
@@ -838,15 +823,11 @@ components:
         message:
           type: string
           maxLength: 500
-          description: >
-            Optional informational or error message explaining the
-            processing result.
+          description: Message with specific error details.
 
     Producer:
       type: object
-      description: >
-        Identifies the advisor or producer associated with the fund transfer.
-        Producer information is used for audit, regulatory, and reporting purposes.
+      description: Licensed producer information
       properties:
         producerNumber:
           type: string
@@ -855,7 +836,7 @@ components:
         npn:
           type: string
           maxLength: 100
-          description: National Producer Number.
+          description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
         crdNumber:
           type: string
           maxLength: 100
@@ -875,7 +856,7 @@ components:
       properties:
         type:
           type: string
-          description: Discriminator identifying whether the party is an individual or an entity.
+          description: Indicates whether the party is an individual or an entity.
           enum: [individual, entity]
         paymentForm:
           type: string
@@ -917,29 +898,29 @@ components:
         type:
           type: string
           const: individual
-          description: Discriminator value indicating an individual party.
+          description: Indicates whether the party is an individual or an entity.
         firstName:
           type: string
           minLength: 1
           maxLength: 105
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
-          description: First name of the party
+          description: First name of the individual
         middleName:
           type: string
           minLength: 1
           maxLength: 105
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
-          description: Middle name of the party
+          description: Middle name of the individual
         lastName:
           type: string
           minLength: 1
           maxLength: 105
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
-          description: Last name of the party
+          description: Last name of the individual
         taxId:
           type: string
           maxLength: 9
-          description: Tax identifier (SSN or equivalent) for the individual.
+          description: Tax Identification Number for the individual or entity
 
     PartyRelationship:
       description: Schema for party relationship data.
@@ -950,7 +931,7 @@ components:
           type: array
           minItems: 1
           maxItems: 2
-          description: Roles the party plays in relation to the policy.
+          description: An array of strings specifying the relationship(s) of the party to the policy.
           items:
             type: string
             enum:
@@ -969,17 +950,17 @@ components:
         type:
           type: string
           const: entity
-          description: Discriminator value indicating an entity party.
+          description: Indicates whether the party is an individual or an entity.
         name:
           type: string
           minLength: 1
           maxLength: 180
           pattern: '^[\w=()*@#\s.,''\/~%$!;:&"®`\\?\-]{1,180}$'
-          description: Legal name of the entity.
+          description: Name of the entity
         taxId:
           type: string
           maxLength: 9
-          description: Tax identifier (EIN or equivalent) for the entity.
+          description: Tax Identification Number for the individual or entity
 
     Error:
       type: object
@@ -989,38 +970,28 @@ components:
       properties:
         httpStatus:
           type: integer
-          description: HTTP status code associated with this error.
+          description: HTTP status code associated with this error
           minimum: 400
           maximum: 599
         code:
           type: string
-          description: >
-            A structured error code that uniquely identifies the type of error.
-            Codes may follow a hierarchical format combining domain, category,
-            and subcategory (for example, "gateway.client.badrequest" or
-            "gateway.server.timeout").
+          description: "A structured error code that uniquely identifies the type of error. This can follow a hierarchical format: - `<domain>`: The logical domain (e.g., ""gateway"") - `<category>`: The error category (e.g., ""client"" or ""server"") - `<subcategory>`: A specific error identifier (e.g., ""badrequest"", ""timeout"")"
         timestamp:
           type: string
           format: date-time
-          description: Time when the error occurred.
+          description: Create or Update timestamp of transaction event
         message:
           type: string
           description: Message with specific error details.
         validationErrors:
           type: array
-          description: >
-            Logical rule violations or decision failures related to business
-            logic or business rules.
+          description: Logical rule violations or decision failures related to business logic or rules
           items:
             type: object
             properties:
               code:
                 type: string
-                description: >
-                  Code classifying the error and identifying the type of
-                  business rule or decision failure.
+                description: "A structured error code that uniquely identifies the type of error. This can follow a hierarchical format: - `<domain>`: The logical domain (e.g., ""gateway"") - `<category>`: The error category (e.g., ""client"" or ""server"") - `<subcategory>`: A specific error identifier (e.g., ""badrequest"", ""timeout"")"
               message:
                 type: string
-                description: >
-                  Explanation of why the error occurred, including the
-                  specific business rule violated.
+                description: Message with specific error details.
