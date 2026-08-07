@@ -5,7 +5,7 @@ info:
   description: |
     APIs enabling training vendors, carriers, and distributors to transmit
     producer training completion information.
-  version: 1.0.0
+  version: 1.0.1
   license:
     name: MIT
     url: https://github.com/Insured-Retirement-Institute/Pending-Case/blob/main/LICENSE
@@ -89,25 +89,25 @@ components:
         - lastName
       properties:
         firstName:
-          description: This is the first name of the producer
+          description: First name of the individual
           type: string
           minLength: 1
           maxLength: 105
           pattern: '^[A-Za-z\s''\-]{1,105}$'
         middleName:
-          description: This is the middle name of the producer
+          description: Middle name of the individual
           type: string
           minLength: 1
           maxLength: 105
           pattern: '^[A-Za-z\s''\-]{1,105}$'
         lastName:
-          description: This is the last name of the producer
+          description: Last name of the individual
           type: string
           minLength: 1
           maxLength: 105
           pattern: '^[A-Za-z\s''\-]{1,105}$'
         npn:
-          description: The National Producer Number (NPN) assigned by NIPR to identifiy the financial professional.
+          description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
           type: string
           minLength: 5
           maxLength: 10

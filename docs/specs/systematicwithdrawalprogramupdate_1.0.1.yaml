@@ -1,22 +1,23 @@
 openapi: 3.1.0
 info:
-  title: Policy Transactions API - SetUp Systematic Withdrawal & SetUp Systematic RMD
-  version: 1.0.0
-  description:  |
-    Single-file API spec for creating Systematic Withdrawal and Systematic RMD arrangements.
+  title: Policy Transactions API - Update Systematic Withdrawal & Update Systematic RMD
+  version: 1.0.1
+  description: |
+    API to update a systematic withdrawal and Systematic RMD on a policy.
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-    
+
 paths:
-  /v1/policies/{policyNumber}/withdrawals/systematic-withdrawals:
-    post:
-      operationId: createSystematicWithdrawalArrangement
-      description: Create a new Systematic Withdrawal arrangement.
+  /v1/policies/{policyNumber}/withdrawals/systematic-withdrawals/{arrangementId}:
+    put:
+      operationId: UpdateSystematicWithdrawal
+      description: Update a systematic withdrawal on a policy.
       tags:
-        - Systematic Program Setup
+        - Systematic Program Update
       parameters:
         - $ref: '#/components/parameters/policyNumber'
+        - $ref: '#/components/parameters/arrangementId'
         - $ref: '#/components/parameters/correlationId'
         - $ref: '#/components/parameters/associatedFirmId'
       requestBody:
@@ -24,23 +25,22 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SubmitSystematicWithdrawalRequest'
+              $ref: '#/components/schemas/UpdateSystematicWithdrawalRequest'
             examples:
-              Create_SWP_Amount_Example:
-                summary: Systematic Withdrawal with amountType AMOUNT
+              Amount_Net_Update:
+                summary: Amount-based, Net update (WITHDRAWAL)
                 value:
-                  effectiveDate: '2025-01-15'
-                  actionIndicator: 'N'
+                  effectiveDate: '2025-01-20'
+                  actionIndicator: 'O'
                   nsccParticipantId: 'NSCC001'
-                  externalArrangementId: 'EXT-ARR-7890'
-                  cusip: '027ABCD12'
+                  cusip: '027IFOWW4'
                   allocationOption: 'PRORATA'
                   systematicProgram:
                     paymentForm: 'ACH'
                     arrangementType: 'WITHDRAWAL'
                     amountType: 'AMOUNT'
                     netGrossIndicator: 'N'
-                    requestedAmount: 300.00
+                    requestedAmount: 300
                     frequency: 'MONTHLY'
                     startDate: '2025-02-01'
                     endDate: '2025-12-31'
@@ -65,7 +65,7 @@ paths:
                             taxWithholdingType: 'FEDERAL'
                             taxRateToUse: 'USEVALUESENTERED'
                             filingStatus: 'SINGLE'
-                            dollar: 20
+                            dollar: 10
                             exemptions: 0
                           - taxId: '123456789'
                             taxWithholdingType: 'STATE'
@@ -79,7 +79,7 @@ paths:
                         firstName: 'Alex'
                         middleName: 'M'
                         lastName: 'Smith'
-                        type: individual
+                        type: 'individual'
                         relationships:
                           - owner
                         paymentForm: 'ACH'
@@ -97,14 +97,11 @@ paths:
                           addressType: 'RESIDENCE'
                           addressLine1: '100 Main St'
                           addressLine2: 'Downtown'
-                          addressLine3: 'String'
-                          addressLine4: 'String'
-                          addressLine5: 'String'
+                          addressLine3: 'Suite 35'
                           city: 'Boston'
                           state: 'MA'
                           zipCode: '02110'
                           zipCodeExtension: '1234'
-                          country: 'US'
                     producer:
                       producerNumber: 'PROD001'
                       npn: '1234567890'
@@ -114,17 +111,21 @@ paths:
                         fundName: 'Growth Fund'
                         totalFundValue: null
                         requestedAmount: null
+                      - fundId: 'FUND-XYZ'
+                        fundName: 'Income Fund'
+                        totalFundValue: null
+                        requestedAmount: null
       responses:
-        '201':
-          description:  Created — request accepted for processing.
+        '202':
+          description: Accepted — request accepted for processing.
           headers:
             Location:
               description: >
-               URL of the created arrangement resource.
-               Format: /v1/policies/{policyNumber}/withdrawals/requests/{requestId}
+                URL of the created arrangement resource.
+                Format: /v1/policies/{policyNumber}/withdrawals/requests/{requestId}
               schema:
                 type: string
-                format: uri
+                format: uri            
             correlationId:
               $ref: '#/components/headers/correlationId'
           content:
@@ -147,14 +148,15 @@ paths:
         '503': { $ref: '#/components/responses/ServiceUnavailableError' }
         '504': { $ref: '#/components/responses/GatewayTimeoutError' }
 
-  /v1/policies/{policyNumber}/withdrawals/systematic-rmds:
-    post:
-      operationId: createSystematicRmdArrangement
-      description: Create a new Systematic Required Minimum Distribution (RMD) arrangement.
+  /v1/policies/{policyNumber}/withdrawals/systematic-rmds/{arrangementId}:
+    put:
+      operationId: updateSystematicRmd
+      description: Update a systematic RMD on a policy.
       tags:
-        - Systematic Program Setup
+        - Systematic Program Update
       parameters:
         - $ref: '#/components/parameters/policyNumber'
+        - $ref: '#/components/parameters/arrangementId'
         - $ref: '#/components/parameters/correlationId'
         - $ref: '#/components/parameters/associatedFirmId'
       requestBody:
@@ -162,23 +164,22 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SubmitSystematicRMDRequest'
+              $ref: '#/components/schemas/UpdateSystematicRMDRequest'
             examples:
-              Create_RMD_Percentage_Example:
-                summary: RMD with amountType PERCENTAGE
+              RMD_Percentage_Gross_Update_Example:
+                summary: Percentage-based, Gross update (REQUIREDMINIMUMDISTRIBUTION)
                 value:
-                  effectiveDate: '2025-01-15'
-                  actionIndicator: 'N'
+                  effectiveDate: '2025-01-20'
+                  actionIndicator: 'O'
                   nsccParticipantId: 'NSCC001'
-                  externalArrangementId: 'EXT-ARR-7890'
-                  cusip: '027ABCD12'
+                  cusip: '027IFOWW4'
                   allocationOption: 'PRORATA'
                   systematicProgram:
                     paymentForm: 'ACH'
                     arrangementType: 'REQUIREDMINIMUMDISTRIBUTION'
                     amountType: 'PERCENTAGE'
                     netGrossIndicator: 'G'
-                    requestedPercentage: 5.00
+                    requestedPercentage: 5
                     frequency: 'QUARTERLY'
                     startDate: '2025-02-01'
                     endDate: '2025-12-31'
@@ -228,14 +229,13 @@ paths:
                           addressType: 'RESIDENCE'
                           addressLine1: '100 Main St'
                           addressLine2: 'Downtown'
-                          addressLine3: 'String'
+                          addressLine3: 'Suite 35'
                           addressLine4: 'String'
                           addressLine5: 'String'
                           city: 'Boston'
                           state: 'MA'
                           zipCode: '02110'
                           zipCodeExtension: '1234'
-                          country: 'US'
                     producer:
                       producerNumber: 'PROD001'
                       npn: '1234567890'
@@ -253,16 +253,16 @@ paths:
                       rmdCalculationMethod: 'UNIFORM_LIFETIME_TABLE'
                       rmdPriorYearEndValue: 118560.00
       responses:
-        '201':
-          description: Created — request accepted for processing.
+        '202':
+          description: Accepted — request accepted for processing.
           headers:
             Location:
               description: >
-               URL of the created arrangement resource.
-               Format: /v1/policies/{policyNumber}/withdrawals/requests/{requestId}
+                URL of the created arrangement resource.
+                Format: /v1/policies/{policyNumber}/withdrawals/requests/{requestId}
               schema:
                 type: string
-                format: uri
+                format: uri  
             correlationId:
               $ref: '#/components/headers/correlationId'
           content:
@@ -322,16 +322,26 @@ components:
       name: policyNumber
       in: path
       required: true
-      description: Unique policy number (1–30 characters).
+      description: Policy number
       schema:
         type: string
         minLength: 1
         maxLength: 30
+    arrangementId:
+      name: arrangementId
+      in: path
+      required: true
+      description: |
+        Unique identifier used to reference
+        a specific systematic arrangement instance on the policy.
+      schema:
+        type: string
+        maxLength: 100
     correlationId:
       name: correlationId
       in: header
       required: false
-      description: Optional client-supplied identifier to trace the request.
+      description: Optional Unique identifier to trace the request.
       schema:
         type: string
         maxLength: 100
@@ -339,7 +349,7 @@ components:
       name: associatedFirmId
       in: query
       required: false
-      description: Firm/linkage identifier.
+      description: Optional query parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms.
       schema:
         type: string
         minLength: 1
@@ -497,16 +507,16 @@ components:
       description: Information about the producer submitting the request
       properties:
         producerNumber:
-          description: Carrier-assigned unique identifier for the producer.
           type: string
+          description: "Carrier-assigned unique identifier for the producer."
           maxLength: 100
         npn:
-          description: National Producer Number.
           type: string
+          description: "The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states."
           maxLength: 100
         crdNumber:
-          description: The Central Registiration Depository (CRD) number assigned by FINRA to identify the financial professional.
           type: string
+          description: "Central Registration Depository number"
           maxLength: 100
 
     IndividualParty:
@@ -536,22 +546,25 @@ components:
           type: string
           const: individual
         firstName:
-          description: First name of the party.
+          description: First name of the individul
           type: string
           minLength: 1
           maxLength: 105
+          pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
         middleName:
-          description: Middle name of the party.
+          description: Middle name of the individul
           type: string
           minLength: 1
           maxLength: 105
+          pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
         lastName:
-          description: Last name of the party.
+          description: Last name of the individul
           type: string
           minLength: 1
           maxLength: 105
+          pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
         taxId:
-          description: Tax Identification Number
+          description: Tax Identification Number for the individual or entity
           type: string
           maxLength: 9
 
@@ -562,8 +575,8 @@ components:
         - relationships
       properties:
         relationships:
-          description: An array of strings specifying the relationship(s) of the party to the policy.
           type: array
+          description: "An array of strings specifying the relationship(s) of the party to the policy."
           minItems: 1
           maxItems: 2
           items:
@@ -589,13 +602,13 @@ components:
           type: string
           const: entity
         name:
-          description: Entity name of the party.
+          description: Name of the entity
           type: string
           minLength: 1
           maxLength: 100
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,100}$'
         taxId:
-          description: Tax Identification Number
+          description: Tax Identification Number for the individual or entity
           type: string
           maxLength: 9
 
@@ -631,32 +644,19 @@ components:
           description: Contract value as of 12/31 of the prior year used as the base for rmd calculation.
           minimum: 0
           maximum: 9999999999.99
-      required:
-        - rmdTaxYear
-        - rmdRequestedAmount
-        - rmdCalculationMethod
-        - rmdAgeAtDistribution
-        
-    SubmitSystematicWithdrawalRequest:
+
+    UpdateSystematicWithdrawalRequest:
       type: object
-      description: Request - SubmitSystematicWithdrawalRequest
+      description: UpdateSystematicWithdrawalRequest
       properties:
         effectiveDate:
           type: string
-          description: when the transaction was originally scheduled or expected to happen, can be a non-business day
           format: date
+          description: "when the transaction was originally scheduled or expected to happen, can be a non-business day"
         nsccParticipantId:
           type: string
-          description: Unique identifier for the participant
+          description: "Unique identifier for the submitting firm or participant within the NSCC network."
           maxLength: 100
-        externalArrangementId:
-          type: string
-          description: Arrangement ID from external system
-          maxLength: 100
-        actionIndicator:
-          type: string
-          description: indicates the action to be taken
-          enum: [N, O, C]
         cusip:
           type: string
           minLength: 9
@@ -666,7 +666,11 @@ components:
         allocationOption:
           type: string
           enum: [PRORATA, DOLLAR, SPECIFYPERCENTAGE, SPECIFIEDFUNDS, SPECIFIEDSEGMENTS, DEFAULT, PECKINGORDER, EARNINGSONLY]
-          description: Defines the format of how the funds are removed
+          description: Indicates the allocation method, such as pro-rata across funds, dollar-based, or a specified set of funds or segments.
+        actionIndicator:
+          type: string
+          description: "indicates the action to be taken"
+          enum: [N, O, C]
         systematicProgram:
           description: Systematic Program.
           allOf:
@@ -674,13 +678,12 @@ components:
             - type: object
               properties:
                 arrangementType:
-                  description: Indicates the type of financial arrangement being set up or updated for the systematic program, such as a recurring payment, withdrawal, loan repayment, required minimum distribution, or payout.
                   type: string
+                  description: Indicates the type of financial arrangement being set up or updated for the systematic program.
                   enum: [PAYMENT, WITHDRAWAL, LOANREPAYMENT, PAYOUT]
       required:
         - effectiveDate
         - actionIndicator
-        - externalArrangementId
         - allocationOption
       allOf:
         - if:
@@ -703,7 +706,6 @@ components:
                 type: object
                 properties:
                   fundDistributions:
-                    description: Detailed allocation of funds.
                     type: array
                     items:
                       allOf:
@@ -715,7 +717,6 @@ components:
                   description: Systematic Program.
                   properties:
                     fundDistributions:
-                      description: Detailed allocation of funds.
                       items:
                         required: [requestedPercentage]
         - if:
@@ -738,7 +739,6 @@ components:
                 type: object
                 properties:
                   fundDistributions:
-                    description: Detailed allocation of funds.
                     type: array
                     items:
                       allOf:
@@ -750,39 +750,34 @@ components:
                   description: Systematic Program.
                   properties:
                     fundDistributions:
-                      description: Detailed allocation of funds.
                       items:
                         required: [requestedAmount]
 
-    SubmitSystematicRMDRequest:
+    UpdateSystematicRMDRequest:
       type: object
-      description: Request - SubmitSystematicRMDRequest
+      description: UpdateSystematicRMDRequest
       properties:
         effectiveDate:
           type: string
-          description: when the transaction was originally scheduled or expected to happen, can be a non-business day
           format: date
+          description: "when the transaction was originally scheduled or expected to happen, can be a non-business day"
         nsccParticipantId:
           type: string
-          description: Unique identifier for the participant
+          description: "Unique identifier for the submitting firm or participant within the NSCC network."
           maxLength: 100
-        externalArrangementId:
-          type: string
-          description: Arrangement ID from external system
-        actionIndicator:
-          type: string
-          description: indicates the action to be taken
-          enum: [N, O, C]
         cusip:
           type: string
           minLength: 9
           maxLength: 9
-          pattern: '^[0-9]{3}[A-Z0-9]{5}[0-9]$'
           description: unique identification code. Optional; REQUIRED only when policyNumber is not globally unique.
         allocationOption:
           type: string
           enum: [PRORATA, DOLLAR, SPECIFYPERCENTAGE, SPECIFIEDFUNDS, SPECIFIEDSEGMENTS, DEFAULT, PECKINGORDER, EARNINGSONLY]
-          description: Defines the format of how the funds are removed
+          description: Indicates the allocation method, such as pro-rata across funds, dollar-based, or a specified set of funds or segments.
+        actionIndicator:
+          type: string
+          description: "indicates the action to be taken"
+          enum: [N, O, C]
         systematicProgram:
           description: Systematic Program.
           allOf:
@@ -790,15 +785,14 @@ components:
             - type: object
               properties:
                 arrangementType:
-                  description: Indicates the type of financial arrangement being set up or updated for the systematic program, such as a recurring payment, withdrawal, loan repayment, required minimum distribution, or payout.
                   type: string
+                  description: Indicates the type of financial arrangement being set up or updated for the systematic program.
                   enum: [REQUIREDMINIMUMDISTRIBUTION]
                 rmdInfo:
                   $ref: '#/components/schemas/rmdInfo'
       required:
         - effectiveDate
         - actionIndicator
-        - externalArrangementId
         - allocationOption
       allOf:
         - if:
@@ -821,7 +815,6 @@ components:
                 type: object
                 properties:
                   fundDistributions:
-                    description: Detailed allocation of funds.
                     type: array
                     items:
                       allOf:
@@ -833,7 +826,6 @@ components:
                   description: Systematic Program.
                   properties:
                     fundDistributions:
-                      description: Detailed allocation of funds.
                       items:
                         required: [requestedPercentage]
         - if:
@@ -856,7 +848,6 @@ components:
                 type: object
                 properties:
                   fundDistributions:
-                    description: Detailed allocation of funds.
                     type: array
                     items:
                       allOf:
@@ -868,44 +859,50 @@ components:
                   description: Systematic Program.
                   properties:
                     fundDistributions:
-                      description: Detailed allocation of funds.
                       items:
                         required: [requestedAmount]
 
     SystematicProgram:
+      description: Systematic Program.
       type: object
-      description: |
-        Systematic program details for withdrawal or RMD setup.
-        The property `rmdInfo` is only relevant and required when `arrangementType` is `REQUIREDMINIMUMDISTRIBUTION`.
       properties:
         paymentForm:
           type: string
           description: Mode of payment
-          enum: [DTCC, ACH, CHECK, WIRE, EXCHANGE]
+          enum:
+            - DTCC
+            - ACH
+            - CHECK
+            - WIRE
+            - EXCHANGE
         arrangementType:
           type: string
-          description: |
-            "Indicates the type of financial arrangement being set up or updated for the systematic program, such as a recurring payment, withdrawal, loan repayment, required minimum distribution, or payout.[ for RMD, it will always be REQUIREDMINIMUMDISTRIBUTION]"
-          enum: [PAYMENT, WITHDRAWAL, LOANREPAYMENT, REQUIREDMINIMUMDISTRIBUTION, PAYOUT]
+          description: Indicates the type of financial arrangement being set up or updated for the systematic program.
+          enum:
+            - PAYMENT
+            - WITHDRAWAL
+            - LOANREPAYMENT
+            - REQUIREDMINIMUMDISTRIBUTION
+            - PAYOUT
         amountType:
           type: string
-          description: |
-            Amount Type selected by user.
-            1. Amount – enter Transaction Amount
-            2. Percentage – enter Percentage for Transaction Amount
-            3. Max – auto-calculated using Maximum Withdrawal Amount. If selected user should NOT be able to enter Amount.
-            4. Free Withdrawal Amount – auto-calculated using Free Withdrawal Amount. If selected user should NOT be able to enter Amount
-            5. Withdraw Until Basis – auto-calculated using Cost Basis. If selected user should NOT be able to enter Amount. 
-          enum: [AMOUNT, PERCENTAGE, MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS, EARNINGSONLY]
+          description: Amount Type selected by user.
+          enum:
+            - AMOUNT
+            - PERCENTAGE
+            - MAX
+            - FREEWITHDRAWALAMOUNT
+            - WITHDRAWALUNTILBASIS
+            - EARNINGSONLY
         netGrossIndicator:
           type: string
           description: To indicate if the transaction is N="Net" or G="Gross"
-          enum: [N, G]
+          enum:
+            - N
+            - G
         requestedAmount:
-          description: Requested amount value.
-          type:
-            - number
-            - "null"
+          type: [number,"null"]
+          description: Requested amount value
           minimum: 0
           maximum: 9999999999.99
         requestedPercentage:
@@ -916,38 +913,45 @@ components:
         frequency:
           type: string
           description: Indicates how often the systematic program executes
-          enum: [DAILY, EVERYTWOWEEKS, MONTHLY, SEMIANNUAL, QUARTERLY, ANNUAL]
+          enum:
+            - DAILY
+            - EVERYTWOWEEKS
+            - MONTHLY
+            - SEMIANNUAL
+            - QUARTERLY
+            - ANNUAL
         startDate:
-          description: start date of the Program/Transaction.
           type: string
           format: date
+          description: "start date of the Program/Transaction"
         endDate:
-          description: End date.
           type: string
           format: date
+          description: End date
         previousTransactionDate:
-          description: The date on which the most recent transaction was executed under the systematic program.
           type: string
           format: date
+          description: "The date on which the most recent transaction was executed under the systematic program"
         nextTransactionDate:
-          description: The date on which the next scheduled Transaction is planned to occur under the systematic program.
           type: string
           format: date
+          description: "The date on which the next scheduled Transaction is planned to occur under the systematic program"
         payee:
-          description: List of payees for allocation.
           type: array
+          description: "List of payees for allocation"
           items:
             $ref: '#/components/schemas/Payee'
         parties:
-          description: Party to the policy (not a producer).
           type: array
+          description: "The parties object represents the policy parties relevant to the withdrawal (owners, annuitants, beneficiaries, etc.), along with their identity, relationship, and payout instructions."
           items:
             $ref: '#/components/schemas/SystematicParty'
         producer:
           $ref: '#/components/schemas/Producer'
+          description: "Information about the producer submitting the request"
         fundDistributions:
-          description: Detailed allocation of funds.
           type: array
+          description: "Detailed allocation of funds"
           items:
             $ref: '#/components/schemas/FundDistribution'
       required:
@@ -989,9 +993,8 @@ components:
               anyOf:
                 - required: [requestedAmount]
                 - required: [requestedPercentage]
-                
+
     Payee:
-      description: List of payees for allocation.
       type: object
       anyOf:
         - $ref: '#/components/schemas/IndividualIdentity'
@@ -999,8 +1002,10 @@ components:
       properties:
         bank:
           $ref: '#/components/schemas/Bank'
+          description: "Financial institution details"
         taxWithholdingInstructions:
           type: array
+          description: "List of tax withholding instruction entries"
           items:
             $ref: '#/components/schemas/TaxWithholdingInstruction'
 
@@ -1017,16 +1022,28 @@ components:
           maxLength: 100
         accountStatus:
           type: string
-          enum: [ACTIVEBANKACCOUNT, TERMINATEDBANKACCOUNT]
+          description: "Account Status"
+          enum:
+            - ACTIVEBANKACCOUNT
+            - TERMINATEDBANKACCOUNT
         accountType:
           type: string
-          enum: [CHECKING, SAVINGS, CREDITCARDACCOUNT, DEBITCARDACCOUNT, BROKERAGEACCOUNT, CERTIFICATEOFDEPOSITACCOUNT]
+          description: "Account Type"
+          enum:
+            - CHECKING
+            - SAVINGS
+            - CREDITCARDACCOUNT
+            - DEBITCARDACCOUNT
+            - BROKERAGEACCOUNT
+            - CERTIFICATEOFDEPOSITACCOUNT
         accountNumber:
           type: string
+          description: "Account Number"
           pattern: '^\d{4,17}$'
           maxLength: 17
         routingNumber:
           type: string
+          description: "Routing Number"
           pattern: '^\d{9}$'
         branchName:
           type: string
@@ -1040,35 +1057,56 @@ components:
 
     TaxWithholdingInstruction:
       type: object
-      description: List of tax withholding instruction entries
       properties:
-        taxId:
-          description: Tax Identification Number
+        taxId: 
+          description: Tax Identification Number for the individual or entity
           type: string
           maxLength: 9
         taxWithholdingType:
           type: string
-          enum: [FEDERAL, STATE, NRA, BACKUP]
+          description: "Type of tax withholding"
+          enum:
+            - FEDERAL
+            - STATE
+            - NRA
+            - BACKUP
         taxRateToUse:
           type: string
-          enum: [NOWITHHOLDINGELECTED, USEVALUESENTERED, NOWITHHOLDINGALLOWED, USEDEFAULTTABLE]
+          description: "Mode of payment"
+          enum:
+            - NOWITHHOLDINGELECTED
+            - USEVALUESENTERED
+            - NOWITHHOLDINGALLOWED
+            - USEDEFAULTTABLE
         filingStatus:
           type: string
-          enum: [SINGLE, DOMESTICPARTNERSHIP, DEFAULT, MARRIED, HEADOFHOUSEHOLD, WIDOWED, DIVORCED]
+          description: "Tax filing status"
+          enum:
+            - SINGLE
+            - DOMESTICPARTNERSHIP
+            - DEFAULT
+            - MARRIED
+            - HEADOFHOUSEHOLD
+            - WIDOWED
+            - DIVORCED
         dollar:
           type: number
+          description: "Computed tax amount"
           minimum: 0
           maximum: 9999999999.99
         percentage:
           type: number
+          description: "Computed tax percentage"
           minimum: 0
           maximum: 100
         exemptions:
           type: integer
+          description: "Requested exemptions value"
           minimum: 0
           maximum: 99
         taxJurisdiction:
           type: string
+          description: "Jurisdiction for tax purposes.If taxwithholdingType=STATE this field should be mandatory"
           maxLength: 50
       required:
         - taxWithholdingType
@@ -1089,13 +1127,13 @@ components:
               - taxJurisdiction
 
     SystematicParty:
-      type: object
       anyOf:
         - $ref: '#/components/schemas/IndividualParty'
         - $ref: '#/components/schemas/EntityParty'
       properties:
         paymentForm:
           type: string
+          description: "Mode of payment"
           enum: [DTCC, ACH, CHECK, WIRE, EXCHANGE]
         allocationPercentage:
           type: number
@@ -1104,8 +1142,10 @@ components:
           maximum: 100
         bank:
           $ref: '#/components/schemas/Bank'
+          description: "Financial institution details"
         address:
           $ref: '#/components/schemas/Address'
+          description: "Physical or mailing address details"
       required:
         - paymentForm
         - allocationPercentage
@@ -1119,36 +1159,47 @@ components:
           maxLength: 100
         addressType:
           type: string
+          description: "Address Type"
           enum: [RESIDENCE, BUSINESS, POBOXSEASONAL, APO, DPO, FPO]
         addressLine1:
           type: string
+          description: "First Line of the address"
           maxLength: 100
         addressLine2:
           type: string
+          description: "Second line of the address"
           maxLength: 100
         addressLine3:
           type: string
+          description: "Third line of the address"
           maxLength: 100
         addressLine4:
           type: string
+          description: "Fourth Line of the address"
           maxLength: 100
         addressLine5:
           type: string
+          description: "Fifth Line of the address"
           maxLength: 100
         city:
           type: string
+          description: "Name of the city"
           maxLength: 100
         state:
           type: string
+          description: "Name of the state"
           pattern: '^[A-Z]{2}$'
         zipCode:
           type: string
+          description: "Zip Code"
           pattern: '^[0-9A-Za-z -]{3,10}$'
         zipCodeExtension:
           type: string
+          description: "zip code extension"
           pattern: '^[0-9A-Za-z]{1,4}$'
         country:
           type: string
+          description: "Country"
           pattern: '^[A-Z]{2}$'
       required:
         - addressType
@@ -1170,12 +1221,16 @@ components:
           maxLength: 100
           description: Name of the fund
         totalFundValue:
-          type: [number, "null"]
+          type:
+            - number
+            - "null"
           description: Total value of the fund
           minimum: 0
           maximum: 9999999999.99
         requestedAmount:
-          type: [number, "null"]
+          type:
+            - number
+            - "null"
           description: Requested amount from the fund
           minimum: 0
           maximum: 9999999999.99
@@ -1198,35 +1253,35 @@ components:
       properties:
         requestId:
           type: string
-          description: Server-assigned identifier for the withdrawal request.
+          description: Server-assigned identifier for the request.
         status:
           type: string
           description: Current status of the withdrawal request.
-          enum: [CREATED, REJECTED]
+          enum: [ACCEPTED, REJECTED]
         effectiveDate:
           type: string
-          description: when the transaction was originally scheduled or expected to happen, can be a non-business day
           format: date
+          description: "when the transaction was originally scheduled or expected to happen, can be a non-business day"
       required: [requestId, status]
 
     GetWithdrawalRequestStatus:
       type: object
-      description: Withdrawal request status resource created by the GET request.
+      description: Withdrawal request status resource created by the GET.
       properties:
         requestId:
           type: string
-          description: Server-assigned identifier for the withdrawal request.
+          description: Server-assigned identifier for the request.
         status:
           type: string
           description: Current status of the withdrawal request.
           enum: [IN_PROGRESS, SUCCESS, REJECTED]
         effectiveDate:
           type: string
-          description: when the transaction was originally scheduled or expected to happen, can be a non-business day
           format: date
+          description: "when the transaction was originally scheduled or expected to happen, can be a non-business day"
         message:
           type: string
-          description: Technical message with specific error details for developers identify the type of error quickly.
+          description: Message with specific error details.
       required: [requestId, status]
 
     Error:
@@ -1247,7 +1302,7 @@ components:
         timestamp:
           type: string
           format: date-time
-          description: Time when the error occurred
+          description: Create or Update timestamp of transaction event
         message:
           type: string
           description: Message with specific error details.
@@ -1262,5 +1317,5 @@ components:
                 description: Code to classify the error & Identifies the type of business rule or decision failure.
               message:
                 type: string
-                description: Why the error occurred / Specific business rule violation
+                description: Message with specific error details.
       required: [code, message]
