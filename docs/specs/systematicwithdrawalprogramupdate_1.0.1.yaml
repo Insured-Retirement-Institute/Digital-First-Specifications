@@ -341,7 +341,7 @@ components:
       name: correlationId
       in: header
       required: false
-      description: Optional Unique identifier to trace the request.
+      description: Optional client-supplied identifier to trace the request.
       schema:
         type: string
         maxLength: 100
@@ -357,7 +357,7 @@ components:
 
   headers:
     correlationId:
-      description: Correlates this response to requests and downstream logs.
+      description: Optional client-supplied identifier to trace the request.
       schema:
         type: string
         maxLength: 100
