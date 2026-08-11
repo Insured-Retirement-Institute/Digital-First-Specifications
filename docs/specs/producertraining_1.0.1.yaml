@@ -309,7 +309,7 @@ components:
       properties:
         correlationId:
           type: string
-          description: Correlation ID echoed from the request
+          description: Optional client-supplied identifier to trace the request.
 
     Error:
       type: object
@@ -325,7 +325,7 @@ components:
           type: string
         correlationId:
           type: string
-          description: Correlation ID echoed from the request
+          description: Optional client-supplied identifier to trace the request.
 
   responses:
     BadRequest:
