@@ -347,7 +347,7 @@ components:
 
   headers:
     correlationId:
-      description: Correlates this response to requests and downstream logs.
+      description: Optional client-supplied identifier to trace the request.
       schema:
         type: string
         maxLength: 100
