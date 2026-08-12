@@ -166,7 +166,7 @@ paths:
 components:
   headers:
     correlationId:
-      description: Optional client-supplied identifier to trace the request.
+      description: Correlates this response to downstream processing.
       schema:
         type: string
         maxLength: 100
@@ -183,7 +183,7 @@ components:
         maxLength: 30
     CorrelationIdHeader:
       name: correlationId
-      description: Correlates this response to downstream processing.
+      description: Optional client-supplied identifier to trace the request.
       in: header
       required: false
       schema:
