@@ -224,7 +224,7 @@ components:
   parameters:
     correlationId:
       name: correlationId
-      description: Optional custom header to be returned to the caller in response payload
+      description: Optional client-supplied identifier to trace the request.
       in: header
       required: false
       schema:
@@ -1000,7 +1000,7 @@ components:
           properties:
             correlationId:
               type: string
-              description: Correlation ID for tracking the request    
+              description: Optional client-supplied identifier to trace the request.   
         - $ref: '#/components/schemas/Policy'
         - type: object
           properties:
@@ -1022,7 +1022,7 @@ components:
       type: object
       properties:
         correlationId:
-          description: Correlation ID for tracking the request
+          description: Optional client-supplied identifier to trace the request.
           type: string
         startIndex:
           description: Zero-based index of the first record to return.
