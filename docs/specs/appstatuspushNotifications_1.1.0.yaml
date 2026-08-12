@@ -1058,7 +1058,7 @@ components:
   parameters:
       correlationId:
         name: correlationId
-        description: Optional custom header to be sent to the caller in response payload
+        description: Optional client-supplied identifier to trace the request.
         in: header
         required: false
         schema:
