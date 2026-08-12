@@ -994,7 +994,7 @@ components:
           maximum: 599
         code:
           type: string
-          description: 
+          description: >
             A structured error code that uniquely identifies the type of error.
             Codes may follow a hierarchical format combining domain, category,
             and subcategory (for example, "gateway.client.badrequest" or
