@@ -39,9 +39,18 @@ docs/
 
 The site is split into two pages:
 
-**[`index.html`](index.html)** is the API catalog. It displays a card for each available API with links to its documentation. When a user clicks "View Documentation," they are sent to `api-viewer.html` with query parameters identifying the API and version (e.g. `api-viewer.html?api=appstatus.yaml&version=v2`).
+**[`index.html`](index.html)** is the API catalog. It displays a card for each available API. Version links and the "View Documentation" button send users to `api-viewer.html` with query parameters identifying the API and version (e.g. `api-viewer.html?api=appstatus&version=v2`).
+
+Each catalog card must include one link with `class="active-version"` (under Active Version, or under In-Review when there is no active release). On page load, a small script copies that link's `href` onto the card's View Documentation button (`a.view-docs`).
 
 **[`api-viewer.html`](api-viewer.html)** is the Swagger UI viewer. It reads the `api` and `version` query parameters from the URL, looks up the corresponding spec file path in the `apiDefinitions` object, and renders it using Swagger UI. It also provides API and version selector dropdowns for switching between specs without returning to the catalog.
+
+Important details about `apiDefinitions`:
+
+- The **API key** (dropdown `value`, object key, and `?api=` query param) is an opaque catalog ID.
+- The actual OpenAPI file is only referenced under `versions.*.path` (e.g. `specs/appstatusv3.yaml`) in **[`api-viewer.html`](api-viewer.html)**.
+- List versions **oldest → newest**. When the API dropdown changes, the viewer rebuilds the version list and selects the **last** (newest) version by default.
+- Legacy bookmarks that still use `?api=foo.yaml` are accepted by stripping the `.yaml` suffix.
 
 ## Adding New API Documentation
 
@@ -49,12 +58,12 @@ To add a new API specification:
 
 1. Add your OpenAPI YAML file to the `docs/specs/` directory.
 
-2. Add an entry to the `apiDefinitions` object in [`api-viewer.html`](api-viewer.html):
+2. Add an entry to the `apiDefinitions` object in [`api-viewer.html`](api-viewer.html). Use a short ID without `.yaml` as the key; put the real filename only in `path`:
 
 ```javascript
 const apiDefinitions = {
   // ... existing entries ...
-  "your-api.yaml": {
+  "your-api": {
     name: "Your API Name",
     versions: {
       "v1": { path: "specs/your-api.yaml", displayName: "v1.0.0" }
@@ -63,16 +72,16 @@ const apiDefinitions = {
 };
 ```
 
-3. Add an `<option>` to the API selector dropdown in [`api-viewer.html`](api-viewer.html):
+3. Add an `<option>` to the API selector dropdown in [`api-viewer.html`](api-viewer.html). The `value` must match the `apiDefinitions` key exactly:
 
 ```html
-<select id="api-selector" onchange="loadSelectedAPI()">
+<select id="api-selector" onchange="onApiChange()">
   <!-- existing options -->
-  <option value="your-api.yaml">Your API Name</option>
+  <option value="your-api">Your API Name</option>
 </select>
 ```
 
-4. Add a card to the API grid in [`index.html`](index.html):
+4. Add a card to the API grid in [`index.html`](index.html). Mark the active version link with `class="active-version"` and leave the View Documentation button as `href="#"`:
 
 ```html
 <div class="api-card">
@@ -84,12 +93,13 @@ const apiDefinitions = {
         <div class="api-versions">
             <span>Active Version:</span>
             <ul>
-                <li><a href="api-viewer.html?api=your-api.yaml&version=v1">v1.0.0</a></li>
+                <li><a class="active-version" href="api-viewer.html?api=your-api&version=v1">v1.0.0</a></li>
             </ul>
             <span>Previous Versions:</span>
         </div>
     </div>
-    <a href="api-viewer.html?api=your-api.yaml&version=v1" class="btn btn-primary">View Documentation</a>
+    <!-- This href is replaced with the 'active-version' spec on page load -->
+    <a href="#" class="btn btn-primary view-docs">View Documentation</a>
 </div>
 ```
 
@@ -101,10 +111,10 @@ To add a new version of an existing API:
 
 1. Add the new version's YAML file to `docs/specs/` (e.g. `your-api-v2.yaml`).
 
-2. Add the new version to the existing entry in the `apiDefinitions` object in [`api-viewer.html`](api-viewer.html):
+2. Add the new version to the existing entry in the `apiDefinitions` object in [`api-viewer.html`](api-viewer.html), **after** older versions so newest is last:
 
 ```javascript
-"your-api.yaml": {
+"your-api": {
   name: "Your API Name",
   versions: {
     "v1": { path: "specs/your-api.yaml", displayName: "v1.0.0" },
@@ -113,18 +123,18 @@ To add a new version of an existing API:
 }
 ```
 
-The version selector in `api-viewer.html` will automatically appear when multiple versions are available for an API.
+The version selector in `api-viewer.html` will automatically appear when multiple versions are available for an API. Switching APIs in the dropdown selects the newest version by default.
 
-3. Update the card in [`index.html`](index.html) to show the new active version and move the old version to "Previous Versions":
+3. Update the card in [`index.html`](index.html) to show the new active version (with `class="active-version"`) and move the old version to "Previous Versions". You do not need to change the View Documentation button — it still uses `href="#"` and picks up the new active link on page load:
 
 ```html
 <span>Active Version:</span>
 <ul>
-    <li><a href="api-viewer.html?api=your-api.yaml&version=v2">v2.0.0</a></li>
+    <li><a class="active-version" href="api-viewer.html?api=your-api&version=v2">v2.0.0</a></li>
 </ul>
 <span>Previous Versions:</span>
 <ul>
-    <li><a href="api-viewer.html?api=your-api.yaml&version=v1">v1.0.0</a></li>
+    <li><a href="api-viewer.html?api=your-api&version=v1">v1.0.0</a></li>
 </ul>
 ```
 
