@@ -414,7 +414,7 @@ components:
           $ref: '#/components/schemas/Producer'
         parties:
           type: array
-          description: The parties object represents the policy parties relevant to the withdrawal (owners, annuitants, beneficiaries, etc.), along with their identity, relationship, and payout instructions.
+          description: Parties associated with the policy involved in this transfer.
           items:
             $ref: '#/components/schemas/Party'
         investProduct:
@@ -473,7 +473,7 @@ components:
             - SPECIFIED_AMOUNT
         requestedAmount:
           type: number
-          description: Amount requested by the user. If amountType = AMOUNT, then requestedAmount is required, and requestedPercentage must NOT be present.
+          description: Amount requested by the user. If amountType = SPECIFIED_AMOUNT, then requestedAmount is required, and requestedPercentage must NOT be present.
           minimum: 0
         requestedPercentage:
           type: number
