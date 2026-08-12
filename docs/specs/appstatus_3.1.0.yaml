@@ -280,10 +280,12 @@ components:
     commissionSplitPercent:
       name: commissionSplitPercent
       description: Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy.
-      type: number
+      in: query
       required: false
-      minimum: 0
-      maximum: 100
+      schema:
+        type: number
+        minimum: 0
+        maximum: 100
     crdNumber:
       name: crdNumber
       description: Optional query parameter for the Central Registration Depository number

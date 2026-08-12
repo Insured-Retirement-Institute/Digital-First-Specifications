@@ -398,7 +398,11 @@ components:
           description: JSONPath-like pointer identifying the field with an error (e.g., $.beneficiaries[0].percent).
         code:
           $ref: '#/components/schemas/BeneficiaryDxErrorCode'
-          description: "A structured error code that uniquely identifies the type of error. This can follow a hierarchical format: - `<domain>`: The logical domain (e.g., ""gateway"") - `<category>`: The error category (e.g., ""client"" or ""server"") - `<subcategory>`: A specific error identifier (e.g., ""badrequest"", ""timeout"")"
+          description: >
+            A structured error code that uniquely identifies the type of error. This can follow a hierarchical format:
+            - `<domain>`: The logical domain (e.g., "gateway")
+            - `<category>`: The error category (e.g., "client" or "server")
+            - `<subcategory>`: A specific error identifier (e.g., "badrequest", "timeout")
         message:
           type: string
           description: Why the error occurred / Specific business rule violation
@@ -765,7 +769,11 @@ components:
           maximum: 599
         code:
           type: string
-          description: "A structured error code that uniquely identifies the type of error. This can follow a hierarchical format: - `<domain>`: The logical domain (e.g., ""gateway"") - `<category>`: The error category (e.g., ""client"" or ""server"") - `<subcategory>`: A specific error identifier (e.g., ""badrequest"", ""timeout"")"
+          description: >
+            A structured error code that uniquely identifies the type of error. This can follow a hierarchical format:
+            - `<domain>`: The logical domain (e.g., "gateway")
+            - `<category>`: The error category (e.g., "client" or "server")
+            - `<subcategory>`: A specific error identifier (e.g., "badrequest", "timeout")
           pattern: '^[a-z]+\.[a-z]+(\.[a-z]+)?$'
         timestamp:
           type: string
