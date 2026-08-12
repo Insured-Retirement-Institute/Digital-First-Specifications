@@ -474,7 +474,7 @@ components:
       name: transactionSubType
       in: query
       required: true
-      description: Required for one-time partial withdrawal quotes. Not used for full surrenders.  For one-time RMD quotes, select transactionSubType as RMD.
+      description: Indicates the business rules that apply to the partial one-time withdrawal, such as regular amount, free withdrawal, interest-only, or RMD. For one-time RMD transactions, select transactionSubType as RMD.
       schema:
         type: string
         enum: [specified-withdrawal, surrender-free, rider-free, interest-only, rmd]
@@ -645,7 +645,7 @@ components:
           minimum: 0
           maximum: 9999999999.99
         requestedPercentage:
-          description: The percentage of the contract value to be transferred when the transaction is percentage-based. Required when amountType is PERCENT_OF_CONTRACT_VALUE and must not be provided for other amount types.
+          description: The percentage of the contract value to be transferred when the transaction is percentage-based. Required when amountType is PERCENTAGE_OF_CONTRACT_VALUE and must not be provided for other amount types.
           type: number
           minimum: 0
           maximum: 100
