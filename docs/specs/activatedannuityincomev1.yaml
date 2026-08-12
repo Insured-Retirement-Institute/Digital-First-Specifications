@@ -58,7 +58,7 @@ paths:
               $ref: '#/components/schemas/BulkActivatedAnnuityIncomeRequest'
       responses:
         "202":
-          description:  
+          description: Accepted - request accepted for processing. 
           content:
             application/json:
               schema:
