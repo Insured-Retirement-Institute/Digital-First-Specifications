@@ -1,0 +1,185 @@
+extends:
+  - ["spectral:oas", "all"]
+
+rules:
+  # ── Turn off NW/opinionated built-ins not applicable to Digital First ──────
+  info-license: off
+  license-url: off
+  operation-singular-tag: off
+  no-$ref-siblings: off
+
+  # ── Enforce built-in OAS3 rules at error severity ─────────────────────────
+  operation-operationId: warn
+  operation-tags: error
+  operation-tag-defined: error
+  operation-description: error
+  openapi-tags: error
+  contact-properties: error
+  oas3-api-servers: error
+
+  # ── Info block ─────────────────────────────────────────────────────────────
+  version-should-be-semver:
+    severity: error
+    message: "Version must be a semver string, e.g. 1.0.0"
+    given: "$.info"
+    then:
+      field: version
+      function: pattern
+      functionOptions:
+        match: "^([0-9]+\\.){2}[0-9]+$"
+
+  title-should-use-valid-characters:
+    severity: warn
+    message: "Title should only contain letters, numbers, spaces, dashes, or parentheses"
+    given: "$.info"
+    then:
+      field: title
+      function: pattern
+      functionOptions:
+        match: "^[a-zA-Z0-9 ()\\-_\\.]+$"
+
+  # ── Paths ──────────────────────────────────────────────────────────────────
+  paths-should-be-lowercase:
+    severity: error
+    message: "Path segment '{{value}}' must not contain uppercase letters (path params excepted)"
+    given: "$.paths"
+    then:
+      field: "@key"
+      function: pattern
+      functionOptions:
+        notMatch: "(?!(\\{[a-zA-Z\\-\\_]+\\}))(?:[A-Z]+)"
+
+  # ── Operations ────────────────────────────────────────────────────────────
+  paths-summary-must-exist:
+    severity: error
+    message: "Operation at {{path}} is missing a summary"
+    given: "$.paths[*][get,post,put,patch,delete,head,options,trace]"
+    then:
+      field: summary
+      function: truthy
+
+  operationId-must-be-camel-case:
+    severity: warn
+    message: "operationId '{{value}}' must start with a lowercase letter (camelCase)"
+    given: "$.paths[*][get,post,put,patch,delete,head,options,trace]"
+    then:
+      field: operationId
+      function: pattern
+      functionOptions:
+        match: "^[a-z]"
+
+  paths-summary-should-be-sufficient-length:
+    severity: warn
+    message: "Summary at {{path}} is too short (minimum 13 characters)"
+    given: "$.paths[*][get,post,put,patch,delete,head,options,trace]"
+    then:
+      field: summary
+      function: pattern
+      functionOptions:
+        match: "^.{13,}$"
+
+  paths-summary-should-be-moderate-length:
+    severity: warn
+    message: "Summary at {{path}} may be too long — consider shortening below 60 characters"
+    given: "$.paths[*][get,post,put,patch,delete,head,options,trace]"
+    then:
+      field: summary
+      function: pattern
+      functionOptions:
+        match: "^.{0,60}$"
+
+  # ── Descriptions ──────────────────────────────────────────────────────────
+  todo-should-be-removed:
+    severity: warn
+    message: "TODO found at {{path}} — remove before merging"
+    given: "$..description"
+    then:
+      function: pattern
+      functionOptions:
+        notMatch: "(TODO|todo|Todo)"
+
+  description-should-not-leak-implementation:
+    severity: warn
+    message: "Description at {{path}} contains an implementation term ('{{value}}') — describe behaviour, not technology"
+    given: "$.info.description"
+    then:
+      function: pattern
+      functionOptions:
+        notMatch: "\\b(backend|microservice|jvm|rest|soap|webservice|system|service)\\b"
+
+  response-description-must-exist:
+    severity: error
+    message: "Response at {{path}} is missing a description — all responses require a non-empty description string"
+    given: "$.paths[*][*].responses[*]"
+    then:
+      field: description
+      function: truthy
+
+  parameter-description-must-exist:
+    severity: warn
+    message: "Parameter at {{path}} is missing a description"
+    given: "$..parameters[*]"
+    then:
+      field: description
+      function: truthy
+
+  schema-property-description-should-exist:
+    severity: info
+    message: "Schema property at {{path}} has no description — descriptions aid SDK generation and consumer documentation"
+    given: "$.components.schemas[*].properties[*]"
+    then:
+      field: description
+      function: truthy
+
+  # ── Required components sections (OAS3) ───────────────────────────────────
+  components-parameters-must-exist:
+    severity: error
+    message: "components.parameters section is required"
+    given: "$"
+    formats:
+      - oas3
+    then:
+      field: components.parameters
+      function: schema
+      functionOptions:
+        schema:
+          type: object
+
+  components-schemas-must-exist:
+    severity: error
+    message: "components.schemas section is required"
+    given: "$"
+    formats:
+      - oas3
+    then:
+      field: components.schemas
+      function: schema
+      functionOptions:
+        schema:
+          type: object
+
+  components-security-schemes-must-exist:
+    severity: error
+    message: "components.securitySchemes section is required"
+    given: "$"
+    formats:
+      - oas3
+    then:
+      field: components.securitySchemes
+      function: schema
+      functionOptions:
+        schema:
+          type: object
+
+  components-responses-must-exist:
+    severity: error
+    message: "components.responses section is required"
+    given: "$"
+    formats:
+      - oas3
+    then:
+      field: components.responses
+      function: schema
+      functionOptions:
+        schema:
+          type: object

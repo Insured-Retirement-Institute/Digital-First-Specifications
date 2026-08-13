@@ -400,3 +400,13 @@ FodyWeavers.xsd
 *.sln.iml
 
 **/.DS_Store
+
+# Local AI context documents & Github workflow test events
+copilot-docs
+github-test-events
+
+# act local artifact storage
+.act-artifacts
+.actrc
+.act.env
+.npmrc

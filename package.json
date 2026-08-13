@@ -7,6 +7,7 @@
   "scripts": {
     "build:dictionary": "tsx scripts/generate-dictionary.ts",
     "validate:specs": "tsx scripts/validate-specs.ts",
+    "lint:specs": "spectral lint docs/specs/*.yaml --ruleset .spectral.yml --fail-severity error",
     "debug:dictionary": "node --inspect-brk --enable-source-maps --import tsx scripts/generate-dictionary.ts",
     "debug": "npm run debug:dictionary",
     "build": "npm run build:dictionary"
@@ -19,6 +20,7 @@
   "license": "MIT",
   "devDependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
+    "@stoplight/spectral-cli": "^6.14.2",
     "@types/node": "^20.10.0",
     "tsx": "^4.7.0",
     "typescript": "^5.3.0",
