@@ -737,8 +737,8 @@ components:
           - if:
               properties:
                 amountType:
-                description: Specifies how the withdrawal amount is provided by the user. For example as a dollar amount, a percentage, or the maximum allowed amount.
-                enum: [MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS, EARNINGSONLY]
+                  description: Specifies how the withdrawal amount is provided by the user. For example as a dollar amount, a percentage, or the maximum allowed amount.
+                  enum: [MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS, EARNINGSONLY]
             then:
               required: [amountType]
               not:
@@ -884,19 +884,19 @@ components:
             - allocationPercentage
           properties:
             paymentForm:
-          description: Mode of payment.
+              description: Mode of payment.
               type: string
               enum: [DTCC, ACH, CHECK, WIRE, EXCHANGE]
             allocationPercentage:
-          description: Allocation percentage at policy level.
+              description: Allocation percentage at policy level.
               type: number
               minimum: 0
               maximum: 100
             bank:
-          description: Financial institution details.
+              description: Financial institution details.
               $ref: '#/components/schemas/Bank'
             address:
-          description: Physical or mailing address details.
+              description: Physical or mailing address details.
               $ref: '#/components/schemas/Address'
       required:
         - paymentForm
