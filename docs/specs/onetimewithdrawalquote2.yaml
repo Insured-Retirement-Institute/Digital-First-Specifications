@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Withdrawal Quote API
-  version: 2.0.0-rc.1
+  version: 2.0.0
   description: >
     A single, standardized **POST** quote endpoint for withdrawal transactions.
   license:
@@ -784,7 +784,6 @@ components:
         - effectiveDate
         - allocationOption
         - nsccParticipantId
-        - cusip
       allOf:
         - if:
             properties:
@@ -890,7 +889,6 @@ components:
       required:
         - effectiveDate
         - nsccParticipantId
-        - cusip
 
     TransactionAmountsRequest:
       type: object
@@ -1264,7 +1262,7 @@ components:
 
     FullSurrenderQuoteResponse:
       type: object
-      required: [status, policyNumber, effectiveDate, transactionAmounts, cusip]
+      required: [status, policyNumber, effectiveDate, transactionAmounts]
       properties:
         status:
           description: Overall quote processing outcome
@@ -1364,7 +1362,7 @@ components:
 
     PartialsWithdrawalQuoteResponse:
       type: object
-      required: [status, policyNumber, effectiveDate, transactionAmounts, cusip]
+      required: [status, policyNumber, effectiveDate, transactionAmounts]
       properties:
         status:
           description: Overall quote processing outcome
@@ -1572,8 +1570,8 @@ components:
               properties:
                 amountType:
                   description: Indicates the method used to calculate the transfer value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction.
-                  enum: [MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS, EARNINGSONLY]
-                  required: [amountType]
+                  enum: [MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS, EARNINGSONLY, PENALTYFREE, RIDERFREE]
+              required: [amountType]
             then:
               required: [amountType]
               not:
@@ -1678,7 +1676,7 @@ components:
         The payeeOrBeneficiary object represents how the withdrawal proceeds are distributed and to whom. It includes payment form, allocation rules for each payee.
       required: [paymentForm, allocationPercentage, disbursementAmount, taxId]
       properties:
-        taxId:
+        taxId:  
           description: Tax Identification Number for the party (individual or entity).
           type: string
           maxLength: 9
