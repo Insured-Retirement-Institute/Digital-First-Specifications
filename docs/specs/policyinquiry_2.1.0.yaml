@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Policy Inquiry
-  version: 2.0.0
+  version: 2.1.0
   description: 'Provides comprehensive servicing and inquiry capabilities. These endpoints
     allow clients to retrieve detailed information about a policy, financial values,
     parties, transactions, dates, riders, funds, producers, systematic programs, payouts,
@@ -757,7 +757,7 @@ components:
     Cusip:
       name: cusip
       in: query
-      required: true
+      required: false
       description: >
         CUSIP identifier used to uniquely identify the policy when the
         policyNumber alone is not globally unique.
