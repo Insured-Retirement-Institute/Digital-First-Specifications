@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Annuity Application Status APIs
   description: APIs for managing Annuity application data including application status, details, transmission, agents, parties, funding, documents, and more.
-  version: 3.0.0
+  version: 3.1.0
   license:
     name: MIT
     url: https://github.com/Insured-Retirement-Institute/Pending-Case/blob/main/LICENSE
@@ -75,6 +75,7 @@ paths:
         - $ref: '#/components/parameters/cusip'
         - $ref: '#/components/parameters/producerNumber'
         - $ref: '#/components/parameters/npn'
+        - $ref: '#/components/parameters/commissionSplitPercent'
         - $ref: '#/components/parameters/crdNumber'
         - $ref: '#/components/parameters/applicationOriginId'
         - $ref: '#/components/parameters/trackingNumber'
@@ -223,7 +224,7 @@ components:
   parameters:
     correlationId:
       name: correlationId
-      description: Optional custom header to be returned to the caller in response payload
+      description: Optional client-supplied identifier to trace the request.
       in: header
       required: false
       schema:
@@ -237,7 +238,7 @@ components:
         type: string
     policyNumber:
       name: policyNumber
-      description: Required path parameter for the policy number to be retrieved
+      description: Policy number
       in: path
       required: true
       schema:
@@ -246,7 +247,7 @@ components:
         maxLength: 30
     associatedFirmId:
       name: associatedFirmId
-      description: Optional query parameter for the associated firm ID
+      description: Optional parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms.
       in: query
       required: false
       schema:
@@ -262,7 +263,7 @@ components:
         $ref: '#/components/schemas/cusip'
     producerNumber:
       name: producerNumber
-      description: Optional query parameter for the carrier assigned unique identifier.
+      description: Carrier-assigned unique identifier for the producer.
       in: query
       required: false
       schema:
@@ -270,12 +271,21 @@ components:
         maxLength: 30
     npn:
       name: npn
-      description: Optional query parameter for the National Producer Number
+      description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
       in: query
       required: false
       schema:
         type: string
         maxLength: 10
+    commissionSplitPercent:
+      name: commissionSplitPercent
+      description: Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy.
+      in: query
+      required: false
+      schema:
+        type: number
+        minimum: 0
+        maximum: 100
     crdNumber:
       name: crdNumber
       description: Optional query parameter for the Central Registration Depository number
@@ -359,19 +369,19 @@ components:
           type: string
           const: individual
         firstName:
-          description: This is the first name of the individual
+          description: First name of the individual
           type: string
           minLength: 1
           maxLength: 105
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,105}$
         middleName:
-          description: This is the middle name of the individual
+          description: The middle name of the individual
           type: string
           minLength: 1
           maxLength: 105
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,105}$
         lastName:
-          description: This is the last name of the individual
+          description: The last name of the individual
           type: string
           minLength: 1
           maxLength: 105
@@ -389,9 +399,14 @@ components:
         - type: object
           properties:
             npn:
-              description: National Producer Number
+              description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
               type: string
               maxLength: 10
+            commissionSplitPercent:
+              description: Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy.
+              type: number
+              minimum: 0
+              maximum: 100
             crdNumber:
               description: The Central Registiration Depository (CRD) number assigned by FINRA to identify the financial professional.
               type: string
@@ -424,7 +439,7 @@ components:
           type: string
           const: entity
         name:
-          description: Entity name
+          description: Name of the entity
           type: string
           minLength: 1
           maxLength: 180
@@ -441,9 +456,14 @@ components:
         - type: object
           properties:
             npn:
-              description: National Producer Number
+              description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
               type: string
               maxLength: 10
+            commissionSplitPercent:
+              description: Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy.
+              type: number
+              minimum: 0
+              maximum: 100
             crdNumber:
               description: The Central Registiration Depository (CRD) number assigned by FINRA to identify the financial professional.
               type: string
@@ -552,9 +572,14 @@ components:
                 type: object
                 properties:
                   npn:
-                    description: National Producer Number
+                    description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
                     type: string
                     maxLength: 10
+                  commissionSplitPercent:
+                    description: Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy.
+                    type: number
+                    minimum: 0
+                    maximum: 100
                   crdNumber:
                     description: The Central Registiration Depository (CRD) number assigned by FINRA to identify the financial professional.
                     type: string
@@ -766,7 +791,7 @@ components:
                 required: [name, accountNumber]
                 properties:
                   name:
-                    description: Ceding company name
+                    description: Name of the entity
                     type: string
                     minLength: 1
                     maxLength: 180
@@ -806,7 +831,7 @@ components:
           minLength: 1
           maxLength: 30
         associatedFirmId:
-          description: Associated firm ID
+          description: Optional query parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms.
           type: string
         applicationOrigin:
           description: Platform of application origin
@@ -956,13 +981,13 @@ components:
       type: object
       properties:
         startIndex:
-          description: The starting of the index
+          description: Zero-based index of the first record to return.
           type: integer
         itemsCount:
-          description: Total number of records returned
+          description: Number of records included in the current response page.
           type: integer
         totalItemsCount:
-          description: Total number of records available for search
+          description: Total number of records available that match the request criteria, independent of pagination.
           type: integer
           maximum: 1000
         policies:
@@ -975,7 +1000,7 @@ components:
           properties:
             correlationId:
               type: string
-              description: Correlation ID for tracking the request    
+              description: Optional client-supplied identifier to trace the request.   
         - $ref: '#/components/schemas/Policy'
         - type: object
           properties:
@@ -997,17 +1022,17 @@ components:
       type: object
       properties:
         correlationId:
-          description: Correlation ID for tracking the request
+          description: Optional client-supplied identifier to trace the request.
           type: string
         startIndex:
-          description: The starting of the index
+          description: Zero-based index of the first record to return.
           type: integer
         itemsCount:
-          description: Total number of records returned
+          description: Number of records included in the current response page.
           type: integer
           maximum: 1000
         totalItemsCount:
-          description: Total number of records available for search
+          description: Total number of records available that match the request criteria, independent of pagination.
           type: integer
         applicationStatuses:
           $ref: "#/components/schemas/SummaryApplicationStatuses"
@@ -1021,7 +1046,7 @@ components:
           minLength: 1
           maxLength: 30
         associatedFirmId:
-          description: Associated firm ID
+          description: Optional query parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms.
           type: string
           minLength: 1
           maxLength: 65
@@ -1033,9 +1058,14 @@ components:
           type: string
           maxLength: 30
         npn: 
-          description: National Producer Number
+          description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
           type: string
           maxLength: 10
+        commissionSplitPercent:
+          description: Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy.
+          type: number
+          minimum: 0
+          maximum: 100
         crdNumber:
           description: The Central Registiration Depository (CRD) number assigned by FINRA to identify the financial professional.
           type: string

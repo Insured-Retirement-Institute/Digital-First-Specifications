@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: One-Time Withdrawal API (Full Surrender and Partial Withdrawal(including RMD))
-  version: 1.0.0
+  version: 1.0.1
   description: >
     API to submit one-time withdrawals (Partial, Full, and RMD) on a policy.
     Supported transaction types: oneTimePartialWithdrawal, fullSurrender.
@@ -457,7 +457,7 @@ components:
       name: policyNumber
       in: path
       required: true
-      description: Unique policy number(1 to 30 characters).
+      description: Policy number
       schema:
         type: string
         minLength: 1
@@ -474,9 +474,7 @@ components:
       name: transactionSubType
       in: query
       required: true
-      description: >
-            Indicates the business rules that apply to the partial one-time withdrawal, such as regular amount,
-            free withdrawal, interest-only, or RMD. For one-time RMD transactions, select transactionSubType as RMD.
+      description: Indicates the business rules that apply to the partial one-time withdrawal, such as regular amount, free withdrawal, interest-only, or RMD. For one-time RMD transactions, select transactionSubType as RMD.
       schema:
         type: string
         enum: [specified-withdrawal, surrender-free, rider-free, interest-only, rmd]
@@ -484,7 +482,7 @@ components:
       name: associatedFirmId
       in: query
       required: false
-      description: Optional firm/linkage identifier (preferred location per IRI).
+      description: Optional query parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms.
       schema:
         type: string
         minLength: 1
@@ -647,16 +645,12 @@ components:
           minimum: 0
           maximum: 9999999999.99
         requestedPercentage:
-          description: >
-            Percentage requested by the user. If amountType = PERCENTAGE, then requestedPercentage
-            is required, and requestedAmount must NOT be present.
+          description: The percentage of the contract value to be transferred when the transaction is percentage-based. Required when amountType is PERCENTAGE and must not be provided for other amount types.
           type: number
           minimum: 0
           maximum: 100
         amountType:
-          description: >
-            Specifies how the withdrawal amount is provided by the user. For example as a dollar
-            amount, a percentage, or the maximum allowed amount.
+          description: Indicates the method used to calculate the transaction value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction.
           type: string
           enum: [AMOUNT, PERCENTAGE, MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS, EARNINGSONLY]
         disbursementType:
@@ -674,7 +668,7 @@ components:
           - if:
               properties:
                 amountType:
-                  description: Specifies how the withdrawal amount is provided by the user. For example as a dollar amount, a percentage, or the maximum allowed amount.
+                  description: Indicates the method used to calculate the transaction value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction.
                   const: AMOUNT
               required:
                 - amountType
@@ -687,7 +681,7 @@ components:
           - if:
               properties:
                 amountType:
-                  description: Specifies how the withdrawal amount is provided by the user. For example as a dollar amount, a percentage, or the maximum allowed amount.
+                  description: Indicates the method used to calculate the transaction value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction.
                   const: PERCENTAGE
               required:
                 - amountType
@@ -700,7 +694,7 @@ components:
           - if:
             properties:
               amountType:
-                description: Specifies how the withdrawal amount is provided by the user. For example as a dollar amount, a percentage, or the maximum allowed amount.
+                description: Indicates the method used to calculate the transaction value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction.
                 enum: [MAX, FREEWITHDRAWALAMOUNT, WITHDRAWALUNTILBASIS, EARNINGSONLY]
             then:
               required: [amountType]
@@ -730,7 +724,7 @@ components:
         The payeeOrBeneficiary object represents how the withdrawal proceeds are distributed and to whom. It includes payment form, allocation rules for each payee.
       properties:
         paymentForm:
-          description: Type of payment form.
+          description: Mode of payment
           type: string
           enum: [DTCC, ACH, CHECK, WIRE, EXCHANGE]
         allocationPercentage:
@@ -755,7 +749,7 @@ components:
       description: List of tax withholding instruction entries
       properties:
         party:
-          description: Impacted party details for withholding.
+          description: Common party identity fields.
           anyOf:
             - $ref: '#/components/schemas/IndividualIdentity'
             - $ref: '#/components/schemas/EntityIdentity'
@@ -768,26 +762,26 @@ components:
           type: string
           enum: [NOWITHHOLDINGELECTED, USEVALUESENTERED, NOWITHHOLDINGALLOWED, USEDEFAULTTABLE]
         filingStatus:
-          description: Tax filing status.
+          description: Optional per data dictionary. Typically provided when `taxRateToUse` is `USEDEFAULTTABLE` and filing status is needed to determine the applicable withholding table; do not treat this field as universally required.
           type: string
           enum: [SINGLE, DOMESTICPARTNERSHIP, DEFAULT, MARRIED, HEADOFHOUSEHOLD, WIDOWED, DIVORCED]
         dollar:
           type: number
-          description: Computed tax amount
+          description: Fixed dollar amount to withhold
           minimum: 0
           maximum: 9999999999.99
         percentage:
           type: number
-          description: Computed tax percentage
+          description: Percentage amount to withhold
           minimum: 0
           maximum: 100
         exemptions:
-          description: Requested exemptions value.
+          description: Requested exemptions value
           type: integer
           minimum: 0
           maximum: 99
         taxJurisdiction:
-          description: Jurisdiction for tax purposes. If taxWithholdingType = STATE this field should be mandatory.
+          description: Jurisdiction for tax purposes. If taxWithholdingType=STATE this field should be mandatory.
           type: string
           maxLength: 50
       required:
@@ -808,15 +802,14 @@ components:
               - taxJurisdiction
 
     Party:
-      description: |
-        The parties object represents the policy parties relevant to the withdrawal (owners, annuitants, beneficiaries, etc.), along with their identity, relationship, and payout instructions.
+      description: Common party identity fields.
       type: object
       anyOf:
         - $ref: '#/components/schemas/IndividualParty'
         - $ref: '#/components/schemas/EntityParty'
       properties:
         paymentForm:
-          description: Mode of payment.
+          description: Mode of payment
           type: string
           enum: [DTCC, ACH, CHECK, WIRE, EXCHANGE]
         allocationPercentage:
@@ -836,14 +829,14 @@ components:
 
     Producer:
       type: object
-      description: Information about the producer submitting the request
+      description: Licensed producer information
       properties:
         producerNumber:
-          description: Carrier assigned unique identifier.
+          description: Carrier-assigned unique identifier for the producer.
           type: string
           maxLength: 100
         npn:
-          description: National Producer Number.
+          description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
           type: string
           maxLength: 100
         crdNumber:
@@ -889,10 +882,10 @@ components:
 
     Charges:
       type: object
-      description: Details of fees and deductions applied to the transaction
+      description: List of charges/deductions applied
       properties:
         chargeType:
-          description: Type of charge.
+          description: Carrier-defined or product-defined charge label
           type: string
           enum: [COSTOFINSURANCE, EXPENSECHARGE, UNITEXPENSECHARGE, RIDERCHARGE, SURRENDERCHARGE, WITHDRAWALCHARGE]
         isChargeWaived:
@@ -1032,25 +1025,25 @@ components:
           type: string
           const: individual
         firstName:
-          description: First name of the party.
+          description: First name of the individual
           type: string
           minLength: 1
           maxLength: 105
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
         middleName:
-          description: Middle name of the party.
+          description: Middle name of the individual
           type: string
           minLength: 1
           maxLength: 105
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
         lastName:
-          description: Last name of the party.
+          description: Last name of the individual
           type: string
           minLength: 1
           maxLength: 105
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
         taxId:
-          description: Tax Identification Number for the party (individual or entity).
+          description: Tax Identification Number for the individual or entity
           type: string
           maxLength: 9
 
@@ -1084,13 +1077,13 @@ components:
           type: string
           const: entity
         name:
-          description: Entity name of the party.
+          description: Name of the entity
           type: string
           minLength: 1
           maxLength: 100
           pattern: '^[\w=()*@#\s.,''\/~%$!;:&"®`\\?\-]{1,100}$'
         taxId:
-          description: Tax Identification Number for the party (individual or entity).
+          description: Tax Identification Number for the individual or entity
           type: string
           maxLength: 9
 
@@ -1152,7 +1145,7 @@ components:
           type: string
           format: date
         nsccParticipantId:
-          description: Unique identifier for the participant.
+          description: Unique identifier for the submitting firm or participant within the NSCC network.
           type: string
           maxLength: 100
         cusip:
@@ -1162,7 +1155,7 @@ components:
           pattern: '^[0-9]{3}[A-Z0-9]{5}[0-9]$'
           description: unique identification code. Optional; REQUIRED only when policyNumber is not globally unique.
         producer:
-          description: Information about the producer submitting the request.
+          description: Licensed producer information
           $ref: '#/components/schemas/Producer'
         transactionAmounts:
           description: Details of financial amounts associated with the transaction.
@@ -1170,9 +1163,9 @@ components:
         allocationOption:
           type: string
           enum: [PRORATA, DOLLAR, SPECIFYPERCENTAGE, SPECIFIEDFUNDS, SPECIFIEDSEGMENTS, DEFAULT, PECKINGORDER, EARNINGSONLY]
-          description: Defines the format of how the funds are removed
+          description: Indicates the allocation method, such as pro-rata across funds, dollar-based, or a specified set of funds or segments.
         fundDistributions:
-          description: Detailed allocation of funds.
+          description: Detailed allocation of funds
           type: array
           items:
             $ref: '#/components/schemas/FundDistribution'
@@ -1198,17 +1191,17 @@ components:
           items:
             $ref: '#/components/schemas/Party'
         taxWithholdingInstructions:
-          description: List of tax withholding instruction entries.
+          description: List of tax withholding instruction entries
           type: array
           items:
             $ref: '#/components/schemas/TaxWithholdingInstruction'
         charges:
-          description: List of charges (fees and deductions) applied to the transaction.
+          description: List of charges/deductions applied
           type: array
           items:
             $ref: '#/components/schemas/Charges'
         isOverride:
-          description: Override rules if true.
+          description: Override rules if true
           type: boolean
       required:
         - effectiveDate
@@ -1222,7 +1215,7 @@ components:
                 type: object
                 properties:
                   amountType:
-                    description: Specifies how the withdrawal amount is provided by the user. For example as a dollar amount, a percentage, or the maximum allowed amount.
+                    description: Indicates the method used to calculate the transaction value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction.
                     const: PERCENTAGE
                 required: [amountType]
             required: [allocationOption, transactionAmounts]
@@ -1247,7 +1240,7 @@ components:
                 type: object
                 properties:
                   amountType:
-                    description: Specifies how the withdrawal amount is provided by the user. For example as a dollar amount, a percentage, or the maximum allowed amount.
+                    description: Indicates the method used to calculate the transaction value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction.
                     const: AMOUNT
                 required: [amountType]
             required: [allocationOption, transactionAmounts]
@@ -1275,7 +1268,7 @@ components:
           type: string
           format: date
         nsccParticipantId:
-          description: Unique identifier for the participant.
+          description: Unique identifier for the submitting firm or participant within the NSCC network.
           type: string
           maxLength: 100
         cusip:
@@ -1285,7 +1278,7 @@ components:
           pattern: '^[0-9]{3}[A-Z0-9]{5}[0-9]$'
           description: unique identification code. Optional; Required only when policyNumber is not globally unique.
         producer:
-          description: Information about the producer submitting the request.
+          description: Licensed producer information
           $ref: '#/components/schemas/Producer'
         transactionAmounts:
           description: Details of financial amounts associated with the transaction.
@@ -1306,17 +1299,17 @@ components:
           items:
             $ref: '#/components/schemas/Party'
         taxWithholdingInstructions:
-          description: List of tax withholding instruction entries.
+          description: List of tax withholding instruction entries
           type: array
           items:
             $ref: '#/components/schemas/TaxWithholdingInstruction'
         charges:
-          description: List of charges (fees and deductions) applied to the transaction.
+          description: List of charges/deductions applied
           type: array
           items:
             $ref: '#/components/schemas/Charges'
         isOverride:
-          description: Override rules if true.
+          description: Override rules if true
           type: boolean
       required:
         - effectiveDate
@@ -1327,7 +1320,7 @@ components:
       properties:
         requestId:
           type: string
-          description: Server-assigned identifier for the withdrawal request.
+          description: Server-assigned identifier for the request.
         status:
           type: string
           description: Current status of the withdrawal request.
@@ -1348,7 +1341,7 @@ components:
       properties:
         requestId:
           type: string
-          description: Server-assigned identifier for the withdrawal request.
+          description: Server-assigned identifier for the request.
         status:
           type: string
           description: Current status of the withdrawal request.
@@ -1363,7 +1356,7 @@ components:
           enum: [specified-withdrawal, surrender-free, rider-free, interest-only, rmd]
         message:
           type: string
-          description: Technical message with specific error details for developers identify the type of error quickly.
+          description: Message with specific error details.
       required: [requestId, status]
 
     Error:
@@ -1384,7 +1377,7 @@ components:
         timestamp:
           type: string
           format: date-time
-          description: Time when the error occurred
+          description: Create or Update timestamp of transaction event
         message:
           type: string
           description: Message with specific error details.
@@ -1399,7 +1392,7 @@ components:
                 description: Code to classify the error & Identifies the type of business rule or decision failure.
               message:
                 type: string
-                description: Why the error occurred / Specific business rule violation
+                description: Message with specific error details.
       required:
         - code
         - message

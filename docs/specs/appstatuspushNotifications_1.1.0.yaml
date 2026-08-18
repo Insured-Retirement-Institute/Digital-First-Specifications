@@ -3,7 +3,7 @@ openapi: 3.1.0
 info:
   title: Annuity Application Status Push Notifications
   description: Webhooks for notifying about changes in annuity application status
-  version: 1.0.0
+  version: 1.1.0
   license:
     name: MIT
     url: https://github.com/Insured-Retirement-Institute/Pending-Case/blob/main/LICENSE
@@ -182,11 +182,13 @@ webhooks:
                     npn: "1234567890"
                     relationships:
                       - primaryAgent
+                    commissionSplitPercent: 100
                   - type: entity
                     name: Smith & Associates
                     npn: "1234567890"
                     relationships:
                       - brokerDealer
+                    commissionSplitPercent: 100
                 parties:
                   - type: individual
                     firstName: John
@@ -227,11 +229,13 @@ webhooks:
                         npn: "1234567890"
                         relationships:
                           - primaryAgent
+                        commissionSplitPercent: 100
                       - type: entity
                         name: Smith & Associates
                         npn: "1234567890"
                         relationships:
                           - brokerDealer
+                        commissionSplitPercent: 100
                     parties:
                       - type: individual
                         firstName: John
@@ -275,6 +279,7 @@ webhooks:
                         crdNumber: "1122334"
                         relationships:
                           - brokerageGeneralAgency
+                        commissionSplitPercent: 100
                     parties:
                       - type: entity
                         name: Doe Family Revocable Trust
@@ -1051,7 +1056,7 @@ components:
   parameters:
       correlationId:
         name: correlationId
-        description: Optional custom header to be sent to the caller in response payload
+        description: Optional client-supplied identifier to trace the request.
         in: header
         required: false
         schema:
@@ -1083,7 +1088,7 @@ components:
           format: date-time
       eventId:
         name: eventId
-        description: Globally unique id for requested event to return
+        description: Globally unique identifier for this notification event
         in: path
         required: true
         schema: 
@@ -1579,19 +1584,19 @@ components:
           type: string
           const: individual
         firstName:
-          description: Party’s first name
+          description: First name of the individual
           type: string
           minLength: 1
           maxLength: 105
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,105}$
         middleName:
-          description: Party’s middle name
+          description: Middle name of the individual
           type: string
           minLength: 1
           maxLength: 105
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\-\\?"]{1,105}$
         lastName:
-          description: Party’s last name
+          description: Last name of the individual
           type: string
           minLength: 1
           maxLength: 105
@@ -1612,6 +1617,11 @@ components:
               description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
               type: string
               maxLength: 10
+            commissionSplitPercent:
+              description: Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy.
+              type: number
+              minimum: 0
+              maximum: 100
             crdNumber:
               description: Central Registration Depository number
               type: string
@@ -1644,7 +1654,7 @@ components:
           type: string
           const: entity
         name:
-          description: Entity name
+          description: Name of the entity
           type: string
           minLength: 1
           maxLength: 180
@@ -1661,9 +1671,14 @@ components:
         - type: object
           properties:
             npn:
-              description: National Producer Number
+              description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
               type: string
               maxLength: 10
+            commissionSplitPercent:
+              description: Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy.
+              type: number
+              minimum: 0
+              maximum: 100
             crdNumber:
               description: Central Registration Depository number
               type: string
@@ -1751,11 +1766,13 @@ components:
           npn: "1234567890"
           relationships:
             - primaryAgent
+          commissionSplitPercent: 100
         - type: entity
           name: Smith & Associates
           npn: "1234567890"
           relationships:
             - brokerDealer
+          commissionSplitPercent: 100
     Producers:
       description: Schema for producers data
       type: array
@@ -1813,9 +1830,14 @@ components:
                 type: object
                 properties:
                   npn:
-                    description: National Producer Number
+                    description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
                     type: string
                     maxLength: 10
+                  commissionSplitPercent:
+                    description: Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy.
+                    type: number
+                    minimum: 0
+                    maximum: 100
                   crdNumber:
                     description: Central Registration Depository number
                     type: string

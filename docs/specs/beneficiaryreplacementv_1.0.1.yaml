@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Beneficiary Replacement
-  version: 1.0.0
+  version: 1.0.1
   description: 'Direction-neutral annuity event exchange specification intended for
     use by both Distributors and Carriers.
     
@@ -58,7 +58,7 @@ paths:
 components:
   headers:
     correlationId:
-      description: Correlates this response to downstream processing for end-to-end request tracing.
+      description: Optional client-supplied identifier to trace the request.
       schema:
         type: string
         maxLength: 100
@@ -398,10 +398,14 @@ components:
           description: JSONPath-like pointer identifying the field with an error (e.g., $.beneficiaries[0].percent).
         code:
           $ref: '#/components/schemas/BeneficiaryDxErrorCode'
-          description: Structured error code for this field error.
+          description: >
+            A structured error code that uniquely identifies the type of error. This can follow a hierarchical format:
+            - `<domain>`: The logical domain (e.g., "gateway")
+            - `<category>`: The error category (e.g., "client" or "server")
+            - `<subcategory>`: A specific error identifier (e.g., "badrequest", "timeout")
         message:
           type: string
-          description: Descriptive error message for this field.
+          description: Why the error occurred / Specific business rule violation
 
     Contract:
       type: object
@@ -436,7 +440,7 @@ components:
           description: Classification of beneficiary (PRIMARY, CONTINGENT).
         relationshipType:
           type: string
-          description: Standardized relationship classification aligned with DTCC Contract Entity Relationship codes. 			
+          description: Standardized relationship classification aligned with DTCC Contract Entity Relationship codes.
           enum:
           - PARENT
           - CHILD
@@ -760,17 +764,21 @@ components:
       properties:
         httpStatus:
           type: integer
-          description: HTTP status code associated with this error.
+          description: HTTP status code associated with this error
           minimum: 400
           maximum: 599
         code:
           type: string
-          description: A structured error code that uniquely identifies the type of error. Codes may follow a hierarchical format combining domain, category, and subcategory (for example, "gateway.client.badrequest" or "gateway.server.timeout").
+          description: >
+            A structured error code that uniquely identifies the type of error. This can follow a hierarchical format:
+            - `<domain>`: The logical domain (e.g., "gateway")
+            - `<category>`: The error category (e.g., "client" or "server")
+            - `<subcategory>`: A specific error identifier (e.g., "badrequest", "timeout")
           pattern: '^[a-z]+\.[a-z]+(\.[a-z]+)?$'
         timestamp:
           type: string
           format: date-time
-          description: Time when the error occurred.
+          description: Create or Update timestamp of transaction event
         message:
           type: string
           description: End-user-friendly explanation, safe to show in portals or consumer-facing apps.
@@ -779,10 +787,10 @@ components:
           description: Safe, user-friendly message suitable for display to end users.
         correlationId:
           type: string
-          description: Carries forward the inbound request's correlation ID header to enable end-to-end traceability.
+          description: Optional client-supplied identifier to trace the request.
         validationErrors:
           type: array
-          description: Array describing domain/business rule violations; each entry requires its own code and message.
+          description: Logical rule violations or decision failures related to business logic or rules
           items:
             $ref: '#/components/schemas/FieldError'
 
