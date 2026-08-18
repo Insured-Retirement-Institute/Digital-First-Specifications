@@ -645,7 +645,7 @@ components:
           minimum: 0
           maximum: 9999999999.99
         requestedPercentage:
-          description: The percentage of the contract value to be transferred when the transaction is percentage-based. Required when amountType is PERCENTAGE_OF_CONTRACT_VALUE and must not be provided for other amount types.
+          description: The percentage of the contract value to be transferred when the transaction is percentage-based. Required when amountType is PERCENTAGE and must not be provided for other amount types.
           type: number
           minimum: 0
           maximum: 100
