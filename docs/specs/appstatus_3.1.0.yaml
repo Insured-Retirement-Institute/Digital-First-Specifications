@@ -247,7 +247,7 @@ components:
         maxLength: 30
     associatedFirmId:
       name: associatedFirmId
-      description: Optional query parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms.
+      description: Optional parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms.
       in: query
       required: false
       schema:
