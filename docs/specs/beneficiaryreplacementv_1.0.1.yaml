@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Beneficiary Replacement
-  version: 1.0.0
+  version: 1.0.1
   description: 'Direction-neutral annuity event exchange specification intended for
     use by both Distributors and Carriers.
     
