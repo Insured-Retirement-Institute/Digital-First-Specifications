@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Policy Inquiry
-  version: 2.1.0
+  version: 2.1.1
   description: 'Provides comprehensive servicing and inquiry capabilities. These endpoints
     allow clients to retrieve detailed information about a policy, financial values,
     parties, transactions, dates, riders, funds, producers, systematic programs, payouts,
@@ -654,7 +654,7 @@ components:
       name: policyNumber
       in: path
       required: true
-      description: Unique identifier of the policy.
+      description: Policy number
       schema:
         type: string
         minLength: 1
@@ -663,7 +663,7 @@ components:
       name: associatedFirmId
       in: query
       required: false
-      description: Optional firm/linkage identifier (preferred location per IRI).
+      description: Optional parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms.
       schema:
         type: string
         minLength: 1
@@ -739,8 +739,7 @@ components:
       name: transactionId
       in: query
       required: false
-      description: Unique identifier assigned to the transaction. Uses the standard
-        transaction identifier pattern for inquiry endpoints.
+      description: Unique identifier assigned to the transaction.
       schema:
         type: string
         pattern: ^[A-Za-z0-9._-]{1,100}$
@@ -758,9 +757,7 @@ components:
       name: cusip
       in: query
       required: false
-      description: >
-        CUSIP identifier used to uniquely identify the policy when the
-        policyNumber alone is not globally unique.
+      description: CUSIP
       schema:
         type: string
         minLength: 9
@@ -770,9 +767,7 @@ components:
       name: nsccParticipantId
       in: query
       required: true
-      description: >
-        Unique identifier for the submitting firm or participant within
-        the NSCC network.
+      description: Unique identifier for the submitting firm or participant within the NSCC network.
       schema:
         type: string
         maxLength: 100
@@ -785,6 +780,7 @@ components:
             $ref: '#/components/schemas/Error'
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
     UnauthorizedError:
       description: Unauthorized
@@ -794,6 +790,7 @@ components:
             $ref: '#/components/schemas/Error'
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
     ForbiddenError:
       description: Forbidden
@@ -803,6 +800,7 @@ components:
             $ref: '#/components/schemas/Error'
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
     NotFoundError:
       description: Not Found
@@ -812,6 +810,7 @@ components:
             $ref: '#/components/schemas/Error'
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
     MethodNotAllowedError:
       description: Method Not Allowed
@@ -821,6 +820,7 @@ components:
             $ref: '#/components/schemas/Error'
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
     NotAcceptableError:
       description: Not Acceptable
@@ -830,6 +830,7 @@ components:
             $ref: '#/components/schemas/Error'
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
     ConflictError:
       description: 'A conflicting policy operation is in progress or the request duplicates
@@ -840,6 +841,7 @@ components:
             $ref: '#/components/schemas/Error'
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
     PayloadTooLargeError:
       description: Payload Too Large
@@ -849,6 +851,7 @@ components:
             $ref: '#/components/schemas/Error'
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
     UnsupportedMediaTypeError:
       description: Unsupported Media Type
@@ -858,6 +861,7 @@ components:
             $ref: '#/components/schemas/Error'
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
     UnprocessableEntityError:
       description: Unprocessable Entity
@@ -867,6 +871,7 @@ components:
             $ref: '#/components/schemas/Error'
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
     TooManyRequestsError:
       description: Too Many Requests
@@ -876,6 +881,7 @@ components:
             $ref: '#/components/schemas/Error'
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
     InternalServerError:
       description: Internal Server Error
@@ -885,6 +891,7 @@ components:
             $ref: '#/components/schemas/Error'
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
     BadGatewayError:
       description: Bad Gateway
@@ -894,6 +901,7 @@ components:
             $ref: '#/components/schemas/Error'
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
     ServiceUnavailableError:
       description: Service Unavailable
@@ -903,6 +911,7 @@ components:
             $ref: '#/components/schemas/Error'
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
     GatewayTimeoutError:
       description: Gateway Timeout
@@ -912,11 +921,13 @@ components:
             $ref: '#/components/schemas/Error'
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
     getPolicySummaryResponse:
       description: Policy summary successfully retrieved.
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -946,6 +957,7 @@ components:
       description: Policy value successfully retrieved.
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -1016,6 +1028,7 @@ components:
       description: Policy funds successfully retrieved.
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -1115,6 +1128,7 @@ components:
       description: Policy producers successfully retrieved.
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -1139,6 +1153,7 @@ components:
       description: Policy dates successfully retrieved.
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -1161,6 +1176,7 @@ components:
       description: Policy parties successfully retrieved.
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -1254,6 +1270,7 @@ components:
       description: Policy parties successfully retrieved.
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -1343,6 +1360,7 @@ components:
       description: Policy riders successfully retrieved.
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -1393,6 +1411,7 @@ components:
       description: Policy rider successfully retrieved.
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -1439,6 +1458,7 @@ components:
       description: Policy systematic programs successfully retrieved.
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -1501,6 +1521,7 @@ components:
       description: Policy payouts successfully retrieved.
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -1538,6 +1559,7 @@ components:
       description: Policy transactions successfully retrieved.
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -1596,6 +1618,7 @@ components:
       description: Policy underlying assets successfully retrieved.
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -1627,7 +1650,7 @@ components:
               insuranceActivityFundEmployeeAmountDebitCreditIndicator: CREDIT
   headers:
     correlationId:
-      description: Correlates this response to requests and downstream logs.
+      description: Optional client-supplied identifier to trace the request.
       schema:
         type: string
         maxLength: 100
@@ -1643,7 +1666,7 @@ components:
       - product
       properties:
         effectiveDate:
-          description: Represents the date on which the policy or contract became active and coverage officially began.
+          description: Effective date of policy
           type: string
           format: date
         carrierId:
@@ -1852,7 +1875,7 @@ components:
           maximum: 599
         code:
           type: string
-          description: A structured error code <domain>.<category>.<subcategory>
+          description: A structured error code that uniquely identifies the type of error. This can follow a hierarchical format: - `<domain>`: The logical domain (e.g., "gateway") - `<category>`: The error category (e.g., "client" or "server") - `<subcategory>`: A specific error identifier (e.g., "badrequest", "timeout")
           pattern: ^[a-zA-Z]+\.[a-zA-Z]+\.[a-zA-Z]+$
         timestamp:
           description: Create or Update timestamp of transaction event
@@ -1870,13 +1893,11 @@ components:
             properties:
               code:
                 type: string
-                description: Code to classify the error & Identifies the type of business
-                  rule or decision failure. Matches the top-level Error.code token
-                  pattern.
+                description: A structured error code that uniquely identifies the type of error. This can follow a hierarchical format: - `<domain>`: The logical domain (e.g., "gateway") - `<category>`: The error category (e.g., "client" or "server") - `<subcategory>`: A specific error identifier (e.g., "badrequest", "timeout")
                 pattern: ^[a-zA-Z]+\.[a-zA-Z]+\.[a-zA-Z]+$
               message:
                 type: string
-                description: Why the error occurred / Specific business rule violation
+                description: Message with specific error details.
             required:
             - code
             - message
@@ -1890,9 +1911,11 @@ components:
       - valuesAsOfDate
       properties:
         valuesAsOfDate:
+          description: Business 'as of' date for the returned values
           type: string
           format: date
         accountDesignation:
+          description: Specifies the ownership structure of the policy (e.g., individual, joint, trust)
           type: string
           enum:
           - INDIVIDUAL
@@ -1901,12 +1924,15 @@ components:
           - CUSTODIAL
           - OTHER
         jurisdiction:
+          description: Jurisdiction for tax purposes.If taxwithholdingType=STATE this field should be mandatory.
           type: string
           pattern: ^[A-Z]{2}$
         sponsoringPlanSeparationDate:
+          description: Date the participant separated from the sponsoring employer plan (used for qualified employer plans when determining withdrawal/surrender rules).
           type: string
           format: date
         payoutType:
+          description: Indicates the current payout phase of the policy, such as whether the contract is in accumulation, deferred income, or annuitized payout mode.
           type: string
           enum:
           - DEFERRED
@@ -1915,155 +1941,196 @@ components:
           - ACCUMULATION
           - UNKNOWN
         totalDepositITD:
+          description: Total deposits inception-to-date (issue to current), including lump sum + subsequent premiums/contributions. Useful for cost basis context.
           type: number
           minimum: 0
           maximum: 9999999999.99
         surrenderChargeFreeDate:
+          description: Date when the contract becomes free of surrender charges based on current premium history (can change if premiums reset the schedule).
           type: string
           format: date
         digitalPaymentTypeCode:
+          description: Type code for supported digital payment rails for the contract/arrangements (e.g., Apple Pay, PayPal)
           type: string
           pattern: ^[A-Za-z0-9._-]{1,100}$
         digitalPaymentTypeDescription:
+          description: Human-readable description of the digital payment type.
           type: string
           maxLength: 100
         accountValues:
+          description: Represents consolidated financial values associated with the policy, including account balances, surrender values, and other valuation metrics used for reporting and servicing decisions.
           type: object
           properties:
             beginningAccountValue:
+              description: Account value at start of period.
               type: number
               minimum: 0
               maximum: 9999999999.99
             endingAccountValue:
+              description: Account value at end of period.
               type: number
               minimum: 0
               maximum: 9999999999.99
             minimumRequiredAccountValue:
+              description: Minimum required account value.
               type: number
               minimum: 0
               maximum: 9999999999.99
             unloanedPortionOfAccountValue:
+              description: Unloaned portion of account value.
               type: number
               minimum: 0
               maximum: 9999999999.99
             loanedPortionOfAccountValue:
+              description: Loaned portion of account value.
               type: number
               minimum: 0
               maximum: 9999999999.99
             surrenderValue:
+              description: Cash surrender value
               type: number
               minimum: 0
               maximum: 9999999999.99
             surrenderValueWithoutMarketValueAdjustment:
+              description: Surrender value excluding market value adjustment.
               type: number
               minimum: 0
               maximum: 9999999999.99
             guaranteedCashSurrenderValueFixed:
+              description: Guaranteed cash surrender value for fixed component.
               type: number
               minimum: 0
               maximum: 9999999999.99
             guaranteedCashSurrenderValueIndexed:
+              description: Guaranteed cash surrender value for indexed component.
               type: number
               minimum: 0
               maximum: 9999999999.99
             interestEarned:
+              description: Interest earned amount.
               type: number
               minimum: 0
               maximum: 9999999999.99
               multipleOf: 0.01
             totalNetWithdrawalSinceIssue:
+              description: Total net withdrawals since issue.
               type: number
               minimum: 0
               maximum: 9999999999.99
             totalGainWithdrawnSinceIssue:
+              description: Total gains withdrawn since issue.
               type: number
               minimum: 0
               maximum: 9999999999.99
           required:
           - endingAccountValue
         loanValues:
+          description: Provides details related to any outstanding loans against the policy, including balances, limits, and accrued interest amounts.(if applicable)
           type: object
           properties:
             totalLoanBalance:
+              description: Total loan balance.
               type: number
               minimum: 0
               maximum: 9999999999.99
             totalLoanPrincipal:
+              description: Total loan principal.
               type: number
               minimum: 0
               maximum: 9999999999.99
             loanPayoffAmount:
+              description: Loan payoff amount.
               type: number
               minimum: 0
               maximum: 9999999999.99
             maximumLoanAmount:
+              description: Maximum loan amount.
               type: number
               minimum: 0
               maximum: 9999999999.99
             minimumLoanAmount:
+              description: Minimum loan amount.
               type: number
               minimum: 0
               maximum: 9999999999.99
             totalLoanAccruedInterest:
+              description: Total accrued loan interest.
               type: number
               minimum: 0
               maximum: 9999999999.99
             lastLoanInterestDueDate:
+              description: Last loan interest due date.
               type: string
               format: date
             totalNumberOfLoan:
+              description: Total number of loans.
               type: integer
               minimum: 0
             totalYearToDateLoanTaken:
+              description: Total loan taken year-to-date.
               type: number
               minimum: 0
               maximum: 9999999999.99
         withdrawalValues:
+          description: Defines available withdrawal-related values and limits, including allowable withdrawal amounts and usage of free withdrawal provisions.
           type: object
           properties:
             totalWithdrawalAmount:
+              description: Total withdrawal amount.
               type: number
               minimum: 0
               maximum: 9999999999.99
             freeWithdrawalAmount:
+              description: Free withdrawal amount available.
               type: number
               minimum: 0
               maximum: 9999999999.99
             yearToDateFreeWithdrawalAmount:
+              description: Year-to-date free withdrawal amount used.
               type: number
               minimum: 0
               maximum: 9999999999.99
             minimumWithdrawalAmount:
+              description: Minimum withdrawal amount allowed.
               type: number
               minimum: 0
               maximum: 9999999999.99
             maximumWithdrawalAmount:
+              description: Maximum withdrawal amount allowed.
               type: number
               minimum: 0
               maximum: 9999999999.99
             freeAvailableAmount:
+              description: Surrender/withdrawalÂ free amount currently availableÂ (i.e., free withdrawal remaining).
               type: number
               minimum: 0
               maximum: 9999999999.99
         marketValueAdjustment:
+          description: Indicates whether a market value adjustment (MVA) applies to the policy and signals that withdrawal or surrender values may be adjusted based on prevailing interest rate conditions.
           type: object
           properties:
             isMarketValueAdjusted:
+              description: Indicates whether MVA applies.
               type: boolean
         rmdInfo:
+          description: RMD details specific to partial one-time withdrawals
           type: object
           properties:
             rmdTaxYear:
+              description: The tax year this RMD withdrawal is for (for example, 2025). Used to decide which year's RMD requirement the withdrawal is satisfying.
               type: integer
               minimum: 1900
               maximum: 2100
             totalRMDAmountRemaining:
+              description: Remaining dollar amount that must still be withdrawn this calendar year to fully satisfy the Required Minimum Distribution.
               type: number
               minimum: 0
               maximum: 9999999999.99
         authorization:
+          description: Identifies those entities that are allowed to complete financial and non-financial transactions.
           $ref: '#/components/schemas/Authorization'
     Authorization:
+      description: Identifies those entities that are allowed to complete financial and non-financial transactions.
       type: object
       required:
       - businessMethods
@@ -2071,6 +2138,7 @@ components:
       - authorizationTransaction
       properties:
         businessMethods:
+          description: All ways transaction may be initiated within the annuity.
           type: array
           items:
             type: string
@@ -2082,15 +2150,18 @@ components:
             - voiceResponseUnit
             - internet
         authorizationEntities:
+          description: Collection of the party that is authorized.
           type: array
           items:
             $ref: '#/components/schemas/AuthorizationEntity'
         authorizationTransaction:
+          description: Describes all the transactions that may be performed by the entitites.
           type: object
           required:
           - administrativeTransactions
           properties:
             administrativeTransactions:
+              description: Transactions that may be performed by the authorized entities.
               type: array
               items:
                 type: string
@@ -2100,14 +2171,18 @@ components:
                 - arrangementAdministration
                 - allTransactions
             isAuthorizationSignatureRequired:
+              description: Identifier if a signature is required from the owner before requeste authorization is accepted / processed.
               type: boolean
     AuthorizationEntity:
+      description: Identifies the parties/entities allowed to initiate transactions on the policy.
       type: object
       properties:
         authorizationEntity:
+          description: Identifies the parties/entities allowed to initiate transactions on the policy.
           type: string
           maxLength: 100
         isAllAgentsAuthorized:
+          description: Identifier if all agents are permitted.
           type: boolean
     PolicyFunds:
       type: object
@@ -2117,6 +2192,7 @@ components:
           type: integer
           minimum: 0
         itemsCount:
+          description: Number of records included in the current response page.
           type: integer
           minimum: 0
         totalItemsCount:
@@ -2361,6 +2437,7 @@ components:
                     type: string
                     format: date
                   endDate:
+                    description: The date Special Program ends (Entered by user or determined by LPS based on Account Value)
                     type: string
                     format: date
               subAccountTerm:
@@ -2600,6 +2677,7 @@ components:
                       type: string
                       format: date
                     endDate:
+                      description: The date Special Program ends (Entered by user or determined by LPS based on Account Value)
                       type: string
                       format: date
                     maxPrice:
@@ -2694,14 +2772,12 @@ components:
           type: integer
           minimum: 0
         parties:
-          description: Represents all individuals or entities associated with the policy, including their identity, relationship to the contract, and role in policy servicing or benefit distribution.
+          description: The parties object represents the policy parties relevant to the withdrawal (owners, annuitants, beneficiaries, etc.), along with their identity, relationship, and payout instructions.
           type: array
           items:
             $ref: '#/components/schemas/Party'
     Party:
-      description: The parties object represents policy parties such as owners, annuitants,
-        beneficiaries, payees, trustees, and agents, together with their identity,
-        relationship, and servicing instructions.
+      description: Common party identity fields.
       type: object
       allOf:
       - type: object
@@ -2780,7 +2856,7 @@ components:
         itemsCount:
           type: integer
           minimum: 0
-          description: Number of items in the current response.
+          description: Number of records included in the current response page.
         totalItemsCount:
           type: integer
           minimum: 0
@@ -2974,6 +3050,7 @@ components:
           type: string
           format: date
         endDate:
+          description: The date Special Program ends (Entered by user or determined by LPS based on Account Value)
           type: string
           format: date
         previousProgramDate:
@@ -3079,7 +3156,7 @@ components:
           type: string
           pattern: ^[A-Za-z0-9._-]{1,50}$
         parties:
-          description: Represents all individuals or entities associated with the policy, including their identity, relationship to the contract, and role in policy servicing or benefit distribution.
+          description: The parties object represents the policy parties relevant to the withdrawal (owners, annuitants, beneficiaries, etc.), along with their identity, relationship, and payout instructions.
           type: array
           items:
             type: object
@@ -3104,7 +3181,7 @@ components:
                 pattern: ^[0-9]{9}$
                 minLength: 9
               percentage:
-                description: Percentage rate to withhold. Mutually exclusive with dollar; provide one, not both.
+                description: Percentage amount to withhold
                 type: number
                 minimum: 0
                 maximum: 100
@@ -3222,7 +3299,7 @@ components:
           - APPROVED
           - DECLINED
         effectiveDate:
-          description: Represents the date on which the policy or contract became active and coverage officially began.
+          description: Effective date of policy
           type: string
           format: date
         exerciseDate:
@@ -3555,15 +3632,19 @@ components:
             - version
             properties:
               transactionId:
+                description: Unique identifier assigned to the transaction.
                 type: string
                 pattern: ^[A-Za-z0-9._-]{1,100}$
               originalTransactionId:
+                description: The unique identifier of the reversed transaction. When a transaction is reversed, this field holds the ID of the original transaction that was reversed. We capture this to ensure proper tracking and auditing of financial adjustments within the system
                 type: string
                 pattern: ^[A-Za-z0-9._-]{1,100}$
               partyPolicyChangeReferenceId:
+                description: Unique identifier for the impacted party data being updated with a transaction or event. For example, if multiple addresses are modified, this field identifies the specific address Id for which change is being processed
                 type: string
                 pattern: ^[A-Za-z0-9._-]{1,100}$
               partyPolicyNewReferenceId:
+                description: Trigger to Pass in API which non financial was newly added out of multiple change requests, for example a new email was added
                 type: string
                 pattern: ^[A-Za-z0-9._-]{1,100}$
               planCode:
@@ -3571,9 +3652,11 @@ components:
                 type: string
                 pattern: ^[A-Za-z0-9._-]{1,50}$
               parentId:
+                description: The unique identifier of a Parent Transaction or Parent Program ID. The value of parentId varies based on the transaction type. >>For Subsequent Premium, One-Time Premium, Loan Repayment (One-Time & Systematic) → The Parent Payment Transaction ID is stamped. >> For Forceout and Disbursement → The Parent Money Out or Money In Transaction ID is stamped
                 type: string
                 pattern: ^[A-Za-z0-9._-]{1,100}$
               transactionType:
+                description: Specifies the type of transaction being performed, such as Premium Payment, Loan Repayment, Anniversary etc
                 type: string
                 enum:
                 - SubsequentPayment
@@ -3608,16 +3691,19 @@ components:
                 - Lapse
                 - Other
               requestDate:
+                description: The date when the transaction request was initiated or received in the system. For example, for system generated events date on which transaction was initiated by the system for adhoc events date on which transaction was received by the system.
                 type: string
                 format: date
               effectiveDate:
-                description: Represents the date on which the policy or contract became active and coverage officially began.
+                description: Effective date of policy
                 type: string
                 format: date
               processDate:
+                description: Represents the date when the transaction is processed by the system.
                 type: string
                 format: date
               reversalDate:
+                description: The date when a transaction is reversed in the system
                 type: string
                 format: date
               status:
@@ -3631,6 +3717,7 @@ components:
                 - Canceled
                 - PendingReversal
               transactionReason:
+                description: The justification or business reason for the transaction
                 type: string
                 enum:
                 - ONETIMEPREMIUM
@@ -3680,8 +3767,10 @@ components:
                       - WITHDRAWAL_CHARGE
                       - OTHER
                     isChargeWaived:
+                      description: Indicates whether the charge associated with the transaction was waived by the carrier or product rules. A value of true means the charge was applicable but waived; false means the charge was applied normally.
                       type: boolean
                     chargeWaiverReason:
+                      description: The reason why a charge was waived (e.g., Promotional Waiver, Policy Exception).
                       type: string
                     chargeAmount:
                       description: The amount of the charge applied for this transaction.
@@ -3703,17 +3792,22 @@ components:
                 type: string
                 format: date-time
               isReverseInitiated:
+                description: A boolean flag that applies only to financial transactions. When set to true, it allows a backdated transaction to be processed. This triggers a reversal on the policy to the earliest transaction on the specified effective date, applies the new transaction, and then reprocesses all subsequent transactions (similar to (R&R) process). This ensures that the policy`s financial history remains accurate and aligned with the backdated change.
                 type: boolean
               version:
+                description: Version number
                 type: integer
                 format: int32
               externalIdentifiers:
+                description: The unique external ID for the transaction
                 type: object
                 properties:
                   referenceNumber:
+                    description: The unique payment reference number for all premium-related transactions by carrier.
                     type: string
                     pattern: ^[A-Za-z0-9._-]{1,100}$
                   externalTransactionId:
+                    description: The unique ID to identify transaction on carrier side.
                     type: string
                     pattern: ^[A-Za-z0-9._-]{1,100}$
                   externalArrangementId:
@@ -3751,6 +3845,7 @@ components:
           - WITHDRAWALUNTILBASIS
           - EARNINGSONLY
         disbursementType:
+          description: Type of amount for withdrawal such as Gross or Net.
           type: string
           enum:
           - GROSS
@@ -3817,6 +3912,7 @@ components:
             - required:
               - requestedPercentage
     UnderlyingAssets:
+      description: List of underlying asset/fund-level breakdown records tied to a transaction activity.
       type: object
       properties:
         startIndex:
@@ -3832,6 +3928,7 @@ components:
           type: integer
           minimum: 0
         underlyingAssets:
+          description: List of underlying asset/fund-level breakdown records tied to a transaction activity.
           type: array
           items:
             type: object
@@ -3839,28 +3936,35 @@ components:
             - insuranceActivityFundID
             properties:
               insuranceActivityFundID:
+                description: Identifier for the underlying fund/sub-account involved in the activity.
                 type: string
                 pattern: ^[A-Za-z0-9._-]{1,50}$
               insuranceActivityFundAmount:
+                description: Amount applied to this fund for the activity.
                 type: string
                 pattern: ^-?\d+(\.\d+)?$
               insuranceActivityFundAmountDebitCreditIndicator:
+                description: Debit credit indicator for the administrative charge amount.
                 type: string
                 enum:
                 - DEBIT
                 - CREDIT
               insuranceActivityFundUnitAmount:
+                description: Units applied to this fund for the activity.
                 type: string
                 pattern: ^-?\d+(\.\d+)?$
               insuranceActivityFundUnitAmountDebitCreditIndicator:
+                description: Debit credit indicator for the unit amount.
                 type: string
                 enum:
                 - DEBIT
                 - CREDIT
               insuranceActivityFundUnitPriceAmount:
+                description: Unit price used for the activity.
                 type: string
                 pattern: ^-?\d+(\.\d+)?$
               insuranceProductSubAccountProductFullName:
+                description: Full name of the sub-account/product.
                 type: string
                 maxLength: 200
               insuranceProductSubAccountAssetClassCode:
@@ -3881,41 +3985,51 @@ components:
                 maxLength: 9
                 description: Uses the standard CUSIP format.
               insuranceActivityFundMVAAmount:
+                description: Market Value Adjustment amount attributed to this fund activity.
                 type: string
                 pattern: ^-?\d+(\.\d+)?$
               insuranceActivityFundMVAAmountDebitCreditIndicator:
+                description: Debit credit indicator for the MVA amount.
                 type: string
                 enum:
                 - DEBIT
                 - CREDIT
               insuranceActivityFundAdministrativeChargeAmount:
+                description: Administrative charge amount attributed to this fund activity.
                 type: string
                 pattern: ^-?\d+(\.\d+)?$
               insuranceActivityFundAdministrativeChargeAmountDebitCreditIndicator:
+                description: Debit credit indicator for the administrative charge amount.
                 type: string
                 enum:
                 - DEBIT
                 - CREDIT
               insuranceActivityFundSurrenderChargeAmount:
+                description: Surrender charge amount attributed to this fund activity.
                 type: string
                 pattern: ^-?\d+(\.\d+)?$
               insuranceActivityFundSurrenderChargeAmountDebitCreditIndicator:
+                description: Debit credit indicator for the surrender charge amount.
                 type: string
                 enum:
                 - DEBIT
                 - CREDIT
               insuranceActivityFundEmployerAmount:
+                description: Employer contribution amount attributed to this fund activity.
                 type: string
                 pattern: ^-?\d+(\.\d+)?$
               insuranceActivityFundEmployerAmountDebitCreditIndicator:
+                description: Debit credit indicator for employer amount.
                 type: string
                 enum:
                 - DEBIT
                 - CREDIT
               insuranceActivityFundEmployeeAmount:
+                description: Employee contribution amount attributed to this fund activity.
                 type: string
                 pattern: ^-?\d+(\.\d+)?$
               insuranceActivityFundEmployeeAmountDebitCreditIndicator:
+                description: Debit credit indicator for employee amount.
                 type: string
                 enum:
                 - DEBIT
@@ -3927,7 +4041,7 @@ components:
         optional per the data dictionary.
       properties:
         party:
-          description: Impacted party details for withholding.
+          description: Common party identity fields.
           anyOf:
           - $ref: '#/components/schemas/IndividualIdentity'
           - $ref: '#/components/schemas/EntityIdentity'
@@ -3957,9 +4071,7 @@ components:
           - HEADOFHOUSEHOLD
           - WIDOWED
           - DIVORCED
-          description: Optional per data dictionary. Typically provided when `taxRateToUse`
-            is `USEDEFAULTTABLE` and filing status is needed to determine the applicable
-            withholding table; do not treat this field as universally required.
+          description: Tax filing status.
         dollar:
           type: number
           description: Fixed dollar amount to withhold. Mutually exclusive with percentage;
@@ -3967,7 +4079,7 @@ components:
           minimum: 0
           maximum: 9999999999.99
         percentage:
-          description: Percentage rate to withhold. Mutually exclusive with dollar; provide one, not both.
+          description: Percentage amount to withhold
           type: number
           minimum: 0
           maximum: 100
@@ -4021,23 +4133,23 @@ components:
       type: object
       properties:
         type:
-          description: Identity type
+          description: Indicates whether the party is an individual or an entity.
           type: string
           const: individual
         firstName:
-          description: First name of the party.
+          description: First name of the individual
           type: string
           minLength: 1
           maxLength: 100
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\\?\-]{1,100}$
         middleName:
-          description: Middle name of the party.
+          description: Middle name of the individual
           type: string
           minLength: 1
           maxLength: 100
           pattern: ^[a-zA-Z0-9=()*@#\s.,'_/~%$!();:&"®`\\?\-]{1,100}$
         lastName:
-          description: Last name of the party.
+          description: Last name of the individual
           type: string
           minLength: 1
           maxLength: 100
@@ -4085,7 +4197,7 @@ components:
           type: string
           const: entity
         name:
-          description: Entity name of the party.
+          description: Name of the entity
           type: string
           minLength: 1
           maxLength: 100
@@ -4216,6 +4328,7 @@ components:
           type: string
           format: date
         endDate:
+          description: The date Special Program ends (Entered by user or determined by LPS based on Account Value)
           type: string
           format: date
         phoneType:
@@ -4277,6 +4390,7 @@ components:
           type: string
           format: date
         endDate:
+          description: The date Special Program ends (Entered by user or determined by LPS based on Account Value)
           type: string
           format: date
         emailType:
