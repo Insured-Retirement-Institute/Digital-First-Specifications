@@ -473,7 +473,7 @@ components:
             - SPECIFIED_AMOUNT
         requestedAmount:
           type: number
-          description: Amount requested by the user. If amountType = SPECIFIED_AMOUNT, then requestedAmount is required, and requestedPercentage must NOT be present.
+          description: Dollar amount to transfer from this segment. Use this field for amount-based transfers. Mutually exclusive with requestedPercentage. Not allowed for FULL_REBALANCE transfers.
           minimum: 0
         requestedPercentage:
           type: number
