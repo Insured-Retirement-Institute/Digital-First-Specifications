@@ -1875,7 +1875,11 @@ components:
           maximum: 599
         code:
           type: string
-          description: A structured error code that uniquely identifies the type of error. This can follow a hierarchical format: - `<domain>`: The logical domain (e.g., "gateway") - `<category>`: The error category (e.g., "client" or "server") - `<subcategory>`: A specific error identifier (e.g., "badrequest", "timeout")
+          description: >
+            A structured error code that uniquely identifies the type of error. This can follow a hierarchical format:
+            - `<domain>`: The logical domain (e.g., "gateway")
+            - `<category>`: The error category (e.g., "client" or "server")
+            - `<subcategory>`: A specific error identifier (e.g., "badrequest", "timeout")
           pattern: ^[a-zA-Z]+\.[a-zA-Z]+\.[a-zA-Z]+$
         timestamp:
           description: Create or Update timestamp of transaction event
