@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: One-Time Withdrawal API (Full Surrender and Partial Withdrawal(including RMD))
-  version: 1.5.1
+  version: 2.0.1
   description: >
     API to submit one-time withdrawals (Partial, Full, and RMD) on a policy.
     Supported transaction types: oneTimePartialWithdrawal, fullSurrender.
@@ -254,6 +254,7 @@ paths:
                 type: string
                 format: uri
             correlationId:
+              description: Optional client-supplied identifier to trace the request.
               $ref: '#/components/headers/correlationId'
           content:
             application/json:
@@ -395,6 +396,7 @@ paths:
                 type: string
                 format: uri
             correlationId:
+              description: Optional client-supplied identifier to trace the request.
               $ref: '#/components/headers/correlationId'
           content:
             application/json:
@@ -439,6 +441,7 @@ paths:
           description: Withdrawal request resource.
           headers:
             correlationId:
+              description: Optional client-supplied identifier to trace the request.
               $ref: '#/components/headers/correlationId'
           content:
             application/json:
@@ -457,7 +460,7 @@ components:
       name: policyNumber
       in: path
       required: true
-      description: Unique policy number(1 to 30 characters).
+      description: Policy number
       schema:
         type: string
         minLength: 1
@@ -520,6 +523,7 @@ components:
       description: Bad Request
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -529,6 +533,7 @@ components:
       description: Unauthorized
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -538,6 +543,7 @@ components:
       description: Forbidden
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -547,6 +553,7 @@ components:
       description: Not Found
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -556,6 +563,7 @@ components:
       description: Method Not Allowed
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -565,6 +573,7 @@ components:
       description: Not Acceptable
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -574,6 +583,7 @@ components:
       description: Conflict
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -583,6 +593,7 @@ components:
       description: Payload Too Large
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -592,6 +603,7 @@ components:
       description: Unsupported Media Type
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -601,6 +613,7 @@ components:
       description: Unprocessable Entity
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -610,6 +623,7 @@ components:
       description: Too Many Requests
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -619,6 +633,7 @@ components:
       description: Internal Server Error
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -628,6 +643,7 @@ components:
       description: Bad Gateway
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -637,6 +653,7 @@ components:
       description: Service Unavailable
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -646,6 +663,7 @@ components:
       description: Gateway Timeout
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -767,7 +785,7 @@ components:
         The payeeOrBeneficiary object represents how the withdrawal proceeds are distributed and to whom. It includes payment form, allocation rules for each payee.
       properties:
         paymentForm:
-          description: Type of payment form.
+          description: Mode of payment.
           type: string
           enum: [DTCC, ACH, CHECK, WIRE, EXCHANGE]
         allocationPercentage:
@@ -833,16 +851,16 @@ components:
           enum: [SINGLE, DOMESTICPARTNERSHIP, DEFAULT, MARRIED, HEADOFHOUSEHOLD, WIDOWED, DIVORCED]
         dollar:
           type: number
-          description: Computed tax amount
+          description: Fixed dollar amount to withhold. Mutually exclusive with percentage; provide one, not both.
           minimum: 0
           maximum: 9999999999.99
         percentage:
           type: number
-          description: Computed tax percentage
+          description: Percentage amount to withhold
           minimum: 0
           maximum: 100
         taxJurisdiction:
-          description: Jurisdiction for tax purposes. If taxWithholdingType = STATE this field should be mandatory.
+          description: Jurisdiction for tax purposes. If taxWithholdingType=STATE this field should be mandatory.
           type: string
           maxLength: 50
       required:
@@ -888,7 +906,7 @@ components:
               type: string
               enum: [DTCC, ACH, CHECK, WIRE, EXCHANGE]
             allocationPercentage:
-              description: Allocation percentage at policy level.
+              description: Allocation percentage.
               type: number
               minimum: 0
               maximum: 100
@@ -904,20 +922,20 @@ components:
 
     Producer:
       type: object
-      description: Information about the producer submitting the request
+      description: Licensed producer information
       required:
         - npn
       properties:
         producerNumber:
-          description: Carrier assigned unique identifier.
+          description: Carrier-assigned unique identifier for the producer.
           type: string
           maxLength: 100
         npn:
-          description: National Producer Number.
+          description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
           type: string
           maxLength: 100
         crdNumber:
-          description: Central Registration Depository number.
+          description: The Central Registration Depository (CRD) number assigned by FINRA to identify the financial professional.
           type: string
           maxLength: 100
 
@@ -1102,19 +1120,19 @@ components:
           type: string
           const: individual
         firstName:
-          description: First name of the party.
+          description: First name of the individual
           type: string
           minLength: 1
           maxLength: 105
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
         middleName:
-          description: Middle name of the party.
+          description: Middle name of the individual
           type: string
           minLength: 1
           maxLength: 105
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
         lastName:
-          description: Last name of the party.
+          description: Last name of the individual
           type: string
           minLength: 1
           maxLength: 105
@@ -1154,7 +1172,7 @@ components:
           type: string
           const: entity
         name:
-          description: Entity name of the party.
+          description: Name of the entity
           type: string
           minLength: 1
           maxLength: 100
@@ -1246,7 +1264,7 @@ components:
           type: string
           format: date
         nsccParticipantId:
-          description: Unique identifier for the participant.
+          description: Unique identifier for the submitting firm or participant within the NSCC network.
           type: string
           maxLength: 100
         cusip:
@@ -1254,9 +1272,9 @@ components:
           minLength: 9
           maxLength: 9
           pattern: '^[0-9]{3}[A-Z0-9]{5}[0-9]$'
-          description: unique identification code. Optional; REQUIRED only when policyNumber is not globally unique.
+          description: CUSIP
         producer:
-          description: Information about the producer submitting the request.
+          description: Licensed producer information
           $ref: '#/components/schemas/Producer'
         transactionAmounts:
           description: Details of financial amounts associated with the transaction.
@@ -1302,7 +1320,7 @@ components:
           items:
             $ref: '#/components/schemas/Charges'
         isOverride:
-          description: Override rules if true.
+          description: Override rules if true
           type: boolean
       required:
         - effectiveDate
@@ -1319,7 +1337,7 @@ components:
                 type: object
                 properties:
                   amountType:
-                    description: Specifies how the withdrawal amount is provided by the user. For example as a dollar amount, a percentage, or the maximum allowed amount.
+                    description: Indicates the method used to calculate the transfer value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction.
                     const: PERCENTAGE
                 required: [amountType]
             required: [allocationOption, transactionAmounts]
@@ -1372,7 +1390,7 @@ components:
           type: string
           format: date
         nsccParticipantId:
-          description: Unique identifier for the participant.
+          description: Unique identifier for the submitting firm or participant within the NSCC network.
           type: string
           maxLength: 100
         cusip:
@@ -1380,9 +1398,9 @@ components:
           minLength: 9
           maxLength: 9
           pattern: '^[0-9]{3}[A-Z0-9]{5}[0-9]$'
-          description: unique identification code. Optional; Required only when policyNumber is not globally unique.
+          description: CUSIP
         producer:
-          description: Information about the producer submitting the request.
+          description: Licensed producer information
           $ref: '#/components/schemas/Producer'
         transactionAmounts:
           description: Details of financial amounts associated with the transaction.
@@ -1413,7 +1431,7 @@ components:
           items:
             $ref: '#/components/schemas/Charges'
         isOverride:
-          description: Override rules if true.
+          description: Override rules if true
           type: boolean
       required:
         - effectiveDate
@@ -1442,9 +1460,7 @@ components:
           enum: [specified-withdrawal, surrender-free, rider-free, interest-only, rmd]
         message:
           type: string
-          description: >
-            Optional informational or error message explaining the
-            processing result.
+          description: Message with specific error details.
       required: [requestId, status]
         
     GetWithdrawalRequestStatus:
@@ -1468,9 +1484,7 @@ components:
           enum: [specified-withdrawal, surrender-free, rider-free, interest-only, rmd]
         message:
           type: string
-          description: >
-            Optional informational or error message explaining the
-            processing result.
+          description: Message with specific error details.
       required: [requestId, status]
 
     Error:
@@ -1580,16 +1594,12 @@ components:
         correlationId:
           type: string
           maxLength: 100
-          description: >
-            Optional correlation identifier supplied with the original
-            request and propagated to the Day-2 confirmation for
-            end-to-end traceability.
+          description: Optional client-supplied identifier to trace the request.
         policyNumber:
           type: string
           minLength: 1
           maxLength: 30
-          description: >
-            Policy number associated with the withdrawal request.
+          description: Policy number
         transactionType:
           type: string
           enum:
@@ -1629,14 +1639,11 @@ components:
         npn:
           type: string
           maxLength: 100
-          description: >
-            National Producer Number associated with the transaction,
-            when available.
+          description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
         nsccParticipantId:
           type: string
           maxLength: 100
-          description: >
-            NSCC participant identifier associated with the submitting firm, when available.
+          description: Unique identifier for the submitting firm or participant within the NSCC network.
         transExeDate:
           type: string
           format: date
