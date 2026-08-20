@@ -1897,7 +1897,7 @@ components:
             properties:
               code:
                 type: string
-                description: A structured error code that uniquely identifies the type of error. This can follow a hierarchical format: - `<domain>`: The logical domain (e.g., "gateway") - `<category>`: The error category (e.g., "client" or "server") - `<subcategory>`: A specific error identifier (e.g., "badrequest", "timeout")
+                description: Code to classify the error & Identifies the type of business rule or decision failure.
                 pattern: ^[a-zA-Z]+\.[a-zA-Z]+\.[a-zA-Z]+$
               message:
                 type: string
