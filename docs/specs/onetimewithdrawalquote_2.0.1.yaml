@@ -80,6 +80,7 @@ paths:
           description: Withdrawal quote calculated successfully.
           headers:
             correlationId:
+              description: Optional client-supplied identifier to trace the request.
               $ref: '#/components/headers/correlationId'
           content:
             application/json:
@@ -372,6 +373,7 @@ paths:
           description: Withdrawal quote calculated successfully.
           headers:
             correlationId:
+              description: Optional client-supplied identifier to trace the request.
               $ref: '#/components/headers/correlationId'
           content:
             application/json:
@@ -544,7 +546,7 @@ components:
       name: policyNumber
       in: path
       required: true
-      description: Unique policy number (1 to 30 characters).
+      description: Policy number
       schema:
         type: string
         minLength: 1
@@ -571,14 +573,14 @@ components:
       name: associatedFirmId
       in: query
       required: true
-      description: Optional firm/linkage identifier (preferred location per IRI).
+      description: Optional parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms.
       schema:
         type: string
         minLength: 1
         maxLength: 65
   headers:
     correlationId:
-      description: Correlates this response to requests and downstream logs.
+      description: Optional client-supplied identifier to trace the request.
       required: true
       schema:
         type: string
@@ -588,6 +590,7 @@ components:
       description: Bad Request
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -597,6 +600,7 @@ components:
       description: Unauthorized
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -606,6 +610,7 @@ components:
       description: Forbidden
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -615,6 +620,7 @@ components:
       description: Not Found
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -624,6 +630,7 @@ components:
       description: Method Not Allowed
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -633,6 +640,7 @@ components:
       description: Not Acceptable
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -644,6 +652,7 @@ components:
         Re-submitting the same transaction while it is in-flight will be rejected to prevent duplicate processing.
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -653,6 +662,7 @@ components:
       description: Payload Too Large
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -662,6 +672,7 @@ components:
       description: Unsupported Media Type
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -671,6 +682,7 @@ components:
       description: Unprocessable Entity
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -680,6 +692,7 @@ components:
       description: Too Many Requests
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -689,6 +702,7 @@ components:
       description: Internal Server Error
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -698,6 +712,7 @@ components:
       description: Bad Gateway
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -707,6 +722,7 @@ components:
       description: Service Unavailable
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -716,6 +732,7 @@ components:
       description: Gateway Timeout
       headers:
         correlationId:
+          description: Optional client-supplied identifier to trace the request.
           $ref: '#/components/headers/correlationId'
       content:
         application/json:
@@ -732,7 +749,7 @@ components:
           type: string
           format: date
         nsccParticipantId:
-          description: Unique identifier for the participant
+          description: Unique identifier for the submitting firm or participant within the NSCC network.
           type: string
           maxLength: 100
         cusip:
@@ -740,11 +757,12 @@ components:
           minLength: 9
           maxLength: 9
           pattern: '^[0-9]{3}[A-Z0-9]{5}[0-9]$'
-          description: unique identification code. Optional; REQUIRED only when policyNumber is not globally unique.
+          description: CUSIP
         producer:
+          description: Licensed producer information
           $ref: '#/components/schemas/Producer'
         transactionAmounts:
-          description: Quoted amounts including charges, taxes, and net payment
+          description: Details of financial amounts associated with the transaction.
           $ref: '#/components/schemas/TransactionAmountsRequest'
         allocationOption:
           type: string
@@ -768,12 +786,12 @@ components:
           items:
             $ref: '#/components/schemas/Party'
         taxWithholdingInstructions:
-          description: List of tax withholding instruction entries
+          description: List of tax withholding instruction entries.
           type: array
           items:
             $ref: '#/components/schemas/TaxWithholdingInstruction'
         charges:
-          description: List of charges/deductions applied in the quote
+          description: List of charges (fees and deductions) applied to the transaction.
           type: array
           items:
             $ref: '#/components/schemas/Charges'
@@ -790,7 +808,7 @@ components:
               allocationOption:
                 const: SPECIFIEDFUNDS
               transactionAmounts:
-                description: Quoted amounts including charges, taxes, and net payment
+                description: Details of financial amounts associated with the transaction.
                 type: object
                 properties:
                   amountType:
@@ -817,7 +835,7 @@ components:
               allocationOption:
                 const: SPECIFIEDFUNDS
               transactionAmounts:
-                description: Quoted amounts including charges, taxes, and net payment
+                description: Details of financial amounts associated with the transaction.
                 type: object
                 properties:
                   amountType:
@@ -849,7 +867,7 @@ components:
           type: string
           format: date
         nsccParticipantId:
-          description: Unique identifier for the participant
+          description: Unique identifier for the submitting firm or participant within the NSCC network.
           type: string
           maxLength: 100
         cusip:
@@ -857,11 +875,12 @@ components:
           minLength: 9
           maxLength: 9
           pattern: '^[0-9]{3}[A-Z0-9]{5}[0-9]$'
-          description: unique identification code. Optional; Required only when policyNumber is not globally unique.
+          description: CUSIP
         producer:
+          description: Licensed producer information
           $ref: '#/components/schemas/Producer'
         transactionAmounts:
-          description: Quoted amounts including charges, taxes, and net payment
+          description: Details of financial amounts associated with the transaction.
           $ref: '#/components/schemas/TransactionAmountsFullRequest'
         payeeOrBeneficiary:
           description: The payeeOrBeneficiary object represents how the withdrawal proceeds are distributed and to whom. It includes payment form, allocation rules for each payee.
@@ -874,12 +893,12 @@ components:
           items:
             $ref: '#/components/schemas/PartyRequest'
         taxWithholdingInstructions:
-          description: List of tax withholding instruction entries
+          description: List of tax withholding instruction entries.
           type: array
           items:
             $ref: '#/components/schemas/TaxWithholdingInstruction'
         charges:
-          description: List of charges/deductions applied in the quote
+          description: List of charges (fees and deductions) applied to the transaction.
           type: array
           items:
             $ref: '#/components/schemas/Charges'
@@ -1030,7 +1049,7 @@ components:
 
     Producer:
       type: object
-      description: Information about the producer submitting the request
+      description: Licensed producer information
       required:
         - npn
       properties:
@@ -1039,7 +1058,7 @@ components:
           type: string
           maxLength: 100
         npn:
-          description: National Producer Number
+          description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
           type: string
           maxLength: 100
         crdNumber:
@@ -1081,7 +1100,7 @@ components:
 
     Charges:
       type: object
-      description: Details of fees and deductions requested to be applied
+      description: List of charges (fees and deductions) applied to the transaction.
       properties:
         chargeType:
           description: Carrier-defined or product-defined charge label (e.g., COSTOFINSURANCE, EXPENSECHARGE, UNITEXPENSECHARGE, RIDERCHARGE, SURRENDERCHARGE, WITHDRAWALCHARGE).
@@ -1222,7 +1241,7 @@ components:
           enum: [SINGLE, DOMESTICPARTNERSHIP, DEFAULT, MARRIED, HEADOFHOUSEHOLD, WIDOWED, DIVORCED]
         dollar:
           type: number
-          description: Fixed dollar amount to withhold
+          description: Fixed dollar amount to withhold. Mutually exclusive with percentage; provide one, not both.
           minimum: 0
           maximum: 9999999999.99
         percentage:
@@ -1274,7 +1293,7 @@ components:
           items:
             $ref: '#/components/schemas/ErrorItem'
         policyNumber:
-          description: Unique policy number
+          description: Policy number
           type: string
           minLength: 1
           maxLength: 30
@@ -1287,7 +1306,7 @@ components:
           minLength: 9
           maxLength: 9
           pattern: '^[0-9]{3}[A-Z0-9]{5}[0-9]$'
-          description: unique identification code. Optional; REQUIRED only when policyNumber is not globally unique.
+          description: CUSIP
         freeWithdrawalAmount:
           description: Carrier-reported free / surrender-free amount available as-of the effective date
           type: number
@@ -1314,10 +1333,10 @@ components:
           minimum: 0
           maximum: 9999999999.99
         transactionAmounts:
-          description: Quoted amounts including charges, taxes, and net payment
+          description: Details of financial amounts associated with the transaction.
           $ref: '#/components/schemas/TransactionAmountsFullSurrender'
         charges:
-          description: List of charges/deductions applied in the quote
+          description: List of charges (fees and deductions) applied to the transaction.
           type: array
           items:
             $ref: '#/components/schemas/Charge'
@@ -1374,7 +1393,7 @@ components:
           items:
             $ref: '#/components/schemas/ErrorItem'
         policyNumber:
-          description: Unique policy number
+          description: Policy number
           type: string
           minLength: 1
           maxLength: 30
@@ -1387,7 +1406,7 @@ components:
           minLength: 9
           maxLength: 9
           pattern: '^[0-9]{3}[A-Z0-9]{5}[0-9]$'
-          description: unique identification code. Optional; REQUIRED only when policyNumber is not globally unique.
+          description: CUSIP
         freeWithdrawalAmount:
           description: Carrier-reported free / surrender-free amount available as-of the effective date
           type: number
@@ -1414,10 +1433,10 @@ components:
           minimum: 0
           maximum: 9999999999.99
         transactionAmounts:
-          description: Quoted amounts including charges, taxes, and net payment
+          description: Details of financial amounts associated with the transaction.
           $ref: '#/components/schemas/TransactionAmountsPartials'
         charges:
-          description: List of charges/deductions applied in the quote
+          description: List of charges (fees and deductions) applied to the transaction.
           type: array
           items:
             $ref: '#/components/schemas/Charge'
@@ -1439,6 +1458,7 @@ components:
         taxQualification:
           $ref: '#/components/schemas/TaxQualification'
         rmdInfo:
+          description: RMD details specific to partial one-time withdrawals
           $ref: '#/components/schemas/RmdInfo'
       allOf:
         - if:
@@ -1652,7 +1672,7 @@ components:
       required: [taxWithholdingType, withholdAmount, taxId]
       properties:
         taxId:
-          description: Tax Identification Number for the party (individual or entity).
+          description: Tax Identification Number for the individual or entity
           type: string
           maxLength: 9
         taxWithholdingType:
@@ -1677,7 +1697,7 @@ components:
       required: [paymentForm, allocationPercentage, disbursementAmount, taxId]
       properties:
         taxId:  
-          description: Tax Identification Number for the party (individual or entity).
+          description: Tax Identification Number for the individual or entity
           type: string
           maxLength: 9
         paymentForm:
@@ -1764,7 +1784,7 @@ components:
       type: object
       properties:
         type:
-          description: Indicates whether the party is an individual or an entity.
+          description: Indicates whether the party is an individual or an entity
           type: string
           const: individual
         firstName:
@@ -1786,7 +1806,7 @@ components:
           maxLength: 105
           pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
         taxId:
-          description: Tax Identification Number for the party (individual or entity).
+          description: Tax Identification Number for the individual or entity
           type: string
           maxLength: 9
 
@@ -1810,7 +1830,7 @@ components:
       required: [type, name, taxId]
       properties:
         type:
-          description: Indicates whether the party is an individual or an entity.
+          description: Indicates whether the party is an individual or an entity
           type: string
           const: entity
         name:
@@ -1820,7 +1840,7 @@ components:
           maxLength: 100
           pattern: '^[\w=()*@#\s.,''\/~%$!;:&"®`\\?\-]{1,100}$'
         taxId:
-          description: Tax Identification Number for the party (individual or entity).
+          description: Tax Identification Number for the individual or entity
           type: string
           maxLength: 9
 
@@ -1843,7 +1863,7 @@ components:
           type: string
           format: date
         rmdRequestedAmount:
-          description: Portion of this withdrawal that should count toward rmd for rmdTaxYear.
+          description: The portion of this withdrawal that should count toward RMD for rmdTaxYear. In many cases this will match transactionAmounts.requestedAmount when the entire withdrawal is intended to satisfy RMD.
           type: number
           minimum: 0
           maximum: 9999999999.99
@@ -1925,5 +1945,5 @@ components:
                 description: Code to classify the error & Identifies the type of business rule or decision failure.
               message:
                 type: string
-                description: Why the error occurred / Specific business rule violation
+                description: Message with specific error details.
       required: [code, message]
