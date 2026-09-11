@@ -8,11 +8,12 @@
  */
 
 import SwaggerParser from '@apidevtools/swagger-parser';
+import { preprocessSourceSpecToFile } from './preprocess-source-spec.js';
+import { describeSharedSpecsBase } from './shared-ref-base.js';
 import {
   listPublishedSpecFiles,
   listSourceSpecFiles,
   publishedSpecPath,
-  sourceSpecPath,
   SPECS_ROOT,
   SPECS_SRC_DIR
 } from './spec-paths.js';
@@ -44,8 +45,9 @@ async function validateSpecs(): Promise<void> {
 
   if (sourceFiles.length > 0) {
     console.log(`Validating source specs in ${SPECS_SRC_DIR}:`);
+    console.log(`Using SHARED_SPECS_BASE: ${describeSharedSpecsBase()}\n`);
     for (const specFile of sourceFiles) {
-      const ok = await validateFile(`src/${specFile}`, sourceSpecPath(specFile));
+      const ok = await validateFile(`src/${specFile}`, preprocessSourceSpecToFile(specFile));
       if (!ok) {
         failures.push(`src/${specFile}`);
       }

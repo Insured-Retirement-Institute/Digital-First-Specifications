@@ -10,12 +10,12 @@
 
 import SwaggerParser from '@apidevtools/swagger-parser';
 import * as fs from 'fs';
-import * as path from 'path';
 import { stringify } from 'yaml';
+import { preprocessSourceSpecToFile } from './preprocess-source-spec.js';
+import { describeSharedSpecsBase } from './shared-ref-base.js';
 import {
   listSourceSpecFiles,
   publishedSpecPath,
-  sourceSpecPath,
   SPECS_SRC_DIR
 } from './spec-paths.js';
 
@@ -27,11 +27,13 @@ async function bundleSpecs(): Promise<void> {
     return;
   }
 
+  console.log(`Using SHARED_SPECS_BASE: ${describeSharedSpecsBase()}\n`);
+
   for (const specFile of sourceFiles) {
-    const inputPath = sourceSpecPath(specFile);
     const outputPath = publishedSpecPath(specFile);
 
     try {
+      const inputPath = preprocessSourceSpecToFile(specFile);
       const bundled = await SwaggerParser.bundle(inputPath);
       const yaml = stringify(bundled, {
         lineWidth: 0,

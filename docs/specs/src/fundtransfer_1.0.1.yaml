@@ -167,15 +167,15 @@ paths:
 components:
   headers:
     correlationId:
-      $ref: '../shared/correlation-id.yaml#/components/headers/correlationId'
+      $ref: '${SHARED_SPECS_BASE}/correlation-id.yaml#/components/headers/correlationId'
 
   parameters:
     PolicyNumber:
-      $ref: '../shared/common-parameters.yaml#/components/parameters/PolicyNumber'
+      $ref: '${SHARED_SPECS_BASE}/common-parameters.yaml#/components/parameters/PolicyNumber'
     CorrelationIdHeader:
-      $ref: '../shared/correlation-id.yaml#/components/parameters/CorrelationIdHeader'
+      $ref: '${SHARED_SPECS_BASE}/correlation-id.yaml#/components/parameters/CorrelationIdHeader'
     AssociatedFirmId:
-      $ref: '../shared/common-parameters.yaml#/components/parameters/AssociatedFirmId'
+      $ref: '${SHARED_SPECS_BASE}/common-parameters.yaml#/components/parameters/AssociatedFirmId'
 
   responses:
     FundTransferSuccess:
@@ -195,11 +195,11 @@ components:
             $ref: '#/components/schemas/FundTransferResponse'
 
     BadRequestError:
-      $ref: '../shared/error-responses.yaml#/components/responses/BadRequestError'
+      $ref: '${SHARED_SPECS_BASE}/error-responses.yaml#/components/responses/BadRequestError'
     UnauthorizedError:
-      $ref: '../shared/error-responses.yaml#/components/responses/UnauthorizedError'
+      $ref: '${SHARED_SPECS_BASE}/error-responses.yaml#/components/responses/UnauthorizedError'
     ForbiddenError:
-      $ref: '../shared/error-responses.yaml#/components/responses/ForbiddenError'
+      $ref: '${SHARED_SPECS_BASE}/error-responses.yaml#/components/responses/ForbiddenError'
     NotFoundError:
       description: Not Found — the referenced policy or fund transfer request does not exist.
       headers:
@@ -210,15 +210,15 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
     MethodNotAllowedError:
-      $ref: '../shared/error-responses.yaml#/components/responses/MethodNotAllowedError'
+      $ref: '${SHARED_SPECS_BASE}/error-responses.yaml#/components/responses/MethodNotAllowedError'
     NotAcceptableError:
-      $ref: '../shared/error-responses.yaml#/components/responses/NotAcceptableError'
+      $ref: '${SHARED_SPECS_BASE}/error-responses.yaml#/components/responses/NotAcceptableError'
     ConflictError:
-      $ref: '../shared/error-responses.yaml#/components/responses/ConflictError'
+      $ref: '${SHARED_SPECS_BASE}/error-responses.yaml#/components/responses/ConflictError'
     PayloadTooLargeError:
-      $ref: '../shared/error-responses.yaml#/components/responses/PayloadTooLargeError'
+      $ref: '${SHARED_SPECS_BASE}/error-responses.yaml#/components/responses/PayloadTooLargeError'
     UnsupportedMediaTypeError:
-      $ref: '../shared/error-responses.yaml#/components/responses/UnsupportedMediaTypeError'
+      $ref: '${SHARED_SPECS_BASE}/error-responses.yaml#/components/responses/UnsupportedMediaTypeError'
     UnprocessableEntityError:
       description: >
         Unprocessable Entity — the request is well-formed but fails business
@@ -232,19 +232,19 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
     TooManyRequestsError:
-      $ref: '../shared/error-responses.yaml#/components/responses/TooManyRequestsError'
+      $ref: '${SHARED_SPECS_BASE}/error-responses.yaml#/components/responses/TooManyRequestsError'
     InternalServerError:
-      $ref: '../shared/error-responses.yaml#/components/responses/InternalServerError'
+      $ref: '${SHARED_SPECS_BASE}/error-responses.yaml#/components/responses/InternalServerError'
     BadGatewayError:
-      $ref: '../shared/error-responses.yaml#/components/responses/BadGatewayError'
+      $ref: '${SHARED_SPECS_BASE}/error-responses.yaml#/components/responses/BadGatewayError'
     ServiceUnavailableError:
-      $ref: '../shared/error-responses.yaml#/components/responses/ServiceUnavailableError'
+      $ref: '${SHARED_SPECS_BASE}/error-responses.yaml#/components/responses/ServiceUnavailableError'
     GatewayTimeoutError:
-      $ref: '../shared/error-responses.yaml#/components/responses/GatewayTimeoutError'
+      $ref: '${SHARED_SPECS_BASE}/error-responses.yaml#/components/responses/GatewayTimeoutError'
 
   schemas:
     Error:
-      $ref: '../shared/error-schema.yaml#/components/schemas/Error'
+      $ref: '${SHARED_SPECS_BASE}/error-schema.yaml#/components/schemas/Error'
     FundTransferRequest:
       type: object
       description: >
@@ -766,7 +766,7 @@ components:
       description: Schema for individual party data.
       type: object
       allOf:
-        - $ref: '../shared/party-schemas.yaml#/components/schemas/IndividualIdentity'
+        - $ref: '${SHARED_SPECS_BASE}/party-schemas.yaml#/components/schemas/IndividualIdentity'
         - $ref: '#/components/schemas/PartyRelationship'
 
     EntityParty:

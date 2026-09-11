@@ -364,7 +364,7 @@ components:
       type: object
       required: [relationships]
       allOf:
-        - $ref: "../shared/party-schemas.yaml#/components/schemas/IndividualIdentity"
+        - $ref: "${SHARED_SPECS_BASE}/party-schemas.yaml#/components/schemas/IndividualIdentity"
         - type: object
           properties:
             npn:
@@ -396,7 +396,7 @@ components:
       description: Schema for individual party data
       type: object
       allOf:
-        - $ref: "../shared/party-schemas.yaml#/components/schemas/IndividualIdentity"
+        - $ref: "${SHARED_SPECS_BASE}/party-schemas.yaml#/components/schemas/IndividualIdentity"
         - $ref: "#/components/schemas/PartyRelationship"
     EntityIdentity:
       description: Schema for entity identity data
