@@ -1,0 +1,44 @@
+# Modified by Cursor: standard Digital-First error schema (see README Standard Error Schema)
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        httpStatus:
+          type: integer
+          description: HTTP status code associated with this error
+          minimum: 400
+          maximum: 599
+        code:
+          type: string
+          description: >
+            A structured error code that uniquely identifies the type of error. This can follow a hierarchical format:
+            - `<domain>`: The logical domain (e.g., "gateway")
+            - `<category>`: The error category (e.g., "client" or "server")
+            - `<subcategory>`: A specific error identifier (e.g., "badrequest", "timeout")
+        timestamp:
+          type: string
+          format: date-time
+          description: Create or Update timestamp of transaction event
+        message:
+          type: string
+          description: Message with specific error details.
+        validationErrors:
+          type: array
+          description: Logical rule violations or decision failures related to business logic or rules
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                description: >
+                  A structured error code that uniquely identifies the type of error. This can follow a hierarchical format:
+                  - `<domain>`: The logical domain (e.g., "gateway")
+                  - `<category>`: The error category (e.g., "client" or "server")
+                  - `<subcategory>`: A specific error identifier (e.g., "badrequest", "timeout")
+              message:
+                type: string
+                description: Message with specific error details.

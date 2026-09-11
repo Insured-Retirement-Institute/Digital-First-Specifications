@@ -7,6 +7,7 @@ This document explains how to manage multiple API documentation pages using GitH
 - [Directory Structure](#directory-structure)
 - [How the Site Works](#how-the-site-works)
 - [Adding New API Documentation](#adding-new-api-documentation)
+- [Shared components and bundling](#shared-components-and-bundling)
 - [Adding Versioned API Documentation](#adding-versioned-api-documentation)
 - [Validating Specifications](#validating-specifications)
 - [Publishing to GitHub Pages](#publishing-to-github-pages)
@@ -29,9 +30,11 @@ docs/
 ├── css/
 │   └── custom.css       # Custom styling
 ├── specs/
-│   ├── appstatusv1.yaml
+│   ├── shared/          # Reusable OpenAPI component fragments ($ref targets)
+│   ├── src/             # Modular source specs (edit these when using shared components)
+│   ├── appstatusv1.yaml # Published specs (Swagger UI loads these paths)
 │   ├── appstatusv2.yaml
-│   └── ...              # All OpenAPI specification files
+│   └── ...              # Bundled or standalone OpenAPI files
 └── favicon.png          # Site favicon
 ```
 
@@ -105,6 +108,72 @@ const apiDefinitions = {
 
 5. Ideally, validate the new spec before opening a pull request — see [Validating Specifications](#validating-specifications).  If this is not possible, verify the validation passes in the pull request (visible at the bottom of the _Conversation_ tab in the pull request)
 
+## Shared components and bundling
+
+Several specs define the same objects (for example the standard `Error` schema, `correlationId` header, and party identity schemas). Maintain those once under `docs/specs/shared/` and reference them from modular sources in `docs/specs/src/`.
+
+### Portable `$ref`s with `SHARED_SPECS_BASE`
+
+Source specs use a **placeholder** so the same file works in this repo and in working-group repos that copy specs in before merge:
+
+```yaml
+components:
+  schemas:
+    Error:
+      $ref: '${SHARED_SPECS_BASE}/error-schema.yaml#/components/schemas/Error'
+```
+
+| Environment | `SHARED_SPECS_BASE` | Resolves to |
+|-------------|---------------------|-------------|
+| **This repo (default)** | *(unset)* | Local `docs/specs/shared/` |
+| **Working-group repo** | `https://specs.dfa.irionline.org/specs/shared` | Published shared fragments |
+| **Pinned to a branch/tag** | `https://raw.githubusercontent.com/…/main/docs/specs/shared` | Exact Git revision |
+
+Set the variable in your shell, CI, or a local `.env` (not committed):
+
+```bash
+export SHARED_SPECS_BASE=https://specs.dfa.irionline.org/specs/shared
+npm run validate:specs
+```
+
+Bundling and validation expand `${SHARED_SPECS_BASE}` before OpenAPI parsing, then write preprocessed copies under `docs/specs/src/.build/` (gitignored). This repo does **not** need the variable in CI — the default local path is used automatically.
+
+Working-group repos can copy `docs/specs/src/<spec>.yaml` plus the `scripts/` helpers (`shared-ref-base.ts`, `preprocess-source-spec.ts`, `spec-paths.ts`, `bundle-specs.ts`, `validate-specs.ts`) and either:
+
+- **Reference the published URL** (no local `shared/` copy), or
+- **Copy `docs/specs/shared/`** as well and leave `SHARED_SPECS_BASE` unset.
+
+### Authoring workflow
+
+1. Add or update reusable fragments in `docs/specs/shared/`.
+2. Reference them from `docs/specs/src/<spec-name>.yaml` using `${SHARED_SPECS_BASE}/…` (see `fundtransfer_1.0.1.yaml` or `appstatusv4.yaml`).
+3. Bundle into the published single-file spec:
+
+```bash
+npm run bundle:specs
+```
+
+4. Validate and build:
+
+```bash
+npm run validate:specs
+npm run build:dictionary
+```
+
+Specs not yet under `docs/specs/src/` remain standalone YAML files in `docs/specs/` and work unchanged. CI runs `bundle:specs` before validate/build.
+
+**Shared fragments currently available**
+
+| File | Contents |
+|------|----------|
+| `shared/error-schema.yaml` | Standard `Error` schema |
+| `shared/error-responses.yaml` | Standard HTTP 4xx/5xx response objects |
+| `shared/correlation-id.yaml` | `correlationId` response header and request parameter |
+| `shared/common-parameters.yaml` | `PolicyNumber`, `AssociatedFirmId` |
+| `shared/party-schemas.yaml` | Shared party identity schemas |
+
+Cross-references **within** `docs/specs/shared/` use relative paths (e.g. `./correlation-id.yaml`). Those resolve correctly when fragments are served from `https://specs.dfa.irionline.org/specs/shared/`.
+
 ## Adding Versioned API Documentation
 
 To add a new version of an existing API:
@@ -150,9 +219,10 @@ CI runs these on Node.js 20; any recent Node version works locally. Install depe
 
 ```bash
 npm ci
+npm run bundle:specs
 ```
 
-Validate every spec in `docs/specs/` against the OpenAPI 3.1 schema:
+Validate modular sources in `docs/specs/src/` and published specs in `docs/specs/` against the OpenAPI 3.1 schema:
 
 ```bash
 npm run validate:specs
@@ -174,8 +244,8 @@ The **PR Checks** workflow reports two independent checks on every pull request 
 
 | Check | What it does |
 |-------|--------------|
-| `Validate OpenAPI specs` | Runs `npm run validate:specs`. |
-| `Build data dictionary` | Runs `npm run build:dictionary`, then packages `docs/` exactly as the publish workflow does. Attaches the built site to the workflow run as a downloadable `data-dictionary-preview` artifact, so you can inspect the generated dictionary before approving the merge. |
+| `Validate OpenAPI specs` | Runs `npm run bundle:specs`, then `npm run validate:specs`. |
+| `Build data dictionary` | Runs `npm run bundle:specs`, then `npm run build:dictionary`, then packages `docs/` exactly as the publish workflow does. Attaches the built site to the workflow run as a downloadable `data-dictionary-preview` artifact, so you can inspect the generated dictionary before approving the merge. |
 
 The build check shares its Node setup and build command with the publish workflow, so a passing build on the pull request means the same build will behave identically when merged to `main`. Schema validation runs only on pull requests — it is intended to gate merges, not to block publication of specs that are already approved.
 

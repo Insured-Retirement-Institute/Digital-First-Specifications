@@ -34,6 +34,9 @@ jobs:
       - name: Setup Node and dependencies
         uses: ./.github/actions/setup-node-deps
 
+      - name: Bundle modular specs
+        run: npm run bundle:specs
+
       - name: Validate specs
         run: npm run validate:specs
 
@@ -46,6 +49,9 @@ jobs:
 
       - name: Setup Node and dependencies
         uses: ./.github/actions/setup-node-deps
+
+      - name: Bundle modular specs
+        run: npm run bundle:specs
 
       - name: Build data dictionary
         run: npm run build:dictionary

@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "description": "IRI Style Guide with Data Dictionary Generator",
   "type": "module",
-  "//": "Modified by Cursor: added local debugging scripts (2026-02-09)",
+  "//": "Modified by Cursor: added spec bundling and shared-component workflow (2026-08-25)",
   "scripts": {
+    "bundle:specs": "tsx scripts/bundle-specs.ts",
     "build:dictionary": "tsx scripts/generate-dictionary.ts",
     "validate:specs": "tsx scripts/validate-specs.ts",
     "debug:dictionary": "node --inspect-brk --enable-source-maps --import tsx scripts/generate-dictionary.ts",
     "debug": "npm run debug:dictionary",
-    "build": "npm run build:dictionary"
+    "build": "npm run bundle:specs && npm run build:dictionary"
   },
   "keywords": [
     "openapi",
@@ -22,6 +23,7 @@
     "@types/node": "^20.10.0",
     "tsx": "^4.7.0",
     "typescript": "^5.3.0",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "yaml": "^2.7.0"
   }
 }
