@@ -20,9 +20,10 @@ Field naming
 - **Booleans**: Should be prefixed with is or has.
 - **Lists/Arrays**: Use plural nouns to represent the array itself and singular nouns to represent the elements within the array.
 - **Descriptions**: Descriptions for fields, parameters, and endpoints should be reviewed against existing specifications and reuse consistent terminology and phrasing rather than introducing new wording for concepts that are already defined elsewhere.
+- **Casing**: Field names must use camelCase. String enum values must also use camelCase.
 
 Type Definitions
-- **Enumerations**: Enum definitions should be closed. Avoid keeping enums open using catch-all enum values such as 'Other' and 'Unknown'. If an open enum value is required, a descriptor field must be added.
+- **Enumerations**: Enum definitions should be closed. Avoid keeping enums open using catch-all enum values such as 'Other' and 'Unknown'. If an open enum value is required, a description field must be added on the enumerated type explaining usage of catch-all value.
 
 Custom headers
 - **_correlationId_**: Optional custom header to be returned to the caller in response payload
