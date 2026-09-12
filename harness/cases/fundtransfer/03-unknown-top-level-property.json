@@ -1,0 +1,13 @@
+{
+  "$case": {
+    "name": "03 Unknown property at the top level",
+    "note": "WHY WE WANT STRICTNESS. `memo` is not in the spec. Baseline accepts it silently - a carrier could be dropping a field the distributor believes it sent. Both additionalProperties:false and unevaluatedProperties:false catch it, because FundTransferRequest's own properties are direct siblings."
+  },
+  "effectiveDate": "2026-10-01",
+  "memo": "please rush this one",
+  "transactionAmounts": { "amountType": "SPECIFIED_AMOUNT", "requestedAmount": 5000 },
+  "funds": {
+    "transferFromFunds": [ { "fundId": "FUND-A", "fundSegments": [ { "segmentId": "SEG-A1", "requestedAmount": 5000 } ] } ],
+    "transferToFunds": [ { "fundId": "FUND-B", "fundSegments": [ { "segmentId": "SEG-B1", "requestedAmount": 5000 } ] } ]
+  }
+}

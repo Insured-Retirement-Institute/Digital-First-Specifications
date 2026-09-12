@@ -1,0 +1,52 @@
+{
+  "$case": {
+    "name": "02 Valid, with an individual party (allOf + oneOf)",
+    "note": "THE HEADLINE CASE. This body is 100% legal against the spec as written. `Party` declares properties {type, paymentForm, allocationPercentage} AND a oneOf pointing at IndividualParty, which is itself allOf[IndividualIdentity, PartyRelationship]. additionalProperties:false only ever looks at properties declared as its own siblings, so it rejects firstName/lastName/taxId/relationships - valid data, rejected. unevaluatedProperties:false looks at what the whole composition evaluated, so it accepts."
+  },
+  "effectiveDate": "2026-10-01",
+  "transactionAmounts": {
+    "amountType": "SPECIFIED_AMOUNT",
+    "requestedAmount": 5000
+  },
+  "funds": {
+    "transferFromFunds": [
+      {
+        "fundId": "FUND-A",
+        "fundSegments": [
+          {
+            "segmentId": "SEG-A1",
+            "requestedAmount": 5000
+          }
+        ]
+      }
+    ],
+    "transferToFunds": [
+      {
+        "fundId": "FUND-B",
+        "fundSegments": [
+          {
+            "segmentId": "SEG-B1",
+            "requestedAmount": 5000
+          }
+        ]
+      }
+    ]
+  },
+  "producer": {
+    "producerNumber": "P-00123",
+    "npn": "8675309"
+  },
+  "parties": [
+    {
+      "type": "individual",
+      "firstName": "Jane",
+      "lastName": "Doe",
+      "taxId": "123456789",
+      "relationships": [
+        "owner"
+      ],
+      "allocationPercentage": 100,
+      "paymentForm": "ACH"
+    }
+  ]
+}

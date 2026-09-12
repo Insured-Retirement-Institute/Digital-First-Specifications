@@ -1,0 +1,12 @@
+{
+  "$case": {
+    "name": "04 Typo in a nested segment amount (requestedAmt)",
+    "note": "THE EXPENSIVE ONE. The source segment says `requestedAmt` instead of `requestedAmount`. Baseline PASSES: FundSegment's oneOf has a branch for 'neither amount nor percentage' (the FULL_REBALANCE source case), so the typo'd field is ignored and the segment matches that branch. The dollar amount silently disappears. Strictness catches it."
+  },
+  "effectiveDate": "2026-10-01",
+  "transactionAmounts": { "amountType": "SPECIFIED_AMOUNT", "requestedAmount": 5000 },
+  "funds": {
+    "transferFromFunds": [ { "fundId": "FUND-A", "fundSegments": [ { "segmentId": "SEG-A1", "requestedAmt": 5000 } ] } ],
+    "transferToFunds": [ { "fundId": "FUND-B", "fundSegments": [ { "segmentId": "SEG-B1", "requestedAmount": 5000 } ] } ]
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "$case": {
+    "name": "07 Valid entity party (other oneOf branch)",
+    "note": "Same composition shape via the EntityParty branch. Useful for showing that unevaluatedProperties resolves against WHICHEVER oneOf branch matched, not against a union of all branches - send an entity `name` on an individual party and it is still rejected."
+  },
+  "effectiveDate": "2026-10-01",
+  "transactionAmounts": {
+    "amountType": "PERCENT_OF_CONTRACT_VALUE",
+    "requestedPercentage": 25
+  },
+  "funds": {
+    "transferFromFunds": [
+      {
+        "fundId": "FUND-A",
+        "fundSegments": [
+          {
+            "segmentId": "SEG-A1",
+            "requestedPercentage": 25
+          }
+        ]
+      }
+    ],
+    "transferToFunds": [
+      {
+        "fundId": "FUND-B",
+        "fundSegments": [
+          {
+            "segmentId": "SEG-B1",
+            "requestedPercentage": 25
+          }
+        ]
+      }
+    ]
+  },
+  "parties": [
+    {
+      "type": "entity",
+      "name": "Acme Trust",
+      "taxId": "987654321",
+      "relationships": [
+        "owner"
+      ],
+      "paymentForm": "ACH",
+      "allocationPercentage": 100
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "$case": {
+    "name": "05 Unknown property inside a composed party",
+    "note": "`nickname` is not declared anywhere in Party, IndividualIdentity or PartyRelationship. Baseline accepts it. unevaluatedProperties:false at the Party level catches it WITHOUT breaking the legitimate firstName/lastName/relationships - that is the behaviour people assume additionalProperties has."
+  },
+  "effectiveDate": "2026-10-01",
+  "transactionAmounts": {
+    "amountType": "SPECIFIED_AMOUNT",
+    "requestedAmount": 5000
+  },
+  "funds": {
+    "transferFromFunds": [
+      {
+        "fundId": "FUND-A",
+        "fundSegments": [
+          {
+            "segmentId": "SEG-A1",
+            "requestedAmount": 5000
+          }
+        ]
+      }
+    ],
+    "transferToFunds": [
+      {
+        "fundId": "FUND-B",
+        "fundSegments": [
+          {
+            "segmentId": "SEG-B1",
+            "requestedAmount": 5000
+          }
+        ]
+      }
+    ]
+  },
+  "parties": [
+    {
+      "type": "individual",
+      "firstName": "Jane",
+      "lastName": "Doe",
+      "taxId": "123456789",
+      "nickname": "Janie",
+      "relationships": [
+        "owner"
+      ],
+      "paymentForm": "ACH",
+      "allocationPercentage": 100
+    }
+  ]
+}

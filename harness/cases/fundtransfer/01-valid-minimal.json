@@ -1,0 +1,19 @@
+{
+  "$case": {
+    "name": "01 Valid, minimal (no composition)",
+    "note": "Only the required fields. Every property is declared as a direct sibling `properties` entry on FundTransferRequest / TransactionAmounts / FundTransferFunds, so additionalProperties and unevaluatedProperties behave identically here. This is the 'flat schema' case where people's intuition is correct."
+  },
+  "effectiveDate": "2026-10-01",
+  "transactionAmounts": {
+    "amountType": "SPECIFIED_AMOUNT",
+    "requestedAmount": 5000
+  },
+  "funds": {
+    "transferFromFunds": [
+      { "fundId": "FUND-A", "fundSegments": [ { "segmentId": "SEG-A1", "requestedAmount": 5000 } ] }
+    ],
+    "transferToFunds": [
+      { "fundId": "FUND-B", "fundSegments": [ { "segmentId": "SEG-B1", "requestedAmount": 5000 } ] }
+    ]
+  }
+}

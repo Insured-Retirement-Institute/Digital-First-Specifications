@@ -1,0 +1,49 @@
+{
+  "$case": {
+    "name": "08 Entity field sent on an individual party",
+    "note": "type=individual but the body also carries the entity-only `name`. Baseline: the oneOf still matches IndividualParty (extra fields ignored) AND fails EntityParty, so it PASSES. unevaluatedProperties:false rejects it, because `name` was never evaluated by the branch that matched. This is the cross-branch leakage case."
+  },
+  "effectiveDate": "2026-10-01",
+  "transactionAmounts": {
+    "amountType": "SPECIFIED_AMOUNT",
+    "requestedAmount": 5000
+  },
+  "funds": {
+    "transferFromFunds": [
+      {
+        "fundId": "FUND-A",
+        "fundSegments": [
+          {
+            "segmentId": "SEG-A1",
+            "requestedAmount": 5000
+          }
+        ]
+      }
+    ],
+    "transferToFunds": [
+      {
+        "fundId": "FUND-B",
+        "fundSegments": [
+          {
+            "segmentId": "SEG-B1",
+            "requestedAmount": 5000
+          }
+        ]
+      }
+    ]
+  },
+  "parties": [
+    {
+      "type": "individual",
+      "firstName": "Jane",
+      "lastName": "Doe",
+      "name": "Acme Trust",
+      "taxId": "123456789",
+      "relationships": [
+        "owner"
+      ],
+      "paymentForm": "ACH",
+      "allocationPercentage": 100
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "$case": {
+    "name": "06 Valid FULL_REBALANCE (exercises if/then)",
+    "note": "FundTransferRequest carries an allOf[if/then] that adds rules when amountType is FULL_REBALANCE. Note that the if/then adds CONSTRAINTS, not new properties, so neither keyword changes the outcome here. Contrast with a spec where if/then introduces conditional properties - there, additionalProperties:false would reject them and unevaluatedProperties:false would not."
+  },
+  "effectiveDate": "2026-10-01",
+  "allocationOption": "PRO_RATA",
+  "transactionAmounts": { "amountType": "FULL_REBALANCE" },
+  "funds": {
+    "transferFromFunds": [ { "fundId": "FUND-A", "fundSegments": [ { "segmentId": "SEG-A1" } ] } ],
+    "transferToFunds": [ { "fundId": "FUND-B", "fundSegments": [ { "segmentId": "SEG-B1", "requestedPercentage": 100 } ] } ]
+  }
+}
