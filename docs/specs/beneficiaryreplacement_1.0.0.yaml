@@ -39,7 +39,6 @@ servers:
     variables:
       host:
         default: partner.example.com
-        description: Receiving participant's host name, agreed during onboarding.
 paths:
   /v1/accounts/beneficiary/events:
     post:
