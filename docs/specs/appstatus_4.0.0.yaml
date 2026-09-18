@@ -1209,6 +1209,21 @@ components:
       type: object
       required: [policyNumber, applicationOrigin, cusip, status, statusDate]
       properties:
+        isActionNeeded:
+          description: Indicator that at least one section requires action
+          type: boolean
+        actionSections:
+          description: Sections that require action. Required, and must contain at least one section, if isActionNeeded is true.
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            type: string
+            enum:
+            - suitability
+            - canSellValidation
+            - documentReview
+            - funding
         policyNumber:
           description: Policy number
           type: string
@@ -1373,6 +1388,16 @@ components:
               format: date
             reason:
               description: Reason for the cancellation
+              type: string
+              enum:     
+              - clientRequest
+              - duplicate
+              - policyCannotBeVerified
+              - addedInError
+              - suitabilityDecline
+              - notInGoodOrder
+            notes:
+              description: Additional notes regarding the cancellation
               type: string
               minLength: 1
               maxLength: 2000
