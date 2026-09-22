@@ -1,9 +1,10 @@
+# Modified by Cursor: validated and corrected examples and OpenAPI 3.1 schema compatibility
 openapi: 3.1.0
 
 info:
   title: Annuity Application Status Push Notifications
   description: Webhooks for notifying about changes in annuity application status
-  version: 1.1.0
+  version: 2.0.0
   license:
     name: MIT
     url: https://github.com/Insured-Retirement-Institute/Pending-Case/blob/main/LICENSE
@@ -164,7 +165,8 @@ paths:
                     notification:
                       initiator: client
                       cancelledDate: "2026-06-18"
-                      reason: Client elected to pursue alternative product
+                      reason: clientRequest
+                      notes: Client elected to pursue alternative product
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
@@ -206,7 +208,8 @@ webhooks:
             schema:
               $ref: '#/components/schemas/ApplicationReceivedNotification'
             examples:
-              example1:
+              applicationReceivedExample:
+                summary: New application received with policy number assigned
                 value:
                   eventId: evt-550e8400-e29b-41d4-a716-446655440001
                   policyNumber: P987654321
@@ -244,105 +247,57 @@ webhooks:
                           - owner
                           - annuitant
                       - type: entity
-                        name: Smith & Associates
-                        npn: "1234567890"
+                        name: Smith Family Trust
+                        taxId: "987654321"
                         relationships:
                           - primaryBeneficiary
                     signedDate: "2026-06-01"
                     receivedDate: "2026-06-02"
                     rateEffectiveDate: "2026-06-02"
-              example2:
+              entityPartyExample:
+                summary: Entity-owned application, showing the entity party and producer shape
+                description: >-
+                  Entity producers and parties are identified by a single `name`
+                  property, not by `firstName`/`middleName`/`lastName`. Only
+                  parties with `type: individual` carry name-part properties.
                 value:
-                  applicationReceivedExample:
-                    summary: New application received with policy number assigned
-                    value:
-                      eventId: evt-550e8400-e29b-41d4-a716-446655440001
-                      policyNumber: P987654321
-                      id: APP-2026-001234
-                      applicationOrigin:
-                        platform: DigitalFirst
-                        isElectronic: true
-                        id: DF-APP-001234
-                      status: received
-                      eventType: applicationStatus.v1.applicationReceived
-                      notification:
-                        cusip: "401B23458"
-                        isActionNeeded: false
-                        productName: Secure Income Annuity Plus
-                        isQualified: true
-                        producers:
-                          - type: individual
-                            firstName: Jane
-                            lastName: Smith
-                            npn: "1234567890"
-                            relationships:
-                              - primaryAgent
-                            commissionSplitPercent: 100
-                          - type: entity
-                            name: Smith & Associates
-                            npn: "1234567890"
-                            relationships:
-                              - brokerDealer
-                            commissionSplitPercent: 100
-                        parties:
-                          - type: individual
-                            firstName: John
-                            lastName: Doe
-                            relationships:
-                              - owner
-                              - annuitant
-                          - type: entity
-                            name: Smith & Associates
-                            npn: "1234567890"
-                            relationships:
-                              - primaryBeneficiary
-                        signedDate: "2026-06-01"
-                        receivedDate: "2026-06-02"
-                        rateEffectiveDate: "2026-06-02"
-                  entityPartyExample:
-                    summary: Entity-owned application, showing the entity party and producer shape
-                    description: >-
-                      Entity producers and parties are identified by a single `name`
-                      property, not by `firstName`/`middleName`/`lastName`. Only
-                      parties with `type: individual` carry name-part properties.
-                    value:
-                      eventId: evt-550e8400-e29b-41d4-a716-446655440014
-                      policyNumber: P987654322
-                      id: APP-2026-001235
-                      applicationOrigin:
-                        platform: DigitalFirst
-                        isElectronic: true
-                        id: DF-APP-001235
-                      status: received
-                      eventType: applicationStatus.v1.applicationReceived
-                      notification:
-                        cusip: "401B23458"
-                        isActionNeeded: false
-                        productName: Secure Income Annuity Plus
-                        isQualified: false
-                        producers:
-                          - type: entity
-                            name: Northstar Brokerage General Agency
-                            npn: "9876543210"
-                            crdNumber: "1122334"
-                            relationships:
-                              - brokerageGeneralAgency
-                            commissionSplitPercent: 100
-                        parties:
-                          - type: entity
-                            name: Doe Family Revocable Trust
-                            taxId: "987654321"
-                            relationships:
-                              - owner
-                          - type: individual
-                            firstName: John
-                            middleName: Quincy
-                            lastName: Doe
-                            relationships:
-                              - annuitant
-                        signedDate: "2026-06-01"
-                        receivedDate: "2026-06-02"
-                        rateEffectiveDate: "2026-06-02"
+                  eventId: evt-550e8400-e29b-41d4-a716-446655440014
+                  policyNumber: P987654322
+                  id: APP-2026-001235
+                  applicationOrigin:
+                    platform: DigitalFirst
+                    isElectronic: true
+                    id: DF-APP-001235
+                  status: received
+                  eventType: applicationStatus.v1.applicationReceived
+                  notification:
+                    cusip: "401B23458"
+                    isActionNeeded: false
+                    productName: Secure Income Annuity Plus
+                    isQualified: false
+                    producers:
+                      - type: entity
+                        name: Northstar Brokerage General Agency
+                        npn: "9876543210"
+                        crdNumber: "1122334"
+                        relationships:
+                          - brokerageGeneralAgency
+                        commissionSplitPercent: 100
+                    parties:
+                      - type: entity
+                        name: Doe Family Revocable Trust
+                        taxId: "987654321"
+                        relationships:
+                          - owner
+                      - type: individual
+                        firstName: John
+                        middleName: Quincy
+                        lastName: Doe
+                        relationships:
+                          - annuitant
+                    signedDate: "2026-06-01"
+                    receivedDate: "2026-06-02"
+                    rateEffectiveDate: "2026-06-02"
       responses:
         "200":
           description: Notification received successfully
@@ -1097,7 +1052,8 @@ webhooks:
                   notification:
                     initiator: client
                     cancelledDate: "2026-06-18"
-                    reason: Client elected to pursue alternative product
+                    reason: clientRequest
+                    notes: Client elected to pursue alternative product
               applicationCancelledExample2:
                 summary: Application cancelled by client request
                 value:
@@ -1111,9 +1067,10 @@ webhooks:
                   status: cancelled
                   eventType: applicationStatus.v1.applicationCancelled
                   notification:
-                    initiator: client
+                    initiator: producer
                     cancelledDate: "2026-06-18"
-                    reason: Client elected to pursue alternative product
+                    reason: clientRequest
+                    notes: Client elected to pursue alternative product
       responses:
         "200":
           description: Notification received successfully
@@ -1231,7 +1188,7 @@ components:
 
     ApplicationReceivedNotification:
       description: Schema for application received notification data
-      required: [cusip,eventType,notification]
+      required: [eventType, notification]
       allOf:
         - $ref: '#/components/schemas/notificationMetadata'
         - type: object
@@ -1287,11 +1244,13 @@ components:
                   type: string
                   format: date
               if:
+                properties:
                   isActionNeeded:
                     const: true
-                  required: [isActionNeeded]
+                required: [isActionNeeded]
               then:
-                required: [actionSections]      
+                required: [actionSections]
+              else: true
     CanSellNotification:
       description: Schema for can sell notification data
       required: [eventType, notification]
@@ -1338,7 +1297,7 @@ components:
               const: applicationStatus.v1.suitabilityApproved
             notification:
               description: Notification
-              required: [status, endDate, isApproved, notification]
+              required: [status, endDate, isApproved]
               allOf:
                 - $ref: '#/components/schemas/Suitability'
               properties:
@@ -1571,11 +1530,15 @@ components:
                   type: string  
                   enum:     
                     - clientRequest
+                    - ageOut
                     - duplicate
                     - policyCannotBeVerified
                     - addedInError
                     - suitabilityDecline
                     - notInGoodOrder
+                    - notTaken
+                    - productTraining
+                    - reg60Decline
                 notes:
                   description: Additional notes regarding the cancellation
                   type: string
@@ -1613,8 +1576,8 @@ components:
             type: object
             required: [method, type]
             properties:
-              fundingMethod:
-                description: Delivery method
+              method:
+                description: Funding delivery method
                 type: string
                 enum:
                   - anotherPolicy
@@ -1626,8 +1589,8 @@ components:
                   - electronicFundTransfer
                   - payrollDeduction
                   - wireTransfer
-              partyType:
-                description: Type of party
+              type:
+                description: Funding source type
                 type: string
                 enum:
                   - contribution
@@ -1923,8 +1886,8 @@ components:
             type: object
             required: [type]
             properties:
-              partyType:
-                description: Type of party
+              type:
+                description: Can-sell issue type
                 type: string
                 enum:
                   - trainingIncompleteMissing
@@ -2086,10 +2049,9 @@ components:
         events:
           description: Events
           type: array
-          min: 1
-          items: {
+          minItems: 1
+          items:
             $ref: "#/components/schemas/notificationMetadata"
-          }
     notificationStatus:
       type: string
       enum: [received, inProgress, completed, cancelled]
