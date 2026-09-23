@@ -1382,29 +1382,27 @@ components:
               - producer
               - carrier
               - client
+              - backOffice
             cancelledDate:
               description: Cancellation date
               type: string
               format: date
             reason:
               description: Reason for the cancellation:
-                - ageOut: Applicant or owner crossed an age threshold that changes their eligibility, product pricing, or options while the application is being processed.
-                - duplicate: Duplicate application entered/STP'd in error.
-                - NIGO: Not In Good Order - requirements cannot be resolved.
-                - notTaken: Advisor, Back Office, or Client has rescinded the application request.
-                - productTraining: Advisor product training missing.
-                - reg60Decline: Did not meet NY Reg 60 requirements for suitable sale.
-                - staleDated: Application/signature dates have exceeded the allowed/lock-in window.
-                - suitDeclined: Deemed not suitable for client. The distributor would expect a suitability notification with isApproved = false, and details on the suitability issue/reason, prior to or in coordination with the cancellation notification.
               type: string
               enum:
-              - ageOut
+              - clientRequest
               - duplicate
-              - NIGO
+              - policyCannotBeVerified
+              - addedInError
+              - suitabilityDecline
+              - notInGoodOrder
+              - ageOut
               - notTaken
               - productTraining
               - reg60Decline
               - staleDated
+              - NIGO
               - suitDeclined
             notes:
               description: Additional notes regarding the cancellation
