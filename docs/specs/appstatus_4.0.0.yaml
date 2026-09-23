@@ -1388,7 +1388,7 @@ components:
               type: string
               format: date
             reason:
-              description: Reason for the cancellation:
+              description: Reason for the cancellation
               type: string
               enum:
               - clientRequest
