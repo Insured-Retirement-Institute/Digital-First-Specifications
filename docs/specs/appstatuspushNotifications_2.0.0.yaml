@@ -1520,7 +1520,7 @@ components:
                 initiator:
                   description: Who initiated cancellation
                   type: string
-                  enum: [producer, carrier, client]
+                  enum: [producer, carrier, client, backOffice]
                 cancelledDate:
                   description: Cancellation date
                   type: string
@@ -1539,6 +1539,9 @@ components:
                     - notTaken
                     - productTraining
                     - reg60Decline
+                    - NIGO
+                    - staleDated
+                    - suitDeclined
                 notes:
                   description: Additional notes regarding the cancellation
                   type: string
