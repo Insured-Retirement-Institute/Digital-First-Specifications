@@ -19,6 +19,7 @@ The style guide provides rules, regulations, and recommendations for Digital-Fir
 Field naming
 - **Booleans**: Should be prefixed with is or has.
 - **Lists/Arrays**: Use plural nouns to represent the array itself and singular nouns to represent the elements within the array.
+- **Descriptions**: Descriptions for fields, parameters, and endpoints should be reviewed against existing specifications and reuse consistent terminology and phrasing rather than introducing new wording for concepts that are already defined elsewhere.
 
 Custom headers
 - **_correlationId_**: Optional custom header to be returned to the caller in response payload
