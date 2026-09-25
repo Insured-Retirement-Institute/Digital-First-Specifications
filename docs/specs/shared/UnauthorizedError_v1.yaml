@@ -1,0 +1,12 @@
+# Modified by Cursor: shared UnauthorizedError response
+components:
+  responses:
+    UnauthorizedError:
+      description: "Unauthorized — authentication credentials are missing or invalid."
+      headers:
+        correlationId:
+          $ref: './correlationId_v1.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './Error_v1.yaml#/components/schemas/Error'

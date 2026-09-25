@@ -1,0 +1,12 @@
+# Modified by Cursor: shared MethodNotAllowedError response (v2)
+components:
+  responses:
+    MethodNotAllowedError:
+      description: "Method Not Allowed — the HTTP method is not supported on this resource."
+      headers:
+        correlationId:
+          $ref: './correlationId_v1.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './Error_v2.yaml#/components/schemas/Error'

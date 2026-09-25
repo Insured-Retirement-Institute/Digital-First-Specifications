@@ -1,0 +1,23 @@
+# Modified by Cursor: shared PolicyProducers schema (policy inquiry family)
+components:
+  schemas:
+    PolicyProducers:
+      type: object
+      properties:
+        producers:
+          type: array
+          items:
+            $ref: './PolicyProducer_v1.yaml#/components/schemas/PolicyProducer'
+          description: Represents the set of producers associated with the policy, including their identifying information and commission-related attributes
+        startIndex:
+          type: integer
+          minimum: 0
+          description: Zero-based index of the first item returned.
+        itemsCount:
+          type: integer
+          minimum: 0
+          description: Number of items in the current response.
+        totalItemsCount:
+          type: integer
+          minimum: 0
+          description: Total number of items available.

@@ -1,0 +1,21 @@
+# Modified by Cursor: shared path and query parameters used across Digital-First APIs
+components:
+  parameters:
+    PolicyNumber:
+      name: policyNumber
+      description: Policy number
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 30
+
+    AssociatedFirmId:
+      description: Optional query parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms.
+      name: associatedFirmId
+      in: query
+      required: false
+      schema:
+        type: string
+        maxLength: 65
