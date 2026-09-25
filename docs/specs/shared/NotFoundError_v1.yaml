@@ -1,0 +1,12 @@
+# Modified by Cursor: shared NotFoundError response
+components:
+  responses:
+    NotFoundError:
+      description: "Not Found — the referenced resource does not exist."
+      headers:
+        correlationId:
+          $ref: './correlationId_v1.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './Error_v1.yaml#/components/schemas/Error'

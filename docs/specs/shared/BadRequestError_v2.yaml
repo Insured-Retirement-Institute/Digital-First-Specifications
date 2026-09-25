@@ -1,0 +1,12 @@
+# Modified by Cursor: shared BadRequestError response (v2)
+components:
+  responses:
+    BadRequestError:
+      description: "Bad Request — the request payload is malformed or fails schema validation."
+      headers:
+        correlationId:
+          $ref: './correlationId_v1.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './Error_v2.yaml#/components/schemas/Error'

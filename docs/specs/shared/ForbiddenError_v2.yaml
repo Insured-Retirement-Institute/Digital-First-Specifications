@@ -1,0 +1,12 @@
+# Modified by Cursor: shared ForbiddenError response (v2)
+components:
+  responses:
+    ForbiddenError:
+      description: "Forbidden — the caller is not permitted to perform this action."
+      headers:
+        correlationId:
+          $ref: './correlationId_v1.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './Error_v2.yaml#/components/schemas/Error'

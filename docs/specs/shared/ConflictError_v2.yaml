@@ -1,0 +1,12 @@
+# Modified by Cursor: shared ConflictError response (v2)
+components:
+  responses:
+    ConflictError:
+      description: "Conflict — a transaction for this policy is already in progress or an equivalent request has already been accepted."
+      headers:
+        correlationId:
+          $ref: './correlationId_v1.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './Error_v2.yaml#/components/schemas/Error'

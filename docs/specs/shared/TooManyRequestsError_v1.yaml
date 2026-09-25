@@ -1,0 +1,12 @@
+# Modified by Cursor: shared TooManyRequestsError response
+components:
+  responses:
+    TooManyRequestsError:
+      description: "Too Many Requests — the caller has exceeded the permitted rate limit."
+      headers:
+        correlationId:
+          $ref: './correlationId_v1.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './Error_v1.yaml#/components/schemas/Error'

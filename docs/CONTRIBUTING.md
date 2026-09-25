@@ -1,3 +1,4 @@
+<!-- Modified by Cursor: shared-components migration conventions (2026-09-24) -->
 # Managing API Documentation with GitHub Pages and Swagger UI
 
 This document explains how to manage multiple API documentation pages using GitHub Pages and Swagger UI.
@@ -118,10 +119,53 @@ Source specs use a **placeholder** so the same file works in this repo and in wo
 
 ```yaml
 components:
-  schemas:
-    Error:
-      $ref: '${SHARED_SPECS_BASE}/error-schema.yaml#/components/schemas/Error'
+  parameters:
+    PolicyNumber:
+      $ref: '${SHARED_SPECS_BASE}/PolicyNumber_v1.yaml#/components/parameters/PolicyNumber'
 ```
+
+### Shared file naming (`{ComponentName}_vN.yaml`)
+
+| Rule | Example |
+|------|---------|
+| One OpenAPI component per file | `Error_v1.yaml`, `PolicyNumber_v1.yaml` |
+| File name = component key + `_vN` | Component `IndividualIdentity` → `IndividualIdentity_v1.yaml`; breaking change → `IndividualIdentity_v2.yaml` |
+| OpenAPI component key unchanged | File is `IndividualIdentity_v2.yaml`; key remains `IndividualIdentity` under `components.schemas` |
+| Child-only objects | Keep inline in the parent file (e.g. `validationErrors.items` inside `Error_v1.yaml`) |
+| Cross-file refs inside `shared/` | Relative paths at the **same version** (e.g. `./Error_v2.yaml` from `BadRequestError_v2.yaml`) |
+
+Specs with non-standard inline error models are tracked in [`specs/ERROR-SCHEMA-DEBT.md`](specs/ERROR-SCHEMA-DEBT.md). During migration those specs **keep inline `Error` / `ErrorResponse`** and do not `$ref` `Error_v1` until upgraded in a separate PR.
+
+### Shared component versioning
+
+Each src spec **pins** the shared file version in its `$ref` path. Bundling does not pick “latest” — it resolves exactly the file named in the ref.
+
+```yaml
+# Older spec stays on v1
+PolicyNumber:
+  $ref: '${SHARED_SPECS_BASE}/PolicyNumber_v1.yaml#/components/parameters/PolicyNumber'
+
+# Newer spec adopts v2 when ready
+PolicyNumber:
+  $ref: '${SHARED_SPECS_BASE}/PolicyNumber_v2.yaml#/components/parameters/PolicyNumber'
+```
+
+Both `{Component}_v1.yaml` and `{Component}_v2.yaml` coexist under `docs/specs/shared/`. Specs upgrade individually; working-group repos can stay on `_v1` via pinned `$ref`s or a pinned `SHARED_SPECS_BASE` URL.
+
+| Change type | What to do |
+|-------------|------------|
+| Non-breaking (optional field, relaxed constraint) | Edit `_v1` in place |
+| Breaking (rename/remove field, tighter rules) | Add `_v2`; migrate specs one PR at a time; **do not** mutate `_v1` |
+
+Automation: [`scripts/shared-component-registry.ts`](../scripts/shared-component-registry.ts) tracks available versions and optional **per-spec version pins** (`SPEC_SHARED_VERSIONS`). `npm run apply:shared` writes `$ref`s from those pins (default **v1**). Hand-edited src refs always win.
+
+Full policy, upgrade checklist, and working-group notes: [`specs/SHARED-COMPONENT-VERSIONING.md`](specs/SHARED-COMPONENT-VERSIONING.md).
+
+```bash
+npm run report:shared-versions   # list _vN usage per src spec
+```
+
+Each API-family migration should be reviewed before the next (shared refs, bundled output, Swagger UI paths unchanged).
 
 | Environment | `SHARED_SPECS_BASE` | Resolves to |
 |-------------|---------------------|-------------|
@@ -145,8 +189,8 @@ Working-group repos can copy `docs/specs/src/<spec>.yaml` plus the `scripts/` he
 
 ### Authoring workflow
 
-1. Add or update reusable fragments in `docs/specs/shared/`.
-2. Reference them from `docs/specs/src/<spec-name>.yaml` using `${SHARED_SPECS_BASE}/…` (see `fundtransfer_1.0.1.yaml` or `appstatusv4.yaml`).
+1. Add or update reusable fragments in `docs/specs/shared/` as `{ComponentName}_vN.yaml` (add `_v2+` for breaking changes; do not break `_v1` in place).
+2. Reference them from `docs/specs/src/<spec-name>.yaml` using `${SHARED_SPECS_BASE}/…`.
 3. Bundle into the published single-file spec:
 
 ```bash
@@ -162,17 +206,35 @@ npm run build:dictionary
 
 Specs not yet under `docs/specs/src/` remain standalone YAML files in `docs/specs/` and work unchanged. CI runs `bundle:specs` before validate/build.
 
+Run `npm run inventory:components` to list duplicate component names across published specs and classify them as identical or conflicting (descriptions/examples stripped for comparison).
+
 **Shared fragments currently available**
 
 | File | Contents |
 |------|----------|
-| `shared/error-schema.yaml` | Standard `Error` schema |
-| `shared/error-responses.yaml` | Standard HTTP 4xx/5xx response objects |
-| `shared/correlation-id.yaml` | `correlationId` response header and request parameter |
-| `shared/common-parameters.yaml` | `PolicyNumber`, `AssociatedFirmId` |
-| `shared/party-schemas.yaml` | Shared party identity schemas |
+| `shared/Error_v1.yaml` | Canonical README Standard Error Schema |
+| `shared/Error_v2.yaml` | Transaction-style Error (Category A; 11 specs) |
+| `shared/Error_v3.yaml` | App-status-style Error (Category B; 2 specs) |
+| `shared/BadRequestError_v1.yaml` … `GatewayTimeoutError_v1.yaml` | Standard responses referencing `Error_v1` |
+| `shared/BadRequestError_v2.yaml` … `GatewayTimeoutError_v2.yaml` | Standard responses referencing `Error_v2` |
+| `shared/correlationId_v1.yaml` | `correlationId` response header |
+| `shared/CorrelationIdHeader_v1.yaml` | `correlationId` request header parameter |
+| `shared/PolicyNumber_v1.yaml` | `PolicyNumber` path parameter |
+| `shared/AssociatedFirmId_v1.yaml` | `AssociatedFirmId` query parameter |
+| `shared/FundDistribution_v1.yaml` | Fund distribution schema (withdrawal/systematic family) |
+| `shared/PartyRelationship_v1.yaml` | Party relationship enum schema (13-spec variant) |
+| `shared/IndividualIdentity_v1.yaml` | Individual identity schema (OTW / systematic update variant) |
+| `shared/EntityIdentity_v1.yaml` | Entity identity schema (OTW / OTW quote variant) |
+| `shared/PolicyProducer_v1.yaml` … `PolicyProducers_v1.yaml` | Policy inquiry producer schemas |
+| `shared/ProducerCommission_v1.yaml`, `ProducerExternalIds_v1.yaml` | Policy inquiry producer child schemas |
 
-Cross-references **within** `docs/specs/shared/` use relative paths (e.g. `./correlation-id.yaml`). Those resolve correctly when fragments are served from `https://specs.dfa.irionline.org/specs/shared/`.
+Conflict-resolution choices for deferred components are recorded in [`specs/SHARED-COMPONENT-DECISIONS.md`](specs/SHARED-COMPONENT-DECISIONS.md).
+
+Cross-references **within** `docs/specs/shared/` use relative paths (e.g. `./Error_v1.yaml`). Those resolve correctly when fragments are served from `https://specs.dfa.irionline.org/specs/shared/`.
+
+### Deferred shared extractions (inventory conflicts)
+
+Party/financial schemas not yet extracted (`Producer`, `Party`, `IndividualParty`, `EntityParty`, `RmdInfo`, `TaxWithholdingInstruction`, `Address`, `Bank`, and alternate `PartyRelationship` variants) remain **inline in src specs** — see [`specs/SHARED-COMPONENT-DECISIONS.md`](specs/SHARED-COMPONENT-DECISIONS.md).
 
 ## Adding Versioned API Documentation
 
