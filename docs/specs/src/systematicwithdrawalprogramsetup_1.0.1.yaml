@@ -1,5 +1,5 @@
-# Modified by Cursor: source spec — bundled to docs/specs/systematicwithdrawalprogramsetup_1.0.1.yaml
-# TODO: align to shared Error_v1 — see ERROR-SCHEMA-DEBT.md
+# Modified by Cursor: generated file — edit docs/specs/src/systematicwithdrawalprogramsetup_1.0.1.yaml instead.
+# Regenerate with: npm run bundle:specs
 openapi: "3.1.0"
 info:
   title: "Policy Transactions API - SetUp Systematic Withdrawal & SetUp Systematic RMD"
@@ -375,38 +375,146 @@ components:
         maxLength: 65
   headers:
     correlationId:
-      $ref: "${SHARED_SPECS_BASE}/correlationId_v1.yaml#/components/headers/correlationId"
+      description: "Correlates this response to downstream processing."
+      schema:
+        type: "string"
+        maxLength: 100
   responses:
     BadRequestError:
-      $ref: "${SHARED_SPECS_BASE}/BadRequestError_v2.yaml#/components/responses/BadRequestError"
+      description: "Bad Request — the request payload is malformed or fails schema validation."
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     UnauthorizedError:
-      $ref: "${SHARED_SPECS_BASE}/UnauthorizedError_v2.yaml#/components/responses/UnauthorizedError"
+      description: "Unauthorized — authentication credentials are missing or invalid."
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     ForbiddenError:
-      $ref: "${SHARED_SPECS_BASE}/ForbiddenError_v2.yaml#/components/responses/ForbiddenError"
+      description: "Forbidden — the caller is not permitted to perform this action."
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     NotFoundError:
-      $ref: "${SHARED_SPECS_BASE}/NotFoundError_v2.yaml#/components/responses/NotFoundError"
+      description: "Not Found — the referenced resource does not exist."
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     MethodNotAllowedError:
-      $ref: "${SHARED_SPECS_BASE}/MethodNotAllowedError_v2.yaml#/components/responses/MethodNotAllowedError"
+      description: "Method Not Allowed — the HTTP method is not supported on this resource."
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     NotAcceptableError:
-      $ref: "${SHARED_SPECS_BASE}/NotAcceptableError_v2.yaml#/components/responses/NotAcceptableError"
+      description: "Not Acceptable — the requested media type is not supported."
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     ConflictError:
-      $ref: "${SHARED_SPECS_BASE}/ConflictError_v2.yaml#/components/responses/ConflictError"
+      description: "Conflict — a transaction for this policy is already in progress or an equivalent request has already been accepted."
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     PayloadTooLargeError:
-      $ref: "${SHARED_SPECS_BASE}/PayloadTooLargeError_v2.yaml#/components/responses/PayloadTooLargeError"
+      description: "Payload Too Large — the request body exceeds the maximum allowed size."
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     UnsupportedMediaTypeError:
-      $ref: "${SHARED_SPECS_BASE}/UnsupportedMediaTypeError_v2.yaml#/components/responses/UnsupportedMediaTypeError"
+      description: "Unsupported Media Type — the request Content-Type is not supported."
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     UnprocessableEntityError:
-      $ref: "${SHARED_SPECS_BASE}/UnprocessableEntityError_v2.yaml#/components/responses/UnprocessableEntityError"
+      description: "Unprocessable Entity — the request is well-formed but fails business rule validation."
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     TooManyRequestsError:
-      $ref: "${SHARED_SPECS_BASE}/TooManyRequestsError_v2.yaml#/components/responses/TooManyRequestsError"
+      description: "Too Many Requests — the caller has exceeded the permitted rate limit."
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     InternalServerError:
-      $ref: "${SHARED_SPECS_BASE}/InternalServerError_v2.yaml#/components/responses/InternalServerError"
+      description: "Internal Server Error — an unexpected condition prevented the request from completing."
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     BadGatewayError:
-      $ref: "${SHARED_SPECS_BASE}/BadGatewayError_v2.yaml#/components/responses/BadGatewayError"
+      description: "Bad Gateway — an upstream system returned an invalid response."
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     ServiceUnavailableError:
-      $ref: "${SHARED_SPECS_BASE}/ServiceUnavailableError_v2.yaml#/components/responses/ServiceUnavailableError"
+      description: "Service Unavailable — the service is temporarily unable to handle the request."
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     GatewayTimeoutError:
-      $ref: "${SHARED_SPECS_BASE}/GatewayTimeoutError_v2.yaml#/components/responses/GatewayTimeoutError"
+      description: "Gateway Timeout — an upstream system did not respond in time."
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
   schemas:
     Producer:
       type: "object"
@@ -468,7 +576,25 @@ components:
           type: "string"
           maxLength: 9
     PartyRelationship:
-      $ref: "${SHARED_SPECS_BASE}/PartyRelationship_v1.yaml#/components/schemas/PartyRelationship"
+      description: "Schema for party relationship data"
+      type: "object"
+      required:
+        - "relationships"
+      properties:
+        relationships:
+          description: "An array of strings specifying the relationship(s) of the party to the policy."
+          type: "array"
+          minItems: 1
+          maxItems: 2
+          items:
+            type: "string"
+            enum:
+              - "owner"
+              - "jointOwner"
+              - "annuitant"
+              - "jointAnnuitant"
+              - "primaryBeneficiary"
+              - "contingentBeneficiary"
     EntityIdentity:
       description: "Schema for entity identity data"
       type: "object"
@@ -1150,7 +1276,47 @@ components:
         - "state"
         - "zipCode"
     FundDistribution:
-      $ref: "${SHARED_SPECS_BASE}/FundDistribution_v1.yaml#/components/schemas/FundDistribution"
+      type: "object"
+      description: "Fund distribution details for the withdrawal"
+      properties:
+        fundId:
+          description: "Fund identifier."
+          type: "string"
+          maxLength: 100
+        fundName:
+          description: "Name of the fund."
+          type: "string"
+          maxLength: 100
+        totalFundValue:
+          description: "Total value of the fund."
+          type:
+            - "number"
+            - "null"
+          minimum: 0
+          maximum: 9999999999.99
+        requestedAmount:
+          description: "Requested amount from the fund."
+          type:
+            - "number"
+            - "null"
+          minimum: 0
+          maximum: 9999999999.99
+        requestedPercentage:
+          description: "Requested percentage from the fund."
+          type: "number"
+          minimum: 0
+          maximum: 100
+      oneOf:
+        - required:
+            - "requestedAmount"
+          not:
+            required:
+              - "requestedPercentage"
+        - required:
+            - "requestedPercentage"
+          not:
+            required:
+              - "requestedAmount"
     WithdrawalRequestStatus:
       type: "object"
       description: "Withdrawal request status resource created by the POST."
@@ -1196,4 +1362,35 @@ components:
         - "requestId"
         - "status"
     Error:
-      $ref: "${SHARED_SPECS_BASE}/Error_v2.yaml#/components/schemas/Error"
+      type: "object"
+      required:
+        - "code"
+        - "message"
+      properties:
+        httpStatus:
+          type: "integer"
+          description: "HTTP status code associated with this error"
+          minimum: 400
+          maximum: 599
+        code:
+          type: "string"
+          description: "Structured error code in domain.category.subcategory format"
+        timestamp:
+          type: "string"
+          format: "date-time"
+          description: "When the error occurred"
+        message:
+          type: "string"
+          description: "Developer-focused technical message"
+        validationErrors:
+          type: "array"
+          description: "Field-level or rule-level validation failures"
+          items:
+            type: "object"
+            properties:
+              code:
+                type: "string"
+                description: "Structured error code for this validation failure"
+              message:
+                type: "string"
+                description: "Description of the validation failure"

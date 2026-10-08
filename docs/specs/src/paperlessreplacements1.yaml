@@ -1,5 +1,5 @@
-# Modified by Cursor: source spec — bundled to docs/specs/paperlessreplacements1.yaml
-# TODO: align to shared Error_v1 — see ERROR-SCHEMA-DEBT.md
+# Modified by Cursor: generated file — edit docs/specs/src/paperlessreplacements1.yaml instead.
+# Regenerate with: npm run bundle:specs
 openapi: "3.1.0"
 info:
   title: "Paperless Replacements (RPL) API"

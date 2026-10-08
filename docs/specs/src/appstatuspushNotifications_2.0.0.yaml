@@ -1,5 +1,5 @@
-# Modified by Cursor: source spec — bundled to docs/specs/appstatuspushNotifications_2.0.0.yaml
-# TODO: align to shared Error_v1 — see ERROR-SCHEMA-DEBT.md
+# Modified by Cursor: generated file — edit docs/specs/src/appstatuspushNotifications_2.0.0.yaml instead.
+# Regenerate with: npm run bundle:specs
 openapi: "3.1.0"
 info:
   title: "Annuity Application Status Push Notifications"
@@ -1070,14 +1070,23 @@ webhooks:
 components:
   headers:
     correlationId:
-      $ref: "${SHARED_SPECS_BASE}/correlationId_v1.yaml#/components/headers/correlationId"
+      description: "Correlates this response to downstream processing."
+      schema:
+        type: "string"
+        maxLength: 100
     X-Api-Version:
       description: "Minor/patch version of the API that served this response"
       schema:
         type: "string"
   parameters:
     correlationId:
-      $ref: "${SHARED_SPECS_BASE}/CorrelationIdHeader_v1.yaml#/components/parameters/CorrelationIdHeader"
+      name: "correlationId"
+      description: "Optional client-supplied identifier to trace the request."
+      in: "header"
+      required: false
+      schema:
+        type: "string"
+        maxLength: 100
     associatedFirmId:
       name: "associatedFirmId"
       description: "Optional query parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms."
@@ -1832,7 +1841,25 @@ components:
           relationships:
             - "primaryBeneficiary"
     PartyRelationship:
-      $ref: "${SHARED_SPECS_BASE}/PartyRelationship_v1.yaml#/components/schemas/PartyRelationship"
+      description: "Schema for party relationship data"
+      type: "object"
+      required:
+        - "relationships"
+      properties:
+        relationships:
+          description: "An array of strings specifying the relationship(s) of the party to the policy."
+          type: "array"
+          minItems: 1
+          maxItems: 2
+          items:
+            type: "string"
+            enum:
+              - "owner"
+              - "jointOwner"
+              - "annuitant"
+              - "jointAnnuitant"
+              - "primaryBeneficiary"
+              - "contingentBeneficiary"
     Producer:
       description: "An individual or an entity acting as a producer on the policy. The `type` property selects the shape: `individual` uses first/middle/last name, `entity` uses a single `name`."
       oneOf:
@@ -2115,4 +2142,49 @@ components:
           description: "Application status"
           $ref: "#/components/schemas/notificationStatus"
     Error:
-      $ref: "${SHARED_SPECS_BASE}/Error_v3.yaml#/components/schemas/Error"
+      description: "Standard error response body"
+      type: "object"
+      required:
+        - "httpStatus"
+        - "code"
+        - "message"
+      properties:
+        httpStatus:
+          description: "HTTP status code"
+          type: "integer"
+        code:
+          description: "Machine-readable error code in domain.category.subcategory format"
+          type: "string"
+          pattern: "^[a-z0-9]+\\.[a-z0-9]+\\.[a-z0-9]+$"
+        timestamp:
+          description: "Time the error occurred"
+          type: "string"
+          format: "date-time"
+        message:
+          description: "Diagnostic message describing the error"
+          type: "string"
+        userMessage:
+          description: "End-user-safe message suitable for display"
+          type: "string"
+        correlationId:
+          description: "Correlation ID echoed from the request, if supplied"
+          type: "string"
+        validationErrors:
+          description: "Field-level validation failures"
+          type: "array"
+          items:
+            type: "object"
+            required:
+              - "path"
+              - "message"
+            properties:
+              path:
+                description: "JSON pointer to the offending field"
+                type: "string"
+              message:
+                description: "Description of the validation failure"
+                type: "string"
+              code:
+                description: "Machine-readable code for this specific validation failure, in domain.category.subcategory format"
+                type: "string"
+                pattern: "^[a-z0-9]+\\.[a-z0-9]+\\.[a-z0-9]+$"

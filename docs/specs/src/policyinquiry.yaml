@@ -1,5 +1,5 @@
-# Modified by Cursor: source spec — bundled to docs/specs/policyinquiry.yaml
-# TODO: align to shared Error_v1 — see ERROR-SCHEMA-DEBT.md
+# Modified by Cursor: generated file — edit docs/specs/src/policyinquiry.yaml instead.
+# Regenerate with: npm run bundle:specs
 openapi: "3.1.0"
 info:
   title: "Policy Inquiry"
@@ -611,9 +611,22 @@ paths:
 components:
   parameters:
     CorrelationIdHeader:
-      $ref: "${SHARED_SPECS_BASE}/CorrelationIdHeader_v1.yaml#/components/parameters/CorrelationIdHeader"
+      name: "correlationId"
+      description: "Optional client-supplied identifier to trace the request."
+      in: "header"
+      required: false
+      schema:
+        type: "string"
+        maxLength: 100
     PolicyNumber:
-      $ref: "${SHARED_SPECS_BASE}/PolicyNumber_v1.yaml#/components/parameters/PolicyNumber"
+      name: "policyNumber"
+      description: "Policy number"
+      in: "path"
+      required: true
+      schema:
+        type: "string"
+        minLength: 1
+        maxLength: 30
     AssociatedFirmId:
       name: "associatedFirmId"
       in: "query"
@@ -1555,7 +1568,10 @@ components:
                 insuranceActivityFundEmployeeAmountDebitCreditIndicator: "CREDIT"
   headers:
     correlationId:
-      $ref: "${SHARED_SPECS_BASE}/correlationId_v1.yaml#/components/headers/correlationId"
+      description: "Correlates this response to downstream processing."
+      schema:
+        type: "string"
+        maxLength: 100
   schemas:
     PolicySummary:
       type: "object"
@@ -2737,13 +2753,74 @@ components:
             required:
               - "bank"
     PolicyProducers:
-      $ref: "${SHARED_SPECS_BASE}/PolicyProducers_v1.yaml#/components/schemas/PolicyProducers"
+      type: "object"
+      properties:
+        producers:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/PolicyProducer"
+          description: "Represents the set of producers associated with the policy, including their identifying information and commission-related attributes"
+        startIndex:
+          type: "integer"
+          minimum: 0
+          description: "Zero-based index of the first item returned."
+        itemsCount:
+          type: "integer"
+          minimum: 0
+          description: "Number of items in the current response."
+        totalItemsCount:
+          type: "integer"
+          minimum: 0
+          description: "Total number of items available."
     PolicyProducer:
-      $ref: "${SHARED_SPECS_BASE}/PolicyProducer_v1.yaml#/components/schemas/PolicyProducer"
+      type: "object"
+      properties:
+        externalIds:
+          $ref: "#/components/schemas/ProducerExternalIds"
+        commissionOption:
+          type: "string"
+          maxLength: 50
+          description: "Commission option on the contract"
+        commission:
+          $ref: "#/components/schemas/ProducerCommission"
+          description: "Defines commission-related details assigned to the producer, including identifiers and allocation percentages that determine how compensation is distributed for the policy"
+        producerNumber:
+          type: "string"
+          maxLength: 50
+          pattern: "^[A-Za-z0-9._-]{1,50}$"
+          description: "Carrier-assigned producer identifier."
     ProducerExternalIds:
-      $ref: "${SHARED_SPECS_BASE}/ProducerExternalIds_v1.yaml#/components/schemas/ProducerExternalIds"
+      type: "object"
+      properties:
+        npn:
+          description: "National Producer Number."
+          type: "string"
+          maxLength: 10
+          pattern: "^[0-9]{1,10}$"
+        crdNumber:
+          description: "Central Registration Depository number."
+          type: "string"
+          pattern: "^[0-9]{1,12}$"
+        agencyId:
+          description: "Identifier for the agency associated with the producer."
+          type: "string"
+          pattern: "^[0-9]{1,18}$"
+        firmId:
+          description: "Identifier for the broker-dealer or parent firm affiliated with the producer."
+          type: "string"
+          pattern: "^[0-9]{1,18}$"
     ProducerCommission:
-      $ref: "${SHARED_SPECS_BASE}/ProducerCommission_v1.yaml#/components/schemas/ProducerCommission"
+      type: "object"
+      properties:
+        commissionIdentifier:
+          description: "Identifier for the commission schedule or contract tied to the producer."
+          type: "string"
+          pattern: "^[A-Za-z0-9._-]{1,100}$"
+        commissionSplitPercent:
+          description: "Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy."
+          type: "number"
+          minimum: 0
+          maximum: 100
     PolicyDates:
       type: "object"
       description: "Policy date fields for the contract."

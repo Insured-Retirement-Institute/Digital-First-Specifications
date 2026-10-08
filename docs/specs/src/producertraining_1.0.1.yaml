@@ -1,5 +1,5 @@
-# Modified by Cursor: source spec — bundled to docs/specs/producertraining_1.0.1.yaml
-# TODO: align to shared Error_v1 — see ERROR-SCHEMA-DEBT.md
+# Modified by Cursor: generated file — edit docs/specs/src/producertraining_1.0.1.yaml instead.
+# Regenerate with: npm run bundle:specs
 openapi: "3.1.0"
 info:
   title: "Producer Training APIs"
