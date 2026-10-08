@@ -58,7 +58,7 @@ paths:
                   cusip: 401B23458
                   productName: Secure Income Annuity Plus
                   isQualified: true
-                  status: inProgress
+                  status: IN_PROGRESS
                   statusDate: '2026-06-04'
                 metadata:
                   offset: 0
@@ -121,26 +121,26 @@ paths:
                 cusip: 401B23458
                 productName: Secure Income Annuity Plus
                 isQualified: true
-                status: inProgress
+                status: IN_PROGRESS
                 statusDate: '2026-06-04'
                 isActionNeeded: true
                 actionSections:
-                - suitability
+                - SUITABILITY
                 canSellValidation:
-                  status: completed
+                  status: COMPLETED
                   isActionNeeded: false
                 documentReview:
-                  status: awaitingReview
+                  status: AWAITING_REVIEW
                   isActionNeeded: false
                 suitability:
-                  status: inProgress
+                  status: IN_PROGRESS
                   isActionNeeded: true
                   startDate: '2026-06-04'
                   dueDate: '2026-06-11'
-                  reason: moreInformationNeeded
+                  reason: MORE_INFORMATION_NEEDED
                   note: Client financial profile documentation required
                 funding:
-                  status: awaitingReview
+                  status: AWAITING_REVIEW
                   isActionNeeded: false
           headers:
             correlationId:
@@ -227,7 +227,7 @@ paths:
                   cusip: 401B23458
                   productName: Secure Income Annuity Plus
                   isQualified: true
-                  status: inProgress
+                  status: IN_PROGRESS
                   statusDate: '2026-06-04'
                 metadata:
                   offset: 0
@@ -290,11 +290,11 @@ paths:
                 cusip: 401B23458
                 productName: Secure Income Annuity Plus
                 isQualified: true
-                status: inProgress
+                status: IN_PROGRESS
                 statusDate: '2026-06-04'
                 isActionNeeded: true
                 actionSections:
-                - suitability
+                - SUITABILITY
                 signedDate: '2026-06-01'
                 receivedDate: '2026-06-02'
           headers:
@@ -352,15 +352,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/Funding"
               example:
-                status: inProgress
+                status: IN_PROGRESS
                 isActionNeeded: true
                 startDate: '2026-06-06'
                 sources:
-                - fundingMethod: anotherPolicy
-                  contributionType: full1035Exchange
+                - fundingMethod: ANOTHER_POLICY
+                  contributionType: FULL_1035_EXCHANGE
                   isActionNeeded: true
                   anticipatedAmount: 250000.0
-                  status: inProgress
+                  status: IN_PROGRESS
                   cedingCompanyName: Legacy Life Insurance Co
                   accountNumber: POL-123456789
           headers:
@@ -418,11 +418,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/DocumentReview"
               example:
-                status: inProgress
+                status: IN_PROGRESS
                 isActionNeeded: true
                 startDate: '2026-06-05'
                 issues:
-                - reason: missingSignature
+                - reason: MISSING_SIGNATURE
                   formName: Application for Annuity
                   formNumber: APP-1001
                   dueDate: '2026-06-12'
@@ -482,11 +482,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/Suitability"
               example:
-                status: inProgress
+                status: IN_PROGRESS
                 isActionNeeded: true
                 startDate: '2026-06-04'
                 dueDate: '2026-06-11'
-                reason: moreInformationNeeded
+                reason: MORE_INFORMATION_NEEDED
                 note: Client financial profile documentation required
           headers:
             correlationId:
@@ -543,11 +543,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/CanSellValidation"
               example:
-                status: inProgress
+                status: IN_PROGRESS
                 isActionNeeded: true
                 startDate: '2026-06-03'
                 issues:
-                - issueType: trainingExpired
+                - issueType: TRAINING_EXPIRED
                   note: Producer training expired on 2026-05-01
                   affectedProducer:
                     npn: '1234567890'
@@ -692,8 +692,8 @@ components:
       required: false
       schema:
         type: string
-        enum: [policyNumber, status, statusDate]
-        default: statusDate
+        enum: [POLICY_NUMBER, STATUS, STATUS_DATE]
+        default: STATUS_DATE
     sortOrder:
       name: sortOrder
       description: Whether resources are ordered in ascending (asc) or descending (desc) order.
@@ -701,8 +701,8 @@ components:
       required: false
       schema:
         type: string
-        enum: [asc, desc]
-        default: desc
+        enum: [ASC, DESC]
+        default: DESC
     offset:
       name: offset
       description: Zero-based index of the first resource to return, matching offset in the response metadata.
@@ -793,10 +793,10 @@ components:
             items:
               type: string
               enum:
-              - primaryAgent
-              - secondaryAgent
-              - additionalAgent
-              - investmentAdvisorRepresentative
+              - PRIMARY_AGENT
+              - SECONDARY_AGENT
+              - ADDITIONAL_AGENT
+              - INVESTMENT_ADVISOR_REPRESENTATIVE
     IndividualParty:
       description: Schema for individual party data
       type: object
@@ -852,10 +852,10 @@ components:
             items:
               type: string
               enum:
-              - brokerageGeneralAgency
-              - registeredInvestmentAdvisoryFirm
-              - independentMarketingOrganization
-              - brokerDealer
+              - BROKERAGE_GENERAL_AGENCY
+              - REGISTERED_INVESTMENT_ADVISORY_FIRM
+              - INDEPENDENT_MARKETING_ORGANIZATION
+              - BROKER_DEALER
     EntityParty:
       description: Schema for entity party data
       type: object
@@ -868,19 +868,19 @@ components:
       required: [relationships]
       properties:
         relationships:
-          description: 'Relationship(s) this party has to the policy: owner, jointOwner, annuitant, jointAnnuitant, primaryBeneficiary, contingentBeneficiary'
+          description: 'Relationship(s) this party has to the policy: OWNER, JOINT_OWNER, ANNUITANT, JOINT_ANNUITANT, PRIMARY_BENEFICIARY, CONTINGENT_BENEFICIARY'
           type: array
           minItems: 1
           maxItems: 2
           items:
             type: string
             enum:
-            - owner
-            - jointOwner
-            - annuitant
-            - jointAnnuitant
-            - primaryBeneficiary
-            - contingentBeneficiary
+            - OWNER
+            - JOINT_OWNER
+            - ANNUITANT
+            - JOINT_ANNUITANT
+            - PRIMARY_BENEFICIARY
+            - CONTINGENT_BENEFICIARY
     Producers:
       description: Schema for producers data
       type: array
@@ -914,7 +914,7 @@ components:
         status:
           description: Validation status
           type: string
-          enum: [awaitingReview, inProgress, completed]
+          enum: [AWAITING_REVIEW, IN_PROGRESS, COMPLETED]
         isActionNeeded:
           description: Indicator that at least one section requires action
           type: boolean
@@ -943,12 +943,12 @@ components:
                 description: Type of can-sell issue
                 type: string
                 enum:
-                - trainingIncompleteMissing
-                - trainingExpired
-                - agentNotAppointedForSale
-                - jitAppointmentInProgress
-                - agentNotLicensed
-                - other
+                - TRAINING_INCOMPLETE_MISSING
+                - TRAINING_EXPIRED
+                - AGENT_NOT_APPOINTED_FOR_SALE
+                - JIT_APPOINTMENT_IN_PROGRESS
+                - AGENT_NOT_LICENSED
+                - OTHER
               note:
                 description: Note about the issue
                 type: string
@@ -983,7 +983,7 @@ components:
         status:
           description: Suitability status
           type: string
-          enum: [awaitingReview, inProgress, completed, notApplicable]
+          enum: [AWAITING_REVIEW, IN_PROGRESS, COMPLETED, NOT_APPLICABLE]
         isActionNeeded:
           description: Indicator that at least one section requires action
           type: boolean
@@ -999,9 +999,9 @@ components:
           description: Reason suitability requires action
           type: string
           enum:
-          - moreInformationNeeded
-          - notSuitableForClient
-          - other
+          - MORE_INFORMATION_NEEDED
+          - NOT_SUITABLE_FOR_CLIENT
+          - OTHER
         note:
           description: Note about the suitability review
           type: string
@@ -1022,7 +1022,7 @@ components:
         status:
           description: Document review status
           type: string
-          enum: [awaitingReview, inProgress, completed]
+          enum: [AWAITING_REVIEW, IN_PROGRESS, COMPLETED]
         isActionNeeded:
           description: Indicator that at least one section requires action
           type: boolean
@@ -1051,13 +1051,13 @@ components:
                 description: Reason the document review issue was raised
                 type: string
                 enum:
-                - applicationIssue
-                - contactCarrier
-                - incompleteForm
-                - missingForm
-                - missingSignature
-                - needClarity
-                - other
+                - APPLICATION_ISSUE
+                - CONTACT_CARRIER
+                - INCOMPLETE_FORM
+                - MISSING_FORM
+                - MISSING_SIGNATURE
+                - NEED_CLARITY
+                - OTHER
               formName:
                 description: Form name
                 type: string
@@ -1096,7 +1096,7 @@ components:
         status:
           description: Funding status
           type: string
-          enum: [awaitingReview, inProgress, completed]
+          enum: [AWAITING_REVIEW, IN_PROGRESS, COMPLETED]
         note:
           description: Note about the funding
           type: string
@@ -1115,28 +1115,28 @@ components:
                 description: Method used to fund/transfer this source
                 type: string
                 enum:
-                - anotherPolicy
-                - check
-                - clearinghouse
-                - creditCard
-                - debitCard
-                - digitalPayment
-                - electronicFundTransfer
-                - payrollDeduction
-                - wireTransfer
+                - ANOTHER_POLICY
+                - CHECK
+                - CLEARINGHOUSE
+                - CREDIT_CARD
+                - DEBIT_CARD
+                - DIGITAL_PAYMENT
+                - ELECTRONIC_FUND_TRANSFER
+                - PAYROLL_DEDUCTION
+                - WIRE_TRANSFER
               contributionType:
                 description: Type of funding contribution
                 type: string
                 enum:
-                - contribution
-                - directRollover
-                - employeeContribution
-                - employerContribution
-                - full1035Exchange
-                - indirectRollover
-                - nonQualifiedTransferOfAssets
-                - partial1035Exchange
-                - qualifiedTransfer
+                - CONTRIBUTION
+                - DIRECT_ROLLOVER
+                - EMPLOYEE_CONTRIBUTION
+                - EMPLOYER_CONTRIBUTION
+                - FULL_1035_EXCHANGE
+                - INDIRECT_ROLLOVER
+                - NON_QUALIFIED_TRANSFER_OF_ASSETS
+                - PARTIAL_1035_EXCHANGE
+                - QUALIFIED_TRANSFER
               isActionNeeded:
                 description: Indicator that this funding source requires action
                 type: boolean
@@ -1156,20 +1156,20 @@ components:
                 description: Status of the funding source
                 type: string
                 enum:
-                - awaitingReview
-                - inProgress
-                - completed
+                - AWAITING_REVIEW
+                - IN_PROGRESS
+                - COMPLETED
               reason:
                 description: Reason the funding is delayed or flagged
                 type: string
                 enum:
-                - awaitingFundsFromCedingCompany
-                - contactCarrier
-                - fundingDiscrepancy
-                - nigoAtCedingCarrier
-                - noFundsReceivedCash
-                - pendingReg60
-                - other
+                - AWAITING_FUNDS_FROM_CEDING_COMPANY
+                - CONTACT_CARRIER
+                - FUNDING_DISCREPANCY
+                - NIGO_AT_CEDING_CARRIER
+                - NO_FUNDS_RECEIVED_CASH
+                - PENDING_REG_60
+                - OTHER
               effectiveDate:
                 description: Effective date of the funding source
                 type: string
@@ -1202,7 +1202,7 @@ components:
               methodOfInitiation:
                 description: Initiation method
                 type: string
-                enum: [fax, email, mail, replacement]
+                enum: [FAX, EMAIL, MAIL, REPLACEMENT]
 
     PolicySummary:
       description: Schema for policy summary data
@@ -1220,10 +1220,10 @@ components:
           items:
             type: string
             enum:
-            - suitability
-            - canSellValidation
-            - documentReview
-            - funding
+            - SUITABILITY
+            - CAN_SELL_VALIDATION
+            - DOCUMENT_REVIEW
+            - FUNDING
         policyNumber:
           description: Policy number
           type: string
@@ -1262,7 +1262,7 @@ components:
         status:
           description: Application status
           type: string
-          enum: [received, inProgress, completed, cancelled]
+          enum: [RECEIVED, IN_PROGRESS, COMPLETED, CANCELLED]
         statusDate:
           description: Date of the application status
           type: string
@@ -1279,11 +1279,11 @@ components:
               description: Delivery method
               type: string
               enum:
-              - fedex
-              - ups
-              - electronicDelivery
-              - handDelivery
-              - usps
+              - FEDEX
+              - UPS
+              - ELECTRONIC_DELIVERY
+              - HAND_DELIVERY
+              - USPS
             trackingNumber:
               description: Delivery tracking number
               type: string
@@ -1342,10 +1342,10 @@ components:
           items:
             type: string
             enum:
-            - suitability
-            - canSellValidation
-            - documentReview
-            - funding
+            - SUITABILITY
+            - CAN_SELL_VALIDATION
+            - DOCUMENT_REVIEW
+            - FUNDING
         signedDate:
           description: Signed date of policy
           type: string
@@ -1379,10 +1379,10 @@ components:
               description: Who initiated cancellation
               type: string
               enum:
-              - producer
-              - carrier
-              - client
-              - backOffice
+              - PRODUCER
+              - CARRIER
+              - CLIENT
+              - BACK_OFFICE
             cancelledDate:
               description: Cancellation date
               type: string
@@ -1391,19 +1391,19 @@ components:
               description: Reason for the cancellation
               type: string
               enum:
-              - clientRequest
-              - duplicate
-              - policyCannotBeVerified
-              - addedInError
-              - suitabilityDecline
-              - notInGoodOrder
-              - ageOut
-              - notTaken
-              - productTraining
-              - reg60Decline
-              - staleDated
+              - CLIENT_REQUEST
+              - DUPLICATE
+              - POLICY_CANNOT_BE_VERIFIED
+              - ADDED_IN_ERROR
+              - SUITABILITY_DECLINE
+              - NOT_IN_GOOD_ORDER
+              - AGE_OUT
+              - NOT_TAKEN
+              - PRODUCT_TRAINING
+              - REG_60_DECLINE
+              - STALE_DATED
               - NIGO
-              - suitDeclined
+              - SUIT_DECLINED
             notes:
               description: Additional notes regarding the cancellation
               type: string

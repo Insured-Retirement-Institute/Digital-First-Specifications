@@ -42,7 +42,7 @@ paths:
                       platform: DigitalFirst
                       isElectronic: true
                       id: DF-APP-001234
-                    status: received
+                    status: RECEIVED
                   - eventId: evt-550e8400-e29b-41d4-a716-446655440002
                     policyNumber: P987654322
                     id: APP-2026-001235
@@ -50,12 +50,12 @@ paths:
                       platform: DigitalFirst
                       isElectronic: true
                       id: DF-APP-001235
-                    status: inProgress
+                    status: IN_PROGRESS
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
           content:
@@ -127,7 +127,7 @@ paths:
                         platform: DigitalFirst
                         isElectronic: true
                         id: DF-APP-001234
-                      status: received
+                      status: RECEIVED
                       eventType: applicationStatus.v1.applicationReceived
                       notification:
                         cusip: "401B23458"
@@ -144,10 +144,10 @@ paths:
                       platform: DigitalFirst
                       isElectronic: true
                       id: DF-APP-001234
-                    status: inProgress
+                    status: IN_PROGRESS
                     eventType: applicationStatus.v1.canSellActionNeeded
                     notification:
-                      status: inProgress
+                      status: IN_PROGRESS
                       isActionNeeded: true
                       startDate: "2026-06-03"
                 applicationCancelledReplay:
@@ -160,18 +160,18 @@ paths:
                       platform: DigitalFirst
                       isElectronic: true
                       id: DF-APP-001234
-                    status: cancelled
+                    status: CANCELLED
                     eventType: applicationStatus.v1.applicationCancelled
                     notification:
-                      initiator: client
+                      initiator: CLIENT
                       cancelledDate: "2026-06-18"
-                      reason: clientRequest
+                      reason: CLIENT_REQUEST
                       notes: Client elected to pursue alternative product
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
           content:
@@ -218,7 +218,7 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: true
                     id: DF-APP-001234
-                  status: received
+                  status: RECEIVED
                   eventType: applicationStatus.v1.applicationReceived
                   notification:
                     cusip: "401B23458"
@@ -231,26 +231,26 @@ webhooks:
                         lastName: Smith
                         npn: "1234567890"
                         relationships:
-                          - primaryAgent
+                          - PRIMARY_AGENT
                         commissionSplitPercent: 100
                       - type: entity
                         name: Smith & Associates
                         npn: "1234567890"
                         relationships:
-                          - brokerDealer
+                          - BROKER_DEALER
                         commissionSplitPercent: 100
                     parties:
                       - type: individual
                         firstName: John
                         lastName: Doe
                         relationships:
-                          - owner
-                          - annuitant
+                          - OWNER
+                          - ANNUITANT
                       - type: entity
                         name: Smith Family Trust
                         taxId: "987654321"
                         relationships:
-                          - primaryBeneficiary
+                          - PRIMARY_BENEFICIARY
                     signedDate: "2026-06-01"
                     receivedDate: "2026-06-02"
                     rateEffectiveDate: "2026-06-02"
@@ -268,7 +268,7 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: true
                     id: DF-APP-001235
-                  status: received
+                  status: RECEIVED
                   eventType: applicationStatus.v1.applicationReceived
                   notification:
                     cusip: "401B23458"
@@ -281,20 +281,20 @@ webhooks:
                         npn: "9876543210"
                         crdNumber: "1122334"
                         relationships:
-                          - brokerageGeneralAgency
+                          - BROKERAGE_GENERAL_AGENCY
                         commissionSplitPercent: 100
                     parties:
                       - type: entity
                         name: Doe Family Revocable Trust
                         taxId: "987654321"
                         relationships:
-                          - owner
+                          - OWNER
                       - type: individual
                         firstName: John
                         middleName: Quincy
                         lastName: Doe
                         relationships:
-                          - annuitant
+                          - ANNUITANT
                     signedDate: "2026-06-01"
                     receivedDate: "2026-06-02"
                     rateEffectiveDate: "2026-06-02"
@@ -304,8 +304,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
           content:
@@ -348,18 +348,18 @@ webhooks:
                 platform: DigitalFirst
                 isElectronic: true
                 id: DF-APP-001234
-              status: inProgress
+              status: IN_PROGRESS
               eventType: applicationStatus.v1.canSellActionNeeded
               notification:
-                status: inProgress
+                status: IN_PROGRESS
                 isActionNeeded: true
                 startDate: "2026-06-03"
                 issues:
-                  - type: trainingExpired
+                  - type: TRAINING_EXPIRED
                     note: Producer training expired on 2026-05-01
                     affectedProducer:
                       npn: "1234567890"
-                  - type: other
+                  - type: OTHER
                     note: Other reason for can-sell action needed
       responses:
         "200":
@@ -367,8 +367,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
           content:
@@ -413,14 +413,14 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: true
                     id: DF-APP-001234
-                  status: inProgress
+                  status: IN_PROGRESS
                   eventType: applicationStatus.v1.suitabilityActionNeeded
                   notification:
-                    status: inProgress
+                    status: IN_PROGRESS
                     isActionNeeded: true
                     startDate: "2026-06-04"
                     dueDate: "2026-06-11"
-                    reason: moreInformationNeeded
+                    reason: MORE_INFORMATION_NEEDED
                     note: Client financial profile documentation required
               suitabilityActionNeededExample:
                 summary: Suitability review requires additional information
@@ -432,14 +432,14 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: true
                     id: DF-APP-001234
-                  status: inProgress
+                  status: IN_PROGRESS
                   eventType: applicationStatus.v1.suitabilityActionNeeded
                   notification:
-                    status: inProgress
+                    status: IN_PROGRESS
                     isActionNeeded: true
                     startDate: "2026-06-04"
                     dueDate: "2026-06-11"
-                    reason: moreInformationNeeded
+                    reason: MORE_INFORMATION_NEEDED
                     note: Client financial profile documentation required
       responses:
         "200":
@@ -447,8 +447,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
         "403":
@@ -479,10 +479,10 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: true
                     id: DF-APP-001234
-                  status: inProgress
+                  status: IN_PROGRESS
                   eventType: applicationStatus.v1.suitabilityApproved
                   notification:
-                    status: completed
+                    status: COMPLETED
                     isActionNeeded: false
                     startDate: "2026-06-04"
                     endDate: "2026-06-15"
@@ -498,10 +498,10 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: true
                     id: DF-APP-001234
-                  status: inProgress
+                  status: IN_PROGRESS
                   eventType: applicationStatus.v1.suitabilityApproved
                   notification:
-                    status: completed
+                    status: COMPLETED
                     isActionNeeded: false
                     startDate: "2026-06-04"
                     endDate: "2026-06-15"
@@ -513,8 +513,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
         "403":
@@ -545,10 +545,10 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: false
                     id: DF-APP-001234
-                  status: inProgress
+                  status: IN_PROGRESS
                   eventType: applicationStatus.v1.documentReviewActionNeeded
                   notification:
-                    status: inProgress
+                    status: IN_PROGRESS
                     isActionNeeded: true
                     startDate: "2026-06-05"
               documentReviewActionNeededExample:
@@ -561,14 +561,14 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: true
                     id: DF-APP-001234
-                  status: inProgress
+                  status: IN_PROGRESS
                   eventType: applicationStatus.v1.documentReviewActionNeeded
                   notification:
-                    status: inProgress
+                    status: IN_PROGRESS
                     isActionNeeded: true
                     startDate: "2026-06-05"
                     issues:
-                      - reason: missingSignature
+                      - reason: MISSING_SIGNATURE
                         formName: Application for Annuity
                         formNumber: APP-1001
                         dueDate: "2026-06-12"
@@ -579,8 +579,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
         "403":
@@ -611,19 +611,19 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: true
                     id: DF-APP-001234
-                  status: inProgress
+                  status: IN_PROGRESS
                   eventType: applicationStatus.v1.fundingActionNeeded
                   notification:
                     isActionNeeded: false
-                    status: inProgress
+                    status: IN_PROGRESS
                     startDate: "2026-06-06"
-                    reason: awaitingFundsFromCedingCompany
+                    reason: AWAITING_FUNDS_FROM_CEDING_COMPANY
                     sources:
-                      - method: anotherPolicy
-                        type: full1035Exchange
+                      - method: ANOTHER_POLICY
+                        type: FULL_1035_EXCHANGE
                         isActionNeeded: false
                         anticipatedAmount: 250000.00
-                        status: inProgress
+                        status: IN_PROGRESS
                         cedingCompanyName: Legacy Life Insurance Co
                         accountNumber: POL-123456789
               fundingActionNeededExample:
@@ -636,19 +636,19 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: true
                     id: DF-APP-001234
-                  status: inProgress
+                  status: IN_PROGRESS
                   eventType: applicationStatus.v1.fundingActionNeeded
                   notification:
                     isActionNeeded: true
-                    status: inProgress
+                    status: IN_PROGRESS
                     startDate: "2026-06-06"
-                    reason: awaitingFundsFromCedingCompany
+                    reason: AWAITING_FUNDS_FROM_CEDING_COMPANY
                     sources:
-                      - method: anotherPolicy
-                        type: full1035Exchange
+                      - method: ANOTHER_POLICY
+                        type: FULL_1035_EXCHANGE
                         isActionNeeded: true
                         anticipatedAmount: 250000.00
-                        status: inProgress
+                        status: IN_PROGRESS
                         cedingCompanyName: Legacy Life Insurance Co
                         accountNumber: POL-123456789
       responses:
@@ -657,8 +657,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
         "403":
@@ -690,21 +690,21 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: true
                     id: DF-APP-001234
-                  status: inProgress
+                  status: IN_PROGRESS
                   eventType: applicationStatus.v1.fundingTransferRequestSent
                   notification:
                     isActionNeeded: false
-                    status: inProgress
+                    status: IN_PROGRESS
                     startDate: "2026-06-07"
                     nextActivityDate: "2026-06-21"
-                    methodOfInitiation: fax
+                    methodOfInitiation: FAX
                     referenceNumber: TRF-2026-004567
                     note: 1035 exchange transfer request faxed to ceding carrier
                     sources:
                       - method: anotherPolicy
                         type: full1035Exchange
                         anticipatedAmount: 250000.00
-                        status: inProgress
+                        status: IN_PROGRESS
                         cedingCompanyName: Legacy Life Insurance Co
                         accountNumber: POL-123456789
       responses:
@@ -713,8 +713,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
         "403":
@@ -745,17 +745,17 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: true
                     id: DF-APP-001234
-                  status: inProgress
+                  status: IN_PROGRESS
                   eventType: applicationStatus.v1.fundingSourceTypeUpdated
                   notification:
                     isActionNeeded: false
-                    status: inProgress
+                    status: IN_PROGRESS
                     startDate: "2026-06-08"
                     sources:
                       - method: anotherPolicy
                         type: directRollover
                         anticipatedAmount: 150000.00
-                        status: inProgress
+                        status: IN_PROGRESS
                         cedingCompanyName: Prior Carrier Inc
                         accountNumber: IRA-987654321
               fundingSourceTypeUpdatedExampl2:
@@ -768,17 +768,17 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: true
                     id: DF-APP-001234
-                  status: inProgress
+                  status: IN_PROGRESS
                   eventType: applicationStatus.v1.fundingSourceTypeUpdated
                   notification:
                     isActionNeeded: false
-                    status: inProgress
+                    status: IN_PROGRESS
                     startDate: "2026-06-08"
                     sources:
-                      - method: anotherPolicy
+                      - method: ANOTHER_POLICY
                         type: directRollover
                         anticipatedAmount: 150000.00
-                        status: inProgress
+                        status: IN_PROGRESS
                         cedingCompanyName: Prior Carrier Inc
                         accountNumber: IRA-987654321
       responses:
@@ -787,8 +787,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
         "403":
@@ -819,20 +819,20 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: true
                     id: DF-APP-001234
-                  status: inProgress
+                  status: IN_PROGRESS
                   eventType: applicationStatus.v1.fundingTransferFollowedUp
                   notification:
                     isActionNeeded: true
-                    status: inProgress
+                    status: IN_PROGRESS
                     startDate: "2026-06-09"
                     nextActivityDate: "2026-06-16"
                     transferSentDate: "2026-06-07"
                     note: Follow-up call scheduled with ceding carrier
                     sources:
-                      - method: anotherPolicy
+                      - method: ANOTHER_POLICY
                         type: full1035Exchange
                         anticipatedAmount: 250000.00
-                        status: inProgress
+                        status: IN_PROGRESS
                         cedingCompanyName: Legacy Life Insurance Co
                         accountNumber: POL-123456789
               fundingTransferFollowedUpExample:
@@ -845,20 +845,20 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: true
                     id: DF-APP-001234
-                  status: inProgress
+                  status: IN_PROGRESS
                   eventType: applicationStatus.v1.fundingTransferFollowedUp
                   notification:
                     isActionNeeded: true
-                    status: inProgress
+                    status: IN_PROGRESS
                     startDate: "2026-06-09"
                     nextActivityDate: "2026-06-16"
                     transferSentDate: "2026-06-07"
                     note: Follow-up call scheduled with ceding carrier
                     sources:
-                      - method: anotherPolicy
-                        type: full1035Exchange
+                      - method: ANOTHER_POLICY
+                        type: FULL_1035_EXCHANGE
                         anticipatedAmount: 250000.00
-                        status: inProgress
+                        status: IN_PROGRESS
                         cedingCompanyName: Legacy Life Insurance Co
                         accountNumber: POL-123456789
       responses:
@@ -867,8 +867,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
         "403":
@@ -899,20 +899,20 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: true
                     id: DF-APP-001234
-                  status: inProgress
+                  status: IN_PROGRESS
                   eventType: applicationStatus.v1.fundingReceived
                   notification:
                     isActionNeeded: false
-                    status: completed
+                    status: COMPLETED
                     startDate: "2026-06-06"
                     anticipatedAmount: 250000.00
                     receivedAmount: 240000.00
                     receivedDate: "2026-06-15"
                     sources:
-                      - method: anotherPolicy
-                        type: full1035Exchange
+                      - method: ANOTHER_POLICY
+                        type: FULL_1035_EXCHANGE
                         anticipatedAmount: 250000.00
-                        status: complete
+                        status: COMPLETED
                         cedingCompanyName: Legacy Life Insurance Co
                         accountNumber: POL-123456789
               fundingReceivedExample:
@@ -925,20 +925,20 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: true
                     id: DF-APP-001234
-                  status: inProgress
+                  status: IN_PROGRESS
                   eventType: applicationStatus.v1.fundingReceived
                   notification:
                     isActionNeeded: false
-                    status: completed
+                    status: COMPLETED
                     startDate: "2026-06-06"
                     anticipatedAmount: 250000.00
                     receivedAmount: 240000.00
                     receivedDate: "2026-06-15"
                     sources:
-                      - method: anotherPolicy
-                        type: full1035Exchange
+                      - method: ANOTHER_POLICY
+                        type: FULL_1035_EXCHANGE
                         anticipatedAmount: 250000.00
-                        status: complete
+                        status: COMPLETE
                         cedingCompanyName: Legacy Life Insurance Co
                         accountNumber: POL-123456789
       responses:
@@ -947,8 +947,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
         "403":
@@ -979,7 +979,7 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: true
                     id: DF-APP-001234
-                  status: completed
+                  status: COMPLETED
                   eventType: applicationStatus.v1.applicationCompleted
                   notification:
                     isActionNeeded: false
@@ -987,7 +987,7 @@ webhooks:
                     note: Policy issued and delivered to owner
                     delivery:
                       sentDate: "2026-06-20"
-                      method: fedex
+                      method: FEDEX
                       trackingNumber: "7946 1234 5678"
               applicationCompletedExample:
                 summary: Application completed and policy delivered
@@ -999,7 +999,7 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: true
                     id: DF-APP-001234
-                  status: completed
+                  status: COMPLETED
                   eventType: applicationStatus.v1.applicationCompleted
                   notification:
                     isActionNeeded: false
@@ -1007,7 +1007,7 @@ webhooks:
                     note: Policy issued and delivered to owner
                     delivery:
                       sentDate: "2026-06-20"
-                      method: fedex
+                      method: FEDEX
                       trackingNumber: "7946 1234 5678"
       responses:
         "200":
@@ -1015,8 +1015,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
         "403":
@@ -1047,12 +1047,12 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: true
                     id: DF-APP-001234
-                  status: cancelled
+                  status: CANCELLED
                   eventType: applicationStatus.v1.applicationCancelled
                   notification:
-                    initiator: client
+                    initiator: CLIENT
                     cancelledDate: "2026-06-18"
-                    reason: clientRequest
+                    reason: CLIENT_REQUEST
                     notes: Client elected to pursue alternative product
               applicationCancelledExample2:
                 summary: Application cancelled by client request
@@ -1064,12 +1064,12 @@ webhooks:
                     platform: DigitalFirst
                     isElectronic: true
                     id: DF-APP-001234
-                  status: cancelled
+                  status: CANCELLED
                   eventType: applicationStatus.v1.applicationCancelled
                   notification:
-                    initiator: producer
+                    initiator: PRODUCER
                     cancelledDate: "2026-06-18"
-                    reason: clientRequest
+                    reason: CLIENT_REQUEST
                     notes: Client elected to pursue alternative product
       responses:
         "200":
@@ -1077,8 +1077,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
         "403":
@@ -1091,7 +1091,7 @@ components:
       description: Correlation ID echoed from the request, if supplied
       schema:
         type: string
-    X-Api-Version:
+    Api-Version:
       description: Minor/patch version of the API that served this response
       schema:
         type: string
@@ -1142,8 +1142,8 @@ components:
         required: false
         schema:
           type: string
-          enum: [policyNumber, status, statusDate]
-          default: statusDate
+          enum: [POLICY_NUMBER, STATUS, STATUS_DATE]
+          default: STATUS_DATE
       sortOrder:
         name: sortOrder
         description: Whether resources are ordered in ascending (asc) or descending (desc) order.
@@ -1151,8 +1151,8 @@ components:
         required: false
         schema:
           type: string
-          enum: [asc, desc]
-          default: desc
+          enum: [ASC, DESC]
+          default: DESC
       offset:
         name: offset
         description: Zero-based index of the first resource to return, matching offset in the response metadata.
@@ -1178,9 +1178,9 @@ components:
     sectionReviewStatus:
       type: string
       enum:
-      - awaitingReview
-      - inProgress
-      - completed
+      - AWAITING_REVIEW
+      - IN_PROGRESS
+      - COMPLETED
     taxId:
       description: Party’s tax identification number
       type: string
@@ -1346,7 +1346,7 @@ components:
                 reason:
                   description: Reason for cancellation
                   type: string
-                  enum: [contactTheCarrier, fundingDiscrepancy, nigoAtCedingCarrier, noFundsReceivedCash, pendingReg60, other]
+                  enum: [CONTACT_THE_CARRIER, FUNDING_DISCREPANCY, NIGO_AT_CEDING_CARRIER, NO_FUNDS_RECEIVED_CASH, PENDING_REG_60, OTHER]
     
     TransferRequestNotification:
       description: Schema for transfer notification data
@@ -1376,7 +1376,7 @@ components:
                 methodOfInitiation:
                   description: Initiation method
                   type: string
-                  enum: [fax, email, mail, replacement]
+                  enum: [FAX, EMAIL, MAIL, REPLACEMENT]
                 referenceNumber:
                   description: Reference number
                   type: string        
@@ -1495,7 +1495,7 @@ components:
                     method:
                       description: Delivery method
                       type: string
-                      enum: [fedex, ups, electronicDelivery, handDelivery, usps]
+                      enum: [FEDEX, UPS, ELECTRONIC_DELIVERY, HAND_DELIVERY, USPS]
                     trackingNumber:
                       description: Delivery tracking number
                       type: string
@@ -1520,7 +1520,7 @@ components:
                 initiator:
                   description: Who initiated cancellation
                   type: string
-                  enum: [producer, carrier, client, backOffice]
+                  enum: [PRODUCER, CARRIER, CLIENT, BACK_OFFICE]
                 cancelledDate:
                   description: Cancellation date
                   type: string
@@ -1529,19 +1529,19 @@ components:
                   description: Reason for cancellation
                   type: string  
                   enum:     
-                    - clientRequest
-                    - ageOut
-                    - duplicate
-                    - policyCannotBeVerified
-                    - addedInError
-                    - suitabilityDecline
-                    - notInGoodOrder
-                    - notTaken
-                    - productTraining
-                    - reg60Decline
+                    - CLIENT_REQUEST
+                    - AGE_OUT
+                    - DUPLICATE
+                    - POLICY_CANNOT_BE_VERIFIED
+                    - ADDED_IN_ERROR
+                    - SUITABILITY_DECLINE
+                    - NOT_IN_GOOD_ORDER
+                    - NOT_TAKEN
+                    - PRODUCT_TRAINING
+                    - REG_60_DECLINE
                     - NIGO
-                    - staleDated
-                    - suitDeclined
+                    - STALE_DATED
+                    - SUIT_DECLINED
                 notes:
                   description: Additional notes regarding the cancellation
                   type: string
@@ -1583,28 +1583,28 @@ components:
                 description: Funding delivery method
                 type: string
                 enum:
-                  - anotherPolicy
-                  - check
-                  - clearinghouse
-                  - creditCard
-                  - debitCard
-                  - digitalPayment
-                  - electronicFundTransfer
-                  - payrollDeduction
-                  - wireTransfer
+                  - ANOTHER_POLICY
+                  - CHECK
+                  - CLEARINGHOUSE
+                  - CREDIT_CARD
+                  - DEBIT_CARD
+                  - DIGITAL_PAYMENT
+                  - ELECTRONIC_FUND_TRANSFER
+                  - PAYROLL_DEDUCTION
+                  - WIRE_TRANSFER
               type:
                 description: Funding source type
                 type: string
                 enum:
-                  - contribution
-                  - directRollover
-                  - employeeContribution
-                  - employerContribution
-                  - full1035Exchange
-                  - indirectRollover
-                  - nonQualifiedTransferOfAssets
-                  - partial1035Exchange
-                  - qualifiedTransfer
+                  - CONTRIBUTION
+                  - DIRECT_ROLLOVER
+                  - EMPLOYEE_CONTRIBUTION
+                  - EMPLOYER_CONTRIBUTION
+                  - FULL_1035_EXCHANGE
+                  - INDIRECT_ROLLOVER
+                  - NON_QUALIFIED_TRANSFER_OF_ASSETS
+                  - PARTIAL_1035_EXCHANGE
+                  - QUALIFIED_TRANSFER
               isActionNeeded:
                 description: Indicator that at least one section requires action
                 type: boolean
@@ -1615,18 +1615,18 @@ components:
               status:
                 description: Application status
                 type: string
-                enum: [inProgress, complete]
+                enum: [IN_PROGRESS, COMPLETE]
               reason:
                 description: Reason for cancellation
                 type: string
                 enum:
-                  - awaitingFundsFromCedingCompany
-                  - contactTheCarrier
-                  - fundingDiscrepancy
-                  - nigoAtCedingCarrier
-                  - noFundsReceivedCash
-                  - pendingReg60
-                  - other
+                  - AWAITING_FUNDS_FROM_CEDING_COMPANY
+                  - CONTACT_THE_CARRIER
+                  - FUNDING_DISCREPANCY
+                  - NIGO_AT_CEDING_CARRIER
+                  - NO_FUNDS_RECEIVED_CASH
+                  - PENDING_REG_60
+                  - OTHER
               note:
                 description: Note
                 type: string
@@ -1712,10 +1712,10 @@ components:
               items:
                 type: string
                 enum:
-                  - primaryAgent
-                  - secondaryAgent
-                  - additionalAgent
-                  - investmentAdvisorRepresentative
+                  - PRIMARY_AGENT
+                  - SECONDARY_AGENT
+                  - ADDITIONAL_AGENT
+                  - INVESTMENT_ADVISOR_REPRESENTATIVE
     IndividualParty:
       description: Schema for individual party data
       type: object
@@ -1770,10 +1770,10 @@ components:
               items:
                 type: string
                 enum:
-                  - brokerageGeneralAgency
-                  - registeredInvestmentAdvisoryFirm
-                  - independentMarketingOrganization
-                  - brokerDealer
+                  - BROKERAGE_GENERAL_AGENCY
+                  - REGISTERED_INVESTMENT_ADVISORY_FIRM
+                  - INDEPENDENT_MARKETING_ORGANIZATION
+                  - BROKER_DEALER
     EntityParty:
       description: Schema for entity party data
       type: object
@@ -1819,12 +1819,12 @@ components:
           items:
             type: string
             enum:
-              - owner
-              - jointOwner
-              - annuitant
-              - jointAnnuitant
-              - primaryBeneficiary
-              - contingentBeneficiary
+              - OWNER
+              - JOINT_OWNER
+              - ANNUITANT
+              - JOINT_ANNUITANT
+              - PRIMARY_BENEFICIARY
+              - CONTINGENT_BENEFICIARY
     Producer:
       description: >-
         An individual or an entity acting as a producer on the policy. The
@@ -1844,13 +1844,13 @@ components:
           lastName: Smith
           npn: "1234567890"
           relationships:
-            - primaryAgent
+            - PRIMARY_AGENT
           commissionSplitPercent: 100
         - type: entity
           name: Smith & Associates
           npn: "1234567890"
           relationships:
-            - brokerDealer
+            - BROKER_DEALER
           commissionSplitPercent: 100
     Producers:
       description: Schema for producers data
@@ -1893,12 +1893,12 @@ components:
                 description: Can-sell issue type
                 type: string
                 enum:
-                  - trainingIncompleteMissing
-                  - trainingExpired
-                  - agentNotAppointedForSale
-                  - jitAppointmentInProgress
-                  - agentNotLicensed
-                  - other
+                  - TRAINING_INCOMPLETE_MISSING
+                  - TRAINING_EXPIRED
+                  - AGENT_NOT_APPOINTED_FOR_SALE
+                  - JIT_APPOINTMENT_IN_PROGRESS
+                  - AGENT_NOT_LICENSED
+                  - OTHER
               note:
                 description: Note
                 type: string
@@ -1933,7 +1933,7 @@ components:
         status:
           description: Application status
           type: string
-          enum: [awaitingReview, inProgress, completed, notApplicable]
+          enum: [AWAITING_REVIEW, IN_PROGRESS, COMPLETED, NOT_APPLICABLE]
         isActionNeeded:
           description: Indicator that at least one section requires action
           type: boolean
@@ -1949,9 +1949,9 @@ components:
           description: Reason for cancellation
           type: string
           enum:
-            - moreInformationNeeded
-            - notSuitableForClient
-            - other
+            - MORE_INFORMATION_NEEDED
+            - NOT_SUITABLE_FOR_CLIENT
+            - OTHER
         note:
           description: Note
           type: string
@@ -1999,13 +1999,13 @@ components:
                 description: Reason for cancellation
                 type: string
                 enum:
-                  - applicationIssue
-                  - contactCarrier
-                  - incompleteForm
-                  - missingForm
-                  - missingSignature
-                  - needClarity
-                  - other
+                  - APPLICATION_ISSUE
+                  - CONTACT_CARRIER
+                  - INCOMPLETE_FORM
+                  - MISSING_FORM
+                  - MISSING_SIGNATURE
+                  - NEED_CLARITY
+                  - OTHER
               formName:
                 description: Form name
                 type: string
@@ -2057,14 +2057,14 @@ components:
             $ref: "#/components/schemas/notificationMetadata"
     notificationStatus:
       type: string
-      enum: [received, inProgress, completed, cancelled]
+      enum: [RECEIVED, IN_PROGRESS, COMPLETED, CANCELLED]
 
     actionSections:
       description: Sections needing action
       type: array
       items:
         type: string
-        enum: [suitability, canSellValidation, documentReview, funding]
+        enum: [SUITABILITY, CAN_SELL_VALIDATION, DOCUMENT_REVIEW, FUNDING]
 
     notificationMetadata:
       type: object
