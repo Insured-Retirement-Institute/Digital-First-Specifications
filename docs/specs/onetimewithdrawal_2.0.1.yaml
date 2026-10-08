@@ -10,7 +10,7 @@ info:
     url: https://opensource.org/licenses/MIT
     
 paths:
-  /v1/policies/{policyNumber}/withdrawal-requests/one-time-partials:
+  /v2/policies/{policyNumber}/withdrawal-requests/one-time-partials:
     post:
       operationId: submitOneTimeWithdrawal
       tags:
@@ -249,7 +249,7 @@ paths:
             Location:
               description: >
                 URL of the created arrangement resource.
-                Format: /v1/policies/{policyNumber}/withdrawal-requests/{requestId}
+                Format: /v2/policies/{policyNumber}/withdrawal-requests/{requestId}
               schema:
                 type: string
                 format: uri
@@ -276,7 +276,7 @@ paths:
         '503': { $ref: '#/components/responses/ServiceUnavailableError' }
         '504': { $ref: '#/components/responses/GatewayTimeoutError' }
 
-  /v1/policies/{policyNumber}/withdrawal-requests/full-surrenders:
+  /v2/policies/{policyNumber}/withdrawal-requests/full-surrenders:
     post:
       operationId: submitFullSurrenderRequest
       tags:
@@ -391,7 +391,7 @@ paths:
             Location:
               description: >
                 URL of the created arrangement resource.
-                Format: /v1/policies/{policyNumber}/withdrawal-requests/{requestId}
+                Format: /v2/policies/{policyNumber}/withdrawal-requests/{requestId}
               schema:
                 type: string
                 format: uri
@@ -418,7 +418,7 @@ paths:
         '503': { $ref: '#/components/responses/ServiceUnavailableError' }
         '504': { $ref: '#/components/responses/GatewayTimeoutError' }
 
-  /v1/policies/{policyNumber}/withdrawal-requests/{requestId}:
+  /v2/policies/{policyNumber}/withdrawal-requests/{requestId}:
     get:
       operationId: getWithdrawalRequest
       tags:
