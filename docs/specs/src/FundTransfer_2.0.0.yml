@@ -1,9 +1,9 @@
-# Modified by Cursor: generated file — edit docs/specs/src/fundtransfer_1.0.1.yaml instead.
-# Regenerate with: npm run bundle:specs
+# Modified by Cursor: source spec — bundled to docs/specs/FundTransfer_2.0.0.yml
+# TODO: align to shared Error_v1 — see ERROR-SCHEMA-DEBT.md
 openapi: "3.1.0"
 info:
   title: "Fund Transfer Service"
-  version: "1.0.1"
+  version: "2.0.0"
   description: "API to perform fund-to-fund and segment-based value transfers.\n"
   license:
     name: "MIT"
@@ -27,14 +27,13 @@ paths:
               $ref: "#/components/schemas/FundTransferRequest"
             examples:
               completeFundTransferRequest:
-                summary: "Complete fund transfer request – FULL_REBALANCE (validated)"
+                summary: "Complete fund transfer request FULL_REBALANCE (validated)"
                 value:
                   effectiveDate: "2026-03-15"
                   allocationOption: "SPECIFIED_FUNDS"
                   nsccParticipantId: "12345"
                   cusip: "123ABC456"
-                  transactionAmounts:
-                    amountType: "FULL_REBALANCE"
+                  amountType: "FULL_REBALANCE"
                   funds:
                     transferFromFunds:
                       - fundId: "FUND_FIXED_01"
@@ -67,7 +66,7 @@ paths:
                       transferAmount: 500
                     arrangementDestination:
                       subAccountId: "DEST_SUB_ACCT_01"
-                      transferPercentage: 100
+                      transferAmount: 500
                   investProduct:
                     rateLockInfo: "RATE_LOCK_2026"
                     isLockedIn: true
@@ -81,25 +80,33 @@ paths:
                     npn: "99887766"
                     crdNumber: "CRD445566"
                   parties:
-                    - type: "individual"
+                    - type: "INDIVIDUAL"
                       firstName: "John"
                       middleName: "A"
                       lastName: "Doe"
                       taxId: "123456789"
                       relationships:
-                        - "owner"
-                      paymentForm: "ACH"
-                      allocationPercentage: 100
-                    - type: "entity"
+                        - "OWNER"
+                    - type: "ENTITY"
                       name: "ABC TRUST"
                       taxId: "987654321"
                       relationships:
-                        - "primaryBeneficiary"
-                      paymentForm: "CHECK"
-                      allocationPercentage: 100
+                        - "PRIMARY_BENEFICIARY"
       responses:
         "202":
-          $ref: "#/components/responses/FundTransferSuccess"
+          description: "Accepted Fund Transfer request accepted for processing."
+          headers:
+            Location:
+              description: "URI of the created fund transfer request resource.\n"
+              schema:
+                type: "string"
+                format: "uri"
+            correlationId:
+              $ref: "#/components/headers/correlationId"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FundTransferResponse"
         "400":
           $ref: "#/components/responses/BadRequestError"
         "401":
@@ -173,229 +180,56 @@ paths:
 components:
   headers:
     correlationId:
-      description: "Correlates this response to downstream processing."
-      schema:
-        type: "string"
-        maxLength: 100
+      $ref: "${SHARED_SPECS_BASE}/correlationId_v1.yaml#/components/headers/correlationId"
   parameters:
     PolicyNumber:
-      name: "policyNumber"
-      description: "Policy number"
-      in: "path"
-      required: true
-      schema:
-        type: "string"
-        minLength: 1
-        maxLength: 30
+      $ref: "${SHARED_SPECS_BASE}/PolicyNumber_v1.yaml#/components/parameters/PolicyNumber"
     CorrelationIdHeader:
-      name: "correlationId"
-      description: "Optional client-supplied identifier to trace the request."
-      in: "header"
-      required: false
-      schema:
-        type: "string"
-        maxLength: 100
+      $ref: "${SHARED_SPECS_BASE}/CorrelationIdHeader_v1.yaml#/components/parameters/CorrelationIdHeader"
     AssociatedFirmId:
-      description: "Optional query parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms."
-      name: "associatedFirmId"
-      in: "query"
-      required: false
-      schema:
-        type: "string"
-        maxLength: 65
+      $ref: "${SHARED_SPECS_BASE}/AssociatedFirmId_v1.yaml#/components/parameters/AssociatedFirmId"
   responses:
-    FundTransferSuccess:
-      description: "Accepted — Fund Transfer request accepted for processing."
-      headers:
-        Location:
-          description: "URI of the created fund transfer request resource.\n"
-          schema:
-            type: "string"
-            format: "uri"
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/FundTransferResponse"
     BadRequestError:
-      description: "Bad Request — the request payload is malformed or fails schema validation."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/BadRequestError_v2.yaml#/components/responses/BadRequestError"
     UnauthorizedError:
-      description: "Unauthorized — authentication credentials are missing or invalid."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/UnauthorizedError_v2.yaml#/components/responses/UnauthorizedError"
     ForbiddenError:
-      description: "Forbidden — the caller is not permitted to perform this action."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/ForbiddenError_v2.yaml#/components/responses/ForbiddenError"
     NotFoundError:
-      description: "Not Found — the referenced policy or fund transfer request does not exist."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/NotFoundError_v2.yaml#/components/responses/NotFoundError"
     MethodNotAllowedError:
-      description: "Method Not Allowed — the HTTP method is not supported on this resource."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/MethodNotAllowedError_v2.yaml#/components/responses/MethodNotAllowedError"
     NotAcceptableError:
-      description: "Not Acceptable — the requested media type is not supported."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/NotAcceptableError_v2.yaml#/components/responses/NotAcceptableError"
     ConflictError:
-      description: "A transaction for this policy is already in progress or an equivalent request has already been accepted.
-
-        Re-submitting the same transaction while it is in-flight will be rejected to prevent duplicate processing.\n"
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/ConflictError_v2.yaml#/components/responses/ConflictError"
     PayloadTooLargeError:
-      description: "Payload Too Large — the request body exceeds the maximum allowed size."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/PayloadTooLargeError_v2.yaml#/components/responses/PayloadTooLargeError"
     UnsupportedMediaTypeError:
-      description: "Unsupported Media Type — the request Content-Type is not supported."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/UnsupportedMediaTypeError_v2.yaml#/components/responses/UnsupportedMediaTypeError"
     UnprocessableEntityError:
-      description: "Unprocessable Entity — the request is well-formed but fails business rule validation (e.g., invalid combinations of amount type and segment amounts).\n"
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/UnprocessableEntityError_v2.yaml#/components/responses/UnprocessableEntityError"
     TooManyRequestsError:
-      description: "Too Many Requests — the caller has exceeded the permitted rate limit. Clients should honor any Retry-After header returned.\n"
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/TooManyRequestsError_v2.yaml#/components/responses/TooManyRequestsError"
     InternalServerError:
-      description: "Internal Server Error — an unexpected condition prevented the request from completing."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/InternalServerError_v2.yaml#/components/responses/InternalServerError"
     BadGatewayError:
-      description: "Bad Gateway — an upstream system returned an invalid response."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/BadGatewayError_v2.yaml#/components/responses/BadGatewayError"
     ServiceUnavailableError:
-      description: "Service Unavailable — the service is temporarily unable to handle the request."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/ServiceUnavailableError_v2.yaml#/components/responses/ServiceUnavailableError"
     GatewayTimeoutError:
-      description: "Gateway Timeout — an upstream system did not respond in time."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/GatewayTimeoutError_v2.yaml#/components/responses/GatewayTimeoutError"
   schemas:
-    Error:
-      type: "object"
-      required:
-        - "code"
-        - "message"
-      properties:
-        httpStatus:
-          type: "integer"
-          description: "HTTP status code associated with this error"
-          minimum: 400
-          maximum: 599
-        code:
-          type: "string"
-          description: "A structured error code that uniquely identifies the type of error. This can follow a hierarchical format: - `<domain>`: The logical domain (e.g., \"gateway\") - `<category>`: The error category (e.g., \"client\" or \"server\") - `<subcategory>`: A specific error identifier (e.g., \"badrequest\", \"timeout\")\n"
-        timestamp:
-          type: "string"
-          format: "date-time"
-          description: "Create or Update timestamp of transaction event"
-        message:
-          type: "string"
-          description: "Message with specific error details."
-        validationErrors:
-          type: "array"
-          description: "Logical rule violations or decision failures related to business logic or rules"
-          items:
-            type: "object"
-            properties:
-              code:
-                type: "string"
-                description: "A structured error code that uniquely identifies the type of error. This can follow a hierarchical format: - `<domain>`: The logical domain (e.g., \"gateway\") - `<category>`: The error category (e.g., \"client\" or \"server\") - `<subcategory>`: A specific error identifier (e.g., \"badrequest\", \"timeout\")\n"
-              message:
-                type: "string"
-                description: "Message with specific error details."
     FundTransferRequest:
       type: "object"
       description: "Represents a request to transfer value between funds or fund segments on a policy. Fund transfers are processed asynchronously and may be amount-based, percentage-based, or full rebalances depending on the transaction type.\n"
       required:
         - "effectiveDate"
-        - "transactionAmounts"
+        - "amountType"
         - "funds"
+        - "nsccParticipantId"
+        - "producer"
+        - "allocationOption"
       properties:
         effectiveDate:
           type: "string"
@@ -403,7 +237,7 @@ components:
           description: "Date on which the fund transfer should take effect."
         allocationOption:
           type: "string"
-          description: "Indicates the allocation method, such as pro-rata across funds, dollar-based, or a specified set of funds or segments."
+          description: "Indicates the allocation method to be applied to the transfer, such as pro-rata across funds, dollar-based, or a specified set of funds or segments.\n"
           enum:
             - "PRO_RATA"
             - "DOLLAR"
@@ -415,43 +249,87 @@ components:
             - "EARNINGS_ONLY"
         cusip:
           type: "string"
+          description: "CUSIP unique identification code for the security. Optional.\n"
           minLength: 9
           maxLength: 9
           pattern: "^[0-9]{3}[A-Z0-9]{5}[0-9]$"
-          description: "CUSIP — unique identification code for the security. Optional.\n"
         nsccParticipantId:
           type: "string"
+          description: "NSCC participant identifier for the submitting firm."
           maxLength: 100
-          description: "Unique identifier for the submitting firm or participant within the NSCC network."
-        transactionAmounts:
-          $ref: "#/components/schemas/TransactionAmounts"
+        amountType:
+          type: "string"
+          description: "Indicates the method used to calculate the transfer value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction.\n"
+          enum:
+            - "FULL_REBALANCE"
+            - "FUND_BALANCE_TRANSFER"
+            - "PERCENT_OF_CONTRACT_VALUE"
+            - "SPECIFIED_AMOUNT"
         funds:
-          $ref: "#/components/schemas/FundTransferFunds"
-          description: "Source and destination funds for the transfer. Required for all transfer types. For FULL_REBALANCE transfers, destination segments must specify requestedPercentage: 100 and source segments must not specify amounts or percentages.\n"
+          description: "Source and destination funds involved in the transfer.
+
+            - For `FULL_REBALANCE`, source segments must not specify
+
+            \  `requestedAmount` or `requestedPercentage`, and destination
+
+            \  segments must specify `requestedPercentage: 100`.
+
+
+            - For `SPECIFIED_AMOUNT`, transfer-from segments must specify
+
+            \  `requestedAmount`. Transfer-to segments may specify either
+
+            \  `requestedAmount` or `requestedPercentage`.
+
+
+            - For `PERCENT_OF_CONTRACT_VALUE`, both transfer-from and
+
+            \  transfer-to segments must specify `requestedPercentage`.
+
+
+            - For FUND_BALANCE_TRANSFER:
+
+            \  Allowed combinations:
+
+            \  - Source requestedAmount → Destination requestedAmount
+
+            \  - Source requestedAmount → Destination requestedPercentage
+
+            \  - Source requestedPercentage → Destination requestedPercentage
+
+            \  Not allowed:
+
+            \  - Source requestedPercentage → Destination requestedAmount\n"
+          allOf:
+            - $ref: "#/components/schemas/FundTransferFunds"
         arrangement:
-          $ref: "#/components/schemas/Arrangement"
+          description: "DTCC / IRI arrangement mapping details related to the transfer.\n"
+          allOf:
+            - $ref: "#/components/schemas/Arrangement"
         auditTransSummation:
-          $ref: "#/components/schemas/AuditTransSummation"
+          description: "Summary information used to audit one or more transactions.\n"
+          allOf:
+            - $ref: "#/components/schemas/AuditTransSummation"
         producer:
-          $ref: "#/components/schemas/Producer"
+          description: "Information about the producer submitting the request.\n"
+          allOf:
+            - $ref: "#/components/schemas/Producer"
         parties:
           type: "array"
           description: "Parties associated with the policy involved in this transfer."
           items:
             $ref: "#/components/schemas/Party"
         investProduct:
-          $ref: "#/components/schemas/InvestProduct"
+          description: "Investment product metadata associated with the transfer.\n"
+          allOf:
+            - $ref: "#/components/schemas/InvestProduct"
       allOf:
         - if:
             properties:
-              transactionAmounts:
-                properties:
-                  amountType:
-                    const: "FULL_REBALANCE"
-                required:
-                  - "amountType"
+              amountType:
+                const: "FULL_REBALANCE"
             required:
-              - "transactionAmounts"
+              - "amountType"
           then:
             properties:
               funds:
@@ -477,30 +355,6 @@ components:
                             properties:
                               requestedPercentage:
                                 const: 100
-    TransactionAmounts:
-      type: "object"
-      description: "Specifies how the value of the fund transfer is calculated. This section indicates whether the transfer is based on a fixed dollar amount, a percentage of contract value, or a full rebalance. The selected method applies consistently to both the source and destination sides of the transfer.\n"
-      required:
-        - "amountType"
-      properties:
-        amountType:
-          type: "string"
-          description: "Indicates the method used to calculate the transaction value, such as a specified dollar amount, a percentage of contract value, or a full rebalance. This value drives how amounts are specified throughout the transaction."
-          enum:
-            - "FULL_REBALANCE"
-            - "FUND_BALANCE_TRANSFER"
-            - "PERCENT_OF_CONTRACT_VALUE"
-            - "SPECIFIED_AMOUNT"
-        requestedAmount:
-          type: "number"
-          description: "Dollar amount to transfer from this segment. Use this field for amount-based transfers. Mutually exclusive with requestedPercentage. Not allowed for FULL_REBALANCE transfers."
-          minimum: 0
-        requestedPercentage:
-          type: "number"
-          minimum: 0
-          maximum: 100
-          description: "The percentage of the contract value to be transferred when the transaction is percentage-based. Required when amountType is PERCENT_OF_CONTRACT_VALUE and must not be provided for other amount types.\n"
-      allOf:
         - if:
             properties:
               amountType:
@@ -508,11 +362,35 @@ components:
             required:
               - "amountType"
           then:
-            required:
-              - "requestedAmount"
-            not:
-              required:
-                - "requestedPercentage"
+            properties:
+              funds:
+                properties:
+                  transferFromFunds:
+                    items:
+                      properties:
+                        fundSegments:
+                          items:
+                            required:
+                              - "requestedAmount"
+                            not:
+                              required:
+                                - "requestedPercentage"
+                  transferToFunds:
+                    items:
+                      properties:
+                        fundSegments:
+                          items:
+                            oneOf:
+                              - required:
+                                  - "requestedAmount"
+                                not:
+                                  required:
+                                    - "requestedPercentage"
+                              - required:
+                                  - "requestedPercentage"
+                                not:
+                                  required:
+                                    - "requestedAmount"
         - if:
             properties:
               amountType:
@@ -520,11 +398,95 @@ components:
             required:
               - "amountType"
           then:
+            properties:
+              funds:
+                properties:
+                  transferFromFunds:
+                    items:
+                      properties:
+                        fundSegments:
+                          items:
+                            required:
+                              - "requestedPercentage"
+                            not:
+                              required:
+                                - "requestedAmount"
+                  transferToFunds:
+                    items:
+                      properties:
+                        fundSegments:
+                          items:
+                            required:
+                              - "requestedPercentage"
+                            not:
+                              required:
+                                - "requestedAmount"
+        - if:
+            properties:
+              amountType:
+                const: "FUND_BALANCE_TRANSFER"
+              funds:
+                properties:
+                  transferFromFunds:
+                    items:
+                      properties:
+                        fundSegments:
+                          items:
+                            required:
+                              - "requestedAmount"
             required:
-              - "requestedPercentage"
-            not:
-              required:
-                - "requestedAmount"
+              - "amountType"
+              - "funds"
+          then:
+            properties:
+              funds:
+                properties:
+                  transferToFunds:
+                    items:
+                      properties:
+                        fundSegments:
+                          items:
+                            oneOf:
+                              - required:
+                                  - "requestedAmount"
+                                not:
+                                  required:
+                                    - "requestedPercentage"
+                              - required:
+                                  - "requestedPercentage"
+                                not:
+                                  required:
+                                    - "requestedAmount"
+        - if:
+            properties:
+              amountType:
+                const: "FUND_BALANCE_TRANSFER"
+              funds:
+                properties:
+                  transferFromFunds:
+                    items:
+                      properties:
+                        fundSegments:
+                          items:
+                            required:
+                              - "requestedPercentage"
+            required:
+              - "amountType"
+              - "funds"
+          then:
+            properties:
+              funds:
+                properties:
+                  transferToFunds:
+                    items:
+                      properties:
+                        fundSegments:
+                          items:
+                            required:
+                              - "requestedPercentage"
+                            not:
+                              required:
+                                - "requestedAmount"
     FundTransferFunds:
       type: "object"
       description: "Defines the source and destination funds involved in the transfer. This section identifies where value is removed from and where it is added as part of the fund transfer.\n"
@@ -544,6 +506,8 @@ components:
             $ref: "#/components/schemas/FundTransferItem"
     FundTransferItem:
       type: "object"
+      required:
+        - "fundId"
       description: "Represents an individual fund participating in the transfer, including optional segment-level breakdowns.\n"
       properties:
         fundId:
@@ -572,6 +536,7 @@ components:
         currentRate:
           type: "number"
           minimum: 0
+          maximum: 9999999999.99
           description: "Current interest or crediting rate for the fund, if applicable."
         maturityDate:
           type: "string"
@@ -584,33 +549,25 @@ components:
             $ref: "#/components/schemas/FundSegment"
     FundSegment:
       type: "object"
-      description: "When transferring value between fund segments, all segments must use the same method for specifying values. If amounts are used, both the transfer-from and transfer-to segments must specify amounts. If percentages are used, both sides must specify percentages. Mixing amounts and percentages in the same transfer is not allowed.
+      description: "Represents a fund segment participating in a transfer. A segment may specify `requestedAmount`, `requestedPercentage`, or neither (for source segments under `FULL_REBALANCE`). It must not specify both.
 
-        For FULL_REBALANCE transfers, source segments must not specify amounts or percentages, while destination segments must specify requestedPercentage: 100.\n"
-      required:
-        - "segmentId"
+        Validation requirements vary by transaction `amountType` and are enforced by the parent `FundTransferRequest` schema.\ \n"
       properties:
         segmentId:
           type: "string"
-          maxLength: 100
+          pattern: "^[A-Za-z0-9._-]{1,100}$"
           description: "Identifier of the fund segment participating in the transfer."
         requestedAmount:
           type: "number"
           minimum: 0
           maximum: 9999999999.99
-          description: "Amount requested by the user. If amountType = AMOUNT, then requestedAmount is required, and requestedPercentage must NOT be present."
+          description: "Dollar amount to transfer from this segment. Use this field for amount-based transfers. Mutually exclusive with requestedPercentage. Not allowed for FULL_REBALANCE transfers.\n"
         requestedPercentage:
           type: "number"
           minimum: 0
           maximum: 100
           description: "Percentage of segment value to transfer. Use this field for percentage-based transfers. Mutually exclusive with requestedAmount. Required for destination segments in FULL_REBALANCE transfers (must be 100).\n"
       oneOf:
-        - not:
-            anyOf:
-              - required:
-                  - "requestedAmount"
-              - required:
-                  - "requestedPercentage"
         - required:
             - "requestedAmount"
           not:
@@ -621,12 +578,20 @@ components:
           not:
             required:
               - "requestedAmount"
+        - not:
+            anyOf:
+              - required:
+                  - "requestedAmount"
+              - required:
+                  - "requestedPercentage"
     Arrangement:
       type: "object"
       description: "Provides details of a standing or recurring fund transfer arrangement when the transfer is part of a systematic or scheduled program rather than a one-time transaction.\n"
       required:
         - "productCode"
         - "arrangementType"
+        - "arrangementDestination"
+        - "arrangementSource"
       properties:
         productCode:
           type: "string"
@@ -657,6 +622,7 @@ components:
         modalAmount:
           type: "number"
           minimum: 0
+          maximum: 9999999999.99
           description: "Amount applied per occurrence of the arrangement."
         sourceTransferAmountType:
           $ref: "#/components/schemas/TransferAmountType"
@@ -666,15 +632,65 @@ components:
           $ref: "#/components/schemas/ArrangementEndpoint"
         arrangementDestination:
           $ref: "#/components/schemas/ArrangementEndpoint"
+      allOf:
+        - if:
+            properties:
+              sourceTransferAmountType:
+                const: "AMOUNT"
+            required:
+              - "sourceTransferAmountType"
+          then:
+            required:
+              - "arrangementSource"
+            properties:
+              arrangementSource:
+                required:
+                  - "transferAmount"
+        - if:
+            properties:
+              sourceTransferAmountType:
+                const: "PERCENT"
+            required:
+              - "sourceTransferAmountType"
+          then:
+            required:
+              - "arrangementSource"
+            properties:
+              arrangementSource:
+                required:
+                  - "transferPercentage"
+        - if:
+            properties:
+              destinationTransferAmountType:
+                const: "AMOUNT"
+            required:
+              - "destinationTransferAmountType"
+          then:
+            required:
+              - "arrangementDestination"
+            properties:
+              arrangementDestination:
+                required:
+                  - "transferAmount"
+        - if:
+            properties:
+              destinationTransferAmountType:
+                const: "PERCENT"
+            required:
+              - "destinationTransferAmountType"
+          then:
+            required:
+              - "arrangementDestination"
+            properties:
+              arrangementDestination:
+                required:
+                  - "transferPercentage"
     TransferAmountType:
       type: "string"
-      description: "Method used to specify the value at an arrangement endpoint — either a fixed amount, a percentage, or a pro-rata allocation across a defined set of funds.\n"
+      description: "Method used to specify the value at an arrangement endpoint either a fixed amount, a percentage, or a pro-rata allocation across a defined set of funds.\n"
       enum:
         - "AMOUNT"
         - "PERCENT"
-        - "PRO_RATA_SELECTED_FUNDS"
-        - "PRO_RATA_VARIABLE_FUNDS"
-        - "PRO_RATA_ALL_FUNDS"
     ArrangementEndpoint:
       type: "object"
       description: "Identifies the source or destination endpoint of a fund transfer arrangement when the transfer is part of a systematic or recurring program rather than a one-time transaction.\n"
@@ -683,11 +699,12 @@ components:
       properties:
         subAccountId:
           type: "string"
-          maxLength: 100
+          pattern: "^[A-Za-z0-9._-]{1,100}$"
           description: "Identifier of the sub-account associated with this arrangement endpoint."
         transferAmount:
           type: "number"
           minimum: 0
+          maximum: 9999999999.99
           description: "Fixed dollar amount for this arrangement endpoint. Use this field when the arrangement uses amount-based transfers. Mutually exclusive with transferPercentage.\n"
         transferPercentage:
           type: "number"
@@ -711,7 +728,7 @@ components:
       properties:
         rateLockInfo:
           type: "string"
-          maxLength: 100
+          pattern: "^[A-Za-z0-9._-]{1,100}$"
           description: "Identifier or descriptor of the rate-lock applied to the transfer."
         isLockedIn:
           type: "boolean"
@@ -730,6 +747,7 @@ components:
         auditTotal:
           type: "number"
           minimum: 0
+          format: "double"
           description: "Numeric value of the audit total corresponding to auditTotalType."
         correlationGuid:
           type: "string"
@@ -752,15 +770,11 @@ components:
       properties:
         requestId:
           type: "string"
-          minLength: 1
-          maxLength: 100
-          description: "Server-assigned identifier for the request."
+          description: "Server-assigned identifier for the fund transfer request."
         status:
           type: "string"
           description: "Initial disposition of the fund transfer request."
-          enum:
-            - "ACCEPTED"
-            - "REJECTED"
+          const: "ACCEPTED"
         effectiveDate:
           type: "string"
           format: "date"
@@ -768,7 +782,7 @@ components:
         message:
           type: "string"
           maxLength: 500
-          description: "Message with specific error details."
+          description: "Optional informational or error message explaining the initial processing result.\n"
     GetFundTransferRequestStatus:
       type: "object"
       description: "Represents the current processing status of a fund transfer request that was submitted asynchronously. This resource is used for polling and reconciliation when immediate confirmation is not available.\n"
@@ -778,9 +792,7 @@ components:
       properties:
         requestId:
           type: "string"
-          minLength: 1
-          maxLength: 100
-          description: "Server-assigned identifier for the request."
+          description: "Server-assigned identifier for the fund transfer request."
         status:
           type: "string"
           description: "Current processing status of the fund transfer."
@@ -795,10 +807,12 @@ components:
         message:
           type: "string"
           maxLength: 500
-          description: "Message with specific error details."
+          description: "Optional informational or error message explaining the processing result.\n"
     Producer:
       type: "object"
-      description: "Licensed producer information"
+      required:
+        - "npn"
+      description: "Identifies the advisor or producer associated with the fund transfer. Producer information is used for audit, regulatory, and reporting purposes.\n"
       properties:
         producerNumber:
           type: "string"
@@ -807,83 +821,22 @@ components:
         npn:
           type: "string"
           maxLength: 100
-          description: "The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states."
+          description: "National Producer Number."
         crdNumber:
           type: "string"
           maxLength: 100
           description: "Central Registration Depository number."
     Party:
       type: "object"
-      description: "Represents a party associated with the policy involved in the fund transfer. Parties may include owners, joint owners, beneficiaries, or other related entities. A party is either an individual or an entity — the `type` field discriminates between the two shapes.\n"
-      required:
-        - "type"
-        - "paymentForm"
-        - "allocationPercentage"
-      properties:
-        type:
-          type: "string"
-          description: "Indicates whether the party is an individual or an entity."
-          enum:
-            - "individual"
-            - "entity"
-        paymentForm:
-          type: "string"
-          description: "Payment form associated with the party for distributions."
-          enum:
-            - "DTCC"
-            - "ACH"
-            - "CHECK"
-            - "WIRE"
-            - "EXCHANGE"
-        allocationPercentage:
-          type: "number"
-          minimum: 0
-          maximum: 100
-          description: "Allocation percentage assigned to this party."
+      description: "Represents a party associated with the policy involved in the fund transfer. Parties may include owners, joint owners, beneficiaries, or other related entities. A party is either an individual or an entity  the `type` field discriminates between the two shapes.\n"
       oneOf:
         - $ref: "#/components/schemas/IndividualParty"
         - $ref: "#/components/schemas/EntityParty"
-      discriminator:
-        propertyName: "type"
-        mapping:
-          individual: "#/components/schemas/IndividualParty"
-          entity: "#/components/schemas/EntityParty"
     IndividualParty:
       description: "Schema for individual party data."
       type: "object"
       allOf:
-        - description: "Schema for individual identity data"
-          required:
-            - "firstName"
-            - "lastName"
-          type: "object"
-          properties:
-            type:
-              description: "Indicates whether the party is an individual or an entity."
-              type: "string"
-              const: "individual"
-            firstName:
-              description: "First name of the individual"
-              type: "string"
-              minLength: 1
-              maxLength: 105
-              pattern: "^[a-zA-Z0-9=()*@#\\s.,'_/~%$!();:&\"®`\\-\\\\?\"]{1,105}$"
-            middleName:
-              description: "The middle name of the individual"
-              type: "string"
-              minLength: 1
-              maxLength: 105
-              pattern: "^[a-zA-Z0-9=()*@#\\s.,'_/~%$!();:&\"®`\\-\\\\?\"]{1,105}$"
-            lastName:
-              description: "The last name of the individual"
-              type: "string"
-              minLength: 1
-              maxLength: 105
-              pattern: "^[a-zA-Z0-9=()*@#\\s.,'_/~%$!();:&\"®`\\-\\\\?\"]{1,105}$"
-            taxId:
-              description: "Tax Identification Number for the individual or entity"
-              type: "string"
-              maxLength: 9
+        - $ref: "#/components/schemas/IndividualIdentity"
         - $ref: "#/components/schemas/PartyRelationship"
     EntityParty:
       description: "Schema for entity party data."
@@ -891,6 +844,42 @@ components:
       allOf:
         - $ref: "#/components/schemas/EntityIdentity"
         - $ref: "#/components/schemas/PartyRelationship"
+    IndividualIdentity:
+      description: "Schema for individual identity data."
+      type: "object"
+      required:
+        - "firstName"
+        - "lastName"
+        - "taxId"
+        - "type"
+      properties:
+        type:
+          type: "string"
+          const: "INDIVIDUAL"
+          description: "Discriminator value indicating an individual party."
+        firstName:
+          type: "string"
+          minLength: 1
+          maxLength: 105
+          pattern: "^[a-zA-Z0-9=()*@#\\s.,'_/~%$!();:&\"®`\\\\?\\-]{1,105}$"
+          description: "First name of the party"
+        middleName:
+          type: "string"
+          minLength: 1
+          maxLength: 105
+          pattern: "^[a-zA-Z0-9=()*@#\\s.,'_/~%$!();:&\"®`\\\\?\\-]{1,105}$"
+          description: "Middle name of the party"
+        lastName:
+          type: "string"
+          minLength: 1
+          maxLength: 105
+          pattern: "^[a-zA-Z0-9=()*@#\\s.,'_/~%$!();:&\"®`\\\\?\\-]{1,105}$"
+          description: "Last name of the party"
+        taxId:
+          type: "string"
+          minLength: 1
+          maxLength: 9
+          description: "Tax identifier (SSN or equivalent) for the individual."
     PartyRelationship:
       description: "Schema for party relationship data."
       type: "object"
@@ -901,16 +890,16 @@ components:
           type: "array"
           minItems: 1
           maxItems: 2
-          description: "An array of strings specifying the relationship(s) of the party to the policy."
+          description: "Roles the party plays in relation to the policy."
           items:
             type: "string"
             enum:
-              - "owner"
-              - "jointOwner"
-              - "annuitant"
-              - "jointAnnuitant"
-              - "primaryBeneficiary"
-              - "contingentBeneficiary"
+              - "OWNER"
+              - "JOINT_OWNER"
+              - "ANNUITANT"
+              - "JOINT_ANNUITANT"
+              - "PRIMARY_BENEFICIARY"
+              - "CONTINGENT_BENEFICIARY"
     EntityIdentity:
       description: "Schema for entity identity data."
       type: "object"
@@ -921,15 +910,105 @@ components:
       properties:
         type:
           type: "string"
-          const: "entity"
-          description: "Indicates whether the party is an individual or an entity."
+          const: "ENTITY"
+          description: "Discriminator value indicating an entity party."
         name:
           type: "string"
-          minLength: 1
           maxLength: 180
           pattern: "^[\\w=()*@#\\s.,'\\/~%$!;:&\"®`\\\\?\\-]{1,180}$"
-          description: "Name of the entity"
+          description: "Legal name of the entity."
         taxId:
           type: "string"
           maxLength: 9
-          description: "Tax Identification Number for the individual or entity"
+          description: "Tax identifier (EIN or equivalent) for the entity."
+    Error:
+      $ref: "${SHARED_SPECS_BASE}/Error_v2.yaml#/components/schemas/Error"
+    Day2FundTransferConfirmationEvent:
+      x-event-mesh:
+        broker: "SAP Advanced Event Mesh / Solace"
+        topicPattern: "{root}/ift/v1/{eventType}/{status}/{transactionType}/{firm}"
+        deliveryModel: "topic-subscription"
+        note: "Delivered over a message broker via topic subscription, not an HTTP callback.\n"
+      type: "object"
+      description: "Canonical Day-2 fund transfer confirmation event published to the enterprise event mesh after a fund transfer request completes processing.\n"
+      required:
+        - "eventType"
+        - "eventId"
+        - "eventTimestamp"
+        - "associatedFirmId"
+        - "requestId"
+        - "policyNumber"
+        - "transactionType"
+        - "status"
+        - "transExeDate"
+        - "transExeTime"
+        - "correlationId"
+        - "npn"
+        - "nsccParticipantId"
+      properties:
+        eventType:
+          type: "string"
+          description: "Identifies the type of Day-2 confirmation event."
+          enum:
+            - "DAY2_CONFIRM"
+        eventId:
+          type: "string"
+          format: "uuid"
+          maxLength: 36
+          description: "Unique identifier assigned to the event for idempotency and duplicate detection.\n"
+        eventTimestamp:
+          type: "string"
+          format: "date-time"
+          description: "Date and time when the event was published."
+        associatedFirmId:
+          type: "string"
+          maxLength: 65
+          description: "Firm identifier associated with the transaction.\n"
+        requestId:
+          type: "string"
+          description: "Identifier returned when the fund transfer request was initially accepted.\n"
+        correlationId:
+          type: "string"
+          maxLength: 100
+          description: "Correlation identifier supplied with the original request and propagated for end-to-end traceability.\n"
+        policyNumber:
+          type: "string"
+          minLength: 1
+          maxLength: 30
+          description: "Policy number associated with the fund transfer."
+        transactionType:
+          type: "string"
+          description: "High-level classification of the completed transaction."
+          enum:
+            - "FUND_TRANSFERS"
+        status:
+          type: "string"
+          description: "Final processing outcome of the fund transfer."
+          enum:
+            - "SUCCESS"
+            - "SUCCESS_WITH_INFO"
+            - "FAILURE"
+        message:
+          type: "string"
+          maxLength: 500
+          description: "Human-readable explanation of the outcome. Populated when the transaction fails or additional explanation is required.\n"
+        effectiveDate:
+          type: "string"
+          format: "date"
+          description: "Effective date applied to the completed transfer."
+        nsccParticipantId:
+          type: "string"
+          maxLength: 100
+          description: "NSCC participant identifier associated with the request."
+        npn:
+          type: "string"
+          maxLength: 100
+          description: "National Producer Number associated with the request."
+        transExeDate:
+          type: "string"
+          format: "date"
+          description: "Date on which the transfer was executed by the processing system.\n"
+        transExeTime:
+          type: "string"
+          pattern: "^([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$"
+          description: "Time at which the transfer was executed by the processing system.\n"

@@ -1,0 +1,12 @@
+# Modified by Cursor: shared BadGatewayError response (v2)
+components:
+  responses:
+    BadGatewayError:
+      description: "Bad Gateway — an upstream system returned an invalid response."
+      headers:
+        correlationId:
+          $ref: './correlationId_v1.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './Error_v2.yaml#/components/schemas/Error'

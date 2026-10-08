@@ -1,5 +1,5 @@
-# Modified by Cursor: generated file — edit docs/specs/src/fundtransfer_1.0.1.yaml instead.
-# Regenerate with: npm run bundle:specs
+# Modified by Cursor: source spec — bundled to docs/specs/fundtransfer_1.0.1.yaml
+# TODO: align to shared Error_v1 — see ERROR-SCHEMA-DEBT.md
 openapi: "3.1.0"
 info:
   title: "Fund Transfer Service"
@@ -173,36 +173,14 @@ paths:
 components:
   headers:
     correlationId:
-      description: "Correlates this response to downstream processing."
-      schema:
-        type: "string"
-        maxLength: 100
+      $ref: "${SHARED_SPECS_BASE}/correlationId_v1.yaml#/components/headers/correlationId"
   parameters:
     PolicyNumber:
-      name: "policyNumber"
-      description: "Policy number"
-      in: "path"
-      required: true
-      schema:
-        type: "string"
-        minLength: 1
-        maxLength: 30
+      $ref: "${SHARED_SPECS_BASE}/PolicyNumber_v1.yaml#/components/parameters/PolicyNumber"
     CorrelationIdHeader:
-      name: "correlationId"
-      description: "Optional client-supplied identifier to trace the request."
-      in: "header"
-      required: false
-      schema:
-        type: "string"
-        maxLength: 100
+      $ref: "${SHARED_SPECS_BASE}/CorrelationIdHeader_v1.yaml#/components/parameters/CorrelationIdHeader"
     AssociatedFirmId:
-      description: "Optional query parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms."
-      name: "associatedFirmId"
-      in: "query"
-      required: false
-      schema:
-        type: "string"
-        maxLength: 65
+      $ref: "${SHARED_SPECS_BASE}/AssociatedFirmId_v1.yaml#/components/parameters/AssociatedFirmId"
   responses:
     FundTransferSuccess:
       description: "Accepted — Fund Transfer request accepted for processing."
@@ -219,176 +197,38 @@ components:
           schema:
             $ref: "#/components/schemas/FundTransferResponse"
     BadRequestError:
-      description: "Bad Request — the request payload is malformed or fails schema validation."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/BadRequestError_v2.yaml#/components/responses/BadRequestError"
     UnauthorizedError:
-      description: "Unauthorized — authentication credentials are missing or invalid."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/UnauthorizedError_v2.yaml#/components/responses/UnauthorizedError"
     ForbiddenError:
-      description: "Forbidden — the caller is not permitted to perform this action."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/ForbiddenError_v2.yaml#/components/responses/ForbiddenError"
     NotFoundError:
-      description: "Not Found — the referenced policy or fund transfer request does not exist."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/NotFoundError_v2.yaml#/components/responses/NotFoundError"
     MethodNotAllowedError:
-      description: "Method Not Allowed — the HTTP method is not supported on this resource."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/MethodNotAllowedError_v2.yaml#/components/responses/MethodNotAllowedError"
     NotAcceptableError:
-      description: "Not Acceptable — the requested media type is not supported."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/NotAcceptableError_v2.yaml#/components/responses/NotAcceptableError"
     ConflictError:
-      description: "A transaction for this policy is already in progress or an equivalent request has already been accepted.
-
-        Re-submitting the same transaction while it is in-flight will be rejected to prevent duplicate processing.\n"
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/ConflictError_v2.yaml#/components/responses/ConflictError"
     PayloadTooLargeError:
-      description: "Payload Too Large — the request body exceeds the maximum allowed size."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/PayloadTooLargeError_v2.yaml#/components/responses/PayloadTooLargeError"
     UnsupportedMediaTypeError:
-      description: "Unsupported Media Type — the request Content-Type is not supported."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/UnsupportedMediaTypeError_v2.yaml#/components/responses/UnsupportedMediaTypeError"
     UnprocessableEntityError:
-      description: "Unprocessable Entity — the request is well-formed but fails business rule validation (e.g., invalid combinations of amount type and segment amounts).\n"
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/UnprocessableEntityError_v2.yaml#/components/responses/UnprocessableEntityError"
     TooManyRequestsError:
-      description: "Too Many Requests — the caller has exceeded the permitted rate limit. Clients should honor any Retry-After header returned.\n"
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/TooManyRequestsError_v2.yaml#/components/responses/TooManyRequestsError"
     InternalServerError:
-      description: "Internal Server Error — an unexpected condition prevented the request from completing."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/InternalServerError_v2.yaml#/components/responses/InternalServerError"
     BadGatewayError:
-      description: "Bad Gateway — an upstream system returned an invalid response."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/BadGatewayError_v2.yaml#/components/responses/BadGatewayError"
     ServiceUnavailableError:
-      description: "Service Unavailable — the service is temporarily unable to handle the request."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/ServiceUnavailableError_v2.yaml#/components/responses/ServiceUnavailableError"
     GatewayTimeoutError:
-      description: "Gateway Timeout — an upstream system did not respond in time."
-      headers:
-        correlationId:
-          $ref: "#/components/headers/correlationId"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
+      $ref: "${SHARED_SPECS_BASE}/GatewayTimeoutError_v2.yaml#/components/responses/GatewayTimeoutError"
   schemas:
     Error:
-      type: "object"
-      required:
-        - "code"
-        - "message"
-      properties:
-        httpStatus:
-          type: "integer"
-          description: "HTTP status code associated with this error"
-          minimum: 400
-          maximum: 599
-        code:
-          type: "string"
-          description: "A structured error code that uniquely identifies the type of error. This can follow a hierarchical format: - `<domain>`: The logical domain (e.g., \"gateway\") - `<category>`: The error category (e.g., \"client\" or \"server\") - `<subcategory>`: A specific error identifier (e.g., \"badrequest\", \"timeout\")\n"
-        timestamp:
-          type: "string"
-          format: "date-time"
-          description: "Create or Update timestamp of transaction event"
-        message:
-          type: "string"
-          description: "Message with specific error details."
-        validationErrors:
-          type: "array"
-          description: "Logical rule violations or decision failures related to business logic or rules"
-          items:
-            type: "object"
-            properties:
-              code:
-                type: "string"
-                description: "A structured error code that uniquely identifies the type of error. This can follow a hierarchical format: - `<domain>`: The logical domain (e.g., \"gateway\") - `<category>`: The error category (e.g., \"client\" or \"server\") - `<subcategory>`: A specific error identifier (e.g., \"badrequest\", \"timeout\")\n"
-              message:
-                type: "string"
-                description: "Message with specific error details."
+      $ref: "${SHARED_SPECS_BASE}/Error_v2.yaml#/components/schemas/Error"
     FundTransferRequest:
       type: "object"
       description: "Represents a request to transfer value between funds or fund segments on a policy. Fund transfers are processed asynchronously and may be amount-based, percentage-based, or full rebalances depending on the transaction type.\n"
@@ -892,25 +732,7 @@ components:
         - $ref: "#/components/schemas/EntityIdentity"
         - $ref: "#/components/schemas/PartyRelationship"
     PartyRelationship:
-      description: "Schema for party relationship data."
-      type: "object"
-      required:
-        - "relationships"
-      properties:
-        relationships:
-          type: "array"
-          minItems: 1
-          maxItems: 2
-          description: "An array of strings specifying the relationship(s) of the party to the policy."
-          items:
-            type: "string"
-            enum:
-              - "owner"
-              - "jointOwner"
-              - "annuitant"
-              - "jointAnnuitant"
-              - "primaryBeneficiary"
-              - "contingentBeneficiary"
+      $ref: "${SHARED_SPECS_BASE}/PartyRelationship_v1.yaml#/components/schemas/PartyRelationship"
     EntityIdentity:
       description: "Schema for entity identity data."
       type: "object"

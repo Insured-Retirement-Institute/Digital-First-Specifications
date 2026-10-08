@@ -1,0 +1,36 @@
+# Modified by Cursor: transaction-style Error schema (Category A shape — not README Error_v1)
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        httpStatus:
+          type: integer
+          description: HTTP status code associated with this error
+          minimum: 400
+          maximum: 599
+        code:
+          type: string
+          description: Structured error code in domain.category.subcategory format
+        timestamp:
+          type: string
+          format: date-time
+          description: When the error occurred
+        message:
+          type: string
+          description: Developer-focused technical message
+        validationErrors:
+          type: array
+          description: Field-level or rule-level validation failures
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                description: Structured error code for this validation failure
+              message:
+                type: string
+                description: Description of the validation failure

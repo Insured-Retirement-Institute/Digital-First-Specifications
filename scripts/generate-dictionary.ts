@@ -13,6 +13,11 @@ import * as XLSX from 'xlsx';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import {
+  listPublishedSpecFiles,
+  publishedSpecPath,
+  SPECS_ROOT
+} from './spec-paths.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -659,26 +664,23 @@ function processPathItem(
 }
 
 async function generateDataDictionary(): Promise<void> {
-  const specsDir = path.join(__dirname, '..', 'docs', 'specs');
   const publicDir = path.join(__dirname, '..', 'docs');
 
   if (!fs.existsSync(publicDir)) {
     fs.mkdirSync(publicDir, { recursive: true });
   }
 
-  const specFiles = fs.readdirSync(specsDir)
-    .filter(f => f.endsWith('.yaml') || f.endsWith('.yml'))
-    .sort();
+  const specFiles = listPublishedSpecFiles();
 
   if (specFiles.length === 0) {
-    console.error(`No YAML spec files found in ${specsDir}`);
+    console.error(`No published YAML spec files found in ${SPECS_ROOT}`);
     process.exit(1);
   }
 
   const manifest: Array<{ key: string; title: string; version: string }> = [];
 
   for (const specFile of specFiles) {
-    const specPath = path.join(specsDir, specFile);
+    const specPath = publishedSpecPath(specFile);
     const key = path.basename(specFile, path.extname(specFile));
 
     console.log(`\nProcessing: ${specFile}`);

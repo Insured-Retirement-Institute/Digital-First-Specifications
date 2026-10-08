@@ -1,0 +1,156 @@
+# Modified by Cursor: standard HTTP error responses referencing the shared Error schema
+components:
+  responses:
+    BadRequestError:
+      description: Bad Request — the request payload is malformed or fails schema validation.
+      headers:
+        correlationId:
+          $ref: './correlation-id.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './error-schema.yaml#/components/schemas/Error'
+
+    UnauthorizedError:
+      description: Unauthorized — authentication credentials are missing or invalid.
+      headers:
+        correlationId:
+          $ref: './correlation-id.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './error-schema.yaml#/components/schemas/Error'
+
+    ForbiddenError:
+      description: Forbidden — the caller is not permitted to perform this action.
+      headers:
+        correlationId:
+          $ref: './correlation-id.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './error-schema.yaml#/components/schemas/Error'
+
+    NotFoundError:
+      description: Not Found — the referenced resource does not exist.
+      headers:
+        correlationId:
+          $ref: './correlation-id.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './error-schema.yaml#/components/schemas/Error'
+
+    MethodNotAllowedError:
+      description: Method Not Allowed — the HTTP method is not supported on this resource.
+      headers:
+        correlationId:
+          $ref: './correlation-id.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './error-schema.yaml#/components/schemas/Error'
+
+    NotAcceptableError:
+      description: Not Acceptable — the requested media type is not supported.
+      headers:
+        correlationId:
+          $ref: './correlation-id.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './error-schema.yaml#/components/schemas/Error'
+
+    ConflictError:
+      description: |
+        A transaction for this policy is already in progress or an equivalent request has already been accepted.
+        Re-submitting the same transaction while it is in-flight will be rejected to prevent duplicate processing.
+      headers:
+        correlationId:
+          $ref: './correlation-id.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './error-schema.yaml#/components/schemas/Error'
+
+    PayloadTooLargeError:
+      description: Payload Too Large — the request body exceeds the maximum allowed size.
+      headers:
+        correlationId:
+          $ref: './correlation-id.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './error-schema.yaml#/components/schemas/Error'
+
+    UnsupportedMediaTypeError:
+      description: Unsupported Media Type — the request Content-Type is not supported.
+      headers:
+        correlationId:
+          $ref: './correlation-id.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './error-schema.yaml#/components/schemas/Error'
+
+    UnprocessableEntityError:
+      description: Unprocessable Entity — the request is well-formed but fails business rule validation.
+      headers:
+        correlationId:
+          $ref: './correlation-id.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './error-schema.yaml#/components/schemas/Error'
+
+    TooManyRequestsError:
+      description: >
+        Too Many Requests — the caller has exceeded the permitted rate limit.
+        Clients should honor any Retry-After header returned.
+      headers:
+        correlationId:
+          $ref: './correlation-id.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './error-schema.yaml#/components/schemas/Error'
+
+    InternalServerError:
+      description: Internal Server Error — an unexpected condition prevented the request from completing.
+      headers:
+        correlationId:
+          $ref: './correlation-id.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './error-schema.yaml#/components/schemas/Error'
+
+    BadGatewayError:
+      description: Bad Gateway — an upstream system returned an invalid response.
+      headers:
+        correlationId:
+          $ref: './correlation-id.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './error-schema.yaml#/components/schemas/Error'
+
+    ServiceUnavailableError:
+      description: Service Unavailable — the service is temporarily unable to handle the request.
+      headers:
+        correlationId:
+          $ref: './correlation-id.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './error-schema.yaml#/components/schemas/Error'
+
+    GatewayTimeoutError:
+      description: Gateway Timeout — an upstream system did not respond in time.
+      headers:
+        correlationId:
+          $ref: './correlation-id.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './error-schema.yaml#/components/schemas/Error'

@@ -1,0 +1,50 @@
+# Modified by Cursor: app-status-style Error schema (Category B shape — not README Error_v1)
+components:
+  schemas:
+    Error:
+      description: Standard error response body
+      type: object
+      required:
+        - httpStatus
+        - code
+        - message
+      properties:
+        httpStatus:
+          description: HTTP status code
+          type: integer
+        code:
+          description: Machine-readable error code in domain.category.subcategory format
+          type: string
+          pattern: '^[a-z0-9]+\.[a-z0-9]+\.[a-z0-9]+$'
+        timestamp:
+          description: Time the error occurred
+          type: string
+          format: date-time
+        message:
+          description: Diagnostic message describing the error
+          type: string
+        userMessage:
+          description: End-user-safe message suitable for display
+          type: string
+        correlationId:
+          description: Correlation ID echoed from the request, if supplied
+          type: string
+        validationErrors:
+          description: Field-level validation failures
+          type: array
+          items:
+            type: object
+            required:
+              - path
+              - message
+            properties:
+              path:
+                description: JSON pointer to the offending field
+                type: string
+              message:
+                description: Description of the validation failure
+                type: string
+              code:
+                description: Machine-readable code for this specific validation failure, in domain.category.subcategory format
+                type: string
+                pattern: '^[a-z0-9]+\.[a-z0-9]+\.[a-z0-9]+$'
