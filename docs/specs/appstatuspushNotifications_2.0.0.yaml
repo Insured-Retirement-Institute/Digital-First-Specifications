@@ -10,7 +10,7 @@ info:
     url: https://github.com/Insured-Retirement-Institute/Pending-Case/blob/main/LICENSE
 
 paths:
-  /v1/application-notifications/reconciliation:
+  /v2/application-notifications/reconciliation:
     get:
       operationId: reconciliation
       summary: Send a list of published events to reconcile for potential missed Notifications
@@ -74,7 +74,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /v1/application-notifications/{eventId}:
+  /v2/application-notifications/{eventId}:
     get:
       operationId: replayEvent
       summary: Retrieve payload for the given event ID

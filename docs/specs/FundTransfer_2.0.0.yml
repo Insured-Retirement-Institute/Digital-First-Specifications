@@ -9,7 +9,7 @@ info:
     url: https://opensource.org/licenses/MIT
 
 paths:
-  /v1/policies/{policyNumber}/fund-transfers:
+  /v2/policies/{policyNumber}/fund-transfers:
     post:
       operationId: createFundTransfer
       tags:
@@ -127,7 +127,7 @@ paths:
         '503': { $ref: '#/components/responses/ServiceUnavailableError' }
         '504': { $ref: '#/components/responses/GatewayTimeoutError' }
 
-  /v1/policies/{policyNumber}/fund-transfers/requests/{requestId}:
+  /v2/policies/{policyNumber}/fund-transfers/requests/{requestId}:
     get:
       operationId: getFundTransferRequest
       tags:

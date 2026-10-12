@@ -9,7 +9,7 @@ info:
     url: https://opensource.org/licenses/MIT
     
 paths:
-  /v1/policies/{policyNumber}/withdrawals/systematic-withdrawals:
+  /v2/policies/{policyNumber}/withdrawals/systematic-withdrawals:
     post:
       operationId: createSystematicWithdrawalArrangement
       description: Create a new Systematic Withdrawal arrangement.
@@ -121,7 +121,7 @@ paths:
             Location:
               description: >
                URL of the created arrangement resource.
-               Format: /v1/policies/{policyNumber}/withdrawals/requests/{requestId}
+               Format: /v2/policies/{policyNumber}/withdrawals/requests/{requestId}
               schema:
                 type: string
                 format: uri
@@ -147,7 +147,7 @@ paths:
         '503': { $ref: '#/components/responses/ServiceUnavailableError' }
         '504': { $ref: '#/components/responses/GatewayTimeoutError' }
 
-  /v1/policies/{policyNumber}/withdrawals/systematic-rmds:
+  /v2/policies/{policyNumber}/withdrawals/systematic-rmds:
     post:
       operationId: createSystematicRmdArrangement
       description: Create a new Systematic Required Minimum Distribution (RMD) arrangement.
@@ -259,7 +259,7 @@ paths:
             Location:
               description: >
                URL of the created arrangement resource.
-               Format: /v1/policies/{policyNumber}/withdrawals/requests/{requestId}
+               Format: /v2/policies/{policyNumber}/withdrawals/requests/{requestId}
               schema:
                 type: string
                 format: uri
@@ -285,7 +285,7 @@ paths:
         '503': { $ref: '#/components/responses/ServiceUnavailableError' }
         '504': { $ref: '#/components/responses/GatewayTimeoutError' }
 
-  /v1/policies/{policyNumber}/withdrawals/requests/{requestId}:
+  /v2/policies/{policyNumber}/withdrawals/requests/{requestId}:
     get:
       operationId: getWithdrawalRequest
       tags:

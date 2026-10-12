@@ -9,7 +9,7 @@ info:
     url: https://opensource.org/licenses/MIT
 
 paths:
-  /v1/policies/{policyNumber}/withdrawals/systematic-withdrawals/{arrangementId}:
+  /v2/policies/{policyNumber}/withdrawals/systematic-withdrawals/{arrangementId}:
     put:
       operationId: updateSystematicWithdrawal
       description: Update a systematic withdrawal on a policy.
@@ -126,7 +126,7 @@ paths:
               description: >
                 URL of the withdrawal request status resource created by this update.
                 Follow this URL to poll the request lifecycle.
-                Format: /v1/policies/{policyNumber}/withdrawals/requests/{requestId}
+                Format: /v2/policies/{policyNumber}/withdrawals/requests/{requestId}
               schema:
                 type: string
                 format: uri            
@@ -152,7 +152,7 @@ paths:
         '503': { $ref: '#/components/responses/ServiceUnavailableError' }
         '504': { $ref: '#/components/responses/GatewayTimeoutError' }
 
-  /v1/policies/{policyNumber}/withdrawals/systematic-rmds/{arrangementId}:
+  /v2/policies/{policyNumber}/withdrawals/systematic-rmds/{arrangementId}:
     put:
       operationId: updateSystematicRmd
       description: Update a systematic RMD on a policy.
@@ -265,7 +265,7 @@ paths:
               description: >
                 URL of the withdrawal request status resource created by this update.
                 Follow this URL to poll the request lifecycle.
-                Format: /v1/policies/{policyNumber}/withdrawals/requests/{requestId}
+                Format: /v2/policies/{policyNumber}/withdrawals/requests/{requestId}
               schema:
                 type: string
                 format: uri  
@@ -291,7 +291,7 @@ paths:
         '503': { $ref: '#/components/responses/ServiceUnavailableError' }
         '504': { $ref: '#/components/responses/GatewayTimeoutError' }
 
-  /v1/policies/{policyNumber}/withdrawals/requests/{requestId}:
+  /v2/policies/{policyNumber}/withdrawals/requests/{requestId}:
     get:
       operationId: getWithdrawalRequest
       tags:
