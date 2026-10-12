@@ -1,0 +1,11 @@
+# Modified by Cursor: shared correlationId request header parameter
+components:
+  parameters:
+    CorrelationIdHeader:
+      name: correlationId
+      description: Optional client-supplied identifier to trace the request.
+      in: header
+      required: false
+      schema:
+        type: string
+        maxLength: 100

@@ -1,0 +1,37 @@
+# Modified by Cursor: shared IndividualIdentity schema (OTW / OTW quote / systematic update variant)
+components:
+  schemas:
+    IndividualIdentity:
+      description: Schema for individual identity data
+      required:
+        - firstName
+        - lastName
+        - taxId
+      type: object
+      properties:
+        type:
+          description: Indicates whether the party is an individual or an entity.
+          type: string
+          const: individual
+        firstName:
+          description: First name of the individual
+          type: string
+          minLength: 1
+          maxLength: 105
+          pattern: "^[a-zA-Z0-9=()*@#\\s.,'_/~%$!();:&\"®`\\?\\-]{1,105}$"
+        middleName:
+          description: Middle name of the individual
+          type: string
+          minLength: 1
+          maxLength: 105
+          pattern: "^[a-zA-Z0-9=()*@#\\s.,'_/~%$!();:&\"®`\\?\\-]{1,105}$"
+        lastName:
+          description: Last name of the individual
+          type: string
+          minLength: 1
+          maxLength: 105
+          pattern: "^[a-zA-Z0-9=()*@#\\s.,'_/~%$!();:&\"®`\\?\\-]{1,105}$"
+        taxId:
+          description: Tax Identification Number for the individual or entity
+          type: string
+          maxLength: 9

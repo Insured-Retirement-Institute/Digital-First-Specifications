@@ -1,0 +1,8 @@
+# Modified by Cursor: shared correlationId response header
+components:
+  headers:
+    correlationId:
+      description: Correlates this response to downstream processing.
+      schema:
+        type: string
+        maxLength: 100

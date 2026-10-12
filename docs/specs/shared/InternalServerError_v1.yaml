@@ -1,0 +1,12 @@
+# Modified by Cursor: shared InternalServerError response
+components:
+  responses:
+    InternalServerError:
+      description: "Internal Server Error — an unexpected condition prevented the request from completing."
+      headers:
+        correlationId:
+          $ref: './correlationId_v1.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './Error_v1.yaml#/components/schemas/Error'

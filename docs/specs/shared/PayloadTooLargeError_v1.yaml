@@ -1,0 +1,12 @@
+# Modified by Cursor: shared PayloadTooLargeError response
+components:
+  responses:
+    PayloadTooLargeError:
+      description: "Payload Too Large — the request body exceeds the maximum allowed size."
+      headers:
+        correlationId:
+          $ref: './correlationId_v1.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './Error_v1.yaml#/components/schemas/Error'
