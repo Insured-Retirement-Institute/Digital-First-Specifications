@@ -1,5 +1,5 @@
-# Modified by Cursor: generated file — edit docs/specs/src/appstatus_4.0.0.yaml instead.
-# Regenerate with: npm run bundle:specs
+# Modified by Cursor: source spec — bundled to docs/specs/appstatus_4.0.0.yaml
+# TODO: align to shared Error_v1 — see ERROR-SCHEMA-DEBT.md
 openapi: "3.1.0"
 info:
   title: "Annuity Application Status APIs"
@@ -76,8 +76,8 @@ paths:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "400":
           description: "Bad Request - malformed or unrecognized search criteria"
           content:
@@ -154,8 +154,8 @@ paths:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "400":
           description: "Bad Request - malformed or invalid request parameters"
           content:
@@ -252,8 +252,8 @@ paths:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "400":
           description: "Bad Request - malformed or invalid request parameters"
           content:
@@ -316,8 +316,8 @@ paths:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "400":
           description: "Bad Request - malformed or invalid request parameters"
           content:
@@ -382,8 +382,8 @@ paths:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "400":
           description: "Bad Request - malformed or invalid request parameters"
           content:
@@ -446,8 +446,8 @@ paths:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "400":
           description: "Bad Request - malformed or invalid request parameters"
           content:
@@ -507,8 +507,8 @@ paths:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "400":
           description: "Bad Request - malformed or invalid request parameters"
           content:
@@ -570,8 +570,8 @@ paths:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "400":
           description: "Bad Request - malformed or invalid request parameters"
           content:
@@ -611,7 +611,6 @@ components:
       required: false
       schema:
         type: "string"
-        maxLength: 100
     brokerNumber:
       name: "brokerNumber"
       description: "Optional custom header identifying the broker number of the call"
@@ -752,39 +751,7 @@ components:
       maxLength: 9
       pattern: "^[0-9]{3}[A-Z0-9]{5}[0-9]$"
     IndividualIdentity:
-      description: "Schema for individual identity data"
-      required:
-        - "type"
-        - "firstName"
-        - "lastName"
-      type: "object"
-      properties:
-        type:
-          description: "Indicates whether the party is an individual or an entity."
-          type: "string"
-          const: "individual"
-        firstName:
-          description: "First name of the individual"
-          type: "string"
-          minLength: 1
-          maxLength: 105
-          pattern: "^[a-zA-Z0-9À-ſ=()*@#\\s.,'_/~%$!();:&\"®`\\-\\\\?]{1,105}$"
-        middleName:
-          description: "The middle name of the individual"
-          type: "string"
-          minLength: 1
-          maxLength: 105
-          pattern: "^[a-zA-Z0-9À-ſ=()*@#\\s.,'_/~%$!();:&\"®`\\-\\\\?]{1,105}$"
-        lastName:
-          description: "The last name of the individual"
-          type: "string"
-          minLength: 1
-          maxLength: 105
-          pattern: "^[a-zA-Z0-9À-ſ=()*@#\\s.,'_/~%$!();:&\"®`\\-\\\\?]{1,105}$"
-        taxId:
-          description: "Party's tax identification number"
-          allOf:
-            - $ref: "#/components/schemas/taxId"
+      $ref: "${SHARED_SPECS_BASE}/party-schemas.yaml#/components/schemas/IndividualIdentity"
     IndividualProducer:
       description: "Schema for individual producer data"
       type: "object"
@@ -827,26 +794,7 @@ components:
         - $ref: "#/components/schemas/IndividualIdentity"
         - $ref: "#/components/schemas/PartyRelationship"
     EntityIdentity:
-      description: "Schema for entity identity data"
-      type: "object"
-      required:
-        - "type"
-        - "name"
-      properties:
-        type:
-          description: "Indicates whether the party is an individual or an entity."
-          type: "string"
-          const: "entity"
-        name:
-          description: "Name of the entity"
-          type: "string"
-          minLength: 1
-          maxLength: 180
-          pattern: "^[a-zA-Z0-9À-ſ=()*@#\\s.,'_/~%$!();:&\"®`\\-\\\\?]{1,180}$"
-        taxId:
-          description: "Party's tax identification number"
-          allOf:
-            - $ref: "#/components/schemas/taxId"
+      $ref: "${SHARED_SPECS_BASE}/party-schemas.yaml#/components/schemas/EntityIdentity"
     EntityProducer:
       description: "Schema for entity producer data"
       type: "object"
@@ -889,25 +837,7 @@ components:
         - $ref: "#/components/schemas/EntityIdentity"
         - $ref: "#/components/schemas/PartyRelationship"
     PartyRelationship:
-      description: "Schema for party relationship data"
-      type: "object"
-      required:
-        - "relationships"
-      properties:
-        relationships:
-          description: "An array of strings specifying the relationship(s) of the party to the policy."
-          type: "array"
-          minItems: 1
-          maxItems: 2
-          items:
-            type: "string"
-            enum:
-              - "owner"
-              - "jointOwner"
-              - "annuitant"
-              - "jointAnnuitant"
-              - "primaryBeneficiary"
-              - "contingentBeneficiary"
+      $ref: "${SHARED_SPECS_BASE}/PartyRelationship_v1.yaml#/components/schemas/PartyRelationship"
     Producers:
       description: "Schema for producers data"
       type: "array"
@@ -1648,11 +1578,10 @@ components:
       maxLength: 9
   headers:
     correlationId:
-      description: "Correlates this response to downstream processing."
+      description: "Correlation ID echoed from the request, if supplied"
       schema:
         type: "string"
-        maxLength: 100
-    X-Api-Version:
+    Api-Version:
       description: "Minor/patch version of the API that served this response"
       schema:
         type: "string"

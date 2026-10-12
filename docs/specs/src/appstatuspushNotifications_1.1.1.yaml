@@ -1,5 +1,4 @@
-# Modified by Cursor: generated file — edit docs/specs/src/appstatuspushNotifications_1.1.1.yaml instead.
-# Regenerate with: npm run bundle:specs
+# Modified by Cursor: source spec — bundled to docs/specs/appstatuspushNotifications_1.1.1.yaml
 openapi: "3.1.0"
 info:
   title: "Annuity Application Status Push Notifications"
@@ -755,7 +754,6 @@ components:
       required: false
       schema:
         type: "string"
-        maxLength: 100
     associatedFirmId:
       name: "associatedFirmId"
       description: "Optional query parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms."
@@ -1475,25 +1473,7 @@ components:
           relationships:
             - "primaryBeneficiary"
     PartyRelationship:
-      description: "Schema for party relationship data"
-      type: "object"
-      required:
-        - "relationships"
-      properties:
-        relationships:
-          description: "An array of strings specifying the relationship(s) of the party to the policy."
-          type: "array"
-          minItems: 1
-          maxItems: 2
-          items:
-            type: "string"
-            enum:
-              - "owner"
-              - "jointOwner"
-              - "annuitant"
-              - "jointAnnuitant"
-              - "primaryBeneficiary"
-              - "contingentBeneficiary"
+      $ref: "${SHARED_SPECS_BASE}/PartyRelationship_v1.yaml#/components/schemas/PartyRelationship"
     Producer:
       description: "An individual or an entity acting as a producer on the policy. The `type` property selects the shape: `individual` uses first/middle/last name, `entity` uses a single `name`."
       oneOf:

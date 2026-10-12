@@ -1,5 +1,4 @@
-# Modified by Cursor: generated file — edit docs/specs/src/appstatusv1.yaml instead.
-# Regenerate with: npm run bundle:specs
+# Modified by Cursor: source spec — bundled to docs/specs/appstatusv1.yaml
 openapi: "3.1.0"
 info:
   title: "Annuity Application Status APIs"
@@ -271,12 +270,11 @@ components:
   parameters:
     correlationId:
       name: "correlationId"
-      description: "Optional client-supplied identifier to trace the request."
+      description: "Optional custom header to be returned to the caller in response payload"
       in: "header"
       required: false
       schema:
         type: "string"
-        maxLength: 100
     senderParticipantId:
       name: "senderParticipantId"
       description: "Optional custom header identifying the sender of the call"
@@ -526,25 +524,7 @@ components:
         - $ref: "#/components/schemas/EntityIdentity"
         - $ref: "#/components/schemas/PartyRelationship"
     PartyRelationship:
-      description: "Schema for party relationship data"
-      type: "object"
-      required:
-        - "relationships"
-      properties:
-        relationships:
-          description: "An array of strings specifying the relationship(s) of the party to the policy."
-          type: "array"
-          minItems: 1
-          maxItems: 2
-          items:
-            type: "string"
-            enum:
-              - "owner"
-              - "jointOwner"
-              - "annuitant"
-              - "jointAnnuitant"
-              - "primaryBeneficiary"
-              - "contingentBeneficiary"
+      $ref: "${SHARED_SPECS_BASE}/PartyRelationship_v1.yaml#/components/schemas/PartyRelationship"
     Producers:
       description: "Schema for producers data"
       type: "array"

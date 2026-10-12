@@ -190,14 +190,20 @@ Working-group repos can copy `docs/specs/src/<spec>.yaml` plus the `scripts/` he
 ### Authoring workflow
 
 1. Add or update reusable fragments in `docs/specs/shared/` as `{ComponentName}_vN.yaml` (add `_v2+` for breaking changes; do not break `_v1` in place).
-2. Reference them from `docs/specs/src/<spec-name>.yaml` using `${SHARED_SPECS_BASE}/…`.
-3. Bundle into the published single-file spec:
+2. Reference them from `docs/specs/src/<spec-name>.yaml` using `${SHARED_SPECS_BASE}/…` (each component entry must be a **direct** `$ref`, not a wrapper object that only points at shared).
+3. To regenerate all modular sources from the top-level published YAML files (structural match to `*_v1.yaml`, **Error_v1 only** for error schemas — Error_v2/v3 shapes stay inline):
+
+```bash
+npm run rebuild:src
+```
+
+4. Bundle into the published single-file spec:
 
 ```bash
 npm run bundle:specs
 ```
 
-4. Validate and build:
+5. Validate and build:
 
 ```bash
 npm run validate:specs

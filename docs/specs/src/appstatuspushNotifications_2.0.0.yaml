@@ -1,5 +1,5 @@
-# Modified by Cursor: generated file — edit docs/specs/src/appstatuspushNotifications_2.0.0.yaml instead.
-# Regenerate with: npm run bundle:specs
+# Modified by Cursor: source spec — bundled to docs/specs/appstatuspushNotifications_2.0.0.yaml
+# TODO: align to shared Error_v1 — see ERROR-SCHEMA-DEBT.md
 openapi: "3.1.0"
 info:
   title: "Annuity Application Status Push Notifications"
@@ -9,7 +9,7 @@ info:
     name: "MIT"
     url: "https://github.com/Insured-Retirement-Institute/Pending-Case/blob/main/LICENSE"
 paths:
-  /v1/application-notifications/reconciliation:
+  /v2/application-notifications/reconciliation:
     get:
       operationId: "reconciliation"
       summary: "Send a list of published events to reconcile for potential missed Notifications"
@@ -53,8 +53,8 @@ paths:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "401":
           description: "Unauthorized"
           content:
@@ -73,7 +73,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /v1/application-notifications/{eventId}:
+  /v2/application-notifications/{eventId}:
     get:
       operationId: "replayEvent"
       summary: "Retrieve payload for the given event ID"
@@ -103,18 +103,18 @@ paths:
                 discriminator:
                   propertyName: "eventType"
                   mapping:
-                    applicationStatus.v1.applicationReceived: "#/components/schemas/ApplicationReceivedNotification"
-                    applicationStatus.v1.canSellActionNeeded: "#/components/schemas/CanSellNotification"
-                    applicationStatus.v1.suitabilityActionNeeded: "#/components/schemas/SuitabilityActionNotification"
-                    applicationStatus.v1.suitabilityApproved: "#/components/schemas/SuitabilityDecisionNotification"
-                    applicationStatus.v1.documentReviewActionNeeded: "#/components/schemas/DocReviewNotification"
-                    applicationStatus.v1.fundingActionNeeded: "#/components/schemas/FundingActionNotification"
-                    applicationStatus.v1.fundingTransferRequestSent: "#/components/schemas/TransferRequestNotification"
-                    applicationStatus.v1.fundingSourceTypeUpdated: "#/components/schemas/SourceTypeNotification"
-                    applicationStatus.v1.fundingTransferFollowedUp: "#/components/schemas/NewFollowUpNotification"
-                    applicationStatus.v1.fundingReceived: "#/components/schemas/FundingReceivedNotification"
-                    applicationStatus.v1.applicationCompleted: "#/components/schemas/ApplicationCompletedNotification"
-                    applicationStatus.v1.applicationCancelled: "#/components/schemas/ApplicationCancelledNotification"
+                    applicationStatus.v2.applicationReceived: "#/components/schemas/ApplicationReceivedNotification"
+                    applicationStatus.v2.canSellActionNeeded: "#/components/schemas/CanSellNotification"
+                    applicationStatus.v2.suitabilityActionNeeded: "#/components/schemas/SuitabilityActionNotification"
+                    applicationStatus.v2.suitabilityApproved: "#/components/schemas/SuitabilityDecisionNotification"
+                    applicationStatus.v2.documentReviewActionNeeded: "#/components/schemas/DocReviewNotification"
+                    applicationStatus.v2.fundingActionNeeded: "#/components/schemas/FundingActionNotification"
+                    applicationStatus.v2.fundingTransferRequestSent: "#/components/schemas/TransferRequestNotification"
+                    applicationStatus.v2.fundingSourceTypeUpdated: "#/components/schemas/SourceTypeNotification"
+                    applicationStatus.v2.fundingTransferFollowedUp: "#/components/schemas/NewFollowUpNotification"
+                    applicationStatus.v2.fundingReceived: "#/components/schemas/FundingReceivedNotification"
+                    applicationStatus.v2.applicationCompleted: "#/components/schemas/ApplicationCompletedNotification"
+                    applicationStatus.v2.applicationCancelled: "#/components/schemas/ApplicationCancelledNotification"
               examples:
                 applicationReceivedReplay:
                   summary: "Application received event payload"
@@ -127,7 +127,7 @@ paths:
                       isElectronic: true
                       id: "DF-APP-001234"
                     status: "received"
-                    eventType: "applicationStatus.v1.applicationReceived"
+                    eventType: "applicationStatus.v2.applicationReceived"
                     notification:
                       cusip: "401B23458"
                       isActionNeeded: false
@@ -144,7 +144,7 @@ paths:
                       isElectronic: true
                       id: "DF-APP-001234"
                     status: "inProgress"
-                    eventType: "applicationStatus.v1.canSellActionNeeded"
+                    eventType: "applicationStatus.v2.canSellActionNeeded"
                     notification:
                       status: "inProgress"
                       isActionNeeded: true
@@ -160,7 +160,7 @@ paths:
                       isElectronic: true
                       id: "DF-APP-001234"
                     status: "cancelled"
-                    eventType: "applicationStatus.v1.applicationCancelled"
+                    eventType: "applicationStatus.v2.applicationCancelled"
                     notification:
                       initiator: "client"
                       cancelledDate: "2026-06-18"
@@ -169,8 +169,8 @@ paths:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "401":
           description: "Unauthorized"
           content:
@@ -217,7 +217,7 @@ webhooks:
                     isElectronic: true
                     id: "DF-APP-001234"
                   status: "received"
-                  eventType: "applicationStatus.v1.applicationReceived"
+                  eventType: "applicationStatus.v2.applicationReceived"
                   notification:
                     cusip: "401B23458"
                     isActionNeeded: false
@@ -264,7 +264,7 @@ webhooks:
                     isElectronic: true
                     id: "DF-APP-001235"
                   status: "received"
-                  eventType: "applicationStatus.v1.applicationReceived"
+                  eventType: "applicationStatus.v2.applicationReceived"
                   notification:
                     cusip: "401B23458"
                     isActionNeeded: false
@@ -299,8 +299,8 @@ webhooks:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "401":
           description: "Unauthorized"
           content:
@@ -343,7 +343,7 @@ webhooks:
                 isElectronic: true
                 id: "DF-APP-001234"
               status: "inProgress"
-              eventType: "applicationStatus.v1.canSellActionNeeded"
+              eventType: "applicationStatus.v2.canSellActionNeeded"
               notification:
                 status: "inProgress"
                 isActionNeeded: true
@@ -361,8 +361,8 @@ webhooks:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "401":
           description: "Unauthorized"
           content:
@@ -407,7 +407,7 @@ webhooks:
                     isElectronic: true
                     id: "DF-APP-001234"
                   status: "inProgress"
-                  eventType: "applicationStatus.v1.suitabilityActionNeeded"
+                  eventType: "applicationStatus.v2.suitabilityActionNeeded"
                   notification:
                     status: "inProgress"
                     isActionNeeded: true
@@ -426,7 +426,7 @@ webhooks:
                     isElectronic: true
                     id: "DF-APP-001234"
                   status: "inProgress"
-                  eventType: "applicationStatus.v1.suitabilityActionNeeded"
+                  eventType: "applicationStatus.v2.suitabilityActionNeeded"
                   notification:
                     status: "inProgress"
                     isActionNeeded: true
@@ -440,8 +440,8 @@ webhooks:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "401":
           description: "Unauthorized"
         "403":
@@ -472,7 +472,7 @@ webhooks:
                     isElectronic: true
                     id: "DF-APP-001234"
                   status: "inProgress"
-                  eventType: "applicationStatus.v1.suitabilityApproved"
+                  eventType: "applicationStatus.v2.suitabilityApproved"
                   notification:
                     status: "completed"
                     isActionNeeded: false
@@ -491,7 +491,7 @@ webhooks:
                     isElectronic: true
                     id: "DF-APP-001234"
                   status: "inProgress"
-                  eventType: "applicationStatus.v1.suitabilityApproved"
+                  eventType: "applicationStatus.v2.suitabilityApproved"
                   notification:
                     status: "completed"
                     isActionNeeded: false
@@ -505,8 +505,8 @@ webhooks:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "401":
           description: "Unauthorized"
         "403":
@@ -537,7 +537,7 @@ webhooks:
                     isElectronic: false
                     id: "DF-APP-001234"
                   status: "inProgress"
-                  eventType: "applicationStatus.v1.documentReviewActionNeeded"
+                  eventType: "applicationStatus.v2.documentReviewActionNeeded"
                   notification:
                     status: "inProgress"
                     isActionNeeded: true
@@ -553,7 +553,7 @@ webhooks:
                     isElectronic: true
                     id: "DF-APP-001234"
                   status: "inProgress"
-                  eventType: "applicationStatus.v1.documentReviewActionNeeded"
+                  eventType: "applicationStatus.v2.documentReviewActionNeeded"
                   notification:
                     status: "inProgress"
                     isActionNeeded: true
@@ -570,8 +570,8 @@ webhooks:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "401":
           description: "Unauthorized"
         "403":
@@ -602,7 +602,7 @@ webhooks:
                     isElectronic: true
                     id: "DF-APP-001234"
                   status: "inProgress"
-                  eventType: "applicationStatus.v1.fundingActionNeeded"
+                  eventType: "applicationStatus.v2.fundingActionNeeded"
                   notification:
                     isActionNeeded: false
                     status: "inProgress"
@@ -627,7 +627,7 @@ webhooks:
                     isElectronic: true
                     id: "DF-APP-001234"
                   status: "inProgress"
-                  eventType: "applicationStatus.v1.fundingActionNeeded"
+                  eventType: "applicationStatus.v2.fundingActionNeeded"
                   notification:
                     isActionNeeded: true
                     status: "inProgress"
@@ -647,8 +647,8 @@ webhooks:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "401":
           description: "Unauthorized"
         "403":
@@ -680,7 +680,7 @@ webhooks:
                     isElectronic: true
                     id: "DF-APP-001234"
                   status: "inProgress"
-                  eventType: "applicationStatus.v1.fundingTransferRequestSent"
+                  eventType: "applicationStatus.v2.fundingTransferRequestSent"
                   notification:
                     isActionNeeded: false
                     status: "inProgress"
@@ -702,8 +702,8 @@ webhooks:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "401":
           description: "Unauthorized"
         "403":
@@ -734,7 +734,7 @@ webhooks:
                     isElectronic: true
                     id: "DF-APP-001234"
                   status: "inProgress"
-                  eventType: "applicationStatus.v1.fundingSourceTypeUpdated"
+                  eventType: "applicationStatus.v2.fundingSourceTypeUpdated"
                   notification:
                     isActionNeeded: false
                     status: "inProgress"
@@ -757,7 +757,7 @@ webhooks:
                     isElectronic: true
                     id: "DF-APP-001234"
                   status: "inProgress"
-                  eventType: "applicationStatus.v1.fundingSourceTypeUpdated"
+                  eventType: "applicationStatus.v2.fundingSourceTypeUpdated"
                   notification:
                     isActionNeeded: false
                     status: "inProgress"
@@ -775,8 +775,8 @@ webhooks:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "401":
           description: "Unauthorized"
         "403":
@@ -807,7 +807,7 @@ webhooks:
                     isElectronic: true
                     id: "DF-APP-001234"
                   status: "inProgress"
-                  eventType: "applicationStatus.v1.fundingTransferFollowedUp"
+                  eventType: "applicationStatus.v2.fundingTransferFollowedUp"
                   notification:
                     isActionNeeded: true
                     status: "inProgress"
@@ -833,7 +833,7 @@ webhooks:
                     isElectronic: true
                     id: "DF-APP-001234"
                   status: "inProgress"
-                  eventType: "applicationStatus.v1.fundingTransferFollowedUp"
+                  eventType: "applicationStatus.v2.fundingTransferFollowedUp"
                   notification:
                     isActionNeeded: true
                     status: "inProgress"
@@ -854,8 +854,8 @@ webhooks:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "401":
           description: "Unauthorized"
         "403":
@@ -886,12 +886,11 @@ webhooks:
                     isElectronic: true
                     id: "DF-APP-001234"
                   status: "inProgress"
-                  eventType: "applicationStatus.v1.fundingReceived"
+                  eventType: "applicationStatus.v2.fundingReceived"
                   notification:
                     isActionNeeded: false
                     status: "completed"
                     startDate: "2026-06-06"
-                    anticipatedAmount: 250000
                     receivedAmount: 240000
                     receivedDate: "2026-06-15"
                     sources:
@@ -912,12 +911,11 @@ webhooks:
                     isElectronic: true
                     id: "DF-APP-001234"
                   status: "inProgress"
-                  eventType: "applicationStatus.v1.fundingReceived"
+                  eventType: "applicationStatus.v2.fundingReceived"
                   notification:
                     isActionNeeded: false
                     status: "completed"
                     startDate: "2026-06-06"
-                    anticipatedAmount: 250000
                     receivedAmount: 240000
                     receivedDate: "2026-06-15"
                     sources:
@@ -933,8 +931,8 @@ webhooks:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "401":
           description: "Unauthorized"
         "403":
@@ -965,7 +963,7 @@ webhooks:
                     isElectronic: true
                     id: "DF-APP-001234"
                   status: "completed"
-                  eventType: "applicationStatus.v1.applicationCompleted"
+                  eventType: "applicationStatus.v2.applicationCompleted"
                   notification:
                     isActionNeeded: false
                     startDate: "2026-06-02"
@@ -985,7 +983,7 @@ webhooks:
                     isElectronic: true
                     id: "DF-APP-001234"
                   status: "completed"
-                  eventType: "applicationStatus.v1.applicationCompleted"
+                  eventType: "applicationStatus.v2.applicationCompleted"
                   notification:
                     isActionNeeded: false
                     startDate: "2026-06-02"
@@ -1000,8 +998,8 @@ webhooks:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "401":
           description: "Unauthorized"
         "403":
@@ -1032,7 +1030,7 @@ webhooks:
                     isElectronic: true
                     id: "DF-APP-001234"
                   status: "cancelled"
-                  eventType: "applicationStatus.v1.applicationCancelled"
+                  eventType: "applicationStatus.v2.applicationCancelled"
                   notification:
                     initiator: "client"
                     cancelledDate: "2026-06-18"
@@ -1049,7 +1047,7 @@ webhooks:
                     isElectronic: true
                     id: "DF-APP-001234"
                   status: "cancelled"
-                  eventType: "applicationStatus.v1.applicationCancelled"
+                  eventType: "applicationStatus.v2.applicationCancelled"
                   notification:
                     initiator: "producer"
                     cancelledDate: "2026-06-18"
@@ -1061,8 +1059,8 @@ webhooks:
           headers:
             correlationId:
               $ref: "#/components/headers/correlationId"
-            X-Api-Version:
-              $ref: "#/components/headers/X-Api-Version"
+            Api-Version:
+              $ref: "#/components/headers/Api-Version"
         "401":
           description: "Unauthorized"
         "403":
@@ -1070,11 +1068,10 @@ webhooks:
 components:
   headers:
     correlationId:
-      description: "Correlates this response to downstream processing."
+      description: "Correlation ID echoed from the request, if supplied"
       schema:
         type: "string"
-        maxLength: 100
-    X-Api-Version:
+    Api-Version:
       description: "Minor/patch version of the API that served this response"
       schema:
         type: "string"
@@ -1086,7 +1083,6 @@ components:
       required: false
       schema:
         type: "string"
-        maxLength: 100
     associatedFirmId:
       name: "associatedFirmId"
       description: "Optional query parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms."
@@ -1184,7 +1180,7 @@ components:
             eventType:
               description: "Identifies the event type or triggered activity being communicated for push notifications"
               type: "string"
-              const: "applicationStatus.v1.applicationReceived"
+              const: "applicationStatus.v2.applicationReceived"
             notification:
               description: "Notification"
               required:
@@ -1254,7 +1250,7 @@ components:
             eventType:
               description: "Identifies the event type or triggered activity being communicated for push notifications"
               type: "string"
-              const: "applicationStatus.v1.canSellActionNeeded"
+              const: "applicationStatus.v2.canSellActionNeeded"
             notification:
               description: "Notification"
               allOf:
@@ -1272,7 +1268,7 @@ components:
             eventType:
               description: "Identifies the event type or triggered activity being communicated for push notifications"
               type: "string"
-              const: "applicationStatus.v1.suitabilityActionNeeded"
+              const: "applicationStatus.v2.suitabilityActionNeeded"
             notification:
               description: "Notification"
               allOf:
@@ -1288,7 +1284,7 @@ components:
             eventType:
               description: "Identifies the event type or triggered activity being communicated for push notifications"
               type: "string"
-              const: "applicationStatus.v1.suitabilityApproved"
+              const: "applicationStatus.v2.suitabilityApproved"
             notification:
               description: "Notification"
               required:
@@ -1318,7 +1314,7 @@ components:
             eventType:
               description: "Identifies the event type or triggered activity being communicated for push notifications"
               type: "string"
-              const: "applicationStatus.v1.documentReviewActionNeeded"
+              const: "applicationStatus.v2.documentReviewActionNeeded"
             notification:
               description: "Notification"
               allOf:
@@ -1336,7 +1332,7 @@ components:
             eventType:
               description: "Identifies the event type or triggered activity being communicated for push notifications"
               type: "string"
-              const: "applicationStatus.v1.fundingActionNeeded"
+              const: "applicationStatus.v2.fundingActionNeeded"
             notification:
               description: "Notification"
               allOf:
@@ -1364,7 +1360,7 @@ components:
             eventType:
               description: "Identifies the event type or triggered activity being communicated for push notifications"
               type: "string"
-              const: "applicationStatus.v1.fundingTransferRequestSent"
+              const: "applicationStatus.v2.fundingTransferRequestSent"
             notification:
               description: "Notification"
               allOf:
@@ -1402,7 +1398,7 @@ components:
             eventType:
               description: "Identifies the event type or triggered activity being communicated for push notifications"
               type: "string"
-              const: "applicationStatus.v1.fundingSourceTypeUpdated"
+              const: "applicationStatus.v2.fundingSourceTypeUpdated"
             sourceId:
               description: "Unique Id to identify the funding"
               type: "string"
@@ -1422,7 +1418,7 @@ components:
             eventType:
               description: "Identifies the event type or triggered activity being communicated for push notifications"
               type: "string"
-              const: "applicationStatus.v1.fundingTransferFollowedUp"
+              const: "applicationStatus.v2.fundingTransferFollowedUp"
             notification:
               description: "Notification"
               type: "object"
@@ -1454,7 +1450,7 @@ components:
             eventType:
               description: "Identifies the event type or triggered activity being communicated for push notifications"
               type: "string"
-              const: "applicationStatus.v1.fundingReceived"
+              const: "applicationStatus.v2.fundingReceived"
             notification:
               description: "Notification"
               type: "object"
@@ -1481,7 +1477,7 @@ components:
             eventType:
               description: "Identifies the event type or triggered activity being communicated for push notifications"
               type: "string"
-              const: "applicationStatus.v1.applicationCompleted"
+              const: "applicationStatus.v2.applicationCompleted"
             notification:
               description: "Notification"
               type: "object"
@@ -1532,7 +1528,7 @@ components:
             eventType:
               description: "Identifies the event type or triggered activity being communicated for push notifications"
               type: "string"
-              const: "applicationStatus.v1.applicationCancelled"
+              const: "applicationStatus.v2.applicationCancelled"
             notification:
               description: "Notification"
               required:
@@ -1841,25 +1837,7 @@ components:
           relationships:
             - "primaryBeneficiary"
     PartyRelationship:
-      description: "Schema for party relationship data"
-      type: "object"
-      required:
-        - "relationships"
-      properties:
-        relationships:
-          description: "An array of strings specifying the relationship(s) of the party to the policy."
-          type: "array"
-          minItems: 1
-          maxItems: 2
-          items:
-            type: "string"
-            enum:
-              - "owner"
-              - "jointOwner"
-              - "annuitant"
-              - "jointAnnuitant"
-              - "primaryBeneficiary"
-              - "contingentBeneficiary"
+      $ref: "${SHARED_SPECS_BASE}/PartyRelationship_v1.yaml#/components/schemas/PartyRelationship"
     Producer:
       description: "An individual or an entity acting as a producer on the policy. The `type` property selects the shape: `individual` uses first/middle/last name, `entity` uses a single `name`."
       oneOf:
@@ -2185,6 +2163,5 @@ components:
                 description: "Description of the validation failure"
                 type: "string"
               code:
-                description: "Machine-readable code for this specific validation failure, in domain.category.subcategory format"
+                description: "Domain.category.subcategory code for this specific validation failure"
                 type: "string"
-                pattern: "^[a-z0-9]+\\.[a-z0-9]+\\.[a-z0-9]+$"

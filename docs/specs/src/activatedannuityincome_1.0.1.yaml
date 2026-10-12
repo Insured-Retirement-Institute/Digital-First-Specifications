@@ -1,5 +1,5 @@
-# Modified by Cursor: generated file — edit docs/specs/src/activatedannuityincome_1.0.1.yaml instead.
-# Regenerate with: npm run bundle:specs
+# Modified by Cursor: source spec — bundled to docs/specs/activatedannuityincome_1.0.1.yaml
+# TODO: align to shared Error_v1 — see ERROR-SCHEMA-DEBT.md
 openapi: "3.1.0"
 info:
   title: "Activated Annuity Income API"
@@ -249,16 +249,10 @@ components:
       schema:
         $ref: "#/components/schemas/cusip"
     correlationId:
-      name: "correlationId"
-      description: "Optional client-supplied identifier to trace the request."
-      in: "header"
-      required: false
-      schema:
-        type: "string"
-        maxLength: 100
+      $ref: "${SHARED_SPECS_BASE}/CorrelationIdHeader_v1.yaml#/components/parameters/CorrelationIdHeader"
   responses:
     BadRequestError:
-      description: "Bad Request — the request payload is malformed or fails schema validation."
+      description: "Bad Request"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -267,7 +261,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     UnauthorizedError:
-      description: "Unauthorized — authentication credentials are missing or invalid."
+      description: "Unauthorized"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -276,7 +270,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     ForbiddenError:
-      description: "Forbidden — the caller is not permitted to perform this action."
+      description: "Forbidden"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -285,7 +279,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     NotFoundError:
-      description: "Not Found — the referenced resource does not exist."
+      description: "Not Found"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -294,7 +288,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     MethodNotAllowedError:
-      description: "Method Not Allowed — the HTTP method is not supported on this resource."
+      description: "Method Not Allowed"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -303,7 +297,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     UnprocessableEntityError:
-      description: "Unprocessable Entity — the request is well-formed but fails business rule validation."
+      description: "Unprocessable Entity"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -312,7 +306,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     TooManyRequestsError:
-      description: "Too Many Requests — the caller has exceeded the permitted rate limit."
+      description: "Too Many Requests"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -321,7 +315,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     InternalServerError:
-      description: "Internal Server Error — an unexpected condition prevented the request from completing."
+      description: "Internal Server Error"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -330,7 +324,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     BadGatewayError:
-      description: "Bad Gateway — an upstream system returned an invalid response."
+      description: "Bad Gateway"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -339,7 +333,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     ServiceUnavailableError:
-      description: "Service Unavailable — the service is temporarily unable to handle the request."
+      description: "Service Unavailable"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -348,7 +342,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     GatewayTimeoutError:
-      description: "Gateway Timeout — an upstream system did not respond in time."
+      description: "Gateway Timeout"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -358,10 +352,7 @@ components:
             $ref: "#/components/schemas/Error"
   headers:
     correlationId:
-      description: "Correlates this response to downstream processing."
-      schema:
-        type: "string"
-        maxLength: 100
+      $ref: "${SHARED_SPECS_BASE}/correlationId_v1.yaml#/components/headers/correlationId"
   schemas:
     cusip:
       description: "CUSIP"
@@ -520,9 +511,6 @@ components:
             - "SHA-256"
     Error:
       type: "object"
-      required:
-        - "code"
-        - "message"
       properties:
         httpStatus:
           type: "integer"
@@ -531,23 +519,26 @@ components:
           maximum: 599
         code:
           type: "string"
-          description: "Structured error code in domain.category.subcategory format"
+          description: "A structured error code that uniquely identifies the type of error. This can follow a hierarchical format: - `<domain>`: The logical domain (e.g., \"gateway\") - `<category>`: The error category (e.g., \"client\" or \"server\") - `<subcategory>`: A specific error identifier (e.g., \"badrequest\", \"timeout\")\n"
         timestamp:
           type: "string"
           format: "date-time"
-          description: "When the error occurred"
+          description: "Create or Update timestamp of transaction event"
         message:
           type: "string"
-          description: "Developer-focused technical message"
+          description: "Message with specific error details."
         validationErrors:
           type: "array"
-          description: "Field-level or rule-level validation failures"
+          description: "Logical rule violations or decision failures related to business logic or rules"
           items:
             type: "object"
             properties:
               code:
                 type: "string"
-                description: "Structured error code for this validation failure"
+                description: "Code to classify the error & Identifies the type of business rule or decision failure."
               message:
                 type: "string"
-                description: "Description of the validation failure"
+                description: "Why the error occurred / Specific business rule violation"
+      required:
+        - "code"
+        - "message"

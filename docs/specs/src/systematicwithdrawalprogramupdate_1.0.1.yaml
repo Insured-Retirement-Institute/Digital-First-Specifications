@@ -1,5 +1,5 @@
-# Modified by Cursor: generated file — edit docs/specs/src/systematicwithdrawalprogramupdate_1.0.1.yaml instead.
-# Regenerate with: npm run bundle:specs
+# Modified by Cursor: source spec — bundled to docs/specs/systematicwithdrawalprogramupdate_1.0.1.yaml
+# TODO: align to shared Error_v1 — see ERROR-SCHEMA-DEBT.md
 openapi: "3.1.0"
 info:
   title: "Policy Transactions API - Update Systematic Withdrawal & Update Systematic RMD"
@@ -367,13 +367,7 @@ components:
         type: "string"
         maxLength: 100
     correlationId:
-      name: "correlationId"
-      in: "header"
-      required: false
-      description: "Optional client-supplied identifier to trace the request."
-      schema:
-        type: "string"
-        maxLength: 100
+      $ref: "${SHARED_SPECS_BASE}/CorrelationIdHeader_v1.yaml#/components/parameters/CorrelationIdHeader"
     associatedFirmId:
       name: "associatedFirmId"
       in: "query"
@@ -385,13 +379,10 @@ components:
         maxLength: 65
   headers:
     correlationId:
-      description: "Correlates this response to downstream processing."
-      schema:
-        type: "string"
-        maxLength: 100
+      $ref: "${SHARED_SPECS_BASE}/correlationId_v1.yaml#/components/headers/correlationId"
   responses:
     BadRequestError:
-      description: "Bad Request — the request payload is malformed or fails schema validation."
+      description: "Bad Request"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -400,7 +391,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     UnauthorizedError:
-      description: "Unauthorized — authentication credentials are missing or invalid."
+      description: "Unauthorized"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -409,7 +400,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     ForbiddenError:
-      description: "Forbidden — the caller is not permitted to perform this action."
+      description: "Forbidden"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -418,7 +409,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     NotFoundError:
-      description: "Not Found — the referenced resource does not exist."
+      description: "Not Found"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -427,7 +418,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     MethodNotAllowedError:
-      description: "Method Not Allowed — the HTTP method is not supported on this resource."
+      description: "Method Not Allowed"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -436,7 +427,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     NotAcceptableError:
-      description: "Not Acceptable — the requested media type is not supported."
+      description: "Not Acceptable"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -445,7 +436,9 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     ConflictError:
-      description: "Conflict — a transaction for this policy is already in progress or an equivalent request has already been accepted."
+      description: "A transaction for this policy is already in progress or an equivalent request has already been accepted.
+
+        Re-submitting the same transaction while it is in-flight will be rejected to prevent duplicate processing.\n"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -454,7 +447,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     PayloadTooLargeError:
-      description: "Payload Too Large — the request body exceeds the maximum allowed size."
+      description: "Payload Too Large"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -463,7 +456,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     UnsupportedMediaTypeError:
-      description: "Unsupported Media Type — the request Content-Type is not supported."
+      description: "Unsupported Media Type"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -472,7 +465,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     UnprocessableEntityError:
-      description: "Unprocessable Entity — the request is well-formed but fails business rule validation."
+      description: "Unprocessable Entity"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -481,7 +474,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     TooManyRequestsError:
-      description: "Too Many Requests — the caller has exceeded the permitted rate limit."
+      description: "Too Many Requests"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -490,7 +483,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     InternalServerError:
-      description: "Internal Server Error — an unexpected condition prevented the request from completing."
+      description: "Internal Server Error"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -499,7 +492,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     BadGatewayError:
-      description: "Bad Gateway — an upstream system returned an invalid response."
+      description: "Bad Gateway"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -508,7 +501,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     ServiceUnavailableError:
-      description: "Service Unavailable — the service is temporarily unable to handle the request."
+      description: "Service Unavailable"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -517,7 +510,7 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     GatewayTimeoutError:
-      description: "Gateway Timeout — an upstream system did not respond in time."
+      description: "Gateway Timeout"
       headers:
         correlationId:
           $ref: "#/components/headers/correlationId"
@@ -567,47 +560,29 @@ components:
           type: "string"
           const: "individual"
         firstName:
-          description: "First name of the individual"
+          description: "First name of the individul"
           type: "string"
           minLength: 1
           maxLength: 105
-          pattern: "^[a-zA-Z0-9=()*@#\\s.,'_/~%$!();:&\"®`\\?\\-]{1,105}$"
+          pattern: "^[a-zA-Z0-9=()*@#\\s.,'_/~%$!();:&\"®`\\\\?\\-]{1,105}$"
         middleName:
-          description: "Middle name of the individual"
+          description: "Middle name of the individul"
           type: "string"
           minLength: 1
           maxLength: 105
-          pattern: "^[a-zA-Z0-9=()*@#\\s.,'_/~%$!();:&\"®`\\?\\-]{1,105}$"
+          pattern: "^[a-zA-Z0-9=()*@#\\s.,'_/~%$!();:&\"®`\\\\?\\-]{1,105}$"
         lastName:
-          description: "Last name of the individual"
+          description: "Last name of the individul"
           type: "string"
           minLength: 1
           maxLength: 105
-          pattern: "^[a-zA-Z0-9=()*@#\\s.,'_/~%$!();:&\"®`\\?\\-]{1,105}$"
+          pattern: "^[a-zA-Z0-9=()*@#\\s.,'_/~%$!();:&\"®`\\\\?\\-]{1,105}$"
         taxId:
           description: "Tax Identification Number for the individual or entity"
           type: "string"
           maxLength: 9
     PartyRelationship:
-      description: "Schema for party relationship data"
-      type: "object"
-      required:
-        - "relationships"
-      properties:
-        relationships:
-          description: "An array of strings specifying the relationship(s) of the party to the policy."
-          type: "array"
-          minItems: 1
-          maxItems: 2
-          items:
-            type: "string"
-            enum:
-              - "owner"
-              - "jointOwner"
-              - "annuitant"
-              - "jointAnnuitant"
-              - "primaryBeneficiary"
-              - "contingentBeneficiary"
+      $ref: "${SHARED_SPECS_BASE}/PartyRelationship_v1.yaml#/components/schemas/PartyRelationship"
     EntityIdentity:
       description: "Schema for entity identity data"
       type: "object"
@@ -1279,47 +1254,7 @@ components:
         - "state"
         - "zipCode"
     FundDistribution:
-      type: "object"
-      description: "Fund distribution details for the withdrawal"
-      properties:
-        fundId:
-          description: "Fund identifier."
-          type: "string"
-          maxLength: 100
-        fundName:
-          description: "Name of the fund."
-          type: "string"
-          maxLength: 100
-        totalFundValue:
-          description: "Total value of the fund."
-          type:
-            - "number"
-            - "null"
-          minimum: 0
-          maximum: 9999999999.99
-        requestedAmount:
-          description: "Requested amount from the fund."
-          type:
-            - "number"
-            - "null"
-          minimum: 0
-          maximum: 9999999999.99
-        requestedPercentage:
-          description: "Requested percentage from the fund."
-          type: "number"
-          minimum: 0
-          maximum: 100
-      oneOf:
-        - required:
-            - "requestedAmount"
-          not:
-            required:
-              - "requestedPercentage"
-        - required:
-            - "requestedPercentage"
-          not:
-            required:
-              - "requestedAmount"
+      $ref: "${SHARED_SPECS_BASE}/FundDistribution_v1.yaml#/components/schemas/FundDistribution"
     WithdrawalRequestStatus:
       type: "object"
       description: "Withdrawal request status resource created by the POST."
@@ -1366,9 +1301,6 @@ components:
         - "status"
     Error:
       type: "object"
-      required:
-        - "code"
-        - "message"
       properties:
         httpStatus:
           type: "integer"
@@ -1377,23 +1309,32 @@ components:
           maximum: 599
         code:
           type: "string"
-          description: "Structured error code in domain.category.subcategory format"
+          description: "A structured error code that uniquely identifies the type of error. This can follow a hierarchical format:
+
+            - <domain>: The logical domain (e.g., \"gateway\")
+
+            - <category>: The error category (e.g., \"client\" or \"server\")
+
+            - <subcategory>: A specific error identifier (e.g., \"badrequest\", \"timeout\")\n"
         timestamp:
           type: "string"
           format: "date-time"
-          description: "When the error occurred"
+          description: "Create or Update timestamp of transaction event"
         message:
           type: "string"
-          description: "Developer-focused technical message"
+          description: "Message with specific error details."
         validationErrors:
           type: "array"
-          description: "Field-level or rule-level validation failures"
+          description: "Logical rule violations or decision failures related to business logic or rules"
           items:
             type: "object"
             properties:
               code:
                 type: "string"
-                description: "Structured error code for this validation failure"
+                description: "Code to classify the error & Identifies the type of business rule or decision failure."
               message:
                 type: "string"
-                description: "Description of the validation failure"
+                description: "Message with specific error details."
+      required:
+        - "code"
+        - "message"

@@ -9,7 +9,7 @@ info:
     name: "MIT"
     url: "https://opensource.org/licenses/MIT"
 paths:
-  /v1/policies/{policyNumber}/withdrawals/systematic-withdrawals:
+  /v2/policies/{policyNumber}/withdrawals/systematic-withdrawals:
     post:
       operationId: "createSystematicWithdrawalArrangement"
       description: "Create a new Systematic Withdrawal arrangement."
@@ -119,7 +119,7 @@ paths:
           description: "Created request accepted for processing."
           headers:
             Location:
-              description: "URL of the created arrangement resource. Format: /v1/policies/{policyNumber}/withdrawals/requests/{requestId}\n"
+              description: "URL of the created arrangement resource. Format: /v2/policies/{policyNumber}/withdrawals/requests/{requestId}\n"
               schema:
                 type: "string"
                 format: "uri"
@@ -159,7 +159,7 @@ paths:
           $ref: "#/components/responses/ServiceUnavailableError"
         "504":
           $ref: "#/components/responses/GatewayTimeoutError"
-  /v1/policies/{policyNumber}/withdrawals/systematic-rmds:
+  /v2/policies/{policyNumber}/withdrawals/systematic-rmds:
     post:
       operationId: "createSystematicRmdArrangement"
       description: "Create a new Systematic Required Minimum Distribution (RMD) arrangement."
@@ -269,7 +269,7 @@ paths:
           description: "Created request accepted for processing."
           headers:
             Location:
-              description: "URL of the created arrangement resource. Format: /v1/policies/{policyNumber}/withdrawals/requests/{requestId}\n"
+              description: "URL of the created arrangement resource. Format: /v2/policies/{policyNumber}/withdrawals/requests/{requestId}\n"
               schema:
                 type: "string"
                 format: "uri"
@@ -309,7 +309,7 @@ paths:
           $ref: "#/components/responses/ServiceUnavailableError"
         "504":
           $ref: "#/components/responses/GatewayTimeoutError"
-  /v1/policies/{policyNumber}/withdrawals/requests/{requestId}:
+  /v2/policies/{policyNumber}/withdrawals/requests/{requestId}:
     get:
       operationId: "getWithdrawalRequest"
       tags:
@@ -375,38 +375,149 @@ components:
         maxLength: 65
   headers:
     correlationId:
-      $ref: "${SHARED_SPECS_BASE}/correlationId_v1.yaml#/components/headers/correlationId"
+      description: "Correlates this response to requests and downstream logs."
+      required: true
+      schema:
+        type: "string"
+        maxLength: 100
   responses:
     BadRequestError:
-      $ref: "${SHARED_SPECS_BASE}/BadRequestError_v2.yaml#/components/responses/BadRequestError"
+      description: "Bad Request"
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     UnauthorizedError:
-      $ref: "${SHARED_SPECS_BASE}/UnauthorizedError_v2.yaml#/components/responses/UnauthorizedError"
+      description: "Unauthorized"
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     ForbiddenError:
-      $ref: "${SHARED_SPECS_BASE}/ForbiddenError_v2.yaml#/components/responses/ForbiddenError"
+      description: "Forbidden"
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     NotFoundError:
-      $ref: "${SHARED_SPECS_BASE}/NotFoundError_v2.yaml#/components/responses/NotFoundError"
+      description: "Not Found"
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     MethodNotAllowedError:
-      $ref: "${SHARED_SPECS_BASE}/MethodNotAllowedError_v2.yaml#/components/responses/MethodNotAllowedError"
+      description: "Method Not Allowed"
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     NotAcceptableError:
-      $ref: "${SHARED_SPECS_BASE}/NotAcceptableError_v2.yaml#/components/responses/NotAcceptableError"
+      description: "Not Acceptable"
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     ConflictError:
-      $ref: "${SHARED_SPECS_BASE}/ConflictError_v2.yaml#/components/responses/ConflictError"
+      description: "A transaction for this policy is already in progress or an equivalent request has already been accepted.
+
+        Re-submitting the same transaction while it is in-flight will be rejected to prevent duplicate processing.\n"
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     PayloadTooLargeError:
-      $ref: "${SHARED_SPECS_BASE}/PayloadTooLargeError_v2.yaml#/components/responses/PayloadTooLargeError"
+      description: "Payload Too Large"
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     UnsupportedMediaTypeError:
-      $ref: "${SHARED_SPECS_BASE}/UnsupportedMediaTypeError_v2.yaml#/components/responses/UnsupportedMediaTypeError"
+      description: "Unsupported Media Type"
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     UnprocessableEntityError:
-      $ref: "${SHARED_SPECS_BASE}/UnprocessableEntityError_v2.yaml#/components/responses/UnprocessableEntityError"
+      description: "Unprocessable Entity"
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     TooManyRequestsError:
-      $ref: "${SHARED_SPECS_BASE}/TooManyRequestsError_v2.yaml#/components/responses/TooManyRequestsError"
+      description: "Too Many Requests"
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     InternalServerError:
-      $ref: "${SHARED_SPECS_BASE}/InternalServerError_v2.yaml#/components/responses/InternalServerError"
+      description: "Internal Server Error"
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     BadGatewayError:
-      $ref: "${SHARED_SPECS_BASE}/BadGatewayError_v2.yaml#/components/responses/BadGatewayError"
+      description: "Bad Gateway"
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     ServiceUnavailableError:
-      $ref: "${SHARED_SPECS_BASE}/ServiceUnavailableError_v2.yaml#/components/responses/ServiceUnavailableError"
+      description: "Service Unavailable"
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     GatewayTimeoutError:
-      $ref: "${SHARED_SPECS_BASE}/GatewayTimeoutError_v2.yaml#/components/responses/GatewayTimeoutError"
+      description: "Gateway Timeout"
+      headers:
+        correlationId:
+          $ref: "#/components/headers/correlationId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
   schemas:
     Producer:
       type: "object"
@@ -1309,7 +1420,44 @@ components:
         - "requestId"
         - "status"
     Error:
-      $ref: "${SHARED_SPECS_BASE}/Error_v2.yaml#/components/schemas/Error"
+      type: "object"
+      properties:
+        httpStatus:
+          type: "integer"
+          description: "HTTP status code associated with this error"
+          minimum: 400
+          maximum: 599
+        code:
+          type: "string"
+          description: "A structured error code that uniquely identifies the type of error. This can follow a hierarchical format:
+
+            - <domain>: The logical domain (e.g., \"gateway\")
+
+            - <category>: The error category (e.g., \"client\" or \"server\")
+
+            - <subcategory>: A specific error identifier (e.g., \"badrequest\", \"timeout\")\n"
+        timestamp:
+          type: "string"
+          format: "date-time"
+          description: "Time when the error occurred"
+        message:
+          type: "string"
+          description: "Message with specific error details."
+        validationErrors:
+          type: "array"
+          description: "Logical rule violations or decision failures related to business logic or rules"
+          items:
+            type: "object"
+            properties:
+              code:
+                type: "string"
+                description: "Code to classify the error & Identifies the type of business rule or decision failure."
+              message:
+                type: "string"
+                description: "Why the error occurred / Specific business rule violation"
+      required:
+        - "code"
+        - "message"
     Day2SystematicProgramConfirmationEvent:
       x-event-mesh:
         broker: "SAP Advanced Event Mesh / Solace"
