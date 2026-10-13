@@ -1,5 +1,6 @@
 /**
- * Migrates a hand-authored published spec to docs/specs/src/ with shared $refs.
+ * Migrates a published spec from docs/specs/ to docs/specs/src/ with shared v1 $refs.
+ * Prefer `npm run rebuild:src` to refresh all src specs at once.
  *
  * Modified by Cursor
  */
@@ -9,47 +10,24 @@ import * as fs from 'fs';
 import { pathToFileURL } from 'url';
 import { stringify } from 'yaml';
 import {
-  ERROR_DEBT_SPEC_FILES,
-  shouldUseSharedComponent,
-  resolveSharedRef
-} from './shared-component-registry.js';
+  applySharedReplacements,
+  buildSharedV1Index,
+  classifyErrorSchema,
+  loadErrorVariantSchemas
+} from './shared-v1-match.js';
+import { README_ERROR_DEBT_SPEC_FILES } from './shared-component-registry.js';
 import { publishedSpecPath, sourceSpecPath, SPECS_SRC_DIR } from './spec-paths.js';
-
-type ComponentKind = 'schemas' | 'parameters' | 'headers' | 'responses';
 
 const ERROR_TODO = '# TODO: align to shared Error_v1 — see ERROR-SCHEMA-DEBT.md';
 
-function applySharedRefs(specFile: string, api: Record<string, unknown>): Record<string, unknown> {
-  const components = (api.components ?? {}) as Partial<
-    Record<ComponentKind, Record<string, unknown>>
-  >;
-  const nextComponents: Partial<Record<ComponentKind, Record<string, unknown>>> = {};
+let cachedIndex: Awaited<ReturnType<typeof buildSharedV1Index>> | undefined;
 
-  for (const kind of ['schemas', 'parameters', 'headers', 'responses'] as ComponentKind[]) {
-    const section = components[kind];
-    if (!section) continue;
-
-    nextComponents[kind] = {};
-    for (const [name, definition] of Object.entries(section)) {
-      if (shouldUseSharedComponent(specFile, kind, name)) {
-        const ref = resolveSharedRef(specFile, kind, name);
-        if (ref) {
-          nextComponents[kind]![name] = { $ref: ref };
-        }
-        continue;
-      }
-
-      nextComponents[kind]![name] = definition;
-    }
+async function getSharedIndex(): Promise<Awaited<ReturnType<typeof buildSharedV1Index>>> {
+  if (!cachedIndex) {
+    await loadErrorVariantSchemas();
+    cachedIndex = await buildSharedV1Index();
   }
-
-  return {
-    ...api,
-    components: {
-      ...(api.components as Record<string, unknown>),
-      ...nextComponents
-    }
-  };
+  return cachedIndex;
 }
 
 export async function migrateSpecToSrc(specFile: string): Promise<void> {
@@ -60,12 +38,21 @@ export async function migrateSpecToSrc(specFile: string): Promise<void> {
     throw new Error(`Published spec not found: ${inputPath}`);
   }
 
-  const api = (await SwaggerParser.parse(inputPath)) as Record<string, unknown>;
-  const migrated = applySharedRefs(specFile, api);
+  const index = await getSharedIndex();
+  const apiBundled = (await SwaggerParser.bundle(inputPath)) as Record<string, unknown>;
+  const { api: migrated } = applySharedReplacements(apiBundled, index);
+
+  const components = migrated.components as { schemas?: { Error?: unknown } } | undefined;
+  const errorVariant = classifyErrorSchema(components?.schemas?.Error, index);
+  const noteDebt =
+    errorVariant === 'v2' ||
+    errorVariant === 'v3' ||
+    errorVariant === 'other' ||
+    README_ERROR_DEBT_SPEC_FILES.has(specFile);
 
   const header = [
     '# Modified by Cursor: source spec — bundled to docs/specs/' + specFile,
-    ERROR_DEBT_SPEC_FILES.has(specFile) ? ERROR_TODO : '',
+    noteDebt ? ERROR_TODO : '',
     ''
   ]
     .filter(Boolean)

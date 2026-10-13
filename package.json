@@ -8,6 +8,7 @@
     "bundle:specs": "tsx scripts/bundle-specs.ts",
     "build:dictionary": "tsx scripts/generate-dictionary.ts",
     "apply:shared": "tsx scripts/apply-shared-to-src.ts",
+    "rebuild:src": "tsx scripts/rebuild-src-from-published.ts",
     "audit:shared-refs": "tsx scripts/audit-shared-ref-coverage.ts",
     "inventory:components": "tsx scripts/inventory-spec-components.ts",
     "validate:specs": "tsx scripts/validate-specs.ts",
