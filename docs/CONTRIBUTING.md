@@ -180,9 +180,38 @@ export SHARED_SPECS_BASE=https://specs.dfa.irionline.org/specs/shared
 npm run validate:specs
 ```
 
-Bundling and validation expand `${SHARED_SPECS_BASE}` before OpenAPI parsing, then write preprocessed copies under `docs/specs/src/.build/` (gitignored). This repo does **not** need the variable in CI — the default local path is used automatically.
+Bundling and validation expand `${SHARED_SPECS_BASE}` before OpenAPI parsing, apply **`x-df-enumOverrides`** (see below), then write preprocessed copies under `docs/specs/src/.build/` (gitignored). This repo does **not** need the variable in CI — the default local path is used automatically.
 
-Working-group repos can copy `docs/specs/src/<spec>.yaml` plus the `scripts/` helpers (`shared-ref-base.ts`, `preprocess-source-spec.ts`, `spec-paths.ts`, `bundle-specs.ts`, `validate-specs.ts`) and either:
+### Enum overrides on shared components
+
+Shared files keep the **full canonical** `enum` list. A single API can add or remove values without forking the shared file by adding **`x-df-enumOverrides`** on the same `components` entry as the shared `$ref` (sibling keys — not a wrapper object).
+
+```yaml
+components:
+  schemas:
+    PartyRelationship:
+      $ref: '${SHARED_SPECS_BASE}/PartyRelationship_v1.yaml#/components/schemas/PartyRelationship'
+      x-df-enumOverrides:
+        - pointer: /properties/relationships/items
+          remove: [owner]           # each value must exist in the shared enum
+          add: [TRUSTEE]            # optional; document in the PR
+        # Or replace the list for this spec only:
+        # - pointer: /properties/relationships/items
+        #   set: [OWNER, JOINT_OWNER, ANNUITANT]
+```
+
+| Field | Meaning |
+|-------|---------|
+| `pointer` | JSON Pointer to the schema node that contains `enum` (relative to the resolved shared component) |
+| `remove` | Drop values from the shared enum (`final = shared \ remove`) |
+| `add` | Append values (`final = shared ∪ add`) |
+| `set` | Replace the enum entirely for this spec (ignores `add` / `remove`) |
+
+Preprocess ([`scripts/apply-enum-overrides.ts`](../scripts/apply-enum-overrides.ts)) inlines the merged schema into `.build` output so bundling and validation see the effective enum. Run `npm run audit:enum-overrides` to validate pointers and `remove` values.
+
+Use a new `{Component}_v2.yaml` when **multiple** specs need the same enum change permanently — overrides are for **one-spec** deltas only.
+
+Working-group repos can copy `docs/specs/src/<spec>.yaml` plus the `scripts/` helpers (`shared-ref-base.ts`, `apply-enum-overrides.ts`, `shared-ref-resolve.ts`, `preprocess-source-spec.ts`, `spec-paths.ts`, `bundle-specs.ts`, `validate-specs.ts`) and either:
 
 - **Reference the published URL** (no local `shared/` copy), or
 - **Copy `docs/specs/shared/`** as well and leave `SHARED_SPECS_BASE` unset.

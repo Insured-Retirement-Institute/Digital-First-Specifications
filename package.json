@@ -10,6 +10,8 @@
     "apply:shared": "tsx scripts/apply-shared-to-src.ts",
     "rebuild:src": "tsx scripts/rebuild-src-from-published.ts",
     "audit:shared-refs": "tsx scripts/audit-shared-ref-coverage.ts",
+    "audit:enum-overrides": "tsx scripts/audit-enum-overrides.ts",
+    "test:enum-overrides": "tsx --test scripts/apply-enum-overrides.test.ts",
     "inventory:components": "tsx scripts/inventory-spec-components.ts",
     "validate:specs": "tsx scripts/validate-specs.ts",
     "debug:dictionary": "node --inspect-brk --enable-source-maps --import tsx scripts/generate-dictionary.ts",
