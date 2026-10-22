@@ -227,7 +227,19 @@ function mergeAllOfSchemas(schemas: Schema[]): { merged: Schema; issues: string[
     required: []
   };
 
-  for (const schema of schemas) {
+  for (const rawSchema of schemas) {
+    // A member of allOf can itself use allOf (e.g. Policy = allOf[PolicySummary]
+    // plus its own properties). Expand it first so its inherited fields are not lost.
+    let schema = rawSchema;
+    if (rawSchema.allOf && rawSchema.allOf.length > 0) {
+      const nested = mergeAllOfSchemas([
+        { type: rawSchema.type, properties: rawSchema.properties, required: rawSchema.required, description: rawSchema.description },
+        ...rawSchema.allOf
+      ]);
+      issues.push(...nested.issues);
+      schema = nested.merged;
+    }
+
     if (schema.type && schema.type !== 'object') {
       issues.push(`allOf contains non-object type: ${schema.type}`);
     }
