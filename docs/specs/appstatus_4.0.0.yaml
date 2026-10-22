@@ -1,1595 +1,1663 @@
-openapi: 3.1.0
+# Modified by Cursor: enum values use UPPER_SNAKE_CASE
+openapi: "3.1.0"
 info:
-  title: Annuity Application Status APIs
-  description: APIs for managing Annuity application data including application status, details, transmission, agents, parties, funding, documents, and more.
-  version: 4.0.0
+  title: "Annuity Application Status APIs"
+  description: "APIs for managing Annuity application data including application status, details, transmission, agents, parties, funding, documents, and more."
+  version: "4.0.0"
   license:
-    name: MIT
-    url: https://github.com/Insured-Retirement-Institute/Pending-Case/blob/main/LICENSE
+    name: "MIT"
+    url: "https://github.com/Insured-Retirement-Institute/Pending-Case/blob/main/LICENSE"
 paths:
   /v4/application-statuses/searches:
     post:
-      operationId: postApplicationStatusSearch
-      summary: Search for summary application statuses
-      description: |
-        Retrieve summary application statuses based on search criteria.
+      operationId: "postApplicationStatusSearch"
+      summary: "Search for summary application statuses"
+      description: "Retrieve summary application statuses based on search criteria.
+
 
         This endpoint uses offset-based pagination through the offset and limit query parameters.
+
         The data returned is not guaranteed to represent a moment-in-time snapshot of the data;
+
         concurrent writes may still affect results across pages. The caller must assume that, on
+
         occasion, some resources may be missing from the result set due to concurrent writes. The
+
         caller must also be prepared to handle the same resource appearing on multiple pages, and
+
         must de-duplicate the result set using policyNumber. Ordering by policyNumber with a
+
         consistent sortOrder provides the most stability across pages. The endpoint may return
-        fewer resources than the requested limit.
+
+        fewer resources than the requested limit.\n"
       tags:
-      - Application Status
+        - "Application Status"
       parameters:
-      - $ref: '#/components/parameters/correlationId'
-      - $ref: '#/components/parameters/brokerNumber'
-      - $ref: '#/components/parameters/orderBy'
-      - $ref: '#/components/parameters/sortOrder'
-      - $ref: '#/components/parameters/offset'
-      - $ref: '#/components/parameters/limit'
+        - $ref: "#/components/parameters/correlationId"
+        - $ref: "#/components/parameters/brokerNumber"
+        - $ref: "#/components/parameters/orderBy"
+        - $ref: "#/components/parameters/sortOrder"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/limit"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SearchSummaryApplicationStatusesRequest'
+              $ref: "#/components/schemas/SearchSummaryApplicationStatusesRequest"
             example:
-              policyNumber: P987654321
-              cusip: 401B23458
+              policyNumber: "P987654321"
+              cusip: "401B23458"
               finishedCutoffDays: 7
-        description: Search criteria. An empty or omitted body returns all application statuses.
+        description: "Search criteria. An empty or omitted body returns all application statuses."
       responses:
-        '200':
-          description: Policy application statuses successfully retrieved
+        "200":
+          description: "Policy application statuses successfully retrieved"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/SummaryApplicationStatusesPagedResult"
               example:
                 applicationStatuses:
-                - policyNumber: P987654321
-                  applicationOrigin:
-                    platform: DigitalFirst
-                    isElectronic: true
-                    id: DF-APP-001234
-                  cusip: 401B23458
-                  productName: Secure Income Annuity Plus
-                  isQualified: true
-                  status: inProgress
-                  statusDate: '2026-06-04'
+                  - policyNumber: "P987654321"
+                    applicationOrigin:
+                      platform: "DigitalFirst"
+                      isElectronic: true
+                      id: "DF-APP-001234"
+                    cusip: "401B23458"
+                    productName: "Secure Income Annuity Plus"
+                    isQualified: true
+                    status: "IN_PROGRESS"
+                    statusDate: "2026-06-04"
                 metadata:
                   offset: 0
                   limit: 100
                   totalCount: 1
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
-        '400':
-          description: Bad Request - malformed or unrecognized search criteria
+              $ref: "#/components/headers/X-Api-Version"
+        "400":
+          description: "Bad Request - malformed or unrecognized search criteria"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '403':
-          description: Forbidden
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '500':
-          description: Internal Server Error
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: "Internal Server Error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /v4/application-statuses/{policyNumber}:
     get:
-      operationId: getApplicationStatusByPolicyNumber
-      summary: Retrieve application status
-      description: Retrieve application status for a policy with complete status details.
+      operationId: "getApplicationStatusByPolicyNumber"
+      summary: "Retrieve application status"
+      description: "Retrieve application status for a policy with complete status details."
       tags:
-      - Application Status
+        - "Application Status"
       parameters:
-      - $ref: '#/components/parameters/correlationId'
-      - $ref: '#/components/parameters/brokerNumber'
-      - $ref: '#/components/parameters/policyNumber'
-      - $ref: '#/components/parameters/associatedFirmId'
+        - $ref: "#/components/parameters/correlationId"
+        - $ref: "#/components/parameters/brokerNumber"
+        - $ref: "#/components/parameters/policyNumber"
+        - $ref: "#/components/parameters/associatedFirmId"
       responses:
         "200":
-          description: Policy application status successfully retrieved
+          description: "Policy application status successfully retrieved"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/DetailApplicationStatus"
               example:
-                policyNumber: P987654321
+                policyNumber: "P987654321"
                 applicationOrigin:
-                  platform: DigitalFirst
+                  platform: "DigitalFirst"
                   isElectronic: true
-                  id: DF-APP-001234
-                cusip: 401B23458
-                productName: Secure Income Annuity Plus
+                  id: "DF-APP-001234"
+                cusip: "401B23458"
+                productName: "Secure Income Annuity Plus"
                 isQualified: true
-                status: inProgress
-                statusDate: '2026-06-04'
+                status: "IN_PROGRESS"
+                statusDate: "2026-06-04"
                 isActionNeeded: true
                 actionSections:
-                - suitability
+                  - "SUITABILITY"
                 canSellValidation:
-                  status: completed
+                  status: "COMPLETED"
                   isActionNeeded: false
                 documentReview:
-                  status: awaitingReview
+                  status: "AWAITING_REVIEW"
                   isActionNeeded: false
                 suitability:
-                  status: inProgress
+                  status: "IN_PROGRESS"
                   isActionNeeded: true
-                  startDate: '2026-06-04'
-                  dueDate: '2026-06-11'
-                  reason: moreInformationNeeded
-                  note: Client financial profile documentation required
+                  startDate: "2026-06-04"
+                  dueDate: "2026-06-11"
+                  reason: "MORE_INFORMATION_NEEDED"
+                  note: "Client financial profile documentation required"
                 funding:
-                  status: awaitingReview
+                  status: "AWAITING_REVIEW"
                   isActionNeeded: false
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "400":
-          description: Bad Request - malformed or invalid request parameters
+          description: "Bad Request - malformed or invalid request parameters"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
-          description: Forbidden
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
-          description: NotFound
+          description: "NotFound"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '500':
-          description: Internal Server Error
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: "Internal Server Error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /v4/application-statuses/policies:
     get:
-      operationId: getPolicies
-      summary: Retrieve policies
-      description: |
-        Retrieve all policies.
+      operationId: "getPolicies"
+      summary: "Retrieve policies"
+      description: "Retrieve all policies.
+
 
         This endpoint uses offset-based pagination through the offset and limit query parameters.
+
         The data returned is not guaranteed to represent a moment-in-time snapshot of the data;
+
         concurrent writes may still affect results across pages. The caller must assume that, on
+
         occasion, some resources may be missing from the result set due to concurrent writes. The
+
         caller must also be prepared to handle the same resource appearing on multiple pages, and
+
         must de-duplicate the result set using policyNumber. Ordering by policyNumber with a
+
         consistent sortOrder provides the most stability across pages. The endpoint may return
-        fewer resources than the requested limit.
+
+        fewer resources than the requested limit.\n"
       tags:
-      - Policy
+        - "Policy"
       parameters:
-      - $ref: '#/components/parameters/correlationId'
-      - $ref: '#/components/parameters/brokerNumber'
-      - $ref: '#/components/parameters/associatedFirmId'
-      - $ref: '#/components/parameters/cusip'
-      - $ref: '#/components/parameters/producerNumber'
-      - $ref: '#/components/parameters/npn'
-      - $ref: '#/components/parameters/commissionSplitPercent'
-      - $ref: '#/components/parameters/crdNumber'
-      - $ref: '#/components/parameters/applicationOriginId'
-      - $ref: '#/components/parameters/trackingNumber'
-      - $ref: '#/components/parameters/finishedCutoffDays'
-      - $ref: '#/components/parameters/orderBy'
-      - $ref: '#/components/parameters/sortOrder'
-      - $ref: '#/components/parameters/offset'
-      - $ref: '#/components/parameters/limit'
+        - $ref: "#/components/parameters/correlationId"
+        - $ref: "#/components/parameters/brokerNumber"
+        - $ref: "#/components/parameters/associatedFirmId"
+        - $ref: "#/components/parameters/cusip"
+        - $ref: "#/components/parameters/producerNumber"
+        - $ref: "#/components/parameters/npn"
+        - $ref: "#/components/parameters/commissionSplitPercent"
+        - $ref: "#/components/parameters/crdNumber"
+        - $ref: "#/components/parameters/applicationOriginId"
+        - $ref: "#/components/parameters/trackingNumber"
+        - $ref: "#/components/parameters/finishedCutoffDays"
+        - $ref: "#/components/parameters/orderBy"
+        - $ref: "#/components/parameters/sortOrder"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/limit"
       responses:
         "200":
-          description: Policies successfully retrieved
+          description: "Policies successfully retrieved"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PoliciesPagedResult"
               example:
                 policies:
-                - policyNumber: P987654321
-                  applicationOrigin:
-                    platform: DigitalFirst
-                    isElectronic: true
-                    id: DF-APP-001234
-                  cusip: 401B23458
-                  productName: Secure Income Annuity Plus
-                  isQualified: true
-                  status: inProgress
-                  statusDate: '2026-06-04'
+                  - policyNumber: "P987654321"
+                    applicationOrigin:
+                      platform: "DigitalFirst"
+                      isElectronic: true
+                      id: "DF-APP-001234"
+                    cusip: "401B23458"
+                    productName: "Secure Income Annuity Plus"
+                    isQualified: true
+                    status: "IN_PROGRESS"
+                    statusDate: "2026-06-04"
                 metadata:
                   offset: 0
                   limit: 100
                   totalCount: 1
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "400":
-          description: Bad Request - malformed or invalid request parameters
+          description: "Bad Request - malformed or invalid request parameters"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
-          description: Forbidden
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '500':
-          description: Internal Server Error
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: "Internal Server Error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /v4/application-statuses/policies/{policyNumber}:
     get:
-      operationId: getPolicyByPolicyNumber
-      summary: Retrieve a policy
-      description: Retrieve summary application-status of a policy without the details of the statuses of each activity associated with the application
+      operationId: "getPolicyByPolicyNumber"
+      summary: "Retrieve a policy"
+      description: "Retrieve summary application-status of a policy without the details of the statuses of each activity associated with the application"
       tags:
-      - Policy
+        - "Policy"
       parameters:
-      - $ref: '#/components/parameters/correlationId'
-      - $ref: '#/components/parameters/brokerNumber'
-      - $ref: '#/components/parameters/policyNumber'
-      - $ref: '#/components/parameters/associatedFirmId'
+        - $ref: "#/components/parameters/correlationId"
+        - $ref: "#/components/parameters/brokerNumber"
+        - $ref: "#/components/parameters/policyNumber"
+        - $ref: "#/components/parameters/associatedFirmId"
       responses:
         "200":
-          description: Policy successfully retrieved
+          description: "Policy successfully retrieved"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Policy"
               example:
-                policyNumber: P987654321
+                policyNumber: "P987654321"
                 applicationOrigin:
-                  platform: DigitalFirst
+                  platform: "DigitalFirst"
                   isElectronic: true
-                  id: DF-APP-001234
-                cusip: 401B23458
-                productName: Secure Income Annuity Plus
+                  id: "DF-APP-001234"
+                cusip: "401B23458"
+                productName: "Secure Income Annuity Plus"
                 isQualified: true
-                status: inProgress
-                statusDate: '2026-06-04'
+                status: "IN_PROGRESS"
+                statusDate: "2026-06-04"
                 isActionNeeded: true
                 actionSections:
-                - suitability
-                signedDate: '2026-06-01'
-                receivedDate: '2026-06-02'
+                  - "SUITABILITY"
+                signedDate: "2026-06-01"
+                receivedDate: "2026-06-02"
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "400":
-          description: Bad Request - malformed or invalid request parameters
+          description: "Bad Request - malformed or invalid request parameters"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
-          description: Forbidden
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
-          description: NotFound
+          description: "NotFound"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '500':
-          description: Internal Server Error
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: "Internal Server Error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /v4/application-statuses/policies/{policyNumber}/fundings:
     get:
-      operationId: getFundingStatusByPolicyNumber
-      summary: Retrieve policy funding data
-      description: Retrieve funding data of a policy.
+      operationId: "getFundingStatusByPolicyNumber"
+      summary: "Retrieve policy funding data"
+      description: "Retrieve funding data of a policy."
       tags:
-      - Policy
+        - "Policy"
       parameters:
-      - $ref: '#/components/parameters/correlationId'
-      - $ref: '#/components/parameters/brokerNumber'
-      - $ref: '#/components/parameters/policyNumber'
-      - $ref: '#/components/parameters/associatedFirmId'
+        - $ref: "#/components/parameters/correlationId"
+        - $ref: "#/components/parameters/brokerNumber"
+        - $ref: "#/components/parameters/policyNumber"
+        - $ref: "#/components/parameters/associatedFirmId"
       responses:
         "200":
-          description: Policy funding successfully retrieved
+          description: "Policy funding successfully retrieved"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Funding"
               example:
-                status: inProgress
+                status: "IN_PROGRESS"
                 isActionNeeded: true
-                startDate: '2026-06-06'
+                startDate: "2026-06-06"
                 sources:
-                - fundingMethod: anotherPolicy
-                  contributionType: full1035Exchange
-                  isActionNeeded: true
-                  anticipatedAmount: 250000.0
-                  status: inProgress
-                  cedingCompanyName: Legacy Life Insurance Co
-                  accountNumber: POL-123456789
+                  - fundingMethod: "ANOTHER_POLICY"
+                    contributionType: "FULL1035_EXCHANGE"
+                    isActionNeeded: true
+                    anticipatedAmount: 250000
+                    status: "IN_PROGRESS"
+                    cedingCompanyName: "Legacy Life Insurance Co"
+                    accountNumber: "POL-123456789"
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "400":
-          description: Bad Request - malformed or invalid request parameters
+          description: "Bad Request - malformed or invalid request parameters"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
-          description: Forbidden
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
-          description: NotFound
+          description: "NotFound"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '500':
-          description: Internal Server Error
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: "Internal Server Error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /v4/application-statuses/policies/{policyNumber}/document-reviews:
     get:
-      operationId: getDocumentReviewStatusByPolicyNumber
-      summary: Retrieve policy document review data
-      description: Retrieve document review data of a policy.
+      operationId: "getDocumentReviewStatusByPolicyNumber"
+      summary: "Retrieve policy document review data"
+      description: "Retrieve document review data of a policy."
       tags:
-      - Policy
+        - "Policy"
       parameters:
-      - $ref: '#/components/parameters/correlationId'
-      - $ref: '#/components/parameters/brokerNumber'
-      - $ref: '#/components/parameters/policyNumber'
-      - $ref: '#/components/parameters/associatedFirmId'
+        - $ref: "#/components/parameters/correlationId"
+        - $ref: "#/components/parameters/brokerNumber"
+        - $ref: "#/components/parameters/policyNumber"
+        - $ref: "#/components/parameters/associatedFirmId"
       responses:
         "200":
-          description: Policy document review successfully retrieved
+          description: "Policy document review successfully retrieved"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/DocumentReview"
               example:
-                status: inProgress
+                status: "IN_PROGRESS"
                 isActionNeeded: true
-                startDate: '2026-06-05'
+                startDate: "2026-06-05"
                 issues:
-                - reason: missingSignature
-                  formName: Application for Annuity
-                  formNumber: APP-1001
-                  dueDate: '2026-06-12'
-                  note: Owner signature required on page 3
+                  - reason: "MISSING_SIGNATURE"
+                    formName: "Application for Annuity"
+                    formNumber: "APP-1001"
+                    dueDate: "2026-06-12"
+                    note: "Owner signature required on page 3"
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "400":
-          description: Bad Request - malformed or invalid request parameters
+          description: "Bad Request - malformed or invalid request parameters"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
-          description: Forbidden
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
-          description: NotFound
+          description: "NotFound"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '500':
-          description: Internal Server Error
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: "Internal Server Error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /v4/application-statuses/policies/{policyNumber}/suitability:
     get:
-      operationId: getSuitabilityInformationByPolicyNumber
-      summary: Retrieve policy suitability data
-      description: Retrieve suitability data of a policy.
+      operationId: "getSuitabilityInformationByPolicyNumber"
+      summary: "Retrieve policy suitability data"
+      description: "Retrieve suitability data of a policy."
       tags:
-      - Policy
+        - "Policy"
       parameters:
-      - $ref: '#/components/parameters/correlationId'
-      - $ref: '#/components/parameters/brokerNumber'
-      - $ref: '#/components/parameters/policyNumber'
-      - $ref: '#/components/parameters/associatedFirmId'
+        - $ref: "#/components/parameters/correlationId"
+        - $ref: "#/components/parameters/brokerNumber"
+        - $ref: "#/components/parameters/policyNumber"
+        - $ref: "#/components/parameters/associatedFirmId"
       responses:
         "200":
-          description: Policy suitability successfully retrieved
+          description: "Policy suitability successfully retrieved"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Suitability"
               example:
-                status: inProgress
+                status: "IN_PROGRESS"
                 isActionNeeded: true
-                startDate: '2026-06-04'
-                dueDate: '2026-06-11'
-                reason: moreInformationNeeded
-                note: Client financial profile documentation required
+                startDate: "2026-06-04"
+                dueDate: "2026-06-11"
+                reason: "MORE_INFORMATION_NEEDED"
+                note: "Client financial profile documentation required"
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "400":
-          description: Bad Request - malformed or invalid request parameters
+          description: "Bad Request - malformed or invalid request parameters"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
-          description: Forbidden
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
-          description: NotFound
+          description: "NotFound"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '500':
-          description: Internal Server Error
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: "Internal Server Error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /v4/application-statuses/policies/{policyNumber}/can-sell-validations:
     get:
-      operationId: getCanSellValidationByPolicyNumber
-      summary: Retrieve policy can sell validation data
-      description: Retrieve can sell validation data of a policy.
+      operationId: "getCanSellValidationByPolicyNumber"
+      summary: "Retrieve policy can sell validation data"
+      description: "Retrieve can sell validation data of a policy."
       tags:
-      - Policy
+        - "Policy"
       parameters:
-      - $ref: '#/components/parameters/correlationId'
-      - $ref: '#/components/parameters/brokerNumber'
-      - $ref: '#/components/parameters/policyNumber'
-      - $ref: '#/components/parameters/associatedFirmId'
+        - $ref: "#/components/parameters/correlationId"
+        - $ref: "#/components/parameters/brokerNumber"
+        - $ref: "#/components/parameters/policyNumber"
+        - $ref: "#/components/parameters/associatedFirmId"
       responses:
         "200":
-          description: Policy can sell validation successfully retrieved
+          description: "Policy can sell validation successfully retrieved"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/CanSellValidation"
               example:
-                status: inProgress
+                status: "IN_PROGRESS"
                 isActionNeeded: true
-                startDate: '2026-06-03'
+                startDate: "2026-06-03"
                 issues:
-                - issueType: trainingExpired
-                  note: Producer training expired on 2026-05-01
-                  affectedProducer:
-                    npn: '1234567890'
+                  - issueType: "TRAINING_EXPIRED"
+                    note: "Producer training expired on 2026-05-01"
+                    affectedProducer:
+                      npn: "1234567890"
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "400":
-          description: Bad Request - malformed or invalid request parameters
+          description: "Bad Request - malformed or invalid request parameters"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
-          description: Forbidden
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
-          description: NotFound
+          description: "NotFound"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '500':
-          description: Internal Server Error
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: "Internal Server Error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
 components:
   parameters:
     correlationId:
-      name: correlationId
-      description: Optional client-supplied identifier to trace the request.
-      in: header
+      name: "correlationId"
+      description: "Optional client-supplied identifier to trace the request."
+      in: "header"
       required: false
       schema:
-        type: string
+        type: "string"
     brokerNumber:
-      name: brokerNumber
-      description: Optional custom header identifying the broker number of the call
-      in: header
+      name: "brokerNumber"
+      description: "Optional custom header identifying the broker number of the call"
+      in: "header"
       required: false
       schema:
-        type: string
+        type: "string"
     policyNumber:
-      name: policyNumber
-      description: Policy number
-      in: path
+      name: "policyNumber"
+      description: "Policy number"
+      in: "path"
       required: true
       schema:
-        type: string
+        type: "string"
         minLength: 1
         maxLength: 30
-        pattern: '^(?!policies$)(?!searches$).+$'
+        pattern: "^(?!policies$)(?!searches$).+$"
     associatedFirmId:
-      name: associatedFirmId
-      description: Optional parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms.
-      in: query
+      name: "associatedFirmId"
+      description: "Optional parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms."
+      in: "query"
       required: false
       schema:
-        type: string
+        type: "string"
         minLength: 1
         maxLength: 65
     cusip:
-      name: cusip
-      description: Optional query parameter for the CUSIP
-      in: query
+      name: "cusip"
+      description: "Optional query parameter for the CUSIP"
+      in: "query"
       required: false
       schema:
-        $ref: '#/components/schemas/cusip'
+        $ref: "#/components/schemas/cusip"
     producerNumber:
-      name: producerNumber
-      description: Carrier-assigned unique identifier for the producer.
-      in: query
+      name: "producerNumber"
+      description: "Carrier-assigned unique identifier for the producer."
+      in: "query"
       required: false
       schema:
-        type: string
+        type: "string"
         maxLength: 30
     npn:
-      name: npn
-      description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
-      in: query
+      name: "npn"
+      description: "The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states."
+      in: "query"
       required: false
       schema:
-        type: string
+        type: "string"
         maxLength: 10
     commissionSplitPercent:
-      name: commissionSplitPercent
-      description: Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy.
-      in: query
+      name: "commissionSplitPercent"
+      description: "Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy."
+      in: "query"
       required: false
       schema:
-        type: number
+        type: "number"
         minimum: 0
         maximum: 100
     crdNumber:
-      name: crdNumber
-      description: Optional query parameter for the Central Registration Depository number
-      in: query
+      name: "crdNumber"
+      description: "Optional query parameter for the Central Registration Depository number"
+      in: "query"
       required: false
       schema:
-        type: string
+        type: "string"
         maxLength: 10
     applicationOriginId:
-      name: applicationOriginId
-      description: Optional query parameter for the application origin ID
-      in: query
+      name: "applicationOriginId"
+      description: "Optional query parameter for the application origin ID"
+      in: "query"
       required: false
       schema:
-        type: string
+        type: "string"
     trackingNumber:
-      name: trackingNumber
-      description: Optional query parameter for the delivery tracking number
-      in: query
+      name: "trackingNumber"
+      description: "Optional query parameter for the delivery tracking number"
+      in: "query"
       required: false
       schema:
-        type: string
+        type: "string"
         minLength: 1
         maxLength: 65
     finishedCutoffDays:
-      name: finishedCutoffDays
-      description: Optional query parameter for when a completed or cancelled policy is to drop off
-      in: query
+      name: "finishedCutoffDays"
+      description: "Optional query parameter for when a completed or cancelled policy is to drop off"
+      in: "query"
       required: false
       schema:
-        type: integer
+        type: "integer"
         default: 7
     orderBy:
-      name: orderBy
-      description: 'Field name used to order resources in the result set. Ordering by policyNumber provides the most stability across pages, because it is unique and stable; statusDate is not unique and may reorder between requests.'
-      in: query
+      name: "orderBy"
+      description: "Field name used to order resources in the result set. Ordering by policyNumber provides the most stability across pages, because it is unique and stable; statusDate is not unique and may reorder between requests."
+      in: "query"
       required: false
       schema:
-        type: string
-        enum: [policyNumber, status, statusDate]
-        default: statusDate
+        type: "string"
+        enum:
+          - "POLICY_NUMBER"
+          - "STATUS"
+          - "STATUS_DATE"
+        default: "STATUS_DATE"
     sortOrder:
-      name: sortOrder
-      description: Whether resources are ordered in ascending (asc) or descending (desc) order.
-      in: query
+      name: "sortOrder"
+      description: "Whether resources are ordered in ascending (asc) or descending (desc) order."
+      in: "query"
       required: false
       schema:
-        type: string
-        enum: [asc, desc]
-        default: desc
+        type: "string"
+        enum:
+          - "ASC"
+          - "DESC"
+        default: "DESC"
     offset:
-      name: offset
-      description: Zero-based index of the first resource to return, matching offset in the response metadata.
-      in: query
+      name: "offset"
+      description: "Zero-based index of the first resource to return, matching offset in the response metadata."
+      in: "query"
       required: false
       schema:
-        type: integer
+        type: "integer"
         default: 0
         minimum: 0
     limit:
-      name: limit
-      description: Maximum number of resources to return per page. The endpoint may return fewer resources than requested.
-      in: query
+      name: "limit"
+      description: "Maximum number of resources to return per page. The endpoint may return fewer resources than requested."
+      in: "query"
       required: false
       schema:
-        type: integer
+        type: "integer"
         default: 100
         minimum: 1
         maximum: 1000
   schemas:
     cusip:
-      description: CUSIP
-      type: string
+      description: "CUSIP"
+      type: "string"
       minLength: 9
       maxLength: 9
-      pattern: ^[0-9]{3}[A-Z0-9]{5}[0-9]$
+      pattern: "^[0-9]{3}[A-Z0-9]{5}[0-9]$"
     IndividualIdentity:
-      description: Schema for individual identity data
+      description: "Schema for individual identity data"
       required:
-      - type
-      - firstName
-      - lastName
-      type: object
+        - "type"
+        - "firstName"
+        - "lastName"
+      type: "object"
       properties:
         type:
-          description: Indicates whether the party is an individual or an entity.
-          type: string
-          const: individual
+          description: "Indicates whether the party is an individual or an entity."
+          type: "string"
+          const: "INDIVIDUAL"
         firstName:
-          description: First name of the individual
-          type: string
+          description: "First name of the individual"
+          type: "string"
           minLength: 1
           maxLength: 105
-          pattern: '^[a-zA-Z0-9À-ſ=()*@#\s.,''_/~%$!();:&"®`\-\\?]{1,105}$'
+          pattern: "^[a-zA-Z0-9À-ſ=()*@#\\s.,'_/~%$!();:&\"®`\\-\\\\?]{1,105}$"
         middleName:
-          description: The middle name of the individual
-          type: string
+          description: "The middle name of the individual"
+          type: "string"
           minLength: 1
           maxLength: 105
-          pattern: '^[a-zA-Z0-9À-ſ=()*@#\s.,''_/~%$!();:&"®`\-\\?]{1,105}$'
+          pattern: "^[a-zA-Z0-9À-ſ=()*@#\\s.,'_/~%$!();:&\"®`\\-\\\\?]{1,105}$"
         lastName:
-          description: The last name of the individual
-          type: string
+          description: "The last name of the individual"
+          type: "string"
           minLength: 1
           maxLength: 105
-          pattern: '^[a-zA-Z0-9À-ſ=()*@#\s.,''_/~%$!();:&"®`\-\\?]{1,105}$'
+          pattern: "^[a-zA-Z0-9À-ſ=()*@#\\s.,'_/~%$!();:&\"®`\\-\\\\?]{1,105}$"
         taxId:
-          description: Party's tax identification number
+          description: "Party's tax identification number"
           allOf:
-          - $ref: '#/components/schemas/taxId'
+            - $ref: "#/components/schemas/taxId"
     IndividualProducer:
-      description: Schema for individual producer data
-      type: object
-      required: [relationships]
+      description: "Schema for individual producer data"
+      type: "object"
+      required:
+        - "relationships"
       allOf:
-      - $ref: "#/components/schemas/IndividualIdentity"
-      - type: object
-        properties:
-          npn:
-            description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
-            type: string
-            maxLength: 10
-          commissionSplitPercent:
-            description: Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy.
-            type: number
-            minimum: 0
-            maximum: 100
-          crdNumber:
-            description: The Central Registration Depository (CRD) number assigned by FINRA to identify the financial professional.
-            type: string
-            maxLength: 10
-          relationships:
-            description: 'Relationship(s) this producer has to the policy: primaryAgent, secondaryAgent, additionalAgent, investmentAdvisorRepresentative'
-            type: array
-            minItems: 1
-            maxItems: 4
-            uniqueItems: true
-            items:
-              type: string
-              enum:
-              - primaryAgent
-              - secondaryAgent
-              - additionalAgent
-              - investmentAdvisorRepresentative
+        - $ref: "#/components/schemas/IndividualIdentity"
+        - type: "object"
+          properties:
+            npn:
+              description: "The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states."
+              type: "string"
+              maxLength: 10
+            commissionSplitPercent:
+              description: "Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy."
+              type: "number"
+              minimum: 0
+              maximum: 100
+            crdNumber:
+              description: "The Central Registration Depository (CRD) number assigned by FINRA to identify the financial professional."
+              type: "string"
+              maxLength: 10
+            relationships:
+              description: "Relationship(s) this producer has to the policy: primaryAgent, secondaryAgent, additionalAgent, investmentAdvisorRepresentative"
+              type: "array"
+              minItems: 1
+              maxItems: 4
+              uniqueItems: true
+              items:
+                type: "string"
+                enum:
+                  - "PRIMARY_AGENT"
+                  - "SECONDARY_AGENT"
+                  - "ADDITIONAL_AGENT"
+                  - "INVESTMENT_ADVISOR_REPRESENTATIVE"
     IndividualParty:
-      description: Schema for individual party data
-      type: object
+      description: "Schema for individual party data"
+      type: "object"
       allOf:
-      - $ref: "#/components/schemas/IndividualIdentity"
-      - $ref: "#/components/schemas/PartyRelationship"
+        - $ref: "#/components/schemas/IndividualIdentity"
+        - $ref: "#/components/schemas/PartyRelationship"
     EntityIdentity:
-      description: Schema for entity identity data
-      type: object
-      required: [type, name]
+      description: "Schema for entity identity data"
+      type: "object"
+      required:
+        - "type"
+        - "name"
       properties:
         type:
-          description: Indicates whether the party is an individual or an entity.
-          type: string
-          const: entity
+          description: "Indicates whether the party is an individual or an entity."
+          type: "string"
+          const: "ENTITY"
         name:
-          description: Name of the entity
-          type: string
+          description: "Name of the entity"
+          type: "string"
           minLength: 1
           maxLength: 180
-          pattern: '^[a-zA-Z0-9À-ſ=()*@#\s.,''_/~%$!();:&"®`\-\\?]{1,180}$'
+          pattern: "^[a-zA-Z0-9À-ſ=()*@#\\s.,'_/~%$!();:&\"®`\\-\\\\?]{1,180}$"
         taxId:
-          description: Party's tax identification number
+          description: "Party's tax identification number"
           allOf:
-          - $ref: '#/components/schemas/taxId'
+            - $ref: "#/components/schemas/taxId"
     EntityProducer:
-      description: Schema for entity producer data
-      type: object
-      required: [relationships]
+      description: "Schema for entity producer data"
+      type: "object"
+      required:
+        - "relationships"
       allOf:
-      - $ref: "#/components/schemas/EntityIdentity"
-      - type: object
-        properties:
-          npn:
-            description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
-            type: string
-            maxLength: 10
-          commissionSplitPercent:
-            description: Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy.
-            type: number
-            minimum: 0
-            maximum: 100
-          crdNumber:
-            description: The Central Registration Depository (CRD) number assigned by FINRA to identify the financial professional.
-            type: string
-            maxLength: 10
-          relationships:
-            description: 'Relationship(s) this producer has to the policy: brokerageGeneralAgency, registeredInvestmentAdvisoryFirm, independentMarketingOrganization, brokerDealer'
-            type: array
-            minItems: 1
-            maxItems: 4
-            uniqueItems: true
-            items:
-              type: string
-              enum:
-              - brokerageGeneralAgency
-              - registeredInvestmentAdvisoryFirm
-              - independentMarketingOrganization
-              - brokerDealer
+        - $ref: "#/components/schemas/EntityIdentity"
+        - type: "object"
+          properties:
+            npn:
+              description: "The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states."
+              type: "string"
+              maxLength: 10
+            commissionSplitPercent:
+              description: "Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy."
+              type: "number"
+              minimum: 0
+              maximum: 100
+            crdNumber:
+              description: "The Central Registration Depository (CRD) number assigned by FINRA to identify the financial professional."
+              type: "string"
+              maxLength: 10
+            relationships:
+              description: "Relationship(s) this producer has to the policy: brokerageGeneralAgency, registeredInvestmentAdvisoryFirm, independentMarketingOrganization, brokerDealer"
+              type: "array"
+              minItems: 1
+              maxItems: 4
+              uniqueItems: true
+              items:
+                type: "string"
+                enum:
+                  - "BROKERAGE_GENERAL_AGENCY"
+                  - "REGISTERED_INVESTMENT_ADVISORY_FIRM"
+                  - "INDEPENDENT_MARKETING_ORGANIZATION"
+                  - "BROKER_DEALER"
     EntityParty:
-      description: Schema for entity party data
-      type: object
+      description: "Schema for entity party data"
+      type: "object"
       allOf:
-      - $ref: "#/components/schemas/EntityIdentity"
-      - $ref: "#/components/schemas/PartyRelationship"
+        - $ref: "#/components/schemas/EntityIdentity"
+        - $ref: "#/components/schemas/PartyRelationship"
     PartyRelationship:
-      description: Schema for party relationship data
-      type: object
-      required: [relationships]
+      description: "Schema for party relationship data"
+      type: "object"
+      required:
+        - "relationships"
       properties:
         relationships:
-          description: 'Relationship(s) this party has to the policy: owner, jointOwner, annuitant, jointAnnuitant, primaryBeneficiary, contingentBeneficiary'
-          type: array
+          description: "Relationship(s) this party has to the policy: owner, jointOwner, annuitant, jointAnnuitant, primaryBeneficiary, contingentBeneficiary"
+          type: "array"
           minItems: 1
           maxItems: 2
           items:
-            type: string
+            type: "string"
             enum:
-            - owner
-            - jointOwner
-            - annuitant
-            - jointAnnuitant
-            - primaryBeneficiary
-            - contingentBeneficiary
+              - "OWNER"
+              - "JOINT_OWNER"
+              - "ANNUITANT"
+              - "JOINT_ANNUITANT"
+              - "PRIMARY_BENEFICIARY"
+              - "CONTINGENT_BENEFICIARY"
     Producers:
-      description: Schema for producers data
-      type: array
+      description: "Schema for producers data"
+      type: "array"
       items:
         oneOf:
-        - $ref: '#/components/schemas/IndividualProducer'
-        - $ref: '#/components/schemas/EntityProducer'
+          - $ref: "#/components/schemas/IndividualProducer"
+          - $ref: "#/components/schemas/EntityProducer"
         discriminator:
-          propertyName: type
+          propertyName: "type"
           mapping:
-            individual: '#/components/schemas/IndividualProducer'
-            entity: '#/components/schemas/EntityProducer'
+            INDIVIDUAL: "#/components/schemas/IndividualProducer"
+            ENTITY: "#/components/schemas/EntityProducer"
     Parties:
-      description: Schema for parties data
-      type: array
+      description: "Schema for parties data"
+      type: "array"
       minItems: 1
       items:
         oneOf:
-        - $ref: '#/components/schemas/IndividualParty'
-        - $ref: '#/components/schemas/EntityParty'
+          - $ref: "#/components/schemas/IndividualParty"
+          - $ref: "#/components/schemas/EntityParty"
         discriminator:
-          propertyName: type
+          propertyName: "type"
           mapping:
-            individual: '#/components/schemas/IndividualParty'
-            entity: '#/components/schemas/EntityParty'
+            INDIVIDUAL: "#/components/schemas/IndividualParty"
+            ENTITY: "#/components/schemas/EntityParty"
     CanSellValidation:
-      description: Schema for policy can sell validation data
-      type: object
-      required: [status, isActionNeeded]
+      description: "Schema for policy can sell validation data"
+      type: "object"
+      required:
+        - "status"
+        - "isActionNeeded"
       properties:
         status:
-          description: Validation status
-          type: string
-          enum: [awaitingReview, inProgress, completed]
+          description: "Validation status"
+          type: "string"
+          enum:
+            - "AWAITING_REVIEW"
+            - "IN_PROGRESS"
+            - "COMPLETED"
         isActionNeeded:
-          description: Indicator that at least one section requires action
-          type: boolean
+          description: "Indicator that at least one section requires action"
+          type: "boolean"
         startDate:
-          description: Start date
-          type: string
-          format: date
+          description: "Start date"
+          type: "string"
+          format: "date"
         endDate:
-          description: End date
-          type: string
-          format: date
+          description: "End date"
+          type: "string"
+          format: "date"
         note:
-          description: Note about the can-sell validation
-          type: string
+          description: "Note about the can-sell validation"
+          type: "string"
           minLength: 1
           maxLength: 2000
         issues:
-          description: List of issues that need to be addressed
-          type: array
+          description: "List of issues that need to be addressed"
+          type: "array"
           items:
-            type: object
+            type: "object"
             required:
-            - issueType
+              - "issueType"
             properties:
               issueType:
-                description: Type of can-sell issue
-                type: string
+                description: "Type of can-sell issue"
+                type: "string"
                 enum:
-                - trainingIncompleteMissing
-                - trainingExpired
-                - agentNotAppointedForSale
-                - jitAppointmentInProgress
-                - agentNotLicensed
-                - other
+                  - "TRAINING_INCOMPLETE_MISSING"
+                  - "TRAINING_EXPIRED"
+                  - "AGENT_NOT_APPOINTED_FOR_SALE"
+                  - "JIT_APPOINTMENT_IN_PROGRESS"
+                  - "AGENT_NOT_LICENSED"
+                  - "OTHER"
               note:
-                description: Note about the issue
-                type: string
+                description: "Note about the issue"
+                type: "string"
                 minLength: 1
                 maxLength: 2000
               affectedProducer:
-                description: Producer for which the CanSell issue exists
-                type: object
+                description: "Producer for which the CanSell issue exists"
+                type: "object"
                 properties:
                   npn:
-                    description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
-                    type: string
+                    description: "The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states."
+                    type: "string"
                     maxLength: 10
                   commissionSplitPercent:
-                    description: Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy.
-                    type: number
+                    description: "Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy."
+                    type: "number"
                     minimum: 0
                     maximum: 100
                   crdNumber:
-                    description: The Central Registiration Depository (CRD) number assigned by FINRA to identify the financial professional.
-                    type: string
+                    description: "The Central Registiration Depository (CRD) number assigned by FINRA to identify the financial professional."
+                    type: "string"
                     maxLength: 10
                   taxId:
-                    description: Party's tax identification number
+                    description: "Party's tax identification number"
                     allOf:
-                    - $ref: '#/components/schemas/taxId'
+                      - $ref: "#/components/schemas/taxId"
     Suitability:
-      description: Schema for policy suitability data
-      type: object
-      required: [status, isActionNeeded]
+      description: "Schema for policy suitability data"
+      type: "object"
+      required:
+        - "status"
+        - "isActionNeeded"
       properties:
         status:
-          description: Suitability status
-          type: string
-          enum: [awaitingReview, inProgress, completed, notApplicable]
-        isActionNeeded:
-          description: Indicator that at least one section requires action
-          type: boolean
-        startDate:
-          description: Start date
-          type: string
-          format: date
-        endDate:
-          description: End date
-          type: string
-          format: date
-        reason:
-          description: Reason suitability requires action
-          type: string
+          description: "Suitability status"
+          type: "string"
           enum:
-          - moreInformationNeeded
-          - notSuitableForClient
-          - other
+            - "AWAITING_REVIEW"
+            - "IN_PROGRESS"
+            - "COMPLETED"
+            - "NOT_APPLICABLE"
+        isActionNeeded:
+          description: "Indicator that at least one section requires action"
+          type: "boolean"
+        startDate:
+          description: "Start date"
+          type: "string"
+          format: "date"
+        endDate:
+          description: "End date"
+          type: "string"
+          format: "date"
+        reason:
+          description: "Reason suitability requires action"
+          type: "string"
+          enum:
+            - "MORE_INFORMATION_NEEDED"
+            - "NOT_SUITABLE_FOR_CLIENT"
+            - "OTHER"
         note:
-          description: Note about the suitability review
-          type: string
+          description: "Note about the suitability review"
+          type: "string"
           minLength: 1
           maxLength: 2000
         dueDate:
-          description: Due date
-          type: string
-          format: date
+          description: "Due date"
+          type: "string"
+          format: "date"
         isApproved:
-          description: If status is completed, this field denotes whether suitability was approved or declined
-          type: boolean
+          description: "If status is completed, this field denotes whether suitability was approved or declined"
+          type: "boolean"
     DocumentReview:
-      description: Schema for policy document review data
-      type: object
-      required: [status, isActionNeeded]
+      description: "Schema for policy document review data"
+      type: "object"
+      required:
+        - "status"
+        - "isActionNeeded"
       properties:
         status:
-          description: Document review status
-          type: string
-          enum: [awaitingReview, inProgress, completed]
+          description: "Document review status"
+          type: "string"
+          enum:
+            - "AWAITING_REVIEW"
+            - "IN_PROGRESS"
+            - "COMPLETED"
         isActionNeeded:
-          description: Indicator that at least one section requires action
-          type: boolean
+          description: "Indicator that at least one section requires action"
+          type: "boolean"
         startDate:
-          description: Start date
-          type: string
-          format: date
+          description: "Start date"
+          type: "string"
+          format: "date"
         endDate:
-          description: End date
-          type: string
-          format: date
+          description: "End date"
+          type: "string"
+          format: "date"
         note:
-          description: Note about the document review
-          type: string
+          description: "Note about the document review"
+          type: "string"
           minLength: 1
           maxLength: 2000
         issues:
-          description: List of issues that need to be addressed
-          type: array
+          description: "List of issues that need to be addressed"
+          type: "array"
           items:
-            type: object
+            type: "object"
             required:
-            - reason
+              - "reason"
             properties:
               reason:
-                description: Reason the document review issue was raised
-                type: string
+                description: "Reason the document review issue was raised"
+                type: "string"
                 enum:
-                - applicationIssue
-                - contactCarrier
-                - incompleteForm
-                - missingForm
-                - missingSignature
-                - needClarity
-                - other
+                  - "APPLICATION_ISSUE"
+                  - "CONTACT_CARRIER"
+                  - "INCOMPLETE_FORM"
+                  - "MISSING_FORM"
+                  - "MISSING_SIGNATURE"
+                  - "NEED_CLARITY"
+                  - "OTHER"
               formName:
-                description: Form name
-                type: string
+                description: "Form name"
+                type: "string"
                 minLength: 1
                 maxLength: 200
               formNumber:
-                description: Form number
-                type: string
+                description: "Form number"
+                type: "string"
                 minLength: 1
                 maxLength: 100
               dueDate:
-                description: Due date
-                type: string
-                format: date
+                description: "Due date"
+                type: "string"
+                format: "date"
               note:
-                description: Note about the document review issue
-                type: string
+                description: "Note about the document review issue"
+                type: "string"
                 minLength: 1
                 maxLength: 2000
     Funding:
-      description: Schema for policy funding data
-      type: object
-      required: [isActionNeeded, status]
+      description: "Schema for policy funding data"
+      type: "object"
+      required:
+        - "isActionNeeded"
+        - "status"
       properties:
         startDate:
-          description: Start date
-          type: string
-          format: date
+          description: "Start date"
+          type: "string"
+          format: "date"
         endDate:
-          description: End date
-          type: string
-          format: date
+          description: "End date"
+          type: "string"
+          format: "date"
         isActionNeeded:
-          description: Indicator that at least one section requires action
-          type: boolean
+          description: "Indicator that at least one section requires action"
+          type: "boolean"
         status:
-          description: Funding status
-          type: string
-          enum: [awaitingReview, inProgress, completed]
+          description: "Funding status"
+          type: "string"
+          enum:
+            - "AWAITING_REVIEW"
+            - "IN_PROGRESS"
+            - "COMPLETED"
         note:
-          description: Note about the funding
-          type: string
+          description: "Note about the funding"
+          type: "string"
           minLength: 1
           maxLength: 2000
         sources:
-          description: Lists sources of funding
-          type: array
+          description: "Lists sources of funding"
+          type: "array"
           items:
-            type: object
+            type: "object"
             required:
-            - fundingMethod
-            - contributionType
+              - "fundingMethod"
+              - "contributionType"
             properties:
               fundingMethod:
-                description: Method used to fund/transfer this source
-                type: string
+                description: "Method used to fund/transfer this source"
+                type: "string"
                 enum:
-                - anotherPolicy
-                - check
-                - clearinghouse
-                - creditCard
-                - debitCard
-                - digitalPayment
-                - electronicFundTransfer
-                - payrollDeduction
-                - wireTransfer
+                  - "ANOTHER_POLICY"
+                  - "CHECK"
+                  - "CLEARINGHOUSE"
+                  - "CREDIT_CARD"
+                  - "DEBIT_CARD"
+                  - "DIGITAL_PAYMENT"
+                  - "ELECTRONIC_FUND_TRANSFER"
+                  - "PAYROLL_DEDUCTION"
+                  - "WIRE_TRANSFER"
               contributionType:
-                description: Type of funding contribution
-                type: string
+                description: "Type of funding contribution"
+                type: "string"
                 enum:
-                - contribution
-                - directRollover
-                - employeeContribution
-                - employerContribution
-                - full1035Exchange
-                - indirectRollover
-                - nonQualifiedTransferOfAssets
-                - partial1035Exchange
-                - qualifiedTransfer
+                  - "CONTRIBUTION"
+                  - "DIRECT_ROLLOVER"
+                  - "EMPLOYEE_CONTRIBUTION"
+                  - "EMPLOYER_CONTRIBUTION"
+                  - "FULL1035_EXCHANGE"
+                  - "INDIRECT_ROLLOVER"
+                  - "NON_QUALIFIED_TRANSFER_OF_ASSETS"
+                  - "PARTIAL1035_EXCHANGE"
+                  - "QUALIFIED_TRANSFER"
               isActionNeeded:
-                description: Indicator that this funding source requires action
-                type: boolean
+                description: "Indicator that this funding source requires action"
+                type: "boolean"
               anticipatedAmount:
-                description: Anticipated amount
-                type: number
-                format: double
+                description: "Anticipated amount"
+                type: "number"
+                format: "double"
               receivedAmount:
-                description: Received amount
-                type: number
-                format: double
+                description: "Received amount"
+                type: "number"
+                format: "double"
               receivedDate:
-                description: Received date
-                type: string
-                format: date
+                description: "Received date"
+                type: "string"
+                format: "date"
               status:
-                description: Status of the funding source
-                type: string
+                description: "Status of the funding source"
+                type: "string"
                 enum:
-                - awaitingReview
-                - inProgress
-                - completed
+                  - "AWAITING_REVIEW"
+                  - "IN_PROGRESS"
+                  - "COMPLETED"
               reason:
-                description: Reason the funding is delayed or flagged
-                type: string
+                description: "Reason the funding is delayed or flagged"
+                type: "string"
                 enum:
-                - awaitingFundsFromCedingCompany
-                - contactCarrier
-                - fundingDiscrepancy
-                - nigoAtCedingCarrier
-                - noFundsReceivedCash
-                - pendingReg60
-                - other
+                  - "AWAITING_FUNDS_FROM_CEDING_COMPANY"
+                  - "CONTACT_CARRIER"
+                  - "FUNDING_DISCREPANCY"
+                  - "NIGO_AT_CEDING_CARRIER"
+                  - "NO_FUNDS_RECEIVED_CASH"
+                  - "PENDING_REG60"
+                  - "OTHER"
               effectiveDate:
-                description: Effective date of the funding source
-                type: string
-                format: date
+                description: "Effective date of the funding source"
+                type: "string"
+                format: "date"
               note:
-                description: Note about the funding source
-                type: string
+                description: "Note about the funding source"
+                type: "string"
                 minLength: 1
                 maxLength: 2000
               cedingCompanyName:
-                description: Name of the company holding the existing contract to be replaced.
-                type: string
+                description: "Name of the company holding the existing contract to be replaced."
+                type: "string"
                 minLength: 1
                 maxLength: 180
-                pattern: '^[a-zA-Z0-9À-ſ=()*@#\s.,''_/~%$!();:&"®`\-\\?]{1,180}$'
+                pattern: "^[a-zA-Z0-9À-ſ=()*@#\\s.,'_/~%$!();:&\"®`\\-\\\\?]{1,180}$"
               accountNumber:
-                description: Ceding company account number
-                type: string
+                description: "Ceding company account number"
+                type: "string"
               startDate:
-                description: Start date
-                type: string
-                format: date
+                description: "Start date"
+                type: "string"
+                format: "date"
               referenceNumber:
-                description: Reference number
-                type: string
+                description: "Reference number"
+                type: "string"
               nextActivityDate:
-                description: Next activity date
-                type: string
-                format: date
+                description: "Next activity date"
+                type: "string"
+                format: "date"
               methodOfInitiation:
-                description: Initiation method
-                type: string
-                enum: [fax, email, mail, replacement]
-
+                description: "Initiation method"
+                type: "string"
+                enum:
+                  - "FAX"
+                  - "EMAIL"
+                  - "MAIL"
+                  - "REPLACEMENT"
     PolicySummary:
-      description: Schema for policy summary data
-      type: object
-      required: [policyNumber, applicationOrigin, cusip, status, statusDate]
+      description: "Schema for policy summary data"
+      type: "object"
+      required:
+        - "policyNumber"
+        - "applicationOrigin"
+        - "cusip"
+        - "status"
+        - "statusDate"
       properties:
         isActionNeeded:
-          description: Indicator that at least one section requires action
-          type: boolean
+          description: "Indicator that at least one section requires action"
+          type: "boolean"
         actionSections:
-          description: Sections that require action. Required, and must contain at least one section, if isActionNeeded is true.
-          type: array
+          description: "Sections that require action. Required, and must contain at least one section, if isActionNeeded is true."
+          type: "array"
           minItems: 1
           uniqueItems: true
           items:
-            type: string
+            type: "string"
             enum:
-            - suitability
-            - canSellValidation
-            - documentReview
-            - funding
+              - "SUITABILITY"
+              - "CAN_SELL_VALIDATION"
+              - "DOCUMENT_REVIEW"
+              - "FUNDING"
         policyNumber:
-          description: Policy number
-          type: string
+          description: "Policy number"
+          type: "string"
           minLength: 1
           maxLength: 30
         associatedFirmId:
-          description: Optional query parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms.
-          type: string
+          description: "Optional query parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms."
+          type: "string"
         applicationOrigin:
-          description: Platform of application origin
-          type: object
+          description: "Platform of application origin"
+          type: "object"
           properties:
             platform:
-              description: Platform of application origin
-              type: string
+              description: "Platform of application origin"
+              type: "string"
               maxLength: 50
             isElectronic:
-              description: Is application electronic?
-              type: boolean
+              description: "Is application electronic?"
+              type: "boolean"
             id:
-              description: ID of application origin
-              type: string
+              description: "ID of application origin"
+              type: "string"
               maxLength: 65
           required:
-          - isElectronic
+            - "isElectronic"
         cusip:
-          description: CUSIP
-          $ref: '#/components/schemas/cusip'
+          description: "CUSIP"
+          $ref: "#/components/schemas/cusip"
         productName:
-          description: Product name
-          type: string
+          description: "Product name"
+          type: "string"
           maxLength: 180
         isQualified:
-          description: Is policy tax plan qualified?
-          type: boolean
+          description: "Is policy tax plan qualified?"
+          type: "boolean"
         status:
-          description: Application status
-          type: string
-          enum: [received, inProgress, completed, cancelled]
+          description: "Application status"
+          type: "string"
+          enum:
+            - "RECEIVED"
+            - "IN_PROGRESS"
+            - "COMPLETED"
+            - "CANCELLED"
         statusDate:
-          description: Date of the application status
-          type: string
-          format: date
+          description: "Date of the application status"
+          type: "string"
+          format: "date"
         delivery:
-          description: Pertains to delivery of the issued policy/contract
-          type: object
+          description: "Pertains to delivery of the issued policy/contract"
+          type: "object"
           properties:
             sentDate:
-              description: Delivery sent date
-              type: string
-              format: date
+              description: "Delivery sent date"
+              type: "string"
+              format: "date"
             method:
-              description: Delivery method
-              type: string
+              description: "Delivery method"
+              type: "string"
               enum:
-              - fedex
-              - ups
-              - electronicDelivery
-              - handDelivery
-              - usps
+                - "FEDEX"
+                - "UPS"
+                - "ELECTRONIC_DELIVERY"
+                - "HAND_DELIVERY"
+                - "USPS"
             trackingNumber:
-              description: Delivery tracking number
-              type: string
+              description: "Delivery tracking number"
+              type: "string"
         caseManager:
-          description: Case manager
-          type: object
-          required: [fullName, phoneNumber]
+          description: "Case manager"
+          type: "object"
+          required:
+            - "fullName"
+            - "phoneNumber"
           properties:
             fullName:
-              description: Full name of case manager
-              type: string
+              description: "Full name of case manager"
+              type: "string"
               minLength: 1
               maxLength: 180
-              pattern: '^[a-zA-Z0-9À-ſ=()*@#\s.,''_/~%$!();:&"®`\-\\?]{1,180}$'
+              pattern: "^[a-zA-Z0-9À-ſ=()*@#\\s.,'_/~%$!();:&\"®`\\-\\\\?]{1,180}$"
             phoneNumber:
-              description: Phone number of the party.
-              type: string
+              description: "Phone number of the party."
+              type: "string"
               minLength: 10
               maxLength: 15
-              pattern: '^[0-9+()\-.\s]{10,15}$'
+              pattern: "^[0-9+()\\-.\\s]{10,15}$"
             emailAddress:
-              description: Email address of the party.
-              type: string
-              format: email
+              description: "Email address of the party."
+              type: "string"
+              format: "email"
             websiteUrl:
-              description: Website URL of case manager
-              type: string
-              format: uri
+              description: "Website URL of case manager"
+              type: "string"
+              format: "uri"
         producers:
           $ref: "#/components/schemas/Producers"
         parties:
           $ref: "#/components/schemas/Parties"
     Policy:
-      description: Schema for policy data
-      type: object
+      description: "Schema for policy data"
+      type: "object"
       allOf:
-      - $ref: '#/components/schemas/PolicySummary'
-      - if:
-          properties:
-            isActionNeeded:
-              const: true
-          required:
-          - isActionNeeded
-        then:
-          required:
-          - actionSections
+        - $ref: "#/components/schemas/PolicySummary"
+        - if:
+            properties:
+              isActionNeeded:
+                const: true
+            required:
+              - "isActionNeeded"
+          then:
+            required:
+              - "actionSections"
       properties:
         isActionNeeded:
-          description: Indicator that at least one section requires action
-          type: boolean
+          description: "Indicator that at least one section requires action"
+          type: "boolean"
         actionSections:
-          description: Sections that require action. Required, and must contain at least one section, if isActionNeeded is true.
-          type: array
+          description: "Sections that require action. Required, and must contain at least one section, if isActionNeeded is true."
+          type: "array"
           minItems: 1
           uniqueItems: true
           items:
-            type: string
+            type: "string"
             enum:
-            - suitability
-            - canSellValidation
-            - documentReview
-            - funding
+              - "SUITABILITY"
+              - "CAN_SELL_VALIDATION"
+              - "DOCUMENT_REVIEW"
+              - "FUNDING"
         signedDate:
-          description: Signed date of policy
-          type: string
-          format: date
+          description: "Signed date of policy"
+          type: "string"
+          format: "date"
         receivedDate:
-          description: Received date
-          type: string
-          format: date
+          description: "Received date"
+          type: "string"
+          format: "date"
         issuedDate:
-          description: Issued date of policy
-          type: string
-          format: date
+          description: "Issued date of policy"
+          type: "string"
+          format: "date"
         effectiveDate:
-          description: Effective date of policy
-          type: string
-          format: date
+          description: "Effective date of policy"
+          type: "string"
+          format: "date"
         rateEffectiveDate:
-          description: Rate effective date of policy
-          type: string
-          format: date
+          description: "Rate effective date of policy"
+          type: "string"
+          format: "date"
         fundsHeldUntilDate:
-          description: Funds held until date
-          type: string
-          format: date
+          description: "Funds held until date"
+          type: "string"
+          format: "date"
         cancellation:
-          description: Details about the policy cancellation
-          type: object
-          required: [initiator, cancelledDate]
+          description: "Details about the policy cancellation"
+          type: "object"
+          required:
+            - "initiator"
+            - "cancelledDate"
           properties:
             initiator:
-              description: Who initiated cancellation
-              type: string
+              description: "Who initiated cancellation"
+              type: "string"
               enum:
-              - producer
-              - carrier
-              - client
-              - backOffice
+                - "PRODUCER"
+                - "CARRIER"
+                - "CLIENT"
+                - "BACK_OFFICE"
             cancelledDate:
-              description: Cancellation date
-              type: string
-              format: date
+              description: "Cancellation date"
+              type: "string"
+              format: "date"
             reason:
-              description: Reason for the cancellation
-              type: string
+              description: "Reason for the cancellation"
+              type: "string"
               enum:
-              - clientRequest
-              - duplicate
-              - policyCannotBeVerified
-              - addedInError
-              - suitabilityDecline
-              - notInGoodOrder
-              - ageOut
-              - notTaken
-              - productTraining
-              - reg60Decline
-              - staleDated
-              - NIGO
-              - suitDeclined
+                - "CLIENT_REQUEST"
+                - "DUPLICATE"
+                - "POLICY_CANNOT_BE_VERIFIED"
+                - "ADDED_IN_ERROR"
+                - "SUITABILITY_DECLINE"
+                - "NOT_IN_GOOD_ORDER"
+                - "AGE_OUT"
+                - "NOT_TAKEN"
+                - "PRODUCT_TRAINING"
+                - "REG60_DECLINE"
+                - "STALE_DATED"
+                - "NIGO"
+                - "SUIT_DECLINED"
             notes:
-              description: Additional notes regarding the cancellation
-              type: string
+              description: "Additional notes regarding the cancellation"
+              type: "string"
               minLength: 1
               maxLength: 2000
     Policies:
-      description: Schema for policies
-      type: array
+      description: "Schema for policies"
+      type: "array"
       items:
-        $ref: '#/components/schemas/PolicySummary'
+        $ref: "#/components/schemas/PolicySummary"
     PaginationMetadata:
-      description: Offset-based pagination metadata describing the resource collection returned in this response.
-      type: object
-      required: [offset, limit]
+      description: "Offset-based pagination metadata describing the resource collection returned in this response."
+      type: "object"
+      required:
+        - "offset"
+        - "limit"
       properties:
         offset:
-          description: Zero-based index of the first resource in this page.
-          type: integer
+          description: "Zero-based index of the first resource in this page."
+          type: "integer"
           minimum: 0
         limit:
-          description: The page size used for this response. May be less than the limit requested by the caller.
-          type: integer
+          description: "The page size used for this response. May be less than the limit requested by the caller."
+          type: "integer"
           minimum: 1
           maximum: 1000
         nextOffset:
-          description: Offset to use to retrieve the next page. Omitted when no further pages exist.
-          type: integer
+          description: "Offset to use to retrieve the next page. Omitted when no further pages exist."
+          type: "integer"
           minimum: 1
         totalCount:
-          description: Total number of resources matching the query, before pagination.
-          type: integer
+          description: "Total number of resources matching the query, before pagination."
+          type: "integer"
           minimum: 0
     PoliciesPagedResult:
-      description: Schema for the paged result of policies
-      type: object
-      required: [policies, metadata]
+      description: "Schema for the paged result of policies"
+      type: "object"
+      required:
+        - "policies"
+        - "metadata"
       properties:
         policies:
           $ref: "#/components/schemas/Policies"
         metadata:
           $ref: "#/components/schemas/PaginationMetadata"
     DetailApplicationStatus:
-      description: Schema for detail application status
-      type: object
+      description: "Schema for detail application status"
+      type: "object"
       allOf:
-      - $ref: '#/components/schemas/Policy'
-      - type: object
-        properties:
-          canSellValidation:
-            $ref: "#/components/schemas/CanSellValidation"
-          documentReview:
-            $ref: "#/components/schemas/DocumentReview"
-          suitability:
-            $ref: "#/components/schemas/Suitability"
-          funding:
-            $ref: "#/components/schemas/Funding"
+        - $ref: "#/components/schemas/Policy"
+        - type: "object"
+          properties:
+            canSellValidation:
+              $ref: "#/components/schemas/CanSellValidation"
+            documentReview:
+              $ref: "#/components/schemas/DocumentReview"
+            suitability:
+              $ref: "#/components/schemas/Suitability"
+            funding:
+              $ref: "#/components/schemas/Funding"
     SummaryApplicationStatuses:
-      description: Schema for application statuses
-      type: array
+      description: "Schema for application statuses"
+      type: "array"
       items:
-        $ref: '#/components/schemas/PolicySummary'
+        $ref: "#/components/schemas/PolicySummary"
     SummaryApplicationStatusesPagedResult:
-      description: Schema for the paged result of application statuses
-      type: object
-      required: [applicationStatuses, metadata]
+      description: "Schema for the paged result of application statuses"
+      type: "object"
+      required:
+        - "applicationStatuses"
+        - "metadata"
       properties:
         applicationStatuses:
           $ref: "#/components/schemas/SummaryApplicationStatuses"
         metadata:
           $ref: "#/components/schemas/PaginationMetadata"
     SearchSummaryApplicationStatusesRequest:
-      description: Schema for searching summary application statuses
-      type: object
+      description: "Schema for searching summary application statuses"
+      type: "object"
       properties:
         policyNumber:
-          description: Policy number
-          type: string
+          description: "Policy number"
+          type: "string"
           minLength: 1
           maxLength: 30
         associatedFirmId:
-          description: Optional field for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms.
-          type: string
+          description: "Optional field for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms."
+          type: "string"
           minLength: 1
           maxLength: 65
         cusip:
-          description: CUSIP
-          $ref: '#/components/schemas/cusip'
+          description: "CUSIP"
+          $ref: "#/components/schemas/cusip"
         producerNumber:
-          description: Carrier-assigned unique identifier for the producer.
-          type: string
+          description: "Carrier-assigned unique identifier for the producer."
+          type: "string"
           maxLength: 30
         npn:
-          description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
-          type: string
+          description: "The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states."
+          type: "string"
           maxLength: 10
         commissionSplitPercent:
-          description: Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy.
-          type: number
+          description: "Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy."
+          type: "number"
           minimum: 0
           maximum: 100
         crdNumber:
-          description: The Central Registration Depository (CRD) number assigned by FINRA to identify the financial professional.
-          type: string
+          description: "The Central Registration Depository (CRD) number assigned by FINRA to identify the financial professional."
+          type: "string"
           maxLength: 10
         taxId:
-          description: Party's tax identification number
+          description: "Party's tax identification number"
           allOf:
-          - $ref: '#/components/schemas/taxId'
+            - $ref: "#/components/schemas/taxId"
         applicationOriginId:
-          description: Optional field for the application origin ID
-          type: string
+          description: "Optional field for the application origin ID"
+          type: "string"
         trackingNumber:
-          description: Optional field for the delivery tracking number
-          type: string
+          description: "Optional field for the delivery tracking number"
+          type: "string"
           minLength: 1
           maxLength: 65
         finishedCutoffDays:
-          description: Optional field for when a completed or cancelled policy is to drop off
-          type: integer
+          description: "Optional field for when a completed or cancelled policy is to drop off"
+          type: "integer"
           default: 7
       additionalProperties: false
     Error:
-      description: Standard error response body
-      type: object
+      description: "Standard error response body"
+      type: "object"
       required:
-      - httpStatus
-      - code
-      - message
+        - "httpStatus"
+        - "code"
+        - "message"
       properties:
         httpStatus:
-          description: HTTP status code
-          type: integer
+          description: "HTTP status code"
+          type: "integer"
         code:
-          description: Machine-readable error code in domain.category.subcategory format
-          type: string
-          pattern: '^[a-z0-9]+\.[a-z0-9]+\.[a-z0-9]+$'
+          description: "Machine-readable error code in domain.category.subcategory format"
+          type: "string"
+          pattern: "^[a-z0-9]+\\.[a-z0-9]+\\.[a-z0-9]+$"
         timestamp:
-          description: Time the error occurred
-          type: string
-          format: date-time
+          description: "Time the error occurred"
+          type: "string"
+          format: "date-time"
         message:
-          description: Diagnostic message describing the error
-          type: string
+          description: "Diagnostic message describing the error"
+          type: "string"
         userMessage:
-          description: End-user-safe message suitable for display
-          type: string
+          description: "End-user-safe message suitable for display"
+          type: "string"
         correlationId:
-          description: Correlation ID echoed from the request, if supplied
-          type: string
+          description: "Correlation ID echoed from the request, if supplied"
+          type: "string"
         validationErrors:
-          description: Field-level validation failures
-          type: array
+          description: "Field-level validation failures"
+          type: "array"
           items:
-            type: object
+            type: "object"
             required:
-            - path
-            - message
+              - "path"
+              - "message"
             properties:
               path:
-                description: JSON pointer to the offending field
-                type: string
+                description: "JSON pointer to the offending field"
+                type: "string"
               message:
-                description: Description of the validation failure
-                type: string
+                description: "Description of the validation failure"
+                type: "string"
               code:
-                description: Machine-readable code for this specific validation failure, in domain.category.subcategory format
-                type: string
-                pattern: '^[a-z0-9]+\.[a-z0-9]+\.[a-z0-9]+$'
+                description: "Machine-readable code for this specific validation failure, in domain.category.subcategory format"
+                type: "string"
+                pattern: "^[a-z0-9]+\\.[a-z0-9]+\\.[a-z0-9]+$"
     taxId:
-      description: Party's tax identification number
-      type: string
+      description: "Party's tax identification number"
+      type: "string"
       maxLength: 9
   headers:
     correlationId:
-      description: Correlation ID echoed from the request, if supplied
+      description: "Correlation ID echoed from the request, if supplied"
       schema:
-        type: string
+        type: "string"
     X-Api-Version:
-      description: Minor/patch version of the API that served this response
+      description: "Minor/patch version of the API that served this response"
       schema:
-        type: string
+        type: "string"
   securitySchemes:
     bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: OAuth2/JWT bearer token issued under the mutually agreed authorization mechanism between carrier and distributor.
+      type: "http"
+      scheme: "bearer"
+      bearerFormat: "JWT"
+      description: "OAuth2/JWT bearer token issued under the mutually agreed authorization mechanism between carrier and distributor."
 security:
-- bearerAuth: []
+  - bearerAuth: []

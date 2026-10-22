@@ -1,2135 +1,2186 @@
 # Modified by Cursor: validated and corrected examples and OpenAPI 3.1 schema compatibility
-openapi: 3.1.0
-
+openapi: "3.1.0"
 info:
-  title: Annuity Application Status Push Notifications
-  description: Webhooks for notifying about changes in annuity application status
-  version: 2.0.0
+  title: "Annuity Application Status Push Notifications"
+  description: "Webhooks for notifying about changes in annuity application status"
+  version: "2.0.0"
   license:
-    name: MIT
-    url: https://github.com/Insured-Retirement-Institute/Pending-Case/blob/main/LICENSE
-
+    name: "MIT"
+    url: "https://github.com/Insured-Retirement-Institute/Pending-Case/blob/main/LICENSE"
 paths:
   /v2/application-notifications/reconciliation:
     get:
-      operationId: reconciliation
-      summary: Send a list of published events to reconcile for potential missed Notifications
+      operationId: "reconciliation"
+      summary: "Send a list of published events to reconcile for potential missed Notifications"
       tags:
-        - Application Notifications
+        - "Application Notifications"
       parameters:
-        - $ref: '#/components/parameters/associatedFirmId'
-        - $ref: '#/components/parameters/correlationId'
-        - $ref: '#/components/parameters/startTime'
-        - $ref: '#/components/parameters/endTime'
-        - $ref: '#/components/parameters/orderBy'
-        - $ref: '#/components/parameters/sortOrder'
-        - $ref: '#/components/parameters/offset'
-        - $ref: '#/components/parameters/limit'
+        - $ref: "#/components/parameters/associatedFirmId"
+        - $ref: "#/components/parameters/correlationId"
+        - $ref: "#/components/parameters/startTime"
+        - $ref: "#/components/parameters/endTime"
+        - $ref: "#/components/parameters/orderBy"
+        - $ref: "#/components/parameters/sortOrder"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/limit"
       responses:
         "200":
-          description: reconciliation successfully received
+          description: "reconciliation successfully received"
           content:
             application/json:
-              schema: 
-                $ref: '#/components/schemas/reconciliation'
+              schema:
+                $ref: "#/components/schemas/reconciliation"
               example:
                 totalEvents: 2
                 events:
-                  - eventId: evt-550e8400-e29b-41d4-a716-446655440001
-                    policyNumber: P987654321
-                    id: APP-2026-001234
+                  - eventId: "evt-550e8400-e29b-41d4-a716-446655440001"
+                    policyNumber: "P987654321"
+                    id: "APP-2026-001234"
                     applicationOrigin:
-                      platform: DigitalFirst
+                      platform: "DigitalFirst"
                       isElectronic: true
-                      id: DF-APP-001234
-                    status: received
-                  - eventId: evt-550e8400-e29b-41d4-a716-446655440002
-                    policyNumber: P987654322
-                    id: APP-2026-001235
+                      id: "DF-APP-001234"
+                    status: "RECEIVED"
+                  - eventId: "evt-550e8400-e29b-41d4-a716-446655440002"
+                    policyNumber: "P987654322"
+                    id: "APP-2026-001235"
                     applicationOrigin:
-                      platform: DigitalFirst
+                      platform: "DigitalFirst"
                       isElectronic: true
-                      id: DF-APP-001235
-                    status: inProgress
+                      id: "DF-APP-001235"
+                    status: "IN_PROGRESS"
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
-          description: Forbidden
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
-          description: NotFound
+          description: "NotFound"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /v2/application-notifications/{eventId}:
     get:
-      operationId: replayEvent
-      summary: Retrieve payload for the given event ID
+      operationId: "replayEvent"
+      summary: "Retrieve payload for the given event ID"
       tags:
-        - Application Notifications
+        - "Application Notifications"
       parameters:
-      - $ref: '#/components/parameters/eventId'
+        - $ref: "#/components/parameters/eventId"
       responses:
         "200":
-          description: event retrieved successfully.
+          description: "event retrieved successfully."
           content:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/ApplicationReceivedNotification'
-                  - $ref: '#/components/schemas/CanSellNotification'
-                  - $ref: '#/components/schemas/SuitabilityActionNotification'
-                  - $ref: '#/components/schemas/SuitabilityDecisionNotification'
-                  - $ref: '#/components/schemas/DocReviewNotification'
-                  - $ref: '#/components/schemas/FundingActionNotification'
-                  - $ref: '#/components/schemas/TransferRequestNotification'
-                  - $ref: '#/components/schemas/SourceTypeNotification'
-                  - $ref: '#/components/schemas/NewFollowUpNotification'
-                  - $ref: '#/components/schemas/FundingReceivedNotification'
-                  - $ref: '#/components/schemas/ApplicationCompletedNotification'
-                  - $ref: '#/components/schemas/ApplicationCancelledNotification'
+                  - $ref: "#/components/schemas/ApplicationReceivedNotification"
+                  - $ref: "#/components/schemas/CanSellNotification"
+                  - $ref: "#/components/schemas/SuitabilityActionNotification"
+                  - $ref: "#/components/schemas/SuitabilityDecisionNotification"
+                  - $ref: "#/components/schemas/DocReviewNotification"
+                  - $ref: "#/components/schemas/FundingActionNotification"
+                  - $ref: "#/components/schemas/TransferRequestNotification"
+                  - $ref: "#/components/schemas/SourceTypeNotification"
+                  - $ref: "#/components/schemas/NewFollowUpNotification"
+                  - $ref: "#/components/schemas/FundingReceivedNotification"
+                  - $ref: "#/components/schemas/ApplicationCompletedNotification"
+                  - $ref: "#/components/schemas/ApplicationCancelledNotification"
                 discriminator:
-                  propertyName: eventType
+                  propertyName: "eventType"
                   mapping:
-                    applicationStatus.v1.applicationReceived: '#/components/schemas/ApplicationReceivedNotification'
-                    applicationStatus.v1.canSellActionNeeded: '#/components/schemas/CanSellNotification'
-                    applicationStatus.v1.suitabilityActionNeeded: '#/components/schemas/SuitabilityActionNotification'
-                    applicationStatus.v1.suitabilityApproved: '#/components/schemas/SuitabilityDecisionNotification'
-                    applicationStatus.v1.documentReviewActionNeeded: '#/components/schemas/DocReviewNotification'
-                    applicationStatus.v1.fundingActionNeeded: '#/components/schemas/FundingActionNotification'
-                    applicationStatus.v1.fundingTransferRequestSent: '#/components/schemas/TransferRequestNotification'
-                    applicationStatus.v1.fundingSourceTypeUpdated: '#/components/schemas/SourceTypeNotification'
-                    applicationStatus.v1.fundingTransferFollowedUp: '#/components/schemas/NewFollowUpNotification'
-                    applicationStatus.v1.fundingReceived: '#/components/schemas/FundingReceivedNotification'
-                    applicationStatus.v1.applicationCompleted: '#/components/schemas/ApplicationCompletedNotification'
-                    applicationStatus.v1.applicationCancelled: '#/components/schemas/ApplicationCancelledNotification'
+                    applicationStatus.v1.applicationReceived: "#/components/schemas/ApplicationReceivedNotification"
+                    applicationStatus.v1.canSellActionNeeded: "#/components/schemas/CanSellNotification"
+                    applicationStatus.v1.suitabilityActionNeeded: "#/components/schemas/SuitabilityActionNotification"
+                    applicationStatus.v1.suitabilityApproved: "#/components/schemas/SuitabilityDecisionNotification"
+                    applicationStatus.v1.documentReviewActionNeeded: "#/components/schemas/DocReviewNotification"
+                    applicationStatus.v1.fundingActionNeeded: "#/components/schemas/FundingActionNotification"
+                    applicationStatus.v1.fundingTransferRequestSent: "#/components/schemas/TransferRequestNotification"
+                    applicationStatus.v1.fundingSourceTypeUpdated: "#/components/schemas/SourceTypeNotification"
+                    applicationStatus.v1.fundingTransferFollowedUp: "#/components/schemas/NewFollowUpNotification"
+                    applicationStatus.v1.fundingReceived: "#/components/schemas/FundingReceivedNotification"
+                    applicationStatus.v1.applicationCompleted: "#/components/schemas/ApplicationCompletedNotification"
+                    applicationStatus.v1.applicationCancelled: "#/components/schemas/ApplicationCancelledNotification"
               examples:
                 applicationReceivedReplay:
-                    summary: Application received event payload
-                    value:
-                      eventId: evt-550e8400-e29b-41d4-a716-446655440001
-                      policyNumber: P987654321
-                      id: APP-2026-001234
-                      applicationOrigin:
-                        platform: DigitalFirst
-                        isElectronic: true
-                        id: DF-APP-001234
-                      status: received
-                      eventType: applicationStatus.v1.applicationReceived
-                      notification:
-                        cusip: "401B23458"
-                        isActionNeeded: false
-                        productName: Secure Income Annuity Plus
-                        isQualified: true
-                canSellActionNeededReplay:
-                  summary: Can-sell action needed event payload
+                  summary: "Application received event payload"
                   value:
-                    eventId: evt-550e8400-e29b-41d4-a716-446655440002
-                    policyNumber: P987654321
-                    id: APP-2026-001234
+                    eventId: "evt-550e8400-e29b-41d4-a716-446655440001"
+                    policyNumber: "P987654321"
+                    id: "APP-2026-001234"
                     applicationOrigin:
-                      platform: DigitalFirst
+                      platform: "DigitalFirst"
                       isElectronic: true
-                      id: DF-APP-001234
-                    status: inProgress
-                    eventType: applicationStatus.v1.canSellActionNeeded
+                      id: "DF-APP-001234"
+                    status: "RECEIVED"
+                    eventType: "applicationStatus.v1.applicationReceived"
                     notification:
-                      status: inProgress
+                      cusip: "401B23458"
+                      isActionNeeded: false
+                      productName: "Secure Income Annuity Plus"
+                      isQualified: true
+                canSellActionNeededReplay:
+                  summary: "Can-sell action needed event payload"
+                  value:
+                    eventId: "evt-550e8400-e29b-41d4-a716-446655440002"
+                    policyNumber: "P987654321"
+                    id: "APP-2026-001234"
+                    applicationOrigin:
+                      platform: "DigitalFirst"
+                      isElectronic: true
+                      id: "DF-APP-001234"
+                    status: "IN_PROGRESS"
+                    eventType: "applicationStatus.v1.canSellActionNeeded"
+                    notification:
+                      status: "IN_PROGRESS"
                       isActionNeeded: true
                       startDate: "2026-06-03"
                 applicationCancelledReplay:
-                  summary: Application cancelled event payload
+                  summary: "Application cancelled event payload"
                   value:
-                    eventId: evt-550e8400-e29b-41d4-a716-446655440012
-                    policyNumber: P987654321
-                    id: APP-2026-001234
+                    eventId: "evt-550e8400-e29b-41d4-a716-446655440012"
+                    policyNumber: "P987654321"
+                    id: "APP-2026-001234"
                     applicationOrigin:
-                      platform: DigitalFirst
+                      platform: "DigitalFirst"
                       isElectronic: true
-                      id: DF-APP-001234
-                    status: cancelled
-                    eventType: applicationStatus.v1.applicationCancelled
+                      id: "DF-APP-001234"
+                    status: "CANCELLED"
+                    eventType: "applicationStatus.v1.applicationCancelled"
                     notification:
-                      initiator: client
+                      initiator: "CLIENT"
                       cancelledDate: "2026-06-18"
-                      reason: clientRequest
-                      notes: Client elected to pursue alternative product
+                      reason: "CLIENT_REQUEST"
+                      notes: "Client elected to pursue alternative product"
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
-          description: Forbidden
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
-          description: NotFound
+          description: "NotFound"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-
+                $ref: "#/components/schemas/Error"
 webhooks:
   applicationReceived:
     post:
-      summary: Initial Application Received Notification
-      description: Webhook fired when a new application is received and a policy number is assigned
+      summary: "Initial Application Received Notification"
+      description: "Webhook fired when a new application is received and a policy number is assigned"
       tags:
-        - Application Notifications
+        - "Application Notifications"
       parameters:
-        - $ref: '#/components/parameters/associatedFirmId'
-        - $ref: '#/components/parameters/correlationId'
+        - $ref: "#/components/parameters/associatedFirmId"
+        - $ref: "#/components/parameters/correlationId"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ApplicationReceivedNotification'
+              $ref: "#/components/schemas/ApplicationReceivedNotification"
             examples:
               applicationReceivedExample:
-                summary: New application received with policy number assigned
+                summary: "New application received with policy number assigned"
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440001
-                  policyNumber: P987654321
-                  id: APP-2026-001234
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440001"
+                  policyNumber: "P987654321"
+                  id: "APP-2026-001234"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: true
-                    id: DF-APP-001234
-                  status: received
-                  eventType: applicationStatus.v1.applicationReceived
+                    id: "DF-APP-001234"
+                  status: "RECEIVED"
+                  eventType: "applicationStatus.v1.applicationReceived"
                   notification:
                     cusip: "401B23458"
                     isActionNeeded: false
-                    productName: Secure Income Annuity Plus
+                    productName: "Secure Income Annuity Plus"
                     isQualified: true
                     producers:
-                      - type: individual
-                        firstName: Jane
-                        lastName: Smith
+                      - type: "individual"
+                        firstName: "Jane"
+                        lastName: "Smith"
                         npn: "1234567890"
                         relationships:
-                          - primaryAgent
+                          - "PRIMARY_AGENT"
                         commissionSplitPercent: 100
-                      - type: entity
-                        name: Smith & Associates
+                      - type: "entity"
+                        name: "Smith & Associates"
                         npn: "1234567890"
                         relationships:
-                          - brokerDealer
+                          - "BROKER_DEALER"
                         commissionSplitPercent: 100
                     parties:
-                      - type: individual
-                        firstName: John
-                        lastName: Doe
+                      - type: "individual"
+                        firstName: "John"
+                        lastName: "Doe"
                         relationships:
-                          - owner
-                          - annuitant
-                      - type: entity
-                        name: Smith Family Trust
+                          - "OWNER"
+                          - "ANNUITANT"
+                      - type: "entity"
+                        name: "Smith Family Trust"
                         taxId: "987654321"
                         relationships:
-                          - primaryBeneficiary
+                          - "PRIMARY_BENEFICIARY"
                     signedDate: "2026-06-01"
                     receivedDate: "2026-06-02"
                     rateEffectiveDate: "2026-06-02"
               entityPartyExample:
-                summary: Entity-owned application, showing the entity party and producer shape
-                description: >-
-                  Entity producers and parties are identified by a single `name`
-                  property, not by `firstName`/`middleName`/`lastName`. Only
-                  parties with `type: individual` carry name-part properties.
+                summary: "Entity-owned application, showing the entity party and producer shape"
+                description: "Entity producers and parties are identified by a single `name` property, not by `firstName`/`middleName`/`lastName`. Only parties with `type: individual` carry name-part properties."
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440014
-                  policyNumber: P987654322
-                  id: APP-2026-001235
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440014"
+                  policyNumber: "P987654322"
+                  id: "APP-2026-001235"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: true
-                    id: DF-APP-001235
-                  status: received
-                  eventType: applicationStatus.v1.applicationReceived
+                    id: "DF-APP-001235"
+                  status: "RECEIVED"
+                  eventType: "applicationStatus.v1.applicationReceived"
                   notification:
                     cusip: "401B23458"
                     isActionNeeded: false
-                    productName: Secure Income Annuity Plus
+                    productName: "Secure Income Annuity Plus"
                     isQualified: false
                     producers:
-                      - type: entity
-                        name: Northstar Brokerage General Agency
+                      - type: "entity"
+                        name: "Northstar Brokerage General Agency"
                         npn: "9876543210"
                         crdNumber: "1122334"
                         relationships:
-                          - brokerageGeneralAgency
+                          - "BROKERAGE_GENERAL_AGENCY"
                         commissionSplitPercent: 100
                     parties:
-                      - type: entity
-                        name: Doe Family Revocable Trust
+                      - type: "entity"
+                        name: "Doe Family Revocable Trust"
                         taxId: "987654321"
                         relationships:
-                          - owner
-                      - type: individual
-                        firstName: John
-                        middleName: Quincy
-                        lastName: Doe
+                          - "OWNER"
+                      - type: "individual"
+                        firstName: "John"
+                        middleName: "Quincy"
+                        lastName: "Doe"
                         relationships:
-                          - annuitant
+                          - "ANNUITANT"
                     signedDate: "2026-06-01"
                     receivedDate: "2026-06-02"
                     rateEffectiveDate: "2026-06-02"
       responses:
         "200":
-          description: Notification received successfully
+          description: "Notification received successfully"
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
-          description: Forbidden
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
-          description: NotFound
+          description: "NotFound"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-
+                $ref: "#/components/schemas/Error"
   canSellActionNeeded:
     post:
-      summary: Can Sell Action Needed Notification
-      description: Webhook fired when can-sell action is needed
+      summary: "Can Sell Action Needed Notification"
+      description: "Webhook fired when can-sell action is needed"
       tags:
-        - Validation Notifications
+        - "Validation Notifications"
       parameters:
-        - $ref: '#/components/parameters/associatedFirmId'
-        - $ref: '#/components/parameters/correlationId'
+        - $ref: "#/components/parameters/associatedFirmId"
+        - $ref: "#/components/parameters/correlationId"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CanSellNotification'
+              $ref: "#/components/schemas/CanSellNotification"
             example:
-              eventId: evt-550e8400-e29b-41d4-a716-446655440002
-              policyNumber: P9876543212
-              id: APP-2026-001234
+              eventId: "evt-550e8400-e29b-41d4-a716-446655440002"
+              policyNumber: "P9876543212"
+              id: "APP-2026-001234"
               applicationOrigin:
-                platform: DigitalFirst
+                platform: "DigitalFirst"
                 isElectronic: true
-                id: DF-APP-001234
-              status: inProgress
-              eventType: applicationStatus.v1.canSellActionNeeded
+                id: "DF-APP-001234"
+              status: "IN_PROGRESS"
+              eventType: "applicationStatus.v1.canSellActionNeeded"
               notification:
-                status: inProgress
+                status: "IN_PROGRESS"
                 isActionNeeded: true
                 startDate: "2026-06-03"
                 issues:
-                  - type: trainingExpired
-                    note: Producer training expired on 2026-05-01
+                  - type: "trainingExpired"
+                    note: "Producer training expired on 2026-05-01"
                     affectedProducer:
                       npn: "1234567890"
-                  - type: other
-                    note: Other reason for can-sell action needed
+                  - type: "other"
+                    note: "Other reason for can-sell action needed"
       responses:
         "200":
-          description: Notification received successfully
+          description: "Notification received successfully"
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
-          description: Forbidden
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
-          description: NotFound
+          description: "NotFound"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-  
+                $ref: "#/components/schemas/Error"
   suitabilityActionNeeded:
     post:
-      summary: Suitability Action Needed Notification
-      description: Webhook fired when suitability review requires action
+      summary: "Suitability Action Needed Notification"
+      description: "Webhook fired when suitability review requires action"
       tags:
-        - Suitability Notifications
+        - "Suitability Notifications"
       parameters:
-        - $ref: '#/components/parameters/associatedFirmId'
-        - $ref: '#/components/parameters/correlationId'
+        - $ref: "#/components/parameters/associatedFirmId"
+        - $ref: "#/components/parameters/correlationId"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SuitabilityActionNotification'
+              $ref: "#/components/schemas/SuitabilityActionNotification"
             examples:
               suitabilityNoActionNeededExample:
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440003
-                  policyNumber: P987654321
-                  id: APP-2026-001234
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440003"
+                  policyNumber: "P987654321"
+                  id: "APP-2026-001234"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: true
-                    id: DF-APP-001234
-                  status: inProgress
-                  eventType: applicationStatus.v1.suitabilityActionNeeded
+                    id: "DF-APP-001234"
+                  status: "IN_PROGRESS"
+                  eventType: "applicationStatus.v1.suitabilityActionNeeded"
                   notification:
-                    status: inProgress
+                    status: "IN_PROGRESS"
                     isActionNeeded: true
                     startDate: "2026-06-04"
                     dueDate: "2026-06-11"
-                    reason: moreInformationNeeded
-                    note: Client financial profile documentation required
+                    reason: "MORE_INFORMATION_NEEDED"
+                    note: "Client financial profile documentation required"
               suitabilityActionNeededExample:
-                summary: Suitability review requires additional information
+                summary: "Suitability review requires additional information"
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440003
-                  policyNumber: P987654321
-                  id: APP-2026-001234
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440003"
+                  policyNumber: "P987654321"
+                  id: "APP-2026-001234"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: true
-                    id: DF-APP-001234
-                  status: inProgress
-                  eventType: applicationStatus.v1.suitabilityActionNeeded
+                    id: "DF-APP-001234"
+                  status: "IN_PROGRESS"
+                  eventType: "applicationStatus.v1.suitabilityActionNeeded"
                   notification:
-                    status: inProgress
+                    status: "IN_PROGRESS"
                     isActionNeeded: true
                     startDate: "2026-06-04"
                     dueDate: "2026-06-11"
-                    reason: moreInformationNeeded
-                    note: Client financial profile documentation required
+                    reason: "MORE_INFORMATION_NEEDED"
+                    note: "Client financial profile documentation required"
       responses:
         "200":
-          description: Notification received successfully
+          description: "Notification received successfully"
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
         "403":
-          description: Forbidden
-  
+          description: "Forbidden"
   suitabilityApproved:
     post:
-      summary: Suitability Approved Notification
-      description: Webhook fired when suitability is approved
+      summary: "Suitability Approved Notification"
+      description: "Webhook fired when suitability is approved"
       tags:
-        - Suitability Notifications
+        - "Suitability Notifications"
       parameters:
-        - $ref: '#/components/parameters/associatedFirmId'
-        - $ref: '#/components/parameters/correlationId'
+        - $ref: "#/components/parameters/associatedFirmId"
+        - $ref: "#/components/parameters/correlationId"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SuitabilityDecisionNotification'
+              $ref: "#/components/schemas/SuitabilityDecisionNotification"
             examples:
               completedExample:
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440004
-                  policyNumber: P987654321
-                  id: APP-2026-001234
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440004"
+                  policyNumber: "P987654321"
+                  id: "APP-2026-001234"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: true
-                    id: DF-APP-001234
-                  status: inProgress
-                  eventType: applicationStatus.v1.suitabilityApproved
+                    id: "DF-APP-001234"
+                  status: "IN_PROGRESS"
+                  eventType: "applicationStatus.v1.suitabilityApproved"
                   notification:
-                    status: completed
+                    status: "COMPLETED"
                     isActionNeeded: false
                     startDate: "2026-06-04"
                     endDate: "2026-06-15"
                     isApproved: true
-                    note: Suitability review completed successfully
+                    note: "Suitability review completed successfully"
               suitabilityApprovedExample:
-                summary: Suitability review completed and approved
+                summary: "Suitability review completed and approved"
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440004
-                  policyNumber: P987654321
-                  id: APP-2026-001234
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440004"
+                  policyNumber: "P987654321"
+                  id: "APP-2026-001234"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: true
-                    id: DF-APP-001234
-                  status: inProgress
-                  eventType: applicationStatus.v1.suitabilityApproved
+                    id: "DF-APP-001234"
+                  status: "IN_PROGRESS"
+                  eventType: "applicationStatus.v1.suitabilityApproved"
                   notification:
-                    status: completed
+                    status: "COMPLETED"
                     isActionNeeded: false
                     startDate: "2026-06-04"
                     endDate: "2026-06-15"
                     isApproved: true
-                    note: Suitability review completed successfully
+                    note: "Suitability review completed successfully"
       responses:
         "200":
-          description: Notification received successfully
+          description: "Notification received successfully"
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
         "403":
-          description: Forbidden
-  
+          description: "Forbidden"
   documentReviewActionNeeded:
     post:
-      summary: Document Review Action Needed Notification
-      description: Webhook fired when document review requires action
+      summary: "Document Review Action Needed Notification"
+      description: "Webhook fired when document review requires action"
       tags:
-        - Document Notifications
+        - "Document Notifications"
       parameters:
-        - $ref: '#/components/parameters/associatedFirmId'
-        - $ref: '#/components/parameters/correlationId'
+        - $ref: "#/components/parameters/associatedFirmId"
+        - $ref: "#/components/parameters/correlationId"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DocReviewNotification'
+              $ref: "#/components/schemas/DocReviewNotification"
             examples:
               documentReviewNoActionNeededExample:
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440005
-                  policyNumber: P987654321
-                  id: APP-2026-001234
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440005"
+                  policyNumber: "P987654321"
+                  id: "APP-2026-001234"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: false
-                    id: DF-APP-001234
-                  status: inProgress
-                  eventType: applicationStatus.v1.documentReviewActionNeeded
+                    id: "DF-APP-001234"
+                  status: "IN_PROGRESS"
+                  eventType: "applicationStatus.v1.documentReviewActionNeeded"
                   notification:
-                    status: inProgress
+                    status: "IN_PROGRESS"
                     isActionNeeded: true
                     startDate: "2026-06-05"
               documentReviewActionNeededExample:
-                summary: Document review identified missing signature
+                summary: "Document review identified missing signature"
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440005
-                  policyNumber: P987654321
-                  id: APP-2026-001234
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440005"
+                  policyNumber: "P987654321"
+                  id: "APP-2026-001234"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: true
-                    id: DF-APP-001234
-                  status: inProgress
-                  eventType: applicationStatus.v1.documentReviewActionNeeded
+                    id: "DF-APP-001234"
+                  status: "IN_PROGRESS"
+                  eventType: "applicationStatus.v1.documentReviewActionNeeded"
                   notification:
-                    status: inProgress
+                    status: "IN_PROGRESS"
                     isActionNeeded: true
                     startDate: "2026-06-05"
                     issues:
-                      - reason: missingSignature
-                        formName: Application for Annuity
-                        formNumber: APP-1001
+                      - reason: "MISSING_SIGNATURE"
+                        formName: "Application for Annuity"
+                        formNumber: "APP-1001"
                         dueDate: "2026-06-12"
-                        note: Owner signature required on page 3
+                        note: "Owner signature required on page 3"
       responses:
         "200":
-          description: Notification received successfully
+          description: "Notification received successfully"
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
         "403":
-          description: Forbidden
-  
+          description: "Forbidden"
   fundingActionNeeded:
     post:
-      summary: Funding Action Needed Notification
-      description: Webhook fired when funding action is needed
+      summary: "Funding Action Needed Notification"
+      description: "Webhook fired when funding action is needed"
       tags:
-        - Funding Notifications
+        - "Funding Notifications"
       parameters:
-        - $ref: '#/components/parameters/associatedFirmId'
-        - $ref: '#/components/parameters/correlationId'
+        - $ref: "#/components/parameters/associatedFirmId"
+        - $ref: "#/components/parameters/correlationId"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/FundingActionNotification'
+              $ref: "#/components/schemas/FundingActionNotification"
             examples:
               fundingNoActionNeededExample:
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440006
-                  policyNumber: P987654321
-                  id: APP-2026-001234
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440006"
+                  policyNumber: "P987654321"
+                  id: "APP-2026-001234"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: true
-                    id: DF-APP-001234
-                  status: inProgress
-                  eventType: applicationStatus.v1.fundingActionNeeded
+                    id: "DF-APP-001234"
+                  status: "IN_PROGRESS"
+                  eventType: "applicationStatus.v1.fundingActionNeeded"
                   notification:
                     isActionNeeded: false
-                    status: inProgress
+                    status: "IN_PROGRESS"
                     startDate: "2026-06-06"
-                    reason: awaitingFundsFromCedingCompany
+                    reason: "AWAITING_FUNDS_FROM_CEDING_COMPANY"
                     sources:
-                      - method: anotherPolicy
-                        type: full1035Exchange
+                      - method: "ANOTHER_POLICY"
+                        type: "full1035Exchange"
                         isActionNeeded: false
-                        anticipatedAmount: 250000.00
-                        status: inProgress
-                        cedingCompanyName: Legacy Life Insurance Co
-                        accountNumber: POL-123456789
+                        anticipatedAmount: 250000
+                        status: "IN_PROGRESS"
+                        cedingCompanyName: "Legacy Life Insurance Co"
+                        accountNumber: "POL-123456789"
               fundingActionNeededExample:
-                summary: Funding action required from ceding carrier
+                summary: "Funding action required from ceding carrier"
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440006
-                  policyNumber: P987654321
-                  id: APP-2026-001234
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440006"
+                  policyNumber: "P987654321"
+                  id: "APP-2026-001234"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: true
-                    id: DF-APP-001234
-                  status: inProgress
-                  eventType: applicationStatus.v1.fundingActionNeeded
+                    id: "DF-APP-001234"
+                  status: "IN_PROGRESS"
+                  eventType: "applicationStatus.v1.fundingActionNeeded"
                   notification:
                     isActionNeeded: true
-                    status: inProgress
+                    status: "IN_PROGRESS"
                     startDate: "2026-06-06"
-                    reason: awaitingFundsFromCedingCompany
+                    reason: "AWAITING_FUNDS_FROM_CEDING_COMPANY"
                     sources:
-                      - method: anotherPolicy
-                        type: full1035Exchange
+                      - method: "ANOTHER_POLICY"
+                        type: "full1035Exchange"
                         isActionNeeded: true
-                        anticipatedAmount: 250000.00
-                        status: inProgress
-                        cedingCompanyName: Legacy Life Insurance Co
-                        accountNumber: POL-123456789
+                        anticipatedAmount: 250000
+                        status: "IN_PROGRESS"
+                        cedingCompanyName: "Legacy Life Insurance Co"
+                        accountNumber: "POL-123456789"
       responses:
         "200":
-          description: Notification received successfully
+          description: "Notification received successfully"
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
         "403":
-          description: Forbidden
-  
+          description: "Forbidden"
   fundingTransferRequestSent:
     post:
-      summary: Funding Transfer Request Sent Notification
-      description: Webhook fired when a funding transfer request is sent
+      summary: "Funding Transfer Request Sent Notification"
+      description: "Webhook fired when a funding transfer request is sent"
       tags:
-        - Transfer Notifications
+        - "Transfer Notifications"
       parameters:
-        - $ref: '#/components/parameters/associatedFirmId'
-        - $ref: '#/components/parameters/correlationId'
+        - $ref: "#/components/parameters/associatedFirmId"
+        - $ref: "#/components/parameters/correlationId"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TransferRequestNotification'
+              $ref: "#/components/schemas/TransferRequestNotification"
             examples:
               fundingTransferRequestSentExample:
-                summary: Transfer request sent to ceding carrier
+                summary: "Transfer request sent to ceding carrier"
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440007
-                  policyNumber: P987654321
-                  id: APP-2026-001234
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440007"
+                  policyNumber: "P987654321"
+                  id: "APP-2026-001234"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: true
-                    id: DF-APP-001234
-                  status: inProgress
-                  eventType: applicationStatus.v1.fundingTransferRequestSent
+                    id: "DF-APP-001234"
+                  status: "IN_PROGRESS"
+                  eventType: "applicationStatus.v1.fundingTransferRequestSent"
                   notification:
                     isActionNeeded: false
-                    status: inProgress
+                    status: "IN_PROGRESS"
                     startDate: "2026-06-07"
                     nextActivityDate: "2026-06-21"
-                    methodOfInitiation: fax
-                    referenceNumber: TRF-2026-004567
-                    note: 1035 exchange transfer request faxed to ceding carrier
+                    methodOfInitiation: "fax"
+                    referenceNumber: "TRF-2026-004567"
+                    note: "1035 exchange transfer request faxed to ceding carrier"
                     sources:
-                      - method: anotherPolicy
-                        type: full1035Exchange
-                        anticipatedAmount: 250000.00
-                        status: inProgress
-                        cedingCompanyName: Legacy Life Insurance Co
-                        accountNumber: POL-123456789
+                      - method: "ANOTHER_POLICY"
+                        type: "full1035Exchange"
+                        anticipatedAmount: 250000
+                        status: "IN_PROGRESS"
+                        cedingCompanyName: "Legacy Life Insurance Co"
+                        accountNumber: "POL-123456789"
       responses:
         "200":
-          description: Notification received successfully
+          description: "Notification received successfully"
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
         "403":
-          description: Forbidden
-  
+          description: "Forbidden"
   fundingSourceTypeUpdated:
     post:
-      summary: Funding Source Type Updated Notification
-      description: Webhook fired when funding source type is determined
+      summary: "Funding Source Type Updated Notification"
+      description: "Webhook fired when funding source type is determined"
       tags:
-        - Funding Notifications
+        - "Funding Notifications"
       parameters:
-        - $ref: '#/components/parameters/associatedFirmId'
-        - $ref: '#/components/parameters/correlationId'
+        - $ref: "#/components/parameters/associatedFirmId"
+        - $ref: "#/components/parameters/correlationId"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SourceTypeNotification'
+              $ref: "#/components/schemas/SourceTypeNotification"
             examples:
               fundingSourceTypeUpdatedExample1:
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440008
-                  policyNumber: P987654321
-                  id: APP-2026-001234
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440008"
+                  policyNumber: "P987654321"
+                  id: "APP-2026-001234"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: true
-                    id: DF-APP-001234
-                  status: inProgress
-                  eventType: applicationStatus.v1.fundingSourceTypeUpdated
+                    id: "DF-APP-001234"
+                  status: "IN_PROGRESS"
+                  eventType: "applicationStatus.v1.fundingSourceTypeUpdated"
                   notification:
                     isActionNeeded: false
-                    status: inProgress
+                    status: "IN_PROGRESS"
                     startDate: "2026-06-08"
                     sources:
-                      - method: anotherPolicy
-                        type: directRollover
-                        anticipatedAmount: 150000.00
-                        status: inProgress
-                        cedingCompanyName: Prior Carrier Inc
-                        accountNumber: IRA-987654321
+                      - method: "ANOTHER_POLICY"
+                        type: "directRollover"
+                        anticipatedAmount: 150000
+                        status: "IN_PROGRESS"
+                        cedingCompanyName: "Prior Carrier Inc"
+                        accountNumber: "IRA-987654321"
               fundingSourceTypeUpdatedExampl2:
-                summary: Funding source type determined for transfer
+                summary: "Funding source type determined for transfer"
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440008
-                  policyNumber: P987654321
-                  id: APP-2026-001234
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440008"
+                  policyNumber: "P987654321"
+                  id: "APP-2026-001234"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: true
-                    id: DF-APP-001234
-                  status: inProgress
-                  eventType: applicationStatus.v1.fundingSourceTypeUpdated
+                    id: "DF-APP-001234"
+                  status: "IN_PROGRESS"
+                  eventType: "applicationStatus.v1.fundingSourceTypeUpdated"
                   notification:
                     isActionNeeded: false
-                    status: inProgress
+                    status: "IN_PROGRESS"
                     startDate: "2026-06-08"
                     sources:
-                      - method: anotherPolicy
-                        type: directRollover
-                        anticipatedAmount: 150000.00
-                        status: inProgress
-                        cedingCompanyName: Prior Carrier Inc
-                        accountNumber: IRA-987654321
+                      - method: "ANOTHER_POLICY"
+                        type: "directRollover"
+                        anticipatedAmount: 150000
+                        status: "IN_PROGRESS"
+                        cedingCompanyName: "Prior Carrier Inc"
+                        accountNumber: "IRA-987654321"
       responses:
         "200":
-          description: Notification received successfully
+          description: "Notification received successfully"
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
         "403":
-          description: Forbidden
-  
+          description: "Forbidden"
   fundingTransferFollowedUp:
     post:
-      summary: New Funding Follow-Up Notification
-      description: Webhook fired when a new follow-up action is created
+      summary: "New Funding Follow-Up Notification"
+      description: "Webhook fired when a new follow-up action is created"
       tags:
-        - Follow-Up Notifications
+        - "Follow-Up Notifications"
       parameters:
-        - $ref: '#/components/parameters/associatedFirmId'
-        - $ref: '#/components/parameters/correlationId'
+        - $ref: "#/components/parameters/associatedFirmId"
+        - $ref: "#/components/parameters/correlationId"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewFollowUpNotification'
+              $ref: "#/components/schemas/NewFollowUpNotification"
             examples:
               fundingTransferFollowedUpExample1:
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440009
-                  policyNumber: P987654321
-                  id: APP-2026-001234
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440009"
+                  policyNumber: "P987654321"
+                  id: "APP-2026-001234"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: true
-                    id: DF-APP-001234
-                  status: inProgress
-                  eventType: applicationStatus.v1.fundingTransferFollowedUp
+                    id: "DF-APP-001234"
+                  status: "IN_PROGRESS"
+                  eventType: "applicationStatus.v1.fundingTransferFollowedUp"
                   notification:
                     isActionNeeded: true
-                    status: inProgress
+                    status: "IN_PROGRESS"
                     startDate: "2026-06-09"
                     nextActivityDate: "2026-06-16"
                     transferSentDate: "2026-06-07"
-                    note: Follow-up call scheduled with ceding carrier
+                    note: "Follow-up call scheduled with ceding carrier"
                     sources:
-                      - method: anotherPolicy
-                        type: full1035Exchange
-                        anticipatedAmount: 250000.00
-                        status: inProgress
-                        cedingCompanyName: Legacy Life Insurance Co
-                        accountNumber: POL-123456789
+                      - method: "ANOTHER_POLICY"
+                        type: "full1035Exchange"
+                        anticipatedAmount: 250000
+                        status: "IN_PROGRESS"
+                        cedingCompanyName: "Legacy Life Insurance Co"
+                        accountNumber: "POL-123456789"
               fundingTransferFollowedUpExample:
-                summary: Follow-up action created for pending transfer
+                summary: "Follow-up action created for pending transfer"
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440009
-                  policyNumber: P987654321
-                  id: APP-2026-001234
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440009"
+                  policyNumber: "P987654321"
+                  id: "APP-2026-001234"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: true
-                    id: DF-APP-001234
-                  status: inProgress
-                  eventType: applicationStatus.v1.fundingTransferFollowedUp
+                    id: "DF-APP-001234"
+                  status: "IN_PROGRESS"
+                  eventType: "applicationStatus.v1.fundingTransferFollowedUp"
                   notification:
                     isActionNeeded: true
-                    status: inProgress
+                    status: "IN_PROGRESS"
                     startDate: "2026-06-09"
                     nextActivityDate: "2026-06-16"
                     transferSentDate: "2026-06-07"
-                    note: Follow-up call scheduled with ceding carrier
+                    note: "Follow-up call scheduled with ceding carrier"
                     sources:
-                      - method: anotherPolicy
-                        type: full1035Exchange
-                        anticipatedAmount: 250000.00
-                        status: inProgress
-                        cedingCompanyName: Legacy Life Insurance Co
-                        accountNumber: POL-123456789
+                      - method: "ANOTHER_POLICY"
+                        type: "full1035Exchange"
+                        anticipatedAmount: 250000
+                        status: "IN_PROGRESS"
+                        cedingCompanyName: "Legacy Life Insurance Co"
+                        accountNumber: "POL-123456789"
       responses:
         "200":
-          description: Notification received successfully
+          description: "Notification received successfully"
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
         "403":
-          description: Forbidden
-  
+          description: "Forbidden"
   fundingReceived:
     post:
-      summary: Funding Received Notification
-      description: Webhook fired when funding is received
+      summary: "Funding Received Notification"
+      description: "Webhook fired when funding is received"
       tags:
-        - Funding Notifications
+        - "Funding Notifications"
       parameters:
-        - $ref: '#/components/parameters/associatedFirmId'
-        - $ref: '#/components/parameters/correlationId'
+        - $ref: "#/components/parameters/associatedFirmId"
+        - $ref: "#/components/parameters/correlationId"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/FundingReceivedNotification'
+              $ref: "#/components/schemas/FundingReceivedNotification"
             examples:
               fundingReceivedExample1:
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440010
-                  policyNumber: P987654321
-                  id: APP-2026-001234
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440010"
+                  policyNumber: "P987654321"
+                  id: "APP-2026-001234"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: true
-                    id: DF-APP-001234
-                  status: inProgress
-                  eventType: applicationStatus.v1.fundingReceived
+                    id: "DF-APP-001234"
+                  status: "IN_PROGRESS"
+                  eventType: "applicationStatus.v1.fundingReceived"
                   notification:
                     isActionNeeded: false
-                    status: completed
+                    status: "COMPLETED"
                     startDate: "2026-06-06"
-                    anticipatedAmount: 250000.00
-                    receivedAmount: 240000.00
+                    anticipatedAmount: 250000
+                    receivedAmount: 240000
                     receivedDate: "2026-06-15"
                     sources:
-                      - method: anotherPolicy
-                        type: full1035Exchange
-                        anticipatedAmount: 250000.00
-                        status: complete
-                        cedingCompanyName: Legacy Life Insurance Co
-                        accountNumber: POL-123456789
+                      - method: "ANOTHER_POLICY"
+                        type: "full1035Exchange"
+                        anticipatedAmount: 250000
+                        status: "COMPLETE"
+                        cedingCompanyName: "Legacy Life Insurance Co"
+                        accountNumber: "POL-123456789"
               fundingReceivedExample:
-                summary: Funding received and policy effective
+                summary: "Funding received and policy effective"
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440010
-                  policyNumber: P987654321
-                  id: APP-2026-001234
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440010"
+                  policyNumber: "P987654321"
+                  id: "APP-2026-001234"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: true
-                    id: DF-APP-001234
-                  status: inProgress
-                  eventType: applicationStatus.v1.fundingReceived
+                    id: "DF-APP-001234"
+                  status: "IN_PROGRESS"
+                  eventType: "applicationStatus.v1.fundingReceived"
                   notification:
                     isActionNeeded: false
-                    status: completed
+                    status: "COMPLETED"
                     startDate: "2026-06-06"
-                    anticipatedAmount: 250000.00
-                    receivedAmount: 240000.00
+                    anticipatedAmount: 250000
+                    receivedAmount: 240000
                     receivedDate: "2026-06-15"
                     sources:
-                      - method: anotherPolicy
-                        type: full1035Exchange
-                        anticipatedAmount: 250000.00
-                        status: complete
-                        cedingCompanyName: Legacy Life Insurance Co
-                        accountNumber: POL-123456789
+                      - method: "ANOTHER_POLICY"
+                        type: "full1035Exchange"
+                        anticipatedAmount: 250000
+                        status: "COMPLETE"
+                        cedingCompanyName: "Legacy Life Insurance Co"
+                        accountNumber: "POL-123456789"
       responses:
         "200":
-          description: Notification received successfully
+          description: "Notification received successfully"
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
         "403":
-          description: Forbidden
-  
+          description: "Forbidden"
   applicationCompleted:
     post:
-      summary: Application Completed Notification
-      description: Webhook fired when an application is completed
+      summary: "Application Completed Notification"
+      description: "Webhook fired when an application is completed"
       tags:
-        - Application Notifications
+        - "Application Notifications"
       parameters:
-        - $ref: '#/components/parameters/associatedFirmId'
-        - $ref: '#/components/parameters/correlationId'
+        - $ref: "#/components/parameters/associatedFirmId"
+        - $ref: "#/components/parameters/correlationId"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ApplicationCompletedNotification'
+              $ref: "#/components/schemas/ApplicationCompletedNotification"
             examples:
               applicationCompletedExample1:
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440011
-                  policyNumber: P987654321
-                  id: APP-2026-001234
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440011"
+                  policyNumber: "P987654321"
+                  id: "APP-2026-001234"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: true
-                    id: DF-APP-001234
-                  status: completed
-                  eventType: applicationStatus.v1.applicationCompleted
+                    id: "DF-APP-001234"
+                  status: "COMPLETED"
+                  eventType: "applicationStatus.v1.applicationCompleted"
                   notification:
                     isActionNeeded: false
                     startDate: "2026-06-02"
-                    note: Policy issued and delivered to owner
+                    note: "Policy issued and delivered to owner"
                     delivery:
                       sentDate: "2026-06-20"
-                      method: fedex
+                      method: "FEDEX"
                       trackingNumber: "7946 1234 5678"
               applicationCompletedExample:
-                summary: Application completed and policy delivered
+                summary: "Application completed and policy delivered"
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440011
-                  policyNumber: P987654321
-                  id: APP-2026-001234
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440011"
+                  policyNumber: "P987654321"
+                  id: "APP-2026-001234"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: true
-                    id: DF-APP-001234
-                  status: completed
-                  eventType: applicationStatus.v1.applicationCompleted
+                    id: "DF-APP-001234"
+                  status: "COMPLETED"
+                  eventType: "applicationStatus.v1.applicationCompleted"
                   notification:
                     isActionNeeded: false
                     startDate: "2026-06-02"
-                    note: Policy issued and delivered to owner
+                    note: "Policy issued and delivered to owner"
                     delivery:
                       sentDate: "2026-06-20"
-                      method: fedex
+                      method: "FEDEX"
                       trackingNumber: "7946 1234 5678"
       responses:
         "200":
-          description: Notification received successfully
+          description: "Notification received successfully"
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
         "403":
-          description: Forbidden
-  
+          description: "Forbidden"
   applicationCancelled:
     post:
-      summary: Application Cancelled Notification
-      description: Webhook fired when an application is cancelled
+      summary: "Application Cancelled Notification"
+      description: "Webhook fired when an application is cancelled"
       tags:
-        - Application Notifications
+        - "Application Notifications"
       parameters:
-        - $ref: '#/components/parameters/associatedFirmId'
-        - $ref: '#/components/parameters/correlationId'
+        - $ref: "#/components/parameters/associatedFirmId"
+        - $ref: "#/components/parameters/correlationId"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ApplicationCancelledNotification'
+              $ref: "#/components/schemas/ApplicationCancelledNotification"
             examples:
               applicationCancelledExample1:
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440012
-                  policyNumber: P987654321
-                  id: APP-2026-001234
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440012"
+                  policyNumber: "P987654321"
+                  id: "APP-2026-001234"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: true
-                    id: DF-APP-001234
-                  status: cancelled
-                  eventType: applicationStatus.v1.applicationCancelled
+                    id: "DF-APP-001234"
+                  status: "CANCELLED"
+                  eventType: "applicationStatus.v1.applicationCancelled"
                   notification:
-                    initiator: client
+                    initiator: "CLIENT"
                     cancelledDate: "2026-06-18"
-                    reason: clientRequest
-                    notes: Client elected to pursue alternative product
+                    reason: "CLIENT_REQUEST"
+                    notes: "Client elected to pursue alternative product"
               applicationCancelledExample2:
-                summary: Application cancelled by client request
+                summary: "Application cancelled by client request"
                 value:
-                  eventId: evt-550e8400-e29b-41d4-a716-446655440012
-                  policyNumber: P987654321
-                  id: APP-2026-001234
+                  eventId: "evt-550e8400-e29b-41d4-a716-446655440012"
+                  policyNumber: "P987654321"
+                  id: "APP-2026-001234"
                   applicationOrigin:
-                    platform: DigitalFirst
+                    platform: "DigitalFirst"
                     isElectronic: true
-                    id: DF-APP-001234
-                  status: cancelled
-                  eventType: applicationStatus.v1.applicationCancelled
+                    id: "DF-APP-001234"
+                  status: "CANCELLED"
+                  eventType: "applicationStatus.v1.applicationCancelled"
                   notification:
-                    initiator: producer
+                    initiator: "PRODUCER"
                     cancelledDate: "2026-06-18"
-                    reason: clientRequest
-                    notes: Client elected to pursue alternative product
+                    reason: "CLIENT_REQUEST"
+                    notes: "Client elected to pursue alternative product"
       responses:
         "200":
-          description: Notification received successfully
+          description: "Notification received successfully"
           headers:
             correlationId:
-              $ref: '#/components/headers/correlationId'
+              $ref: "#/components/headers/correlationId"
             X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+              $ref: "#/components/headers/X-Api-Version"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
         "403":
-          description: Forbidden
-
-
+          description: "Forbidden"
 components:
   headers:
     correlationId:
-      description: Correlation ID echoed from the request, if supplied
+      description: "Correlation ID echoed from the request, if supplied"
       schema:
-        type: string
+        type: "string"
     X-Api-Version:
-      description: Minor/patch version of the API that served this response
+      description: "Minor/patch version of the API that served this response"
       schema:
-        type: string
+        type: "string"
   parameters:
-      correlationId:
-        name: correlationId
-        description: Optional client-supplied identifier to trace the request.
-        in: header
-        required: false
-        schema:
-          type: string
-      associatedFirmId:
-        name: associatedFirmId
-        description: Optional query parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms.
-        in: query
-        required: false
-        schema:
-          type: string
-          minLength: 1
-          maxLength: 65
-      startTime:
-        name: startTime
-        description: Start Date/Time of data to send for reconciliation
-        in: query
-        required: true
-        schema:
-          type: string
-          format: date-time
-      endTime:
-        name: endTime
-        description: End Date/Time of data to send for reconciliation
-        in: query
-        required: true
-        schema: 
-          type: string
-          format: date-time
-      eventId:
-        name: eventId
-        description: Globally unique identifier for this notification event
-        in: path
-        required: true
-        schema: 
-          type: string
-      orderBy:
-        name: orderBy
-        description: 'Field name used to order resources in the result set. Ordering by policyNumber provides the most stability across pages, because it is unique and stable; statusDate is not unique and may reorder between requests.'
-        in: query
-        required: false
-        schema:
-          type: string
-          enum: [policyNumber, status, statusDate]
-          default: statusDate
-      sortOrder:
-        name: sortOrder
-        description: Whether resources are ordered in ascending (asc) or descending (desc) order.
-        in: query
-        required: false
-        schema:
-          type: string
-          enum: [asc, desc]
-          default: desc
-      offset:
-        name: offset
-        description: Zero-based index of the first resource to return, matching offset in the response metadata.
-        in: query
-        required: false
-        schema:
-          type: integer
-          default: 0
-          minimum: 0
-      limit:
-        name: limit
-        description: Maximum number of resources to return per page. The endpoint may return fewer resources than requested.
-        in: query
-        required: false
-        schema:
-          type: integer
-          default: 100
-          minimum: 1
-          maximum: 1000
-
-  ###### Payload schemas #######
+    correlationId:
+      name: "correlationId"
+      description: "Optional client-supplied identifier to trace the request."
+      in: "header"
+      required: false
+      schema:
+        type: "string"
+    associatedFirmId:
+      name: "associatedFirmId"
+      description: "Optional query parameter for the associated firm ID used to further identify a firm who is doing business on behalf of multiple distribution firms."
+      in: "query"
+      required: false
+      schema:
+        type: "string"
+        minLength: 1
+        maxLength: 65
+    startTime:
+      name: "startTime"
+      description: "Start Date/Time of data to send for reconciliation"
+      in: "query"
+      required: true
+      schema:
+        type: "string"
+        format: "date-time"
+    endTime:
+      name: "endTime"
+      description: "End Date/Time of data to send for reconciliation"
+      in: "query"
+      required: true
+      schema:
+        type: "string"
+        format: "date-time"
+    eventId:
+      name: "eventId"
+      description: "Globally unique identifier for this notification event"
+      in: "path"
+      required: true
+      schema:
+        type: "string"
+    orderBy:
+      name: "orderBy"
+      description: "Field name used to order resources in the result set. Ordering by policyNumber provides the most stability across pages, because it is unique and stable; statusDate is not unique and may reorder between requests."
+      in: "query"
+      required: false
+      schema:
+        type: "string"
+        enum:
+          - "POLICY_NUMBER"
+          - "STATUS"
+          - "STATUS_DATE"
+        default: "STATUS_DATE"
+    sortOrder:
+      name: "sortOrder"
+      description: "Whether resources are ordered in ascending (asc) or descending (desc) order."
+      in: "query"
+      required: false
+      schema:
+        type: "string"
+        enum:
+          - "ASC"
+          - "DESC"
+        default: "DESC"
+    offset:
+      name: "offset"
+      description: "Zero-based index of the first resource to return, matching offset in the response metadata."
+      in: "query"
+      required: false
+      schema:
+        type: "integer"
+        default: 0
+        minimum: 0
+    limit:
+      name: "limit"
+      description: "Maximum number of resources to return per page. The endpoint may return fewer resources than requested."
+      in: "query"
+      required: false
+      schema:
+        type: "integer"
+        default: 100
+        minimum: 1
+        maximum: 1000
   schemas:
     sectionReviewStatus:
-      type: string
+      type: "string"
       enum:
-      - awaitingReview
-      - inProgress
-      - completed
+        - "AWAITING_REVIEW"
+        - "IN_PROGRESS"
+        - "COMPLETED"
     taxId:
-      description: Party’s tax identification number
-      type: string
+      description: "Party’s tax identification number"
+      type: "string"
       maxLength: 9
-
     ApplicationReceivedNotification:
-      description: Schema for application received notification data
-      required: [eventType, notification]
+      description: "Schema for application received notification data"
+      required:
+        - "eventType"
+        - "notification"
       allOf:
-        - $ref: '#/components/schemas/notificationMetadata'
-        - type: object
+        - $ref: "#/components/schemas/notificationMetadata"
+        - type: "object"
           properties:
             eventType:
-              description: Identifies the event type or triggered activity being communicated for push notifications
-              type: string
-              const: applicationStatus.v1.applicationReceived
+              description: "Identifies the event type or triggered activity being communicated for push notifications"
+              type: "string"
+              const: "applicationStatus.v1.applicationReceived"
             notification:
-              description: Notification
-              required: [cusip]
-              type: object
+              description: "Notification"
+              required:
+                - "cusip"
+              type: "object"
               properties:
                 cusip:
-                  description: CUSIP
-                  $ref: '#/components/schemas/cusip'
+                  description: "CUSIP"
+                  $ref: "#/components/schemas/cusip"
                 isActionNeeded:
-                  description: Indicator that at least one section requires action
-                  type: boolean
+                  description: "Indicator that at least one section requires action"
+                  type: "boolean"
                 actionSections:
-                  description: Sections needing action
-                  $ref: '#/components/schemas/actionSections'
+                  description: "Sections needing action"
+                  $ref: "#/components/schemas/actionSections"
                 productName:
-                  description: Product name
-                  type: string
+                  description: "Product name"
+                  type: "string"
                   maxLength: 180
                 isQualified:
-                  description: Is policy tax plan qualified?
-                  type: boolean
+                  description: "Is policy tax plan qualified?"
+                  type: "boolean"
                 producers:
-                  description: List of producer records associated with the policy
-                  $ref: '#/components/schemas/Producers'
+                  description: "List of producer records associated with the policy"
+                  $ref: "#/components/schemas/Producers"
                 parties:
-                  description: List of individuals or entities related to the policy
-                  type: array
+                  description: "List of individuals or entities related to the policy"
+                  type: "array"
                   minItems: 1
                   items:
                     $ref: "#/components/schemas/Party"
                 signedDate:
-                  description: Signed date of policy
-                  type: string
-                  format: date
+                  description: "Signed date of policy"
+                  type: "string"
+                  format: "date"
                 receivedDate:
-                  description: Received date of policy
-                  type: string
-                  format: date
+                  description: "Received date of policy"
+                  type: "string"
+                  format: "date"
                 rateEffectiveDate:
-                  description: Rate effective date of policy
-                  type: string
-                  format: date
+                  description: "Rate effective date of policy"
+                  type: "string"
+                  format: "date"
                 fundsHeldUntilDate:
-                  description: Funds held until date
-                  type: string
-                  format: date
+                  description: "Funds held until date"
+                  type: "string"
+                  format: "date"
               if:
                 properties:
                   isActionNeeded:
                     const: true
-                required: [isActionNeeded]
+                required:
+                  - "isActionNeeded"
               then:
-                required: [actionSections]
+                required:
+                  - "actionSections"
               else: true
     CanSellNotification:
-      description: Schema for can sell notification data
-      required: [eventType, notification]
+      description: "Schema for can sell notification data"
+      required:
+        - "eventType"
+        - "notification"
       allOf:
-        - $ref: '#/components/schemas/notificationMetadata'
-        - type: object
+        - $ref: "#/components/schemas/notificationMetadata"
+        - type: "object"
           properties:
             eventType:
-              description: Identifies the event type or triggered activity being communicated for push notifications
-              type: string
-              const: applicationStatus.v1.canSellActionNeeded
+              description: "Identifies the event type or triggered activity being communicated for push notifications"
+              type: "string"
+              const: "applicationStatus.v1.canSellActionNeeded"
             notification:
-              description: Notification
+              description: "Notification"
               allOf:
-                - $ref: '#/components/schemas/CanSellValidation'
-    
+                - $ref: "#/components/schemas/CanSellValidation"
     SuitabilityActionNotification:
-      description: Schema for suitability notification data
-      type: object
-      required: [eventType, notification]
+      description: "Schema for suitability notification data"
+      type: "object"
+      required:
+        - "eventType"
+        - "notification"
       allOf:
-        - $ref: '#/components/schemas/notificationMetadata'
-        - type: object
+        - $ref: "#/components/schemas/notificationMetadata"
+        - type: "object"
           properties:
             eventType:
-              description: Identifies the event type or triggered activity being communicated for push notifications
-              type: string
-              const: applicationStatus.v1.suitabilityActionNeeded
+              description: "Identifies the event type or triggered activity being communicated for push notifications"
+              type: "string"
+              const: "applicationStatus.v1.suitabilityActionNeeded"
             notification:
-              description: Notification
+              description: "Notification"
               allOf:
-                - $ref: '#/components/schemas/Suitability'
-    
+                - $ref: "#/components/schemas/Suitability"
     SuitabilityDecisionNotification:
-      description: Schema for suitability decision notification data
-      required: [eventType]
+      description: "Schema for suitability decision notification data"
+      required:
+        - "eventType"
       allOf:
-        - $ref: '#/components/schemas/notificationMetadata'
-        - type: object
+        - $ref: "#/components/schemas/notificationMetadata"
+        - type: "object"
           properties:
             eventType:
-              description: Identifies the event type or triggered activity being communicated for push notifications
-              type: string
-              const: applicationStatus.v1.suitabilityApproved
+              description: "Identifies the event type or triggered activity being communicated for push notifications"
+              type: "string"
+              const: "applicationStatus.v1.suitabilityApproved"
             notification:
-              description: Notification
-              required: [status, endDate, isApproved]
+              description: "Notification"
+              required:
+                - "status"
+                - "endDate"
+                - "isApproved"
               allOf:
-                - $ref: '#/components/schemas/Suitability'
+                - $ref: "#/components/schemas/Suitability"
               properties:
                 note:
-                  description: Note
-                  type: string
+                  description: "Note"
+                  type: "string"
                   minLength: 1
                   maxLength: 2000
                 isApproved:
-                  description: If status is completed, this field denotes whether suitability was approved or declined
-                  type: boolean
-    
+                  description: "If status is completed, this field denotes whether suitability was approved or declined"
+                  type: "boolean"
     DocReviewNotification:
-      description: Schema for document review notification data
-      required: [eventType, notification]
+      description: "Schema for document review notification data"
+      required:
+        - "eventType"
+        - "notification"
       allOf:
-        - $ref: '#/components/schemas/notificationMetadata'
-        - type: object
+        - $ref: "#/components/schemas/notificationMetadata"
+        - type: "object"
           properties:
             eventType:
-              description: Identifies the event type or triggered activity being communicated for push notifications
-              type: string
-              const: applicationStatus.v1.documentReviewActionNeeded
+              description: "Identifies the event type or triggered activity being communicated for push notifications"
+              type: "string"
+              const: "applicationStatus.v1.documentReviewActionNeeded"
             notification:
-              description: Notification
+              description: "Notification"
               allOf:
-                - $ref: '#/components/schemas/DocumentReview'
-                - type: object
-    
+                - $ref: "#/components/schemas/DocumentReview"
+                - type: "object"
     FundingActionNotification:
-      description: Schema for funding action notification data
-      required: [eventType, notification]
+      description: "Schema for funding action notification data"
+      required:
+        - "eventType"
+        - "notification"
       allOf:
-        - $ref: '#/components/schemas/notificationMetadata'
-        - type: object
+        - $ref: "#/components/schemas/notificationMetadata"
+        - type: "object"
           properties:
             eventType:
-              description: Identifies the event type or triggered activity being communicated for push notifications
-              type: string
-              const: applicationStatus.v1.fundingActionNeeded
+              description: "Identifies the event type or triggered activity being communicated for push notifications"
+              type: "string"
+              const: "applicationStatus.v1.fundingActionNeeded"
             notification:
-              description: Notification
+              description: "Notification"
               allOf:
-                - $ref: '#/components/schemas/TransferNotificationBase'
+                - $ref: "#/components/schemas/TransferNotificationBase"
               properties:
                 reason:
-                  description: Reason for cancellation
-                  type: string
-                  enum: [contactTheCarrier, fundingDiscrepancy, nigoAtCedingCarrier, noFundsReceivedCash, pendingReg60, other]
-    
+                  description: "Reason for cancellation"
+                  type: "string"
+                  enum:
+                    - "CONTACT_THE_CARRIER"
+                    - "FUNDING_DISCREPANCY"
+                    - "NIGO_AT_CEDING_CARRIER"
+                    - "NO_FUNDS_RECEIVED_CASH"
+                    - "PENDING_REG60"
+                    - "OTHER"
     TransferRequestNotification:
-      description: Schema for transfer notification data
-      required: [eventType, notification]
+      description: "Schema for transfer notification data"
+      required:
+        - "eventType"
+        - "notification"
       allOf:
-        - $ref: '#/components/schemas/notificationMetadata'
-        - type: object
+        - $ref: "#/components/schemas/notificationMetadata"
+        - type: "object"
           properties:
             eventType:
-              description: Identifies the event type or triggered activity being communicated for push notifications
-              type: string
-              const: applicationStatus.v1.fundingTransferRequestSent
+              description: "Identifies the event type or triggered activity being communicated for push notifications"
+              type: "string"
+              const: "applicationStatus.v1.fundingTransferRequestSent"
             notification:
-              description: Notification
+              description: "Notification"
               allOf:
-                - $ref: '#/components/schemas/TransferNotificationBase'
+                - $ref: "#/components/schemas/TransferNotificationBase"
               properties:
                 nextActivityDate:
-                  description: Next activity date
-                  type: string
-                  format: date
+                  description: "Next activity date"
+                  type: "string"
+                  format: "date"
                 note:
-                  description: Note
-                  type: string
+                  description: "Note"
+                  type: "string"
                   minLength: 1
                   maxLength: 2000
                 methodOfInitiation:
-                  description: Initiation method
-                  type: string
-                  enum: [fax, email, mail, replacement]
+                  description: "Initiation method"
+                  type: "string"
+                  enum:
+                    - "FAX"
+                    - "EMAIL"
+                    - "MAIL"
+                    - "REPLACEMENT"
                 referenceNumber:
-                  description: Reference number
-                  type: string        
-    
+                  description: "Reference number"
+                  type: "string"
     SourceTypeNotification:
-      description: Schema for source type notification data
-      required: [eventType, notification]
+      description: "Schema for source type notification data"
+      required:
+        - "eventType"
+        - "notification"
       allOf:
-        - $ref: '#/components/schemas/notificationMetadata'
-        - type: object
+        - $ref: "#/components/schemas/notificationMetadata"
+        - type: "object"
           properties:
             eventType:
-              description: Identifies the event type or triggered activity being communicated for push notifications
-              type: string
-              const: applicationStatus.v1.fundingSourceTypeUpdated
+              description: "Identifies the event type or triggered activity being communicated for push notifications"
+              type: "string"
+              const: "applicationStatus.v1.fundingSourceTypeUpdated"
             sourceId:
-              description: Unique Id to identify the funding
-              type: string
+              description: "Unique Id to identify the funding"
+              type: "string"
             notification:
-              description: Notification
+              description: "Notification"
               allOf:
-                - $ref: '#/components/schemas/TransferNotificationBase'
-    
+                - $ref: "#/components/schemas/TransferNotificationBase"
     NewFollowUpNotification:
-      description: Schema for new follow up notification data
-      required: [eventType, notification]
+      description: "Schema for new follow up notification data"
+      required:
+        - "eventType"
+        - "notification"
       allOf:
-        - $ref: '#/components/schemas/notificationMetadata'
-        - type: object
+        - $ref: "#/components/schemas/notificationMetadata"
+        - type: "object"
           properties:
             eventType:
-              description: Identifies the event type or triggered activity being communicated for push notifications
-              type: string
-              const: applicationStatus.v1.fundingTransferFollowedUp
+              description: "Identifies the event type or triggered activity being communicated for push notifications"
+              type: "string"
+              const: "applicationStatus.v1.fundingTransferFollowedUp"
             notification:
-              description: Notification
-              type: object
+              description: "Notification"
+              type: "object"
               allOf:
-                - $ref: '#/components/schemas/TransferNotificationBase'
+                - $ref: "#/components/schemas/TransferNotificationBase"
               properties:
                 nextActivityDate:
-                  description: Next activity date
-                  type: string
-                  format: date
+                  description: "Next activity date"
+                  type: "string"
+                  format: "date"
                 note:
-                  description: Note
-                  type: string
+                  description: "Note"
+                  type: "string"
                   minLength: 1
                   maxLength: 2000
                 transferSentDate:
-                  description: Date upon which the transfer request was sent from the receiving to the ceding carrier.
-                  type: string
-                  format: date
-    
+                  description: "Date upon which the transfer request was sent from the receiving to the ceding carrier."
+                  type: "string"
+                  format: "date"
     FundingReceivedNotification:
-      description: Schema for funding received notification data
-      required: [eventType, notification]
+      description: "Schema for funding received notification data"
+      required:
+        - "eventType"
+        - "notification"
       allOf:
-        - $ref: '#/components/schemas/notificationMetadata'
-        - type: object
+        - $ref: "#/components/schemas/notificationMetadata"
+        - type: "object"
           properties:
             eventType:
-              description: Identifies the event type or triggered activity being communicated for push notifications
-              type: string
-              const: applicationStatus.v1.fundingReceived
-            notification: 
-              description: Notification
-              type: object                 
+              description: "Identifies the event type or triggered activity being communicated for push notifications"
+              type: "string"
+              const: "applicationStatus.v1.fundingReceived"
+            notification:
+              description: "Notification"
+              type: "object"
               allOf:
-                - $ref: '#/components/schemas/TransferNotificationBase'
+                - $ref: "#/components/schemas/TransferNotificationBase"
               properties:
                 receivedAmount:
-                  description: Received amount
-                  type: number
-                  format: float
+                  description: "Received amount"
+                  type: "number"
+                  format: "float"
                 receivedDate:
-                  description: Received date of policy
-                  type: string
-                  format: date
-    
+                  description: "Received date of policy"
+                  type: "string"
+                  format: "date"
     ApplicationCompletedNotification:
-      description: Schema for application completed notification data
-      required: [eventType, notification]
+      description: "Schema for application completed notification data"
+      required:
+        - "eventType"
+        - "notification"
       allOf:
-        - $ref: '#/components/schemas/notificationMetadata'
-        - type: object
+        - $ref: "#/components/schemas/notificationMetadata"
+        - type: "object"
           properties:
             eventType:
-                description: Identifies the event type or triggered activity being communicated for push notifications
-                type: string
-                const: applicationStatus.v1.applicationCompleted
+              description: "Identifies the event type or triggered activity being communicated for push notifications"
+              type: "string"
+              const: "applicationStatus.v1.applicationCompleted"
             notification:
-              description: Notification
-              type: object
+              description: "Notification"
+              type: "object"
               properties:
                 isActionNeeded:
-                  description: Indicator that at least one section requires action
-                  type: boolean
+                  description: "Indicator that at least one section requires action"
+                  type: "boolean"
                 startDate:
-                  description: Start date
-                  type: string
-                  format: date
+                  description: "Start date"
+                  type: "string"
+                  format: "date"
                 note:
-                  description: Note
-                  type: string
+                  description: "Note"
+                  type: "string"
                   minLength: 1
                   maxLength: 2000
                 delivery:
-                  description: Pertains to delivery of the issued policy/contract
-                  type: object
+                  description: "Pertains to delivery of the issued policy/contract"
+                  type: "object"
                   properties:
                     sentDate:
-                      description: Delivery sent date
-                      type: string
-                      format: date
+                      description: "Delivery sent date"
+                      type: "string"
+                      format: "date"
                     method:
-                      description: Delivery method
-                      type: string
-                      enum: [fedex, ups, electronicDelivery, handDelivery, usps]
+                      description: "Delivery method"
+                      type: "string"
+                      enum:
+                        - "FEDEX"
+                        - "UPS"
+                        - "ELECTRONIC_DELIVERY"
+                        - "HAND_DELIVERY"
+                        - "USPS"
                     trackingNumber:
-                      description: Delivery tracking number
-                      type: string
+                      description: "Delivery tracking number"
+                      type: "string"
                       minLength: 1
                       maxLength: 65
-    
     ApplicationCancelledNotification:
-      description: Schema for application cancelled notification data
-      required: [eventType, notification]
+      description: "Schema for application cancelled notification data"
+      required:
+        - "eventType"
+        - "notification"
       allOf:
-        - $ref: '#/components/schemas/notificationMetadata'
-        - type: object
+        - $ref: "#/components/schemas/notificationMetadata"
+        - type: "object"
           properties:
             eventType:
-              description: Identifies the event type or triggered activity being communicated for push notifications
-              type: string
-              const: applicationStatus.v1.applicationCancelled
+              description: "Identifies the event type or triggered activity being communicated for push notifications"
+              type: "string"
+              const: "applicationStatus.v1.applicationCancelled"
             notification:
-              description: Notification
-              required: [cancelledDate]
+              description: "Notification"
+              required:
+                - "cancelledDate"
               properties:
                 initiator:
-                  description: Who initiated cancellation
-                  type: string
-                  enum: [producer, carrier, client, backOffice]
+                  description: "Who initiated cancellation"
+                  type: "string"
+                  enum:
+                    - "PRODUCER"
+                    - "CARRIER"
+                    - "CLIENT"
+                    - "BACK_OFFICE"
                 cancelledDate:
-                  description: Cancellation date
-                  type: string
-                  format: date
+                  description: "Cancellation date"
+                  type: "string"
+                  format: "date"
                 reason:
-                  description: Reason for cancellation
-                  type: string  
-                  enum:     
-                    - clientRequest
-                    - ageOut
-                    - duplicate
-                    - policyCannotBeVerified
-                    - addedInError
-                    - suitabilityDecline
-                    - notInGoodOrder
-                    - notTaken
-                    - productTraining
-                    - reg60Decline
-                    - NIGO
-                    - staleDated
-                    - suitDeclined
+                  description: "Reason for cancellation"
+                  type: "string"
+                  enum:
+                    - "CLIENT_REQUEST"
+                    - "AGE_OUT"
+                    - "DUPLICATE"
+                    - "POLICY_CANNOT_BE_VERIFIED"
+                    - "ADDED_IN_ERROR"
+                    - "SUITABILITY_DECLINE"
+                    - "NOT_IN_GOOD_ORDER"
+                    - "NOT_TAKEN"
+                    - "PRODUCT_TRAINING"
+                    - "REG60_DECLINE"
+                    - "NIGO"
+                    - "STALE_DATED"
+                    - "SUIT_DECLINED"
                 notes:
-                  description: Additional notes regarding the cancellation
-                  type: string
+                  description: "Additional notes regarding the cancellation"
+                  type: "string"
                   minLength: 1
                   maxLength: 2000
-
     TransferNotificationBase:
-      description: Schema for policy funding data
-      type: object
-      required: [isActionNeeded, status]  
+      description: "Schema for policy funding data"
+      type: "object"
+      required:
+        - "isActionNeeded"
+        - "status"
       properties:
         actionSections:
-          description: Sections needing action
-          $ref: '#/components/schemas/actionSections'
+          description: "Sections needing action"
+          $ref: "#/components/schemas/actionSections"
         startDate:
-          description: Start date
-          type: string
-          format: date
+          description: "Start date"
+          type: "string"
+          format: "date"
         isActionNeeded:
-          description: Indicator that at least one section requires action
-          type: boolean
+          description: "Indicator that at least one section requires action"
+          type: "boolean"
         status:
-          description: Application status
+          description: "Application status"
           allOf:
-          - $ref: '#/components/schemas/sectionReviewStatus'
+            - $ref: "#/components/schemas/sectionReviewStatus"
         note:
-          description: Note
-          type: string
+          description: "Note"
+          type: "string"
           minLength: 1
           maxLength: 2000
         sources:
-          description: Lists sources of funding
-          type: array
+          description: "Lists sources of funding"
+          type: "array"
           items:
-            type: object
-            required: [method, type]
+            type: "object"
+            required:
+              - "method"
+              - "type"
             properties:
               method:
-                description: Funding delivery method
-                type: string
+                description: "Funding delivery method"
+                type: "string"
                 enum:
-                  - anotherPolicy
-                  - check
-                  - clearinghouse
-                  - creditCard
-                  - debitCard
-                  - digitalPayment
-                  - electronicFundTransfer
-                  - payrollDeduction
-                  - wireTransfer
+                  - "ANOTHER_POLICY"
+                  - "CHECK"
+                  - "CLEARINGHOUSE"
+                  - "CREDIT_CARD"
+                  - "DEBIT_CARD"
+                  - "DIGITAL_PAYMENT"
+                  - "ELECTRONIC_FUND_TRANSFER"
+                  - "PAYROLL_DEDUCTION"
+                  - "WIRE_TRANSFER"
               type:
-                description: Funding source type
-                type: string
+                description: "Funding source type"
+                type: "string"
                 enum:
-                  - contribution
-                  - directRollover
-                  - employeeContribution
-                  - employerContribution
-                  - full1035Exchange
-                  - indirectRollover
-                  - nonQualifiedTransferOfAssets
-                  - partial1035Exchange
-                  - qualifiedTransfer
+                  - "CONTRIBUTION"
+                  - "DIRECT_ROLLOVER"
+                  - "EMPLOYEE_CONTRIBUTION"
+                  - "EMPLOYER_CONTRIBUTION"
+                  - "FULL1035_EXCHANGE"
+                  - "INDIRECT_ROLLOVER"
+                  - "NON_QUALIFIED_TRANSFER_OF_ASSETS"
+                  - "PARTIAL1035_EXCHANGE"
+                  - "QUALIFIED_TRANSFER"
               isActionNeeded:
-                description: Indicator that at least one section requires action
-                type: boolean
+                description: "Indicator that at least one section requires action"
+                type: "boolean"
               anticipatedAmount:
-                description: Anticipated amount
-                type: number
-                format: float
+                description: "Anticipated amount"
+                type: "number"
+                format: "float"
               status:
-                description: Application status
-                type: string
-                enum: [inProgress, complete]
-              reason:
-                description: Reason for cancellation
-                type: string
+                description: "Application status"
+                type: "string"
                 enum:
-                  - awaitingFundsFromCedingCompany
-                  - contactTheCarrier
-                  - fundingDiscrepancy
-                  - nigoAtCedingCarrier
-                  - noFundsReceivedCash
-                  - pendingReg60
-                  - other
+                  - "IN_PROGRESS"
+                  - "COMPLETE"
+              reason:
+                description: "Reason for cancellation"
+                type: "string"
+                enum:
+                  - "AWAITING_FUNDS_FROM_CEDING_COMPANY"
+                  - "CONTACT_THE_CARRIER"
+                  - "FUNDING_DISCREPANCY"
+                  - "NIGO_AT_CEDING_CARRIER"
+                  - "NO_FUNDS_RECEIVED_CASH"
+                  - "PENDING_REG60"
+                  - "OTHER"
               note:
-                description: Note
-                type: string
+                description: "Note"
+                type: "string"
                 minLength: 1
                 maxLength: 2000
               cedingCompanyName:
-                description: Name of the company holding the existing contract to be replaced.
-                type: string
+                description: "Name of the company holding the existing contract to be replaced."
+                type: "string"
                 minLength: 1
                 maxLength: 180
-                pattern: ^[a-zA-Z0-9À-ſ=()*@#\s.,''_/~%$!();:&"®`\-\\?]{1,180}$
+                pattern: "^[a-zA-Z0-9À-ſ=()*@#\\s.,''_/~%$!();:&\"®`\\-\\\\?]{1,180}$"
               accountNumber:
-                description: Ceding company account number
-                type: string
+                description: "Ceding company account number"
+                type: "string"
               startDate:
-                description: Start date
-                type: string
-                format: date
-
+                description: "Start date"
+                type: "string"
+                format: "date"
     cusip:
-      description: Generally used to identify financial instruments based on ABA standard CUSIP, but defined here with relaxed constraints to allow for annuity products that are not issued with standard ABA CUSIPs
-      type: string
+      description: "Generally used to identify financial instruments based on ABA standard CUSIP, but defined here with relaxed constraints to allow for annuity products that are not issued with standard ABA CUSIPs"
+      type: "string"
       minLength: 1
-      pattern:  ^[A-Z0-9]{1,9}$
-      examples: ["401B23458"]
+      pattern: "^[A-Z0-9]{1,9}$"
+      examples:
+        - "401B23458"
     IndividualIdentity:
-      description: Schema for individual identity data
-      required: [type,firstName,lastName]
-      type: object
+      description: "Schema for individual identity data"
+      required:
+        - "type"
+        - "firstName"
+        - "lastName"
+      type: "object"
       properties:
         type:
-          description: Type of party
-          type: string
-          const: individual
+          description: "Type of party"
+          type: "string"
+          const: "INDIVIDUAL"
         firstName:
-          description: First name of the individual
-          type: string
+          description: "First name of the individual"
+          type: "string"
           minLength: 1
           maxLength: 105
-          pattern: ^[a-zA-Z0-9À-ſ=()*@#\s.,''_/~%$!();:&"®`\-\\?]{1,105}$
+          pattern: "^[a-zA-Z0-9À-ſ=()*@#\\s.,''_/~%$!();:&\"®`\\-\\\\?]{1,105}$"
         middleName:
-          description: Middle name of the individual
-          type: string
+          description: "Middle name of the individual"
+          type: "string"
           minLength: 1
           maxLength: 105
-          pattern: ^[a-zA-Z0-9À-ſ=()*@#\s.,''_/~%$!();:&"®`\-\\?]{1,105}$
+          pattern: "^[a-zA-Z0-9À-ſ=()*@#\\s.,''_/~%$!();:&\"®`\\-\\\\?]{1,105}$"
         lastName:
-          description: Last name of the individual
-          type: string
+          description: "Last name of the individual"
+          type: "string"
           minLength: 1
           maxLength: 105
-          pattern: ^[a-zA-Z0-9À-ſ=()*@#\s.,''_/~%$!();:&"®`\-\\?]{1,105}$
+          pattern: "^[a-zA-Z0-9À-ſ=()*@#\\s.,''_/~%$!();:&\"®`\\-\\\\?]{1,105}$"
         taxId:
-          description: Party’s tax identification number
+          description: "Party’s tax identification number"
           allOf:
-           - $ref: '#/components/schemas/taxId'
+            - $ref: "#/components/schemas/taxId"
     IndividualProducer:
-      description: Schema for individual producer data
-      type: object
-      required: [relationships]
+      description: "Schema for individual producer data"
+      type: "object"
+      required:
+        - "relationships"
       allOf:
         - $ref: "#/components/schemas/IndividualIdentity"
-        - type: object
+        - type: "object"
           properties:
             npn:
-              description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
-              type: string
+              description: "The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states."
+              type: "string"
               maxLength: 10
             commissionSplitPercent:
-              description: Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy.
-              type: number
+              description: "Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy."
+              type: "number"
               minimum: 0
               maximum: 100
             crdNumber:
-              description: Central Registration Depository number
-              type: string
+              description: "Central Registration Depository number"
+              type: "string"
               maxLength: 10
             relationships:
-              description: Relationship(s) this party has to the policy
-              type: array
+              description: "Relationship(s) this party has to the policy"
+              type: "array"
               minItems: 1
               maxItems: 30
               items:
-                type: string
+                type: "string"
                 enum:
-                  - primaryAgent
-                  - secondaryAgent
-                  - additionalAgent
-                  - investmentAdvisorRepresentative
+                  - "PRIMARY_AGENT"
+                  - "SECONDARY_AGENT"
+                  - "ADDITIONAL_AGENT"
+                  - "INVESTMENT_ADVISOR_REPRESENTATIVE"
     IndividualParty:
-      description: Schema for individual party data
-      type: object
+      description: "Schema for individual party data"
+      type: "object"
       allOf:
         - $ref: "#/components/schemas/IndividualIdentity"
         - $ref: "#/components/schemas/PartyRelationship"
     EntityIdentity:
-      description: Schema for entity identity data
-      type: object
-      required: [type, name]
+      description: "Schema for entity identity data"
+      type: "object"
+      required:
+        - "type"
+        - "name"
       properties:
         type:
-          description: Type of party
-          type: string
-          const: entity
+          description: "Type of party"
+          type: "string"
+          const: "ENTITY"
         name:
-          description: Name of the entity
-          type: string
+          description: "Name of the entity"
+          type: "string"
           minLength: 1
           maxLength: 180
-          pattern: ^[a-zA-Z0-9À-ſ=()*@#\s.,''_/~%$!();:&"®`\-\\?]{1,180}$
+          pattern: "^[a-zA-Z0-9À-ſ=()*@#\\s.,''_/~%$!();:&\"®`\\-\\\\?]{1,180}$"
         taxId:
-          description: Party’s tax identification number
+          description: "Party’s tax identification number"
           allOf:
-           - $ref: '#/components/schemas/taxId'
+            - $ref: "#/components/schemas/taxId"
     EntityProducer:
-      description: Schema for entity producer data
-      type: object
-      required: [relationships]
+      description: "Schema for entity producer data"
+      type: "object"
+      required:
+        - "relationships"
       allOf:
         - $ref: "#/components/schemas/EntityIdentity"
-        - type: object
+        - type: "object"
           properties:
             npn:
-              description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
-              type: string
+              description: "The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states."
+              type: "string"
               maxLength: 10
             commissionSplitPercent:
-              description: Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy.
-              type: number
+              description: "Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy."
+              type: "number"
               minimum: 0
               maximum: 100
             crdNumber:
-              description: Central Registration Depository number
-              type: string
+              description: "Central Registration Depository number"
+              type: "string"
               maxLength: 10
             relationships:
-              description: Relationship(s) this party has to the policy
-              type: array
+              description: "Relationship(s) this party has to the policy"
+              type: "array"
               minItems: 1
               maxItems: 25
               items:
-                type: string
+                type: "string"
                 enum:
-                  - brokerageGeneralAgency
-                  - registeredInvestmentAdvisoryFirm
-                  - independentMarketingOrganization
-                  - brokerDealer
+                  - "BROKERAGE_GENERAL_AGENCY"
+                  - "REGISTERED_INVESTMENT_ADVISORY_FIRM"
+                  - "INDEPENDENT_MARKETING_ORGANIZATION"
+                  - "BROKER_DEALER"
     EntityParty:
-      description: Schema for entity party data
-      type: object
+      description: "Schema for entity party data"
+      type: "object"
       allOf:
         - $ref: "#/components/schemas/EntityIdentity"
         - $ref: "#/components/schemas/PartyRelationship"
     Party:
-      description: >-
-        An individual or an entity related to the policy. The `type` property
-        selects the shape: `individual` uses first/middle/last name, `entity`
-        uses a single `name`.
+      description: "An individual or an entity related to the policy. The `type` property selects the shape: `individual` uses first/middle/last name, `entity` uses a single `name`."
       oneOf:
         - $ref: "#/components/schemas/IndividualParty"
         - $ref: "#/components/schemas/EntityParty"
       discriminator:
-        propertyName: type
+        propertyName: "type"
         mapping:
-          individual: "#/components/schemas/IndividualParty"
-          entity: "#/components/schemas/EntityParty"
+          INDIVIDUAL: "#/components/schemas/IndividualParty"
+          ENTITY: "#/components/schemas/EntityParty"
       examples:
-        - type: individual
-          firstName: John
-          middleName: Quincy
-          lastName: Doe
+        - type: "individual"
+          firstName: "John"
+          middleName: "Quincy"
+          lastName: "Doe"
           relationships:
-            - owner
-            - annuitant
-        - type: entity
-          name: Smith & Associates
+            - "OWNER"
+            - "ANNUITANT"
+        - type: "entity"
+          name: "Smith & Associates"
           taxId: "123456789"
           relationships:
-            - primaryBeneficiary
+            - "PRIMARY_BENEFICIARY"
     PartyRelationship:
-      description: Schema for party relationship data
-      type: object
-      required: [relationships]
+      description: "Schema for party relationship data"
+      type: "object"
+      required:
+        - "relationships"
       properties:
         relationships:
-          description: Relationship(s) this party has to the policy
-          type: array
+          description: "Relationship(s) this party has to the policy"
+          type: "array"
           minItems: 1
           maxItems: 2
           items:
-            type: string
+            type: "string"
             enum:
-              - owner
-              - jointOwner
-              - annuitant
-              - jointAnnuitant
-              - primaryBeneficiary
-              - contingentBeneficiary
+              - "OWNER"
+              - "JOINT_OWNER"
+              - "ANNUITANT"
+              - "JOINT_ANNUITANT"
+              - "PRIMARY_BENEFICIARY"
+              - "CONTINGENT_BENEFICIARY"
     Producer:
-      description: >-
-        An individual or an entity acting as a producer on the policy. The
-        `type` property selects the shape: `individual` uses first/middle/last
-        name, `entity` uses a single `name`.
+      description: "An individual or an entity acting as a producer on the policy. The `type` property selects the shape: `individual` uses first/middle/last name, `entity` uses a single `name`."
       oneOf:
         - $ref: "#/components/schemas/IndividualProducer"
         - $ref: "#/components/schemas/EntityProducer"
       discriminator:
-        propertyName: type
+        propertyName: "type"
         mapping:
-          individual: "#/components/schemas/IndividualProducer"
-          entity: "#/components/schemas/EntityProducer"
+          INDIVIDUAL: "#/components/schemas/IndividualProducer"
+          ENTITY: "#/components/schemas/EntityProducer"
       examples:
-        - type: individual
-          firstName: Jane
-          lastName: Smith
+        - type: "individual"
+          firstName: "Jane"
+          lastName: "Smith"
           npn: "1234567890"
           relationships:
-            - primaryAgent
+            - "PRIMARY_AGENT"
           commissionSplitPercent: 100
-        - type: entity
-          name: Smith & Associates
+        - type: "entity"
+          name: "Smith & Associates"
           npn: "1234567890"
           relationships:
-            - brokerDealer
+            - "BROKER_DEALER"
           commissionSplitPercent: 100
     Producers:
-      description: Schema for producers data
-      type: array
+      description: "Schema for producers data"
+      type: "array"
       items:
         $ref: "#/components/schemas/Producer"
     CanSellValidation:
-      description: Schema for policy can sell validation data
-      type: object
-      required: [status,isActionNeeded]
+      description: "Schema for policy can sell validation data"
+      type: "object"
+      required:
+        - "status"
+        - "isActionNeeded"
       properties:
         status:
-          description: Application status
+          description: "Application status"
           allOf:
-          - $ref: '#/components/schemas/sectionReviewStatus'
+            - $ref: "#/components/schemas/sectionReviewStatus"
         isActionNeeded:
-          description: Indicator that at least one section requires action
-          type: boolean
+          description: "Indicator that at least one section requires action"
+          type: "boolean"
         startDate:
-          description: Start date
-          type: string
-          format: date
+          description: "Start date"
+          type: "string"
+          format: "date"
         endDate:
-          description: End date
-          type: string
-          format: date
+          description: "End date"
+          type: "string"
+          format: "date"
         note:
-          description: Note
-          type: string
+          description: "Note"
+          type: "string"
           minLength: 1
           maxLength: 2000
         issues:
-          description: List of issues that need to be addressed
-          type: array
+          description: "List of issues that need to be addressed"
+          type: "array"
           items:
-            type: object
-            required: [type]
+            type: "object"
+            required:
+              - "type"
             properties:
               type:
-                description: Can-sell issue type
-                type: string
+                description: "Can-sell issue type"
+                type: "string"
                 enum:
-                  - trainingIncompleteMissing
-                  - trainingExpired
-                  - agentNotAppointedForSale
-                  - jitAppointmentInProgress
-                  - agentNotLicensed
-                  - other
+                  - "TRAINING_INCOMPLETE_MISSING"
+                  - "TRAINING_EXPIRED"
+                  - "AGENT_NOT_APPOINTED_FOR_SALE"
+                  - "JIT_APPOINTMENT_IN_PROGRESS"
+                  - "AGENT_NOT_LICENSED"
+                  - "OTHER"
               note:
-                description: Note
-                type: string
+                description: "Note"
+                type: "string"
                 minLength: 1
                 maxLength: 2000
               affectedProducer:
-                description: Producer for which the CanSell issue exists
-                type: object
+                description: "Producer for which the CanSell issue exists"
+                type: "object"
                 properties:
                   npn:
-                    description: The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
-                    type: string
+                    description: "The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states."
+                    type: "string"
                     maxLength: 10
                   commissionSplitPercent:
-                    description: Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy.
-                    type: number
+                    description: "Represents the percentage share of total commission allocated to the producer, used when multiple producers are associated with the policy."
+                    type: "number"
                     minimum: 0
                     maximum: 100
                   crdNumber:
-                    description: Central Registration Depository number
-                    type: string
+                    description: "Central Registration Depository number"
+                    type: "string"
                     maxLength: 10
                   taxId:
-                    description: Party’s tax identification number
+                    description: "Party’s tax identification number"
                     allOf:
-                    - $ref: '#/components/schemas/taxId'
+                      - $ref: "#/components/schemas/taxId"
     Suitability:
-      description: Schema for policy suitability data
-      type: object
-      required: [status,isActionNeeded]
+      description: "Schema for policy suitability data"
+      type: "object"
+      required:
+        - "status"
+        - "isActionNeeded"
       properties:
         status:
-          description: Application status
-          type: string
-          enum: [awaitingReview, inProgress, completed, notApplicable]
-        isActionNeeded:
-          description: Indicator that at least one section requires action
-          type: boolean
-        startDate:
-          description: Start date
-          type: string
-          format: date
-        endDate:
-          description: End date
-          type: string
-          format: date
-        reason:
-          description: Reason for cancellation
-          type: string
+          description: "Application status"
+          type: "string"
           enum:
-            - moreInformationNeeded
-            - notSuitableForClient
-            - other
+            - "AWAITING_REVIEW"
+            - "IN_PROGRESS"
+            - "COMPLETED"
+            - "NOT_APPLICABLE"
+        isActionNeeded:
+          description: "Indicator that at least one section requires action"
+          type: "boolean"
+        startDate:
+          description: "Start date"
+          type: "string"
+          format: "date"
+        endDate:
+          description: "End date"
+          type: "string"
+          format: "date"
+        reason:
+          description: "Reason for cancellation"
+          type: "string"
+          enum:
+            - "MORE_INFORMATION_NEEDED"
+            - "NOT_SUITABLE_FOR_CLIENT"
+            - "OTHER"
         note:
-          description: Note
-          type: string
+          description: "Note"
+          type: "string"
           minLength: 1
           maxLength: 2000
         dueDate:
-          description: Due date
-          type: string
-          format: date
+          description: "Due date"
+          type: "string"
+          format: "date"
         isApproved:
-          description: If status is completed, this field denotes whether suitability was approved or declined
-          type: boolean
+          description: "If status is completed, this field denotes whether suitability was approved or declined"
+          type: "boolean"
     DocumentReview:
-      description: Schema for policy document review data
-      type: object
-      required: [status,isActionNeeded]
+      description: "Schema for policy document review data"
+      type: "object"
+      required:
+        - "status"
+        - "isActionNeeded"
       properties:
         status:
-          description: Application status
+          description: "Application status"
           allOf:
-          - $ref: '#/components/schemas/sectionReviewStatus'
+            - $ref: "#/components/schemas/sectionReviewStatus"
         isActionNeeded:
-          description: Indicator that at least one section requires action
-          type: boolean
+          description: "Indicator that at least one section requires action"
+          type: "boolean"
         startDate:
-          description: Start date
-          type: string
-          format: date
+          description: "Start date"
+          type: "string"
+          format: "date"
         endDate:
-          description: End date
-          type: string
-          format: date
+          description: "End date"
+          type: "string"
+          format: "date"
         note:
-          description: Note
-          type: string
+          description: "Note"
+          type: "string"
           minLength: 1
           maxLength: 2000
         issues:
-          description: List of issues that need to be addressed
-          type: array
+          description: "List of issues that need to be addressed"
+          type: "array"
           items:
-            type: object
+            type: "object"
             properties:
               reason:
-                description: Reason for cancellation
-                type: string
+                description: "Reason for cancellation"
+                type: "string"
                 enum:
-                  - applicationIssue
-                  - contactCarrier
-                  - incompleteForm
-                  - missingForm
-                  - missingSignature
-                  - needClarity
-                  - other
+                  - "APPLICATION_ISSUE"
+                  - "CONTACT_CARRIER"
+                  - "INCOMPLETE_FORM"
+                  - "MISSING_FORM"
+                  - "MISSING_SIGNATURE"
+                  - "NEED_CLARITY"
+                  - "OTHER"
               formName:
-                description: Form name
-                type: string
+                description: "Form name"
+                type: "string"
                 minLength: 1
                 maxLength: 200
               formNumber:
-                description: Form number
-                type: string
+                description: "Form number"
+                type: "string"
                 minLength: 1
                 maxLength: 100
               dueDate:
-                description: Due date
-                type: string
-                format: date
+                description: "Due date"
+                type: "string"
+                format: "date"
               note:
-                description: Note
-                type: string
+                description: "Note"
+                type: "string"
                 minLength: 1
                 maxLength: 2000
     applicationOrigin:
-      description: Platform of application origin
-      type: object
-      required: [isElectronic]
+      description: "Platform of application origin"
+      type: "object"
+      required:
+        - "isElectronic"
       properties:
         platform:
-          description: Platform of application origin
-          type: string
+          description: "Platform of application origin"
+          type: "string"
           maxLength: 50
         isElectronic:
-          description: Is application electronic?
-          type: boolean
+          description: "Is application electronic?"
+          type: "boolean"
         id:
-          description: ID of application origin
-          type: string
+          description: "ID of application origin"
+          type: "string"
           maxLength: 65
-
     reconciliation:
-      type: object
-      required: [totalEvents, events]
+      type: "object"
+      required:
+        - "totalEvents"
+        - "events"
       properties:
         totalEvents:
-          description: Total Events
-          type: integer
+          description: "Total Events"
+          type: "integer"
         events:
-          description: Events
-          type: array
+          description: "Events"
+          type: "array"
           minItems: 1
           items:
             $ref: "#/components/schemas/notificationMetadata"
     notificationStatus:
-      type: string
-      enum: [received, inProgress, completed, cancelled]
-
+      type: "string"
+      enum:
+        - "RECEIVED"
+        - "IN_PROGRESS"
+        - "COMPLETED"
+        - "CANCELLED"
     actionSections:
-      description: Sections needing action
-      type: array
+      description: "Sections needing action"
+      type: "array"
       items:
-        type: string
-        enum: [suitability, canSellValidation, documentReview, funding]
-
+        type: "string"
+        enum:
+          - "SUITABILITY"
+          - "CAN_SELL_VALIDATION"
+          - "DOCUMENT_REVIEW"
+          - "FUNDING"
     notificationMetadata:
-      type: object
-      required: [status, eventId, policyNumber, applicationOrigin]
+      type: "object"
+      required:
+        - "status"
+        - "eventId"
+        - "policyNumber"
+        - "applicationOrigin"
       properties:
         eventId:
-          type: string
-          description: Globally unique identifier for this notification event
+          type: "string"
+          description: "Globally unique identifier for this notification event"
         policyNumber:
-          description: Policy number
-          type: string
+          description: "Policy number"
+          type: "string"
         id:
-          type: string
-          description: Unique identifier for the application
+          type: "string"
+          description: "Unique identifier for the application"
           maxLength: 65
         applicationOrigin:
-          description: Platform of application origin
-          $ref: '#/components/schemas/applicationOrigin'
+          description: "Platform of application origin"
+          $ref: "#/components/schemas/applicationOrigin"
         status:
-          description: Application status
-          $ref: '#/components/schemas/notificationStatus'
+          description: "Application status"
+          $ref: "#/components/schemas/notificationStatus"
     Error:
-      description: Standard error response body
-      type: object
+      description: "Standard error response body"
+      type: "object"
       required:
-      - httpStatus
-      - code
-      - message
+        - "httpStatus"
+        - "code"
+        - "message"
       properties:
         httpStatus:
-          description: HTTP status code
-          type: integer
+          description: "HTTP status code"
+          type: "integer"
         code:
-          description: Machine-readable error code in domain.category.subcategory format
-          type: string
-          pattern: '^[a-z0-9]+\.[a-z0-9]+\.[a-z0-9]+$'
+          description: "Machine-readable error code in domain.category.subcategory format"
+          type: "string"
+          pattern: "^[a-z0-9]+\\.[a-z0-9]+\\.[a-z0-9]+$"
         timestamp:
-          description: Time the error occurred
-          type: string
-          format: date-time
+          description: "Time the error occurred"
+          type: "string"
+          format: "date-time"
         message:
-          description: Diagnostic message describing the error
-          type: string
+          description: "Diagnostic message describing the error"
+          type: "string"
         userMessage:
-          description: End-user-safe message suitable for display
-          type: string
+          description: "End-user-safe message suitable for display"
+          type: "string"
         correlationId:
-          description: Correlation ID echoed from the request, if supplied
-          type: string
+          description: "Correlation ID echoed from the request, if supplied"
+          type: "string"
         validationErrors:
-          description: Field-level validation failures
-          type: array
+          description: "Field-level validation failures"
+          type: "array"
           items:
-            type: object
+            type: "object"
             required:
-            - path
-            - message
+              - "path"
+              - "message"
             properties:
               path:
-                description: JSON pointer to the offending field
-                type: string
+                description: "JSON pointer to the offending field"
+                type: "string"
               message:
-                description: Description of the validation failure
-                type: string
+                description: "Description of the validation failure"
+                type: "string"
               code:
-                description: Domain.category.subcategory code for this specific validation failure
-                type: string
-
+                description: "Domain.category.subcategory code for this specific validation failure"
+                type: "string"
