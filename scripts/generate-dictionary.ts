@@ -808,7 +808,38 @@ async function generateDataDictionary(): Promise<void> {
   console.log('\nData dictionary generation complete!');
 }
 
+/**
+ * Reads the Working Groups / Resources (and any other) dropdown menus from
+ * docs/index.html so the Data Dictionary page always shows the same menus as
+ * the API Documentation page. To change the menus, edit docs/index.html only.
+ */
+function getSharedNavDropdowns(): string {
+  const indexPath = path.join(__dirname, '..', 'docs', 'index.html');
+  const indexHtml = fs.readFileSync(indexPath, 'utf8').replace(/\r\n/g, '\n');
+
+  const navMatch = indexHtml.match(/<nav class="main-nav">([\s\S]*?)<\/nav>/);
+  if (!navMatch) {
+    throw new Error(`Could not find <nav class="main-nav"> in ${indexPath}. The Data Dictionary copies its menus from there.`);
+  }
+  const nav = navMatch[1];
+
+  const start = nav.indexOf('<li class="nav-dropdown">');
+  const end = nav.lastIndexOf('</ul>'); // closes the outer menu list
+  if (start === -1 || end === -1 || end <= start) {
+    throw new Error(`Could not find any <li class="nav-dropdown"> menus inside the nav in ${indexPath}.`);
+  }
+
+  // Re-indent the copied block so the generated page stays tidy.
+  const lines = nav.slice(start, end).replace(/\s+$/, '').split('\n');
+  const indents = lines.slice(1).filter(l => l.trim()).map(l => l.match(/^\s*/)![0].length);
+  const firstIndent = indents.length ? Math.min(...indents) : 0;
+  return lines
+    .map((l, i) => (i === 0 ? l.trim() : '          ' + l.slice(firstIndent)))
+    .join('\n');
+}
+
 function generateHtml(outputPath: string): void {
+  const navDropdowns = getSharedNavDropdowns();
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1439,17 +1470,7 @@ function generateHtml(outputPath: string): void {
         <ul>
           <li><a href="index.html">API Documentation</a></li>
           <li><a href="data-dictionary.html" class="active">Data Dictionary</a></li>
-          <li class="nav-dropdown">
-            <a href="#" class="nav-dropdown-toggle">Working Groups</a>
-            <ul class="nav-dropdown-menu">
-              <li><a href="https://github.com/Insured-Retirement-Institute/Application-Status" target="_blank">Application Status</a></li>
-              <li><a href="https://github.com/Insured-Retirement-Institute/Producer-Training" target="_blank">Producer Training</a></li>
-              <li><a href="https://github.com/Insured-Retirement-Institute/Activated-Annuity-Income" target="_blank">Policy Income</a></li>
-              <li><a href="https://github.com/Insured-Retirement-Institute/One-Time-Withdrawals" target="_blank">One-Time Withdrawals</a></li>
-              <li><a href="https://github.com/Insured-Retirement-Institute/One-Time-Withdrawal-Quote" target="_blank">One-Time Withdrawal Quote</a></li>
-              <li><a href="https://github.com/Insured-Retirement-Institute/Systematic-Program" target="_blank">Systematic Program</a></li>
-            </ul>
-          </li>
+          ${navDropdowns}
         </ul>
       </nav>
     </div>
@@ -1822,20 +1843,31 @@ function generateHtml(outputPath: string): void {
     // Load manifest and data on page load
     loadManifest();
 
-    // Working Groups dropdown
-    const toggle = document.querySelector('.nav-dropdown-toggle');
-    const menu = document.querySelector('.nav-dropdown-menu');
-    if (toggle && menu) {
-      toggle.addEventListener('click', function(e) {
+    // Set up every dropdown in the nav (Working Groups, Resources, and any added later).
+    const dropdowns = document.querySelectorAll('.nav-dropdown');
+    dropdowns.forEach(function (dropdown) {
+      const toggle = dropdown.querySelector('.nav-dropdown-toggle');
+      const menu = dropdown.querySelector('.nav-dropdown-menu');
+      if (!toggle || !menu) return;
+      toggle.addEventListener('click', function (e) {
         e.preventDefault();
+        // Close any other open dropdown so only one is open at a time.
+        dropdowns.forEach(function (other) {
+          if (other !== dropdown) {
+            other.querySelector('.nav-dropdown-menu').classList.remove('open');
+          }
+        });
         menu.classList.toggle('open');
       });
-      document.addEventListener('click', function(e) {
-        if (!e.target.closest('.nav-dropdown')) {
+    });
+    // Clicking anywhere outside a dropdown closes all of them.
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.nav-dropdown')) {
+        document.querySelectorAll('.nav-dropdown-menu').forEach(function (menu) {
           menu.classList.remove('open');
-        }
-      });
-    }
+        });
+      }
+    });
   </script>
 </body>
 </html>`;
