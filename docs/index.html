@@ -373,8 +373,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const toggle = document.querySelector('.nav-dropdown-toggle');
-            const menu = document.querySelector('.nav-dropdown-menu');
 
             // Keep each card's 'View Documentation' button pointing at its Active (or In-Review) version link.
             // If there are multiple 'active-version' links, the script will use the first one.
@@ -387,15 +385,31 @@
                     btn.href = active.getAttribute('href');
                 }
             });
+            // Set up every dropdown in the nav (Working Groups, Resources, and any added later).
+            const dropdowns = document.querySelectorAll('.nav-dropdown');
 
-            toggle.addEventListener('click', function (e) {
-                e.preventDefault();
-                menu.classList.toggle('open');
+            dropdowns.forEach(function (dropdown) {
+                const toggle = dropdown.querySelector('.nav-dropdown-toggle');
+                const menu = dropdown.querySelector('.nav-dropdown-menu');
+
+                toggle.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    // Close any other open dropdown so only one is open at a time.
+                    dropdowns.forEach(function (other) {
+                        if (other !== dropdown) {
+                            other.querySelector('.nav-dropdown-menu').classList.remove('open');
+                        }
+                    });
+                    menu.classList.toggle('open');
+                });
             });
 
+            // Clicking anywhere outside a dropdown closes all of them.
             document.addEventListener('click', function (e) {
                 if (!e.target.closest('.nav-dropdown')) {
-                    menu.classList.remove('open');
+                    document.querySelectorAll('.nav-dropdown-menu').forEach(function (menu) {
+                        menu.classList.remove('open');
+                    });
                 }
             });
         });
