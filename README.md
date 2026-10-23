@@ -23,7 +23,7 @@ Field naming
 - **Casing**: Field names must use camelCase. String enum values must also use camelCase.
 
 Type Definitions
-- **Enumerations**: Enum definitions should be closed. Avoid keeping enums open using catch-all enum values such as 'Other' and 'Unknown'. If an open enum value is required, a description field must be added on the enumerated type explaining usage of catch-all value.
+- **Enumerations**: Enum definitions should be closed. Avoid keeping enums open using catch-all enum values. If an open enum value is required, you MUST use 'OTHER' and add a description field using the following convention: '<enum name>OtherDescription'.
 
 Custom headers
 - **_correlationId_**: Optional custom header to be returned to the caller in response payload
