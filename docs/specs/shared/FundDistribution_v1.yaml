@@ -1,0 +1,45 @@
+# Modified by Cursor: shared FundDistribution schema (withdrawal/systematic family)
+components:
+  schemas:
+    FundDistribution:
+      type: object
+      description: Fund distribution details for the withdrawal
+      properties:
+        fundId:
+          description: Fund identifier.
+          type: string
+          maxLength: 100
+        fundName:
+          description: Name of the fund.
+          type: string
+          maxLength: 100
+        totalFundValue:
+          description: Total value of the fund.
+          type:
+            - number
+            - "null"
+          minimum: 0
+          maximum: 9999999999.99
+        requestedAmount:
+          description: Requested amount from the fund.
+          type:
+            - number
+            - "null"
+          minimum: 0
+          maximum: 9999999999.99
+        requestedPercentage:
+          description: Requested percentage from the fund.
+          type: number
+          minimum: 0
+          maximum: 100
+      oneOf:
+        - required:
+            - requestedAmount
+          not:
+            required:
+              - requestedPercentage
+        - required:
+            - requestedPercentage
+          not:
+            required:
+              - requestedAmount

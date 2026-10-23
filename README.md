@@ -424,6 +424,7 @@ Run both locally before opening a pull request:
 
 ```bash
 npm ci
+npm run bundle:specs
 npm run validate:specs
 npm run build:dictionary
 ```

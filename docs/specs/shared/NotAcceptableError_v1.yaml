@@ -1,0 +1,12 @@
+# Modified by Cursor: shared NotAcceptableError response
+components:
+  responses:
+    NotAcceptableError:
+      description: "Not Acceptable — the requested media type is not supported."
+      headers:
+        correlationId:
+          $ref: './correlationId_v1.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './Error_v1.yaml#/components/schemas/Error'
