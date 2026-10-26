@@ -10,7 +10,7 @@ info:
     name: MIT
     url: https://opensource.org/licenses/MIT
 paths:
-  /v1/policies/{policyNumber}/summary:
+  /v2/policies/{policyNumber}/summary:
     get:
       operationId: getPolicySummary
       tags:
@@ -61,7 +61,7 @@ paths:
           $ref: '#/components/responses/ServiceUnavailableError'
         '504':
           $ref: '#/components/responses/GatewayTimeoutError'
-  /v1/policies/{policyNumber}/values:
+  /v2/policies/{policyNumber}/values:
     get:
       operationId: getPolicyValue
       tags:
@@ -106,7 +106,7 @@ paths:
           $ref: '#/components/responses/ServiceUnavailableError'
         '504':
           $ref: '#/components/responses/GatewayTimeoutError'
-  /v1/policies/{policyNumber}/funds:
+  /v2/policies/{policyNumber}/funds:
     get:
       operationId: getPolicyFunds
       tags:
@@ -153,7 +153,7 @@ paths:
           $ref: '#/components/responses/ServiceUnavailableError'
         '504':
           $ref: '#/components/responses/GatewayTimeoutError'
-  /v1/policies/{policyNumber}/parties:
+  /v2/policies/{policyNumber}/parties:
     get:
       operationId: getPolicyParties
       tags:
@@ -200,7 +200,7 @@ paths:
           $ref: '#/components/responses/ServiceUnavailableError'
         '504':
           $ref: '#/components/responses/GatewayTimeoutError'
-  /v1/policies/{policyNumber}/parties/{partyId}:
+  /v2/policies/{policyNumber}/parties/{partyId}:
     get:
       operationId: getPolicyPartyById
       tags:
@@ -254,7 +254,7 @@ paths:
           $ref: '#/components/responses/ServiceUnavailableError'
         '504':
           $ref: '#/components/responses/GatewayTimeoutError'
-  /v1/policies/{policyNumber}/producers:
+  /v2/policies/{policyNumber}/producers:
     get:
       operationId: getPolicyProducers
       tags:
@@ -301,7 +301,7 @@ paths:
           $ref: '#/components/responses/ServiceUnavailableError'
         '504':
           $ref: '#/components/responses/GatewayTimeoutError'
-  /v1/policies/{policyNumber}/riders:
+  /v2/policies/{policyNumber}/riders:
     get:
       operationId: getPolicyRiders
       tags:
@@ -348,7 +348,7 @@ paths:
           $ref: '#/components/responses/ServiceUnavailableError'
         '504':
           $ref: '#/components/responses/GatewayTimeoutError'
-  /v1/policies/{policyNumber}/riders/{riderId}:
+  /v2/policies/{policyNumber}/riders/{riderId}:
     get:
       operationId: getPolicyRiderById
       tags:
@@ -400,7 +400,7 @@ paths:
           $ref: '#/components/responses/ServiceUnavailableError'
         '504':
           $ref: '#/components/responses/GatewayTimeoutError'
-  /v1/policies/{policyNumber}/dates:
+  /v2/policies/{policyNumber}/dates:
     get:
       operationId: getPolicyDates
       tags:
@@ -445,7 +445,7 @@ paths:
           $ref: '#/components/responses/ServiceUnavailableError'
         '504':
           $ref: '#/components/responses/GatewayTimeoutError'
-  /v1/policies/{policyNumber}/systematic-programs:
+  /v2/policies/{policyNumber}/systematic-programs:
     get:
       operationId: getPolicySystematicPrograms
       tags:
@@ -492,7 +492,7 @@ paths:
           $ref: '#/components/responses/ServiceUnavailableError'
         '504':
           $ref: '#/components/responses/GatewayTimeoutError'
-  /v1/policies/{policyNumber}/payouts:
+  /v2/policies/{policyNumber}/payouts:
     get:
       operationId: getPolicyPayouts
       tags:
@@ -539,7 +539,7 @@ paths:
           $ref: '#/components/responses/ServiceUnavailableError'
         '504':
           $ref: '#/components/responses/GatewayTimeoutError'
-  /v1/policies/{policyNumber}/transactions:
+  /v2/policies/{policyNumber}/transactions:
     get:
       operationId: getPolicyTransactions
       tags:
@@ -589,7 +589,7 @@ paths:
           $ref: '#/components/responses/ServiceUnavailableError'
         '504':
           $ref: '#/components/responses/GatewayTimeoutError'
-  /v1/policies/{policyNumber}/underlying-assets:
+  /v2/policies/{policyNumber}/underlying-assets:
     get:
       operationId: getPolicyUnderlyingAssets
       tags:
