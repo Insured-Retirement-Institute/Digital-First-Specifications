@@ -25,11 +25,6 @@ Field naming
 Type Definitions
 - **Enumerations**: Enum definitions should be closed. Avoid keeping enums open using catch-all enum values. If an open enum value is required, you MUST use 'OTHER' and add a description field using the following convention: '<enum name>OtherDescription'. (EXAMPLE: fundingSourceOtherDescription:)
 
-Enumerations
-- **Enum case**: Enumeration values **must** use UPPER_SNAKE_CASE: all uppercase letters, with words separated by underscores (e.g., `PRO_RATA`, `FULL_REBALANCE`, `REQUIRED_MINIMUM_DISTRIBUTION`).
-  - Abbreviations and acronyms follow the same rule (e.g., `ACH`, `RMD`).
-  - Do not use spaces, hyphens, camelCase, or lowercase letters in enum values.
-
 Custom headers
 - **_correlationId_**: Optional custom header to be returned to the caller in response payload
 
