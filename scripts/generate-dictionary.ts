@@ -264,6 +264,15 @@ function mergeAllOfSchemas(schemas: Schema[]): { merged: Schema; issues: string[
   return { merged, issues };
 }
 
+// True when a schema (or any schema it composes) declares fields, as opposed to
+// a pure validation rule such as { required: [...], not: {...} }.
+function definesFields(schema: Schema): boolean {
+  if (!schema) return false;
+  if (schema.properties && Object.keys(schema.properties).length > 0) return true;
+  if (schema.items) return true;
+  return [...(schema.allOf || []), ...(schema.oneOf || []), ...(schema.anyOf || [])].some(definesFields);
+}
+
 function flattenSchema(
   schema: Schema,
   fieldPath: string,
@@ -297,21 +306,33 @@ function flattenSchema(
     return flattenSchema(merged, fieldPath, ctx, schemaName, variantLabel, visited);
   }
 
-  // Handle oneOf/anyOf - create variant rows
-  if (schema.oneOf && schema.oneOf.length > 0) {
-    schema.oneOf.forEach((variant, index) => {
-      const variantName = getSchemaName(variant) || `variant${index + 1}`;
-      const newVariantLabel = variantLabel ? `${variantLabel}|${variantName}` : variantName;
-      results.push(...flattenSchema(variant, fieldPath, ctx, parentSchemaName, newVariantLabel, new Set(visited)));
-    });
-    return results;
-  }
+  // Handle oneOf/anyOf - create variant rows.
+  // A schema can declare its own `properties` AND a oneOf/anyOf. Two cases:
+  //  - Validation-only branches (e.g. FundDistribution: "requestedAmount OR
+  //    requestedPercentage, not both"). The branches hold only `required`/`not`,
+  //    so the fields live on the parent. Skip the branches and fall through to
+  //    the normal property handling below.
+  //  - Branches that define their own fields. Merge the parent's properties into
+  //    each branch so the parent's fields are not lost.
+  const hasOwnProperties = !!schema.properties && Object.keys(schema.properties).length > 0;
+  for (const key of ['oneOf', 'anyOf'] as const) {
+    const branches = schema[key];
+    if (!branches || branches.length === 0) continue;
 
-  if (schema.anyOf && schema.anyOf.length > 0) {
-    schema.anyOf.forEach((variant, index) => {
+    if (hasOwnProperties && !branches.some(definesFields)) {
+      continue; // validation-only rule; parent's properties are flattened below
+    }
+
+    branches.forEach((variant, index) => {
       const variantName = getSchemaName(variant) || `variant${index + 1}`;
       const newVariantLabel = variantLabel ? `${variantLabel}|${variantName}` : variantName;
-      results.push(...flattenSchema(variant, fieldPath, ctx, parentSchemaName, newVariantLabel, new Set(visited)));
+      const branchSchema = hasOwnProperties
+        ? mergeAllOfSchemas([
+            { type: schema.type, properties: schema.properties, required: schema.required, description: schema.description },
+            variant
+          ]).merged
+        : variant;
+      results.push(...flattenSchema(branchSchema, fieldPath, ctx, parentSchemaName, newVariantLabel, new Set(visited)));
     });
     return results;
   }
