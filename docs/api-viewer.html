@@ -30,6 +30,7 @@
                         <option value="fundtransfer">Fund Transfer API</option>
                         <option value="policyinquiry">Policy Inquiry API</option>
                         <option value="beneficiaryreplacement">Beneficiary Replacement API</option>
+                        <option value="documentprocessing">Document Processing API</option>
                         <!-- Add more options as you add more APIs -->
                     </select>
                 </div>
@@ -198,6 +199,15 @@
                 versions: {
                     "v1": {
                         path: "specs/beneficiaryreplacement_1.0.0.yaml",
+                        displayName: "v1.0.0"
+                    }
+                }
+            },
+            "documentprocessing": {
+                name: "Document Processing API",
+                versions: {
+                    "v1": {
+                        path: "specs/DocumentProcessing_1.0.0.yaml",
                         displayName: "v1.0.0"
                     }
                 }
