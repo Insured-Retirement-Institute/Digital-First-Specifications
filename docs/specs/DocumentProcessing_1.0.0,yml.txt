@@ -1,0 +1,1056 @@
+openapi: "3.1.0"
+info:
+  title: Document Processing API
+  version: "1.0.0"
+  description: >
+    Standardized API for secure exchange of unstructured data (imaged documents, signatures, forms)
+    during pre-sale, new business, and post-issue processing of annuity and life insurance transactions.
+    This API follows an asynchronous model:
+    1. Sender submits attachments -> receives immediate 202 acknowledgment.
+    2. DTCC forwards to Data Provider -> Data Provider responds with success/failure.
+    3. DTCC sends final confirmation notification back to the original sender.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+tags:
+  - name: Attachments
+    description: Submit attachment documents for async processing
+  - name: Notifications
+    description: Final confirmation notifications sent to the original sender
+paths:
+  /v1/attachments:
+    post:
+      operationId: submitAttachments
+      tags:
+        - Attachments
+      summary: Submit forms detail and one file per form
+      description: >-
+        Asynchronous multipart request with a JSON payload part (attachmentRequestBody) and one or more
+        binary file parts in 'attachmentRequestFiles[]'.
+        Each 'forms[i]' must include an 'attachment.fileName' that matches exactly one uploaded file.
+        Combined size of all files must be <= 30MB.
+        Returns an immediate 202 acknowledgment. Final processing outcome is delivered via the
+        /v1/attachments/notifications endpoint.
+      parameters:
+        - $ref: '#/components/parameters/correlationId'
+        - $ref: '#/components/parameters/dtcc-trans-ref-guid'
+        - $ref: '#/components/parameters/dtcc-sender'
+        - $ref: '#/components/parameters/dtcc-receiver'
+        - $ref: '#/components/parameters/dtcc-message-type'
+        - $ref: '#/components/parameters/dtcc-sub-message-type'
+        - $ref: '#/components/parameters/dtcc-url-params'
+        - $ref: '#/components/parameters/dtcc-api-version'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - attachmentRequestBody
+                - attachmentRequestFiles
+              properties:
+                attachmentRequestBody:
+                  $ref: "#/components/schemas/attachmentRequestBody"
+                attachmentRequestFiles:
+                  type: array
+                  description: The attachmentRequestFiles Resource is designed to add the multipart files.
+                  minItems: 1
+                  maxItems: 20
+                  items:
+                    type: string
+                    format: binary
+              encoding:
+                attachmentRequestBody:
+                  contentType: application/json
+      responses:
+        '202':
+          description: Request accepted for processing.
+          headers:
+            CorrelationId:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/acknowledgmentResponse"
+              example:
+                dtcc-trans-ref-guid: "ABCD-2025-00001"
+                messageStatus:
+                  statusCode: "202"
+                  description: "Accepted for processing"
+        '400': { $ref: '#/components/responses/BadRequestError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '405': { $ref: '#/components/responses/MethodNotAllowedError' }
+        '406': { $ref: '#/components/responses/NotAcceptableError' }
+        '413': { $ref: '#/components/responses/PayloadTooLargeError' }
+        '415': { $ref: '#/components/responses/UnsupportedMediaTypeError' }
+        '429': { $ref: '#/components/responses/TooManyRequestsError' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '502': { $ref: '#/components/responses/BadGatewayError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailableError' }
+        '504': { $ref: '#/components/responses/GatewayTimeoutError' }
+
+  /v1/attachments/notifications:
+    post:
+      operationId: sendAttachmentNotification
+      tags:
+        - Notifications
+      summary: Final confirmation notification to the original sender
+      description: >-
+        Delivers the final processing outcome (success or failure) from the Data Provider back to the
+        original sender. This endpoint is called by DTCC after receiving the Data Provider's response.
+        The originalCorrelationId in the response body allows the sender to correlate this notification
+        to their original submission.
+      parameters:
+        - $ref: '#/components/parameters/correlationId'
+        - $ref: '#/components/parameters/dtcc-trans-ref-guid'
+        - $ref: '#/components/parameters/dtcc-sender'
+        - $ref: '#/components/parameters/dtcc-receiver'
+        - $ref: '#/components/parameters/dtcc-message-type'
+        - $ref: '#/components/parameters/dtcc-sub-message-type'
+        - $ref: '#/components/parameters/dtcc-url-params'
+        - $ref: '#/components/parameters/dtcc-api-version'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/notificationRequest"
+            examples:
+              successNotification:
+                summary: Successful processing notification
+                value:
+                  originalCorrelationId: "ABCD-2025-00001"
+                  messageStatus:
+                    statusCode: "200"
+                    description: "Attachment processed successfully by Data Provider"
+              failureNotification:
+                summary: Failed processing notification
+                value:
+                  originalCorrelationId: "ABCD-2025-00001"
+                  messageStatus:
+                    statusCode: "400"
+                    description: "Data Provider rejected the attachment"
+                  error:
+                    httpStatus: 400
+                    code: "provider.client.validation"
+                    timestamp: "2025-05-08T14:30:00Z"
+                    message: "Incorrect owner information"
+                    validationErrors:
+                      - code: "OWNER_MISMATCH"
+                        message: "Owner name does not match policy records"
+      responses:
+        '200':
+          description: Notification acknowledged by sender.
+          headers:
+            CorrelationId:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/acknowledgmentResponse"
+              example:
+                messageStatus:
+                  statusCode: "200"
+        '400': { $ref: '#/components/responses/BadRequestError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '405': { $ref: '#/components/responses/MethodNotAllowedError' }
+        '429': { $ref: '#/components/responses/TooManyRequestsError' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '502': { $ref: '#/components/responses/BadGatewayError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailableError' }
+        '504': { $ref: '#/components/responses/GatewayTimeoutError' }
+
+components:
+  parameters:
+    correlationId:
+      name: correlationId
+      description: Optional client-supplied identifier to trace the request.
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 65
+        pattern: "^[0-9A-Za-z*@#.,'_/~\\-`?]{1,65}$"
+    dtcc-trans-ref-guid:
+      name: dtcc-trans-ref-guid
+      description: DTCC transaction reference GUID. Unique identifier for tracing the request through the Hub.
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 65
+    dtcc-sender:
+      name: dtcc-sender
+      description: DTCC sender identifier to identify the sender/distributor of this particular transaction.
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 8
+        maxLength: 8
+        pattern: "(^[0-9]{8}$)(?<!^0+$)"
+    dtcc-receiver:
+      name: dtcc-receiver
+      description: DTCC receiver identifier to identify the receiver of this particular transaction.
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 8
+        maxLength: 8
+        pattern: "(^[0-9]{8}$)(?<!^0+$)"
+    dtcc-message-type:
+      name: dtcc-message-type
+      description: DTCC message type identifier.
+      in: header
+      required: true
+      schema:
+        type: string
+        const: IAT
+    dtcc-sub-message-type:
+      name: dtcc-sub-message-type
+      description: DTCC sub-message type identifier.
+      in: header
+      required: true
+      schema:
+        type: string
+        const: IAT
+    dtcc-url-params:
+      name: dtcc-url-params
+      description: >
+        Partial URL path (including dynamic parameters) to be appended to the
+        base URL when the Hub forwards the request to the Data Provider or
+        Data Requestor.
+      in: header
+      required: false
+      schema:
+        type: string
+    dtcc-api-version:
+      name: dtcc-api-version
+      description: The version of the Digital First of Annuities (DFA) standard schema being sent.
+      in: header
+      required: true
+      schema:
+        type: string
+  headers:
+    CorrelationId:
+      description: Correlates this response to requests and downstream logs.
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 65
+        pattern: "^[0-9A-Za-z*@#.,'_/~\\-`?]{1,65}$"
+
+  schemas:
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        httpStatus:
+          type: integer
+          description: HTTP status code associated with this error
+          minimum: 400
+          maximum: 599
+        code:
+          type: string
+          description: >
+            A structured error code that uniquely identifies the type of error. This can follow a hierarchical format:
+            - `<domain>`: The logical domain (e.g., "gateway")
+            - `<category>`: The error category (e.g., "client" or "server")
+            - `<subcategory>`: A specific error identifier (e.g., "badrequest", "timeout")
+        timestamp:
+          type: string
+          format: date-time
+          description: Time when the error occurred
+        message:
+          type: string
+          description: Message with specific error details.
+        validationErrors:
+          type: array
+          description: Logical rule violations or decision failures related to business logic or rules
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                description: Code to classify the error & Identifies the type of business rule or decision failure.
+              message:
+                type: string
+                description: Why the error occurred / Specific business rule violation
+            required:
+              - code
+              - message
+
+    attachmentRequestBody:
+      type: object
+      description: The attachmentRequestBody Resource is designed to add the multipart request data.
+      additionalProperties: false
+      required:
+        - transSubType
+        - transactionType
+        - forms
+      properties:
+        transSubType:
+          type: string
+          description: Transaction sub-type identifier. Provision to support multiple transaction types in the future.
+          enum:
+            - "1022500300"
+        transactionType:
+          $ref: "#/components/schemas/transactionType"
+        owner:
+          $ref: "#/components/schemas/owner"
+        annuitant:
+          $ref: "#/components/schemas/annuitant"
+        policyNumber:
+          type: string
+          description: The unique number assigned to the policy, or submission, being referenced.
+          minLength: 1
+          maxLength: 30
+          pattern: "^(?=.*\\S)[0-9A-Za-z*@#\\s\\.,'_/~%$!();:&\"+®`\\-?=]{1,30}$"
+        cedingPolicyNumber:
+          type: string
+          description: Required when originating transaction type indicates Replacement Processing Submission.
+          minLength: 1
+          maxLength: 30
+          pattern: "^(?=.*\\S)[0-9A-Za-z*@#\\s\\.,'_/~%$!();:&\"+®`\\-?=]{1,30}$"
+        cusip:
+          type: string
+          description: "CUSIP number; required for New Business."
+          minLength: 9
+          maxLength: 9
+          pattern: "^[A-Za-z0-9]{9}$"
+        messageGroupId:
+          type: string
+          description: Identifier used to relate multiple attachment messages belonging to the same logical group.
+          minLength: 1
+          maxLength: 65
+          pattern: "^[0-9A-Za-z*@#.,'_/~\\-`?]{1,65}$"
+        messageGroupState:
+          type: string
+          description: The state of this message within the group (Initial, Ongoing, or Final).
+          enum:
+            - Initial
+            - Ongoing
+            - Final
+        associatedFirmId:
+          type: string
+          description: Identifies the associated Firm ID of this particular transaction.
+          minLength: 1
+          maxLength: 65
+        forms:
+          type: array
+          description: Form instances attached to the message. No more than one attachment object per form instance.
+          minItems: 1
+          maxItems: 20
+          items:
+            $ref: "#/components/schemas/formsItem"
+      allOf:
+        - if:
+            properties:
+              transactionType:
+                const: "127" # Replacement Processing Submission
+          then:
+            required:
+              - policyNumber
+              - cedingPolicyNumber
+              - owner
+        - if:
+            properties:
+              transactionType:
+                const: "103" # New Business / i.e.DTCC APP File
+          then:
+            required:
+              - cusip
+        - if:
+            required:
+              - messageGroupId
+          then:
+            required:
+              - messageGroupState
+      examples:
+        - transactionType: "127" # Replacement Processing Submission
+          owner:
+            legalEntityTypeCode: Person
+            firstName: OwnerFirstName
+            lastName: OwnerLastName
+          annuitant:
+            firstName: AnnuitantFirstName
+            lastName: AnnuitantLastName
+          policyNumber: POL-12345
+          cedingPolicyNumber: CPN-12345
+          messageGroupId: "GRP-2025-00001"
+          messageGroupState: Initial
+          forms:
+            - documentControlNumber: "10001"
+              name: Original Application
+              number: APP-2025-01
+              attachment:
+                type: "10"
+                attachmentType: application/pdf
+                fileName: OriginalApplication.pdf
+                hashValue: 3a7bd3e2360a3d80b1a3c1f6c7d9f6a1c5f0e4a0d2f7c9b8e1f2d3c4b5a69788
+                hashType: SHA-256
+            - documentControlNumber: "10002"
+              name: Electronic Signature Summary
+              number: SIG-2025-01
+              attachment:
+                type: "506"
+                attachmentType: image/tiff
+                fileName: SignatureSummary.tiff
+                hashValue: af1b2c3d4e5f60718293a4b5c6d7e8f90123456789abcdef0123456789abcdef
+                hashType: SHA-256
+
+    transactionType:
+      type: string
+      description: Originating Transaction Type.
+      enum:
+        - "181"  # Address Change Request
+        - "410"  # Appointment Request
+        - "413"  # Appointment Termination
+        - "107"  # Arrangement Administration
+        - "183"  # Email Address Change Request
+        - "1213" # Financial Activity Transmittal / Confirms
+        - "102"  # Fund Transfer
+        - "1235" # Holding Statement Transmittal / Statements
+        - "129"  # License Request
+        - "103"  # New Business / i.e. DTCC APP File
+        - "186"  # Party Update
+        - "182"  # Phone Change Request
+        - "161"  # Producer (Re) Assignment Submission
+        - "127"  # Replacement Processing Submission
+        - "508"  # Sub Payment / i.e. DTCC Sub file
+        - "185"  # Update Financial Activity
+
+    owner:
+      type: object
+      description: Owner role.
+      additionalProperties: false
+      required:
+        - legalEntityTypeCode
+      properties:
+        legalEntityTypeCode:
+          type: string
+          description: "Code identifying whether the owner is a person or non-person (e.g., Custodian or Trust)."
+          enum:
+            - Person
+            - "Non Person"
+        firstName:
+          type: string
+          description: First name when owner is a person.
+          minLength: 1
+          maxLength: 105
+          pattern: "^(?=.*\\S)[a-zA-Z0-9=()*@#\\s\\.,'_/~%$!();:&\"+®`\\-\\?]{1,105}$"
+        lastName:
+          type: string
+          description: Last name when owner is a person.
+          minLength: 1
+          maxLength: 105
+          pattern: "^(?=.*\\S)[a-zA-Z0-9=()*@#\\s\\.,'_/~%$!();:&\"+®`\\-\\?]{1,105}$"
+        organizationName:
+          type: string
+          description: "Full name when owner is a non-person (e.g., Custodian or Trust)."
+          minLength: 1
+          maxLength: 180
+          pattern: "^(?=.*\\S)[a-zA-Z0-9=()*@#\\s\\.,'_/~%$!();:&\"+®`\\-\\?]{1,180}$"
+      allOf:
+        - if:
+            properties:
+              legalEntityTypeCode:
+                enum:
+                  - "Non Person"
+            required:
+              - legalEntityTypeCode
+          then:
+            required:
+              - organizationName
+          else:
+            not:
+              required:
+                - organizationName
+        - if:
+            properties:
+              legalEntityTypeCode:
+                enum:
+                  - Person
+            required:
+              - legalEntityTypeCode
+          then:
+            required:
+              - firstName
+              - lastName
+          else:
+            not:
+              required:
+                - firstName
+                - lastName
+
+    annuitant:
+      type: object
+      description: Annuitant details (individual entitled to collect payments).
+      additionalProperties: false
+      properties:
+        firstName:
+          type: string
+          minLength: 1
+          maxLength: 105
+          pattern: "^(?=.*\\S)[a-zA-Z0-9=()*@#\\s\\.,'_/~%$!();:&\"+®`\\-\\?]{1,105}$"
+        lastName:
+          type: string
+          minLength: 1
+          maxLength: 105
+          pattern: "^(?=.*\\S)[a-zA-Z0-9=()*@#\\s\\.,'_/~%$!();:&\"+®`\\-\\?]{1,105}$"
+
+    formsItem:
+      type: object
+      additionalProperties: false
+      required:
+        - documentControlNumber
+        - attachment
+      properties:
+        documentControlNumber:
+          type: string
+          description: Unique identifier for the form instance.
+          minLength: 1
+          maxLength: 256
+          pattern: "^(?=.*\\S)[0-9A-Za-z*@# .,'_/~%$!();:+&\"®`\\-?]{1,256}$"
+        name:
+          type: string
+          description: Form name.
+          minLength: 1
+          maxLength: 256
+          pattern: "^(?=.*\\S)[0-9A-Za-z*@# .,'_/~%$!();:+&\"®`\\-?]{1,256}$"
+        number:
+          type: string
+          description: Provider form number (version).
+          minLength: 1
+          maxLength: 256
+          pattern: "^(?=.*\\S)[0-9A-Za-z*@# .,'_/~%$!();:+&\"®`\\-?]{1,256}$"
+        signatureInfo:
+          type: array
+          description: Signature data represented in this transaction.
+          minItems: 0
+          maxItems: 75
+          items:
+            $ref: "#/components/schemas/signatureInfo"
+        attachment:
+          $ref: "#/components/schemas/attachment"
+
+    signatureInfo:
+      type: object
+      description: Provides all the information of signature data represented in this transaction.
+      required:
+        - signaturePartyId
+        - signatureRole
+        - signatureDate
+        - signatureTime
+      properties:
+        signaturePartyId:
+          type: string
+          description: "Used to point to party this signature is related to. Value should be the last 4 digits of the party's social/tax ID."
+        signatureRole:
+          type: string
+          description: Role of person or entity which provided signature.
+          enum:
+            - "0"          # Unknown
+            - "1"          # Primary Insured
+            - "2"          # Other Insured
+            - "3"          # Insured Child
+            - "4"          # Insured Dependent
+            - "5"          # Insured Spouse
+            - "6"          # Joint Insured
+            - "7"          # Beneficiary - Primary
+            - "8"          # Business Partner
+            - "9"          # Beneficiary - Contingent
+            - "10"         # Beneficiary - Tertiary
+            - "11"         # Beneficiary - Assignee
+            - "12"         # Payor
+            - "13"         # Payee
+            - "14"         # Correspondence Recipient
+            - "15"         # Primary Agent
+            - "16"         # Additional Agent
+            - "17"         # Witness
+            - "18"         # Owner
+            - "19"         # Trustee
+            - "20"         # Parent or Guardian signing for minor or incompetent person
+            - "21"         # Counter Signing Agent
+            - "22"         # Applicant
+            - "23"         # Grantor
+            - "24"         # Custodian
+            - "25"         # Plan Administrator
+            - "26"         # Other Billing Notice Recipient
+            - "27"         # Annuitant
+            - "28"         # Joint Annuitant
+            - "29"         # Contingent Owner
+            - "30"         # Servicing Agent
+            - "31"         # Third Party Recipient
+            - "32"         # Statement Recipient
+            - "33"         # Power of Attorney
+            - "34"         # Collateral Assignee
+            - "35"         # PVT Met Dental Provider
+            - "36"         # Both Annuitant and Owner
+            - "37"         # Enrollee
+            - "38"         # Contingent Annuitant
+            - "39"         # Plan Sponsor
+            - "40"         # Underwriter
+            - "41"         # Client Relationship Unit Associate
+            - "42"         # Owner if Person
+            - "43"         # Joint Contingent Owner
+            - "44"         # Annuitant's Spouse
+            - "45"         # Co-Annuitant
+            - "50"         # Joint Owner
+            - "51"         # Conservator
+            - "52"         # Unborn child of insured
+            - "53"         # Assignee
+            - "56"         # Investigator
+            - "57"         # Physician
+            - "58"         # Medical Examiner
+            - "59"         # Loss First Notifier
+            - "60"         # Claimant Proxy
+            - "62"         # Mortgagee
+            - "63"         # Loss Payee
+            - "64"         # Driver
+            - "65"         # Excluded Driver
+            - "66"         # Lessor
+            - "67"         # Other Interested Party
+            - "68"         # Other Resident
+            - "69"         # Successor Custodian
+            - "70"         # Renter
+            - "71"         # Resident
+            - "72"         # Lienholder
+            - "73"         # Joint Applicant
+            - "74"         # Claim Processor
+            - "75"         # Claims Manager
+            - "76"         # Claims Clerk
+            - "77"         # Claim Approver
+            - "78"         # Succeeding Beneficiary
+            - "2147483647" # Other
+        signatureDate:
+          type: string
+          format: date
+          description: Documents the date on which the signature party performed the signature (YYYY-MM-DD).
+        signatureTime:
+          type: string
+          description: Documents the time on which the signature party performed the signature.
+
+    attachment:
+      type: object
+      additionalProperties: false
+      required:
+        - type
+        - attachmentType
+        - fileName
+      properties:
+        type:
+          type: string
+          description: Attachment type code.
+          enum:
+            - "1"       # Document - specifics undefined
+            - "2"       # Comment or note text
+            - "5"       # Form (generic, actual type unknown) - std form
+            - "6"       # Pre-Candidate Illustration
+            - "7"       # As Originally Sold Illustration
+            - "8"       # Reproposal
+            - "9"       # Revised Illustration
+            - "10"      # Original Application - preferred over 5
+            - "11"      # Revised Application
+            - "12"      # Underwriting Note
+            - "13"      # Wet signature image
+            - "57"      # ACORD 751 - Authorization to Obtain and Disclose Information Form
+            - "58"      # ACORD 752 - Certificate of Non-Illustration Form
+            - "59"      # ACORD 753 - Pre-Notice Form
+            - "60"      # ACORD 754 - Additional Other Proposed Insured Form
+            - "61"      # ACORD 755 - Additional Owners Form
+            - "62"      # ACORD 756 - Additional Beneficiaries Form
+            - "70"      # ACORD 765 - Agent's Report Form
+            - "71"      # ACORD 766 - Product Comparison Form
+            - "72"      # ACORD 767 - Temporary Insurance Agreement Form
+            - "73"      # ACORD 951 Replacement Form
+            - "79"      # Producer Card (a.k.a. Agent Card)
+            - "81"      # Policy Summary
+            - "82"      # Specification Page
+            - "97"      # Worksheet
+            - "100"     # Limited Insurance Agreement
+            - "107"     # Replacement Form
+            - "108"     # Disclosure
+            - "109"     # Transmittal
+            - "110"     # Correspondence from General Agency
+            - "111"     # Correspondence from Agent
+            - "112"     # Correspondence to General Agency
+            - "113"     # Correspondence to Agent
+            - "114"     # Correspondence from Provider
+            - "115"     # Correspondence from Proposed Insured
+            - "116"     # Pre-Authorized Check (PAC) Correspondence
+            - "117"     # Resident Alien Card
+            - "120"     # Pre-Authorized Check (PAC) Authorization
+            - "121"     # Pre-Authorized Check (PAC) Authorization/Voided Check
+            - "122"     # Premium Check - Initial Premium (COD)
+            - "123"     # Electronic Funds Transfer (EFT) Form
+            - "124"     # Government Allotment
+            - "125"     # Delivery Coversheet
+            - "126"     # Policy Delivery Receipt
+            - "127"     # Backdate Notice
+            - "128"     # Returned Original Policy
+            - "146"     # Financial Questionnaire
+            - "147"     # Trust Agreement
+            - "148"     # Income Statement
+            - "149"     # Financial Report - Personal
+            - "150"     # Financial Report - Business
+            - "151"     # 1035 Paperwork
+            - "152"     # 1035 Cost Basis
+            - "153"     # 1035 Exchange Memorandums
+            - "154"     # 1035 Loan Transfer
+            - "155"     # 1035 Minimum Deposit ResQ Worksheet
+            - "156"     # 1035 Letter/Check
+            - "157"     # 1035 Tax Advantage
+            - "158"     # 1099R
+            - "159"     # 5498
+            - "160"     # W9
+            - "183"     # Void Check
+            - "184"     # Bank Correspondence
+            - "185"     # In-Force Non-Financial Transaction
+            - "186"     # In-Force Non-Financial Change
+            - "187"     # In-Force Servicing Agent Change
+            - "188"     # In-Force Owner Change
+            - "189"     # In-Force Beneficiary Change
+            - "190"     # In-Force Name Change
+            - "191"     # In-Force Premium Change
+            - "192"     # In-Force Audit Request
+            - "193"     # In-Force Complex Transaction
+            - "194"     # In-Force Duplicate Policy Request
+            - "195"     # In-Force Reissue
+            - "196"     # In-Force Conversion
+            - "197"     # In-Force Face Amount Change
+            - "198"     # In-Force Amendment
+            - "199"     # In-Force Rate Reduction
+            - "200"     # In-Force Rider Change
+            - "201"     # In-Force Address Change
+            - "202"     # In-Force Reinstatement Request
+            - "203"     # Disbursement - Surrender
+            - "204"     # Disbursement - Withdrawal
+            - "205"     # Disbursement Forms
+            - "206"     # Disbursement - PUA Surrender
+            - "207"     # Disbursement - Loan
+            - "208"     # Dividend Forms
+            - "209"     # Death Claim
+            - "210"     # Cancellation
+            - "211"     # 1035 Surrender
+            - "213"     # Appointment Copy in non pre-appointment states
+            - "214"     # Appointment - Broker Authorization
+            - "215"     # Appointment - Authorization to Disclose
+            - "216"     # Appointment - Producer Information Form
+            - "217"     # Appointment - General Correspondence
+            - "218"     # Appointment Documents for pre-appointment states
+            - "219"     # Appointment E & O
+            - "220"     # License Copy in non pre-appointment states
+            - "221"     # Broker Authorization
+            - "222"     # Licensing Broker Authorization
+            - "223"     # Licensing Authorization to Disclose
+            - "224"     # Licensing - General Correspondence
+            - "225"     # Licensing - Documents for pre-appointment states
+            - "250"     # Instructions / Reminders
+            - "257"     # New York Reg 60 Form Appendix 10A
+            - "258"     # New York Reg 60 Form Appendix 10B
+            - "259"     # New York Reg 60 Form Appendix 10C
+            - "268"     # Broker of Record Letter
+            - "269"     # Budget Information
+            - "270"     # Carrier Contact Information
+            - "271"     # Carrier Form
+            - "272"     # Billing Statement
+            - "377"     # Financial - Personal Statement
+            - "398"     # Needs Analysis / Screening - Investment
+            - "447"     # Service - Bene, Owner, Trustee, Assignment, Name
+            - "448"     # Service - Cancellation / Termination
+            - "449"     # Service - Creditor Request
+            - "450"     # Service - Deposit Notice
+            - "451"     # Service - Loan Repayment
+            - "452"     # Service - Non-Financial Update
+            - "453"     # Service - Ownership or Beneficiary
+            - "454"     # Service - Payee
+            - "455"     # Service - Phone Restriction
+            - "456"     # Service - Policy
+            - "457"     # Service - Registered Investment Transfer
+            - "458"     # Service - Release of Beneficiary's Interest
+            - "459"     # Service - Release of Collateral Assignment
+            - "460"     # Service - Rider Election / Addition of Coverage
+            - "461"     # Service - Servicing Representative Change
+            - "462"     # Service - Status Change
+            - "487"     # HIPAA Authorization
+            - "506"     # Electronic Signature Summary
+            - "509"     # Application Overflow Form
+            - "512"     # One Time Withdrawal Form
+            - "513"     # Full Liquidation Form
+            - "514"     # Partial Withdrawal Form
+            - "520"     # Client Identification - Member of Armed Forces
+            - "521"     # Client Identification - Citizenship
+            - "525"     # ACORD 821 - Producer Information Form
+            - "526"     # Voice Signature Image/File
+            - "527"     # Death Certificate
+            - "545"     # Insurance Agent Disclosure (Form 660)
+            - "546"     # Idaho Annuity Disclosure (ACORD Form 960)
+            - "547"     # Exchange/Rollover/Transfer eForm (Form 951E)
+            - "548"     # Advisory Fee Adjustment
+            - "550"     # Broker Dealer of Record Change Form
+            - "551"     # U.S. W4R Tax Form
+            - "552"     # New York Reg 60 Form Appendix 11
+            - "553"     # New York Reg 60 Authorization Form
+            - "554"     # ACORD 950 - Change Agent / BD of Record Form
+            - "2550010" # Account Opening Form
+            - "2550015" # Customer Profile
+            - "2550020" # Electronic Consent Form - Carrier
+            - "2550030" # Electronic Consent Form - Distributor
+            - "2550035" # Electronic Consent Form - Joint
+            - "2550040" # Variable Annuity Contract Prospectus
+            - "2550041" # Variable Annuity Summary Prospectus
+            - "2550042" # Registered Fixed Annuity Prospectus (MVA and EIA)
+            - "2550050" # Fund Prospectus
+            - "2550060" # Variable Annuity Profile
+            - "2550070" # Fixed Annuity Profile
+            - "2550080" # Indexed Annuity Profile
+            - "2550090" # Risk Tolerance Questionnaire
+            - "2550100" # Privacy Notice
+            - "2550110" # General VA Disclosure (rule 2821)
+            - "2550120" # Compensation Disclosure
+            - "2550130" # Conflicts of Interest Disclosure
+            - "2550140" # Sales Summary Disclosure
+            - "2550150" # NAIC Buyers Guide - Fixed
+            - "2550160" # NAIC Buyers Guide - Variable
+            - "2550170" # NAIC Buyers Guide - EIA
+            - "2550180" # NAIC Disclosure - Fixed and EIA
+            - "2550190" # Annuity Application - NAVA Compliant
+            - "2550200" # Annuity Application - Non NAVA Compliant
+            - "2550210" # Trust Document Certificate
+            - "2550216" # Early Withdrawals on Annuity Proceeds Disclosure
+            - "2550220" # Systematic Withdrawal Form
+            - "2550230" # Telephone or Electronic Transaction Authorization
+            - "2550232" # Payment - Pre-Authorized Investment Form (PAC)
+            - "2550240" # Jumbo Case Review Form
+            - "2550250" # Tax Disclosure Form - W8
+            - "2550260" # Tax Disclosure Form - W4P
+            - "2550270" # Power of Attorney Affidavit
+            - "2550280" # Rider Reset Authorization Form
+            - "2550290" # Annuitization Authorization Form
+            - "2550300" # Interest Sweep Form
+            - "2550310" # Asset Rebalancing Form
+            - "2550320" # Dollar Cost Averaging (DCA) Form
+            - "2550330" # NAIC Model Reg Replacement Form
+            - "2550340" # Non-NAIC Model Replacement Form
+            - "2550350" # New York Regulation 60 Disclosure Form
+            - "2550360" # Exchange/Rollover Transfer Form
+            - "2550370" # Suitability Determination Form
+            - "2550380" # Customer Confirmation Form
+            - "2550390" # Welcome Letter
+            - "2550400" # Annuity Policy Contract
+            - "2550410" # Proof of Delivery Statement
+            - "2550420" # Guaranty Association Notices
+            - "2550430" # Qualified Plan Disclosures
+            - "2550440" # Service Forms
+            - "2550450" # Buyers Guide (Non-NAIC)
+        attachmentType:
+          type: string
+          description: MIME type for the attachment.
+          enum:
+            - image/tiff
+            - application/pdf
+        hashValue:
+          type: string
+          description: Hash value of the attachment (algorithm specified by hashType).
+          minLength: 1
+          maxLength: 256
+          pattern: "^(?=.*\\S)[0-9A-Za-z*@# .,'_/~%$!();:+&\"®`\\-?]{1,256}$"
+        hashType:
+          type: string
+          description: "Type of hash algorithm (e.g., SHA-256)."
+        fileName:
+          type: string
+          description: The name of the file included in the attachment.
+          minLength: 1
+          maxLength: 1000
+          pattern: "^(?=.*\\S)[0-9A-Za-z*@# .,'_/~%$!();:&\"+®`\\-?]{1,1000}$"
+      allOf:
+        - if:
+            required:
+              - hashValue
+          then:
+            required:
+              - hashType
+
+    acknowledgmentResponse:
+      type: object
+      description: Immediate acknowledgment response for async requests and notification receipts.
+      required:
+        - dtcc-trans-ref-guid
+        - messageStatus
+      properties:
+        dtcc-trans-ref-guid:
+          type: string
+          description: >
+            Echoed back from the request header. Same value the sender sent in the
+            dtcc-trans-ref-guid request header. Serves as the durable identifier to
+            correlate this request with the subsequent notification.
+          minLength: 1
+          maxLength: 65
+        messageStatus:
+          $ref: "#/components/schemas/messageStatus"
+
+    notificationRequest:
+      type: object
+      description: >
+        Final confirmation notification payload sent to the original sender after Data Provider processing completes.
+        Sender should always check messageStatus.statusCode first. If non-200, the error object may contain failure details.
+      required:
+        - originalCorrelationId
+        - messageStatus
+      properties:
+        originalCorrelationId:
+          type: string
+          description: The correlationId from the sender's original submission, allowing them to tie this notification back to their initial request.
+          minLength: 1
+          maxLength: 65
+          pattern: "^[0-9A-Za-z*@#.,'_/~\\-`?]{1,65}$"
+        messageStatus:
+          $ref: "#/components/schemas/messageStatus"
+        error:
+          $ref: "#/components/schemas/Error"
+
+    messageStatus:
+      type: object
+      description: This object is used in a response message to provide the complete status from the result of processing the matching request.
+      required:
+        - statusCode
+      properties:
+        statusCode:
+          type: string
+          description: A code for response messages indicating the status or result following receipt of the request message.
+          enum:
+            - "200" # Success
+            - "202" # Accepted
+            - "400" # Failure
+        description:
+          type: string
+          description: This description provides additional information to support the status code.
+          minLength: 1
+          maxLength: 2000
+
+  responses:
+    BadRequestError:
+      description: Bad Request
+      headers:
+        CorrelationId:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    UnauthorizedError:
+      description: Unauthorized
+      headers:
+        CorrelationId:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ForbiddenError:
+      description: Forbidden
+      headers:
+        CorrelationId:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFoundError:
+      description: Not Found
+      headers:
+        CorrelationId:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    MethodNotAllowedError:
+      description: Method Not Allowed
+      headers:
+        CorrelationId:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotAcceptableError:
+      description: Not Acceptable
+      headers:
+        CorrelationId:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    PayloadTooLargeError:
+      description: Payload Too Large
+      headers:
+        CorrelationId:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    UnsupportedMediaTypeError:
+      description: Unsupported Media Type
+      headers:
+        CorrelationId:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    TooManyRequestsError:
+      description: Too Many Requests
+      headers:
+        CorrelationId:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    InternalServerError:
+      description: Internal Server Error
+      headers:
+        CorrelationId:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ServiceUnavailableError:
+      description: Service Unavailable
+      headers:
+        CorrelationId:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    BadGatewayError:
+      description: Bad Gateway
+      headers:
+        CorrelationId:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    GatewayTimeoutError:
+      description: Gateway Timeout
+      headers:
+        CorrelationId:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
