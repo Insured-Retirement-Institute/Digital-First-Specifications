@@ -214,23 +214,198 @@ Note: Use of `totalCount` is discouraged unless the business case requires it, a
 
 ### Standard Error Schema
 
-- Every error response—regardless of transaction type—includes:
-  - An HTTP status code in the **400–599** range
-  - A structured and validated **error code**
-  - A **timestamp** of when the error was generated
-  - A developer‑focused **technical message** (`message`)
-  - A safe, user‑friendly **userMessage**
-  - A **correlationId** for cross‑system tracing
-  - A **field‑level** or **rule‑level** error collections
+Every Digital-First specification uses the same `Error` object as the body of every error response (HTTP `4xx`/`5xx`). Specifications **must** copy the `Error` and `ValidationError` schemas below unchanged.
 
-- Key Fields
-  | Field | Description |
-  |-------|-------------|
-  | **httpStatus** | Numeric HTTP status code (400–599) representing the type and severity of the failure. |
-  | **code** | Structured identifier in the enforced format: `domain.category.subcategory`. Enables machine‑readable error handling. |
-  | **correlationId** | Carries forward the inbound request’s correlation ID header to enable end‑to‑end traceability. |
-  | **message** | End‑user‑friendly explanation, safe to show in portals or consumer‑facing apps. |
-  | **validationErrors** | Array describing domain/business rule violations; each entry requires its own code and message. |
+The same `Error` object is also used wherever a failure is reported without its own HTTP response: a failed asynchronous job, a rejection event, or one failed item in a bulk result. In those places `httpStatus` is omitted.
+
+A request whose items succeed or fail independently is **not** an error: respond `2xx` with a result per item, and give each failed item its own `Error`.
+
+#### Handling rules
+
+- Clients decide how to react from the HTTP status (or, for an embedded error, from `isRetryable`), and use `code` for specific handling.
+- Clients **must** ignore properties they do not recognize.
+- Each specification **must** document the error codes it returns. A published code keeps its meaning, so clients may switch on it; they must still handle codes they do not know by HTTP status.
+- `message`, `userMessage`, and `validationErrors` **must not** contain stack traces, credentials, or the values of sensitive fields such as tax IDs or dates of birth; identify the field by `path` instead.
+
+#### Error fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `code` | string | Yes | Machine-readable error identifier in the format `domain.category.subcategory` (e.g., `fundtransfer.business.insufficient-funds`). Lowercase letters, digits, hyphens, and underscores; maximum 100 characters. |
+| `message` | string | Yes | Developer-facing explanation of what went wrong and, when known, what to change. For logs and support — not for display to end users, and not for program logic. |
+| `userMessage` | string | No | Plain-language text a portal or app may show its end user. No codes, field names, or internal details. Generic text is fine when the problem is not the end user's to fix. If absent, clients should show their own generic message. |
+| `timestamp` | string (date-time) | Yes | When the error was detected, in UTC (RFC 3339, ending in `Z`). |
+| `correlationId` | string | Yes, in HTTP error responses | The value of the request's correlation header, or a server-generated value if the caller sent none. In an embedded error, the correlation ID of the request that started the work, if there was one. |
+| `httpStatus` | integer | No | Copy of the HTTP response status (`400`–`599`), for logs and for systems that forward the body without the status line. If present it **must** equal the response status; the response status wins if they differ. Omit in embedded errors. |
+| `isRetryable` | boolean | No | Whether sending the identical request again may succeed. If absent, follow HTTP conventions: retry `429` and `503` after `Retry-After`, and do not retry other `4xx`. A `5xx` on a request that is not idempotent (such as a POST that moves money) may have taken effect, so check the resource's status before resubmitting. |
+| `validationErrors` | array | No | The individual problems behind this error, such as each invalid field or failed business rule. Omit when there is only the top-level error. Entries do not nest and never change the HTTP status. |
+
+#### ValidationError fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `code` | string | Yes | Machine-readable identifier for this problem, in the same format as `Error.code`. |
+| `message` | string | Yes | Developer-facing explanation of this problem. |
+| `userMessage` | string | No | End-user text for this problem, suitable for showing next to the related input. |
+| `path` | string | No | JSON Pointer (RFC 6901) to the field in the request body, such as `/owners/0/taxId`. Omit when the problem is not tied to one field. |
+
+**Example:**
+
+```json
+{
+  "code": "fundtransfer.validation.invalid-request",
+  "message": "Request body failed validation; see validationErrors.",
+  "userMessage": "Some of the information you entered needs to be corrected.",
+  "correlationId": "3f2c9a1e-5b7d-4e8f-9a0b-1c2d3e4f5a6b",
+  "timestamp": "2026-10-07T14:32:05Z",
+  "httpStatus": 400,
+  "validationErrors": [
+    {
+      "code": "fundtransfer.validation.required",
+      "message": "transferAmount is required.",
+      "path": "/transferAmount"
+    }
+  ]
+}
+```
+
+All specifications **must** use the following schema definitions. Copy the entire block below into your specification. If your specification already has `components:` and `schemas:` lines, paste only the `Error` and `ValidationError` definitions under your existing `schemas:` line.
+
+```yaml
+components:
+  schemas:
+    Error:
+      type: object
+      description: |
+        Clients decide how to react from the HTTP status (or, for an
+        embedded error, from `isRetryable`), and use `code` for specific
+        handling. Clients MUST ignore properties they do not recognize.
+
+        `message`, `userMessage`, and `validationErrors` MUST NOT contain
+        stack traces, credentials, or the values of sensitive fields such
+        as tax IDs or dates of birth; identify the field by `path` instead.
+      required:
+        - code
+        - message
+        - timestamp
+      properties:
+        code:
+          type: string
+          pattern: '^[a-z][a-z0-9_-]*\.[a-z][a-z0-9_-]*\.[a-z][a-z0-9_-]*$'
+          maxLength: 100
+          description: |
+            Machine-readable error identifier, `domain.category.subcategory`,
+            for example `fundtransfer.business.insufficient-funds`. Lowercase
+            letters, digits, hyphens, and underscores. Each specification
+            documents the codes it returns. A published code keeps its
+            meaning, so clients may switch on it; they must still handle
+            codes they do not know by HTTP status.
+          examples:
+            - fundtransfer.validation.invalid-request
+        message:
+          type: string
+          minLength: 1
+          description: |
+            Developer-facing explanation of what went wrong and, when known,
+            what to change. For logs and support, not for display to end
+            users, and not for program logic.
+          examples:
+            - transferAmount is required.
+        userMessage:
+          type: string
+          minLength: 1
+          description: |
+            Optional. Plain-language text a portal or app may show its end
+            user. No codes, field names, or internal details. Generic text
+            ("We could not complete your request. Please try again later.")
+            is fine when the problem is not the end user's to fix. If absent,
+            clients should show their own generic message.
+          examples:
+            - Some of the information you entered needs to be corrected.
+        correlationId:
+          type: string
+          description: |
+            The value of the request's correlation header, or a value the
+            server generated if the caller sent none. Required in HTTP error
+            responses. In an embedded error, the correlation ID of the
+            request that started the work, if there was one.
+          examples:
+            - 3f2c9a1e-5b7d-4e8f-9a0b-1c2d3e4f5a6b
+        timestamp:
+          type: string
+          format: date-time
+          description: When the error was detected, in UTC (RFC 3339, ending in `Z`).
+          examples:
+            - '2026-10-07T14:32:05Z'
+        httpStatus:
+          type: integer
+          minimum: 400
+          maximum: 599
+          description: |
+            Optional copy of the HTTP response status, for logs and for
+            systems that forward the body without the status line. If
+            present it MUST equal the response status, and the response
+            status wins if they differ. Omit it in embedded errors, which
+            have no HTTP status.
+          examples:
+            - 400
+        isRetryable:
+          type: boolean
+          description: |
+            Whether sending the identical request again may succeed. If
+            absent, follow HTTP conventions: retry 429 and 503 after
+            `Retry-After`, and do not retry other 4xx. A 5xx on a request
+            that is not idempotent (such as a POST that moves money) may
+            have taken effect, so check the resource's status before
+            resubmitting.
+        validationErrors:
+          type: array
+          minItems: 1
+          description: |
+            The individual problems behind this error, such as each invalid
+            field or failed business rule. Omit when there is only the
+            top-level error. Entries do not nest, and they never change the
+            HTTP status: the top-level `code` describes the failure as a
+            whole.
+          items:
+            $ref: '#/components/schemas/ValidationError'
+
+    ValidationError:
+      type: object
+      description: One specific problem within an `Error`.
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          pattern: '^[a-z][a-z0-9_-]*\.[a-z][a-z0-9_-]*\.[a-z][a-z0-9_-]*$'
+          maxLength: 100
+          description: Machine-readable identifier for this problem, in the same format as `Error.code`.
+          examples:
+            - fundtransfer.validation.required
+        message:
+          type: string
+          minLength: 1
+          description: Developer-facing explanation of this problem.
+          examples:
+            - transferAmount is required.
+        userMessage:
+          type: string
+          minLength: 1
+          description: Optional end-user text for this problem, suitable for showing next to the related input.
+          examples:
+            - Enter an amount to transfer.
+        path:
+          type: string
+          description: |
+            JSON Pointer (RFC 6901) to the field in the request body, such as
+            `/owners/0/taxId`. Omit when the problem is not tied to one
+            field.
+          examples:
+            - /transferAmount
+```
+
 
 Data definitions  
 - **_policyNumber_** is the term used to describe the unique identifier of the policy.
@@ -285,9 +460,9 @@ All Digital-First specifications follow [Semantic Versioning (SemVer)](https://s
 Individual firms decide the versions they will support. Firms can support multiple versions if they choose.
 
 ### API Versioning
-- API's will utilize the major version at the URL level, and the minor/patch versions should have a head for X-Api-Version.  For example, an API with a version of 1.2.1 would have the following:
-  - URL: https://example-api.com/v1/products.
-  - Header: X-Api-Version: 1.2.1
+- APIs will use the major version at the URL level. For example, an API with a version of 1.2.1 would use the following URL:
+  - URL: https://example-api.com/v1/products
+- Minor and patch versions are not sent in a request header. The full version (for example, 1.2.1) is documented in the specification's `info.version` field.
 
 Individual firms decide the versions they will support. Firms can support multiple versions if they choose.
 
