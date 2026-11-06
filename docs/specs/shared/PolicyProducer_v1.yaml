@@ -1,0 +1,20 @@
+# Modified by Cursor: shared PolicyProducer schema (policy inquiry family)
+components:
+  schemas:
+    PolicyProducer:
+      type: object
+      properties:
+        externalIds:
+          $ref: './ProducerExternalIds_v1.yaml#/components/schemas/ProducerExternalIds'
+        commissionOption:
+          type: string
+          maxLength: 50
+          description: Commission option on the contract
+        commission:
+          $ref: './ProducerCommission_v1.yaml#/components/schemas/ProducerCommission'
+          description: Defines commission-related details assigned to the producer, including identifiers and allocation percentages that determine how compensation is distributed for the policy
+        producerNumber:
+          type: string
+          maxLength: 50
+          pattern: '^[A-Za-z0-9._-]{1,50}$'
+          description: Carrier-assigned producer identifier.

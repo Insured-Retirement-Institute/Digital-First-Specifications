@@ -1,0 +1,58 @@
+# Modified by Cursor: app-status family individual/entity identity schemas
+components:
+  schemas:
+    IndividualIdentity:
+      description: Schema for individual identity data
+      required:
+        - type
+        - firstName
+        - lastName
+      type: object
+      properties:
+        type:
+          description: Indicates whether the party is an individual or an entity.
+          type: string
+          const: individual
+        firstName:
+          description: First name of the individual
+          type: string
+          minLength: 1
+          maxLength: 105
+          pattern: "^[a-zA-Z0-9À-ſ=()*@#\\s.,'_/~%$!();:&\"®`\\-\\\\?]{1,105}$"
+        middleName:
+          description: The middle name of the individual
+          type: string
+          minLength: 1
+          maxLength: 105
+          pattern: "^[a-zA-Z0-9À-ſ=()*@#\\s.,'_/~%$!();:&\"®`\\-\\\\?]{1,105}$"
+        lastName:
+          description: The last name of the individual
+          type: string
+          minLength: 1
+          maxLength: 105
+          pattern: "^[a-zA-Z0-9À-ſ=()*@#\\s.,'_/~%$!();:&\"®`\\-\\\\?]{1,105}$"
+        taxId:
+          description: Party's tax identification number
+          type: string
+          maxLength: 9
+    EntityIdentity:
+      description: Schema for entity identity data
+      type: object
+      required:
+        - type
+        - name
+      properties:
+        type:
+          description: Indicates whether the party is an individual or an entity.
+          type: string
+          const: entity
+        name:
+          description: Name of the entity
+          type: string
+          minLength: 1
+          maxLength: 180
+          pattern: "^[a-zA-Z0-9À-ſ=()*@#\\s.,'_/~%$!();:&\"®`\\-\\\\?]{1,180}$"
+        taxId:
+          description: Party's tax identification number
+          type: string
+          maxLength: 9

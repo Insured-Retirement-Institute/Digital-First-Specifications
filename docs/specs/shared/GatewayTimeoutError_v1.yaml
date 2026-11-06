@@ -1,0 +1,12 @@
+# Modified by Cursor: shared GatewayTimeoutError response
+components:
+  responses:
+    GatewayTimeoutError:
+      description: "Gateway Timeout — an upstream system did not respond in time."
+      headers:
+        correlationId:
+          $ref: './correlationId_v1.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './Error_v1.yaml#/components/schemas/Error'

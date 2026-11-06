@@ -1,0 +1,12 @@
+# Modified by Cursor: shared UnprocessableEntityError response (v2)
+components:
+  responses:
+    UnprocessableEntityError:
+      description: "Unprocessable Entity — the request is well-formed but fails business rule validation."
+      headers:
+        correlationId:
+          $ref: './correlationId_v1.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './Error_v2.yaml#/components/schemas/Error'
