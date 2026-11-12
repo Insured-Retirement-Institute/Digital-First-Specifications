@@ -1,0 +1,271 @@
+openapi: 3.1.0
+info:
+  title: Ceding Carrier Data API
+  description: API for verifying that a sender is affiliated with a ceding policy at the ceding insurance carrier.
+  version: 0.1.0
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+paths:
+ /v1/policy/ceding-carrier-data:
+    post:
+      operationId: createCedingCarrierVerification
+      tags:
+        - Ceding Carrier Verification
+      summary: Verify ceding carrier policy affiliation
+      description: >
+        Verify that a sender (distributor) is affiliated with a ceding policy number at the
+        ceding insurance carrier. The requesting participant supplies the transactionId,
+        requestingParticipantNumber, carrierNumber, authorizationCaptured, policyNumber and
+        the last four digits of the annuitant ID as query parameters.
+        The annuitant ID must be associated with the policy number; if it does not match, an
+        error is returned to the sender instead of the verification resource. The verification
+        resource is returned only when isDistributorAffiliated is true; otherwise an error is
+        returned.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CedingCarrierVerificationRequest'
+      responses:
+        '200':
+          description: Ceding carrier verification successfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CedingCarrierVerification'
+        '400': { $ref: '#/components/responses/BadRequestError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '422': { $ref: '#/components/responses/UnprocessableEntityError' }
+        '429': { $ref: '#/components/responses/TooManyRequestsError' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailableError' }
+
+security:
+  - oauth2: []
+
+components:
+  responses:
+    BadRequestError:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    UnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    ForbiddenError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFoundError:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    UnprocessableEntityError:
+      description: >
+        Unprocessable Entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    TooManyRequestsError:
+      description: Too Many Requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    ServiceUnavailableError:
+      description: Service Unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    Error:
+     type: object
+     properties:
+       httpStatus:
+         type: integer
+         description: HTTP status code associated with this error
+         minimum: 400
+         maximum: 599
+       code:
+         type: string
+         description: >
+           A structured error code that uniquely identifies the type of error. This can follow a hierarchical format:
+           - `<domain>`: The logical domain (e.g., "gateway")
+           - `<category>`: The error category (e.g., "client" or "server")
+           - `<subcategory>`: A specific error identifier (e.g., "badrequest", "timeout")
+       timestamp:
+         type: string
+         format: date-time
+         description: Time when the error occurred
+       message:
+         type: string
+         description: Message with specific error details.
+       validationErrors:
+         type: array
+         description: Logical rule violations or decision failures related to business logic or rules
+         items:
+           type: object
+           properties:
+             code:
+               type: string
+               description: Code to classify the error & Identifies the type of business rule or decision failure.
+             message:
+               type: string
+               description: Why the error occurred / Specific business rule violation
+     required:
+       - code
+       - message
+    CedingCarrierVerificationRequest:
+     type: object
+     description: Request to verify a sender's affiliation with a ceding policy number at the ceding insurance carrier.
+     required:
+        - transactionId
+        - policyNumber
+        - requestingParticipantNumber
+        - annuitantId
+        - carrierNumber
+        - authorizationCaptured
+     properties:
+        policyNumber:
+          type: string
+          description: This identifies the ceding policy number at the ceding insurance carrier when requesting ceding policy information.
+          minLength: 1
+          maxLength: 30
+          pattern: ^[0-9A-Za-z*@#\s.,'_/~%$!();:&amp;&quot;+&#x00ae;`\-\\?"=]{1,30}$
+        transactionId:
+          type: string
+          format: uuid
+          description: This is an alphanumeric value used to identify a specific transaction.
+          pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
+        requestingParticipantNumber:
+          type: string
+          description: This identifies the sender (distributor) requesitng the ceding carrier information on a ceding policy that is potentially being surrendered. 
+          minLength: 8
+          maxLength: 8
+          pattern: ^[a-zA-Z0-9]{8}$
+        carrierNumber:
+          type: string
+          description: Identifies the DTCC Carrier ID that owns the policy.
+          minLength: 8
+          maxLength: 8
+          pattern: ^[a-zA-Z0-9]{8}$
+        authorizationCaptured:
+          type: boolean
+          description: Identifies if the correct authorization was obtained
+        annuitantId:
+          type: string
+          minLength: 4
+          maxLength: 4
+          pattern: '^[0-9A-Za-z]{4}$'
+          description: >
+            Identifies the annuitant ID (last four digits) on the ceding policy. 
+     CedingCarrierVerification:
+      type: object
+      description: Result of verifying a sender's affiliation with a ceding policy number at the ceding insurance carrier.
+      required:
+        - policyNumber
+        - annuitantId
+        - cedingCarrierId
+        - cedingProcessingLocationId
+        - cusip
+        - isDistributorAffiliated
+      properties:
+        policyNumber:
+          type: string
+          minLength: 1
+          maxLength: 30
+          pattern: '^[0-9A-Za-z*@#\s.,''_/~%$!();:&amp;&quot;+&#x00ae;`\-\\?"=]{1,30}$'
+          description: This identifies the ceding policy number at the ceding insurance carrier when requesting ceding policy information. This will be echoed back on the response.
+        annuitantId:
+          type: string
+          minLength: 4
+          maxLength: 4
+          pattern: '^[0-9A-Za-z]{4}$'
+          description: >
+            Identifies the annuitant ID (last 4 digits) on the ceding policy.
+        cedingCarrierId:
+          type: string
+          minLength: 8
+          maxLength: 8
+          pattern: '(^[0-9]{8}$)(?<!^0+$)'
+          description: >
+            Identifies the DTCC Carrier ID that owns the policy and is reporting the ceding
+            policy on the position and valuations (POV) file that is stored within IIEX.
+        cedingProcessingLocationId:
+          type: string
+          minLength: 10
+          maxLength: 10
+          description: >
+            This processing location ID will be used to identify the correct location and
+            processing attributes to the current policy. This location will also apply to 1035
+            exchange/replacement transactions as the location to direct information/processing
+            attributes.
+        cusip:
+          type: string
+          minLength: 9
+          maxLength: 9
+          pattern: '^[a-zA-Z0-9]{9}$'
+          description: This field provides name of the Policy-Product reported on the positions and valuations (POV) file that is stored within IIEX.
+        isDistributorAffiliated:
+          type: boolean
+          description: >
+            This identifies if the sender (distributor) requesting ceding carrier information is
+            affiliated with the ceding policy number. To establish affiliation, at least one
+            broker-tagged account must be associated with both the Carrier and the Policy. DTCC
+            sends the response only if the value is true; otherwise an error is sent.
+        totalAnnualCharges:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          description: >
+            The total annualized cost of insurance, administration, and rider fees as a
+            percentage of contract value. Optional. Retrieved from the CONTRACT_VALUE_AMOUNT of
+            GLD_POLICY_VALUATION when the Contract Value Qualifier (CONTRACT_VALUE_QUALIFIERS)
+            is "TBF".
+        remainingHoldingPeriod:
+          type: string
+          description: >
+            Remaining required holding period for a living benefit. Optional; may be blank when
+            not available in IIEX
+            
+
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: OAuth2 flows supported by this endpoint.
+      flows:
+        clientCredentials:
+          tokenUrl: https://TOKEN_URL
+          scopes:
+            ceding-carrier-verification.read: read access to retrieve ceding carrier verifications
