@@ -188,77 +188,77 @@ components:
           maxLength: 4
           pattern: '^[0-9A-Za-z]{4}$'
           description: >
-            Identifies the annuitant ID (last four digits) on the ceding policy. 
-     CedingCarrierVerification:
-      type: object
-      description: Result of verifying a sender's affiliation with a ceding policy number at the ceding insurance carrier.
-      required:
-        - policyNumber
-        - annuitantId
-        - cedingCarrierId
-        - cedingProcessingLocationId
-        - cusip
-        - isDistributorAffiliated
-      properties:
-        policyNumber:
-          type: string
-          minLength: 1
-          maxLength: 30
-          pattern: '^[0-9A-Za-z*@#\s.,''_/~%$!();:&amp;&quot;+&#x00ae;`\-\\?"=]{1,30}$'
-          description: This identifies the ceding policy number at the ceding insurance carrier when requesting ceding policy information. This will be echoed back on the response.
-        annuitantId:
-          type: string
-          minLength: 4
-          maxLength: 4
-          pattern: '^[0-9A-Za-z]{4}$'
-          description: >
-            Identifies the annuitant ID (last 4 digits) on the ceding policy.
-        cedingCarrierId:
-          type: string
-          minLength: 8
-          maxLength: 8
-          pattern: '(^[0-9]{8}$)(?<!^0+$)'
-          description: >
-            Identifies the DTCC Carrier ID that owns the policy and is reporting the ceding
-            policy on the position and valuations (POV) file that is stored within IIEX.
-        cedingProcessingLocationId:
-          type: string
-          minLength: 10
-          maxLength: 10
-          description: >
-            This processing location ID will be used to identify the correct location and
-            processing attributes to the current policy. This location will also apply to 1035
-            exchange/replacement transactions as the location to direct information/processing
-            attributes.
-        cusip:
-          type: string
-          minLength: 9
-          maxLength: 9
-          pattern: '^[a-zA-Z0-9]{9}$'
-          description: This field provides name of the Policy-Product reported on the positions and valuations (POV) file that is stored within IIEX.
-        isDistributorAffiliated:
-          type: boolean
-          description: >
-            This identifies if the sender (distributor) requesting ceding carrier information is
-            affiliated with the ceding policy number. To establish affiliation, at least one
-            broker-tagged account must be associated with both the Carrier and the Policy. DTCC
-            sends the response only if the value is true; otherwise an error is sent.
-        totalAnnualCharges:
-          type: number
-          format: float
-          minimum: 0
-          maximum: 100
-          description: >
-            The total annualized cost of insurance, administration, and rider fees as a
-            percentage of contract value. Optional. Retrieved from the CONTRACT_VALUE_AMOUNT of
-            GLD_POLICY_VALUATION when the Contract Value Qualifier (CONTRACT_VALUE_QUALIFIERS)
-            is "TBF".
-        remainingHoldingPeriod:
-          type: string
-          description: >
-            Remaining required holding period for a living benefit. Optional; may be blank when
-            not available in IIEX
-            
+            Identifies the annuitant ID (last four digits) on the ceding policy.  
+    CedingCarrierVerification:
+     type: object
+     description: Result of verifying a sender's affiliation with a ceding policy number at the ceding insurance carrier.
+     required:
+       - policyNumber
+       - annuitantId
+       - cedingCarrierId
+       - cedingProcessingLocationId
+       - cusip
+       - isDistributorAffiliated
+     properties:
+       policyNumber:
+         type: string
+         minLength: 1
+         maxLength: 30
+         pattern: '^[0-9A-Za-z*@#\s.,''_/~%$!();:&amp;&quot;+&#x00ae;`\-\\?"=]{1,30}$'
+         description: This identifies the ceding policy number at the ceding insurance carrier when requesting ceding policy information. This will be echoed back on the response.
+       annuitantId:
+         type: string
+         minLength: 4
+         maxLength: 4
+         pattern: '^[0-9A-Za-z]{4}$'
+         description: >
+           Identifies the annuitant ID (last 4 digits) on the ceding policy.
+       cedingCarrierId:
+         type: string
+         minLength: 8
+         maxLength: 8
+         pattern: '(^[0-9]{8}$)(?<!^0+$)'
+         description: >
+           Identifies the DTCC Carrier ID that owns the policy and is reporting the ceding
+           policy on the position and valuations (POV) file that is stored within IIEX.
+       cedingProcessingLocationId:
+         type: string
+         minLength: 10
+         maxLength: 10
+         description: >
+           This processing location ID will be used to identify the correct location and
+           processing attributes to the current policy. This location will also apply to 1035
+           exchange/replacement transactions as the location to direct information/processing
+           attributes.
+       cusip:
+         type: string
+         minLength: 9
+         maxLength: 9
+         pattern: '^[a-zA-Z0-9]{9}$'
+         description: This field provides name of the Policy-Product reported on the positions and valuations (POV) file that is stored within IIEX.
+       isDistributorAffiliated:
+         type: boolean
+         description: >
+           This identifies if the sender (distributor) requesting ceding carrier information is
+           affiliated with the ceding policy number. To establish affiliation, at least one
+           broker-tagged account must be associated with both the Carrier and the Policy. DTCC
+           sends the response only if the value is true; otherwise an error is sent.
+       totalAnnualCharges:
+         type: number
+         format: float
+         minimum: 0
+         maximum: 100
+         description: >
+           The total annualized cost of insurance, administration, and rider fees as a
+           percentage of contract value. Optional. Retrieved from the CONTRACT_VALUE_AMOUNT of
+           GLD_POLICY_VALUATION when the Contract Value Qualifier (CONTRACT_VALUE_QUALIFIERS)
+           is "TBF".
+       remainingHoldingPeriod:
+         type: string
+         description: >
+           Remaining required holding period for a living benefit. Optional; may be blank when
+           not available in IIEX
+           
 
   securitySchemes:
     oauth2:
