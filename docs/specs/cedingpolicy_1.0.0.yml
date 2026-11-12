@@ -1,0 +1,726 @@
+openapi: 3.1.0
+info:
+  title: Ceding Carrier Data API
+  description: APIs for retrieving comprehensive policy data from ceding carriers
+    including policy details, parties, contract values, allocations, riders, and
+    benefits.
+  version: 0.1.0
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+paths:
+  /v1/policy/ceding-policy-info:
+    post:
+      operationId: getCedingCarrierPolicy
+      tags:
+        - Ceding Carrier Policy Data
+      summary: Retrieve ceding carrier policy data
+      description: Retrieve comprehensive policy data from ceding carrier including
+        all policy details, parties, contract values, fund allocations, riders,
+        and benefits.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CedingPolicyRequest"
+            example:
+              transactionId: "3f2a9c1e-7b4d-4e8a-9f01-2c6d8e4b5a77"
+              requestingParticipantNumber: "AB12CD34"
+              carrierNumber: "12345678"
+              policyNumber: "POL123456789"
+              authorizationCaptured: true
+              parties:
+                 - ownerTaxId: "1234"
+                 - insuredTaxId: "5678"
+      responses:
+        "200":
+          description: Policy data successfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PolicyResponse"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/TooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailableError"
+security:
+  - oauth2: []
+components:
+  responses:
+    BadRequestError:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    UnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ForbiddenError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFoundError:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    MethodNotAllowedError:
+      description: Method Not Allowed
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    TooManyRequestsError:
+      description: Too Many Requests
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ServiceUnavailableError:
+      description: Service Unavailable
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+  schemas:
+    Error:
+      type: object
+      properties:
+        httpStatus:
+          type: integer
+          description: HTTP status code associated with this error
+          minimum: 400
+          maximum: 599
+        code:
+          type: string
+          description: >
+            A structured error code that uniquely identifies the type of error.
+            This can follow a hierarchical format: - `<domain>`: The logical
+            domain (e.g., "gateway") - `<category>`: The error category (e.g.,
+            "client" or "server") - `<subcategory>`: A specific error identifier
+            (e.g., "badrequest", "timeout")
+        timestamp:
+          type: string
+          format: date-time
+          description: Time when the error occurred
+        message:
+          type: string
+          description: Message with specific error details.
+        validationErrors:
+          type: array
+          description: Logical rule violations or decision failures related to business
+            logic or rules
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                description: Code to classify the error & Identifies the type of business rule
+                  or decision failure.
+              message:
+                type: string
+                description: Why the error occurred / Specific business rule violation
+      required:
+        - code
+        - message
+    CedingPolicyRequest:
+      type: object
+      description: Request body used to retrieve ceding carrier policy data
+      required:
+        - policyNumber
+        - transactionId
+        - requestingParticipantNumber
+        - carrierNumber
+        - authorizationCaptured
+        - parties
+      properties:
+        policyNumber:
+          type: string
+          description: Unique policy number (1 to 30 characters; letters, numbers, spaces
+            and special characters allowed)
+          minLength: 1
+          maxLength: 30
+          pattern: ^[0-9A-Za-z*@#\s.,'_/~%$!();:&amp;&quot;+&#x00ae;`\-\\?"=]{1,30}$
+        transactionId:
+          type: string
+          format: uuid
+          description: Alphanumeric value used to identify a specific transaction
+          pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
+        requestingParticipantNumber:
+          type: string
+          description: Identifies the sender of this particular transaction (8
+            alphanumeric characters)
+          minLength: 8
+          maxLength: 8
+          pattern: ^[a-zA-Z0-9]{8}$
+        carrierNumber:
+          type: string
+          description: Identifies the DTCC Carrier ID that owns the policy (8 alphanumeric
+            characters)
+          minLength: 8
+          maxLength: 8
+          pattern: ^[a-zA-Z0-9]{8}$
+        authorizationCaptured:
+          type: boolean
+          description: Identifies if the correct authorization was obtained (true/false)
+        parties:
+          type: array
+          description: List of individuals or entities related to the policy
+          minItems: 1
+          maxItems: 180
+          items:
+            type: object
+            properties:
+              ownerTaxId:
+                type: string
+                description: Owner's tax ID (last 4 digits)
+                minLength: 4
+                maxLength: 4
+              insuredTaxId:
+                type: string
+                description: Insured's tax ID (last 4 digits)
+                minLength: 4
+                maxLength: 4
+    PolicyResponse:
+      type: object
+      description: Complete policy response from ceding carrier
+      required:
+        - policyNumber
+        - parties
+        - productType
+        - productName
+        - taxPlan
+        - cedingCompanyID
+      properties:
+        policyNumber:
+          type: string
+          minLength: 1
+          maxLength: 30
+          pattern: ^[0-9A-Za-z*@#\s.,'_/~%$!();:&amp;&quot;+&#x00ae;`\-\\?"=]{1,30}$
+          description: Unique identifier assigned to the contract by the insurer or cedent
+        parties:
+          $ref: "#/components/schemas/Parties"
+        issuedDate:
+          type: string
+          format: date
+          description: The official date on which the contract was issued (yyyy-mm-dd)
+        productType:
+          type: string
+          enum:
+            - Disability
+            - Fixed Indexed Annuity
+            - Fixed Annuity Products
+            - Fixed Immediate Annuity
+            - Index Variable Annuity
+            - Fixed Universal Life Insurance
+            - Fixed Whole Life Insurance
+            - Long Term Care
+            - Market Value Adjustment
+            - Money Market Products
+            - Offshore Investment Products
+            - Pension Plan
+            - Registered Index Annuity
+            - Retirement Plan
+            - Term Life
+            - Variable Annuity Products
+            - Variable Immediate Annuity
+            - Variable Universal Life Insurance
+            - Variable Whole Life Insurance
+            - Index Life
+            - Deferred Income Annuity
+            - Contingent Deferred Annuity
+          description: The general classification of the annuity or insurance product
+            (ACORD Product Type Code)
+        productName:
+          type: string
+          maxLength: 100
+          description: The marketing or legal name of the annuity or insurance product
+        cusip:
+          type: string
+          minLength: 9
+          maxLength: 9
+          pattern: ^[0-9A-Z]{9}$
+          description: CUSIP code (9 characters with only letters and numbers)
+        taxPlan:
+          type: string
+          enum:
+            - 401k
+            - Solo 401K
+            - 501c9 / Health Reimbursement
+            - 457 Deferred Compensation
+            - HR10/Keogh
+            - Inherited IRA Plan
+            - Non-qualified Stretch Plan
+            - Inherited Roth IRA Plan
+            - IRA
+            - IRA Rollover
+            - Non-qualified
+            - Pension Plan
+            - SAR/SEP
+            - SEP-IRA
+            - IRA Spousal
+            - IRA Transfer
+            - Cash Balance Plan-Defined Contributions
+            - Cash Balance Plan-Defined Benefit
+            - Solo Defined Benefit
+            - Tax Sheltered Annuity (403b)
+            - 401g
+            - 412i Plan
+            - Simple IRA
+            - Roth IRA
+            - Roth 401K
+            - Roth Tax Sheltered Annuity (403b)
+            - Educational IRA
+            - Profit Sharing Plan
+            - Money Purchase Plan
+            - Welfare Benefit Plan (419 Plan)
+            - 7702b / Long Term Care
+            - No U.S. Taxation (used for Offshore Products)
+            - 401a
+            - Inherited Tax-Sheltered Annuity (403b)
+            - Target Benefit Plan
+            - Texas Optional Retirement Program (ORP)
+            - Tax Sheltered Annuity (403b) Transfers Only
+            - Roth 457
+            - SEP Roth IRA
+            - Simple Roth IRA
+          description: Indicates the IRS qualification type of the annuity contract (IRS
+            Qualification Code)
+        cedingCompanyID:
+          type: string
+          maxLength: 100
+          description: ID of the issuing insurance company (ceding company). Maps to
+            Carrier Participant Number (DTCC master table)
+        cedingCompanyName:
+          type: string
+          maxLength: 100
+          description: Name of the issuing insurance company (ceding company)
+        maturityDate:
+          type: string
+          format: date
+          description: Date on which the annuity contract is scheduled to mature
+            (yyyy-mm-dd)
+        values:
+          $ref: "#/components/schemas/Values"
+        funds:
+          type: array
+          maxItems: 180
+          description: List of fund allocations related to the policy
+          items:
+            $ref: "#/components/schemas/Funds"
+        features:
+          items:
+            $ref: "#/components/schemas/Features"
+        livingBenefits:
+          items:
+            $ref: "#/components/schemas/LivingBenefit"
+        deathBenefits:
+          items:
+            $ref: "#/components/schemas/DeathBenefit"
+        ltcRider:
+          $ref: "#/components/schemas/LTCRider"
+    Parties:
+      type: array
+      minItems: 1
+      maxItems: 180
+      description: List of individuals or entities related to the policy
+      items:
+        $ref: "#/components/schemas/Party"
+    Party:
+      type: object
+      description: Individual or entity party to the policy
+      anyOf:
+        - required:
+            - type
+            - role
+            - firstName
+            - lastName
+        - required:
+            - type
+            - role
+            - name
+      properties:
+        type:
+          type: string
+          enum:
+            - person
+            - nonPersonEntity
+            - unknown
+            - corporation
+            - trust
+            - plan
+            - limitedLiabilityCorporation
+            - partnership
+            - assignee
+            - custodian
+            - nonProfitOrganization
+            - soleProprietorship
+            - government
+            - charitableOrganization
+            - charitableRemainderTrust
+            - ugmaUtma
+            - grantorTrust
+            - nonGrantorTrust
+            - estate
+          description: Type of party
+        role:
+          type: string
+          enum:
+            - owner
+            - jointOwner
+            - annuitant
+            - jointAnnuitant
+            - contingentAnnuitantInsured
+            - contingentOwner
+            - trustee
+            - powerOfAttorney
+            - custodianUGMA
+            - insured
+            - jointInsured
+            - decedent
+            - ownerAnnuitant
+          description: Role on the contract. Code mapping - owner=HA, jointOwner=JV,
+            annuitant=G2, jointAnnuitant=HC, contingentAnnuitantInsured=HD,
+            contingentOwner=HE, trustee=69, powerOfAttorney=PA,
+            custodianUGMA=CU, insured=PI, jointInsured=JI, decedent=DE,
+            ownerAnnuitant=OK
+        firstName:
+          type: string
+          maxLength: 180
+          description: Party's first name (populated only when the party is a natural
+            person)
+        middleName:
+          type: string
+          maxLength: 180
+          description: Party's middle name (populated only when the party is a natural
+            person)
+        lastName:
+          type: string
+          maxLength: 180
+          description: Party's last name (populated only when the party is a natural person)
+        name:
+          type: string
+          maxLength: 180
+          description: Entity name (populated only when the party is a non-natural entity)
+    Values:
+      type: object
+      description: Policy contract value information
+      required:
+        - minimumWithdrawalValueQualifier
+      properties:
+        contractValue:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 99999999999999.99
+          description: Gross contract value at valuation date, before loans, fees, or any
+            other charges (numeric 16,2 per data dictionary)
+        surrenderValue:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 99999999999999.99
+          description: The net amount available to the contract owner upon full surrender
+        surrenderCharge:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 99999999999999.99
+          description: The dollar amount reduction applied to the account value upon
+            surrender during the surrender charge period. Sourced from Contract
+            Value Qualifier SC (Surrender Charge Amount).
+        surrenderChargeExpirationDate:
+          type: string
+          format: date
+          description: The date after which no surrender charge applies (yyyy-mm-dd)
+        minimumGuaranteedDeathBenefit:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 99999999999999.99
+          description: Minimum amount payable to beneficiary upon death
+        minimumWithdrawalValue:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 99999999999999.99
+          description: Minimum allowed withdrawal amount
+        minimumWithdrawalValueQualifier:
+          type: string
+          description: Qualifies the minimum allowed withdrawal as either a percentage or
+            a dollar amount
+        totalAnnualCharges:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          description: Total annualized cost as a percentage of contract value (0-100)
+        initialPremium:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 99999999999999.99
+          description: Total premium amount paid at contract issue
+    Funds:
+      type: object
+      description: Fund allocation details
+      properties:
+        allocation:
+          type: string
+          maxLength: 180
+          description: Name of the allocation
+        allocationPercentage:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          description: Percentage of funds in the allocation (0-100)
+        rateType:
+          type: string
+          enum:
+            - Actual Rate
+            - Actual Loss Rate
+            - Buffer Rate
+            - Bonus Rate
+            - Cap Rate
+            - Cap Bailout Rate
+            - Cap Threshold
+            - Floor Rate
+            - Index Base Rate
+            - Index Rate Lock
+            - Performance Lock Threshold Downside Rate
+            - Lock Fixed Rate
+            - Lock In Rate
+            - Lower Target Rate
+            - Performance Lock Threshold Upside Rate
+            - Margin (Spread) Bailout Rate
+            - Margin (Spread)
+            - Minimum Cap Rate
+            - Participation Bailout Rate
+            - Participation Downside Rate
+            - Participation Upside Rate
+            - Performance Yield Rate
+            - Trigger Bailout Rate
+            - Trigger Rate
+            - Trigger Within Buffer Rate
+            - Upper Target Rate
+            - Multi-Level Return Start Rate 1
+            - Multi-Level Return Start Rate 2
+            - Multi-Level Return Start Rate 3
+            - Multi-Level Return Start Rate 4
+            - Multi-Level Return Start Rate 5
+            - Multi-Level Return Participation Rate 1
+            - Multi-Level Return Participation Rate 2
+            - Multi-Level Return Participation Rate 3
+            - Multi-Level Return Participation Rate 4
+            - Multi-Level Return Participation Rate 5
+            - Multi-Level Loss Return Start Rate 1
+            - Multi-Level Loss Return Start Rate 2
+            - Multi-Level Loss Return Start Rate 3
+            - Multi-Level Loss Return Start Rate 4
+            - Multi-Level Loss Return Start Rate 5
+            - Multi-Level Downside Participation Rate 1
+            - Multi-Level Downside Participation Rate 2
+            - Multi-Level Downside Participation Rate 3
+            - Multi-Level Downside Participation Rate 4
+            - Multi-Level Downside Participation Rate 5
+          description: The type of rate applicable to the allocation (Index Duration Rate
+            Type)
+        rateValue:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          description: The value of the rate as a percentage (0-100)
+        minimumGuaranteedBaseRate:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          description: Minimum base rate guaranteed on policy (0-100)
+        rateEndDate:
+          type: string
+          format: date
+          description: End date of current fund rate (yyyy-mm-dd)
+        indexTermMaturityDate:
+          type: string
+          format: date
+          description: The maturity date of the index term (yyyy-mm-dd)
+        mvaIndicator:
+          type: boolean
+          description: Indicator for Market Value Adjustment presence
+        mvaFundLevel:
+          type: boolean
+          description: Indicator for the Market Value Adjustment at the fund level
+    Features:
+      type: object
+      description: Rider fee information
+      properties:
+        totalRiderFee:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          description: Total amount of fees for riders as a percentage (0-100)
+    LivingBenefit:
+      type: object
+      description: Living benefit rider details
+      required:
+        - activated
+      properties:
+        livingBenefit:
+          type: boolean
+          description: Does the policy have a living benefit?
+        type:
+          type: string
+          maxLength: 180
+          enum:
+            - Guaranteed Minimum Accumulation Benefit (GMAB)
+            - Guaranteed Minimum Income Benefit (GMIB)
+            - Guaranteed Minimum Withdrawal Benefit (GMWB)
+            - Guaranteed Minimum Withdrawal for Life Benefit (GWLB)
+          description: Rider type (Service Feature Type Code 211, 204, 336, 215)
+        coverage:
+          type: string
+          enum:
+            - Single
+            - Joint
+          description: Type of coverage
+        name:
+          type: string
+          maxLength: 180
+          description: The name of the living benefit
+        benefitBase:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 9999999999.99
+          description: The current value of the living benefit
+        activated:
+          type: boolean
+          description: Is the rider activated/turned on?
+        activationDate:
+          type: string
+          format: date
+          description: Date the living benefit was initiated (yyyy-mm-dd)
+        incomeAmount:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 9999999999.99
+          description: Living benefit payout dollar amount
+        incomeStartDate:
+          type: string
+          format: date
+          description: Date of the first payment from the Living Benefit (yyyy-mm-dd)
+        rollupFrequency:
+          type: string
+          enum:
+            - Monthly
+            - Quarterly
+            - Semi-annual
+            - Annual
+          description: Frequency of the Living Benefit rollup rate
+        rollupFrequencyDate:
+          type: string
+          format: date
+          description: The date of the Living Benefit rollup rate (yyyy-mm-dd)
+        cost:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          description: Living benefit fees/costs as a percentage (0-100)
+        rollup:
+          type: number
+          format: float
+          description: Living Benefit rollup rate, as a percentage. Optional; blank when
+            not available in IIEX.
+        remainingHoldingPeriod:
+          type: string
+          description: Remaining required holding period for living benefit. Must be ≥
+            0.00. Optional; blank when not available in IIEX.
+    DeathBenefit:
+      type: object
+      description: Death benefit rider details
+      properties:
+        type:
+          type: string
+          maxLength: 180
+          description: The type of death benefit rider. Derived from Service Feature
+            Sub-Type Code (1 = Beneficiary Protection Rider, 2 = Spousal
+            Protection Benefit, 3 = Growth, 4 = Stepped-Up, 5 = Return of
+            premium, 6 = Return of account value, 28 = Greater of Total Premiums
+            or Account Value) when Service Feature Type Code = 206.
+        name:
+          type: string
+          maxLength: 180
+          description: The name of the death benefit rider
+        guaranteedValue:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 9999999999.99
+          description: The minimum death benefit value guaranteed on the contract
+        currentValue:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 9999999999.99
+          description: The current value of the death benefit
+        cost:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          description: Death benefit fees/costs as a percentage (0-100)
+    LTCRider:
+      type: object
+      description: LTC Rider or HLTC-LTC details
+      properties:
+        specifiedAmount:
+          type: number
+          format: float
+          description: The specific LTC benefit amount selected (Total Benefit Value -
+            code TBV)
+        maxMonthlyBenefit:
+          type: number
+          format: float
+          description: The maximum LTC benefit payable per month (Maximum Monthly Benefit
+            Value - code MMB)
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: OAuth2 flows supported by this endpoint.
+      flows:
+        clientCredentials:
+          tokenUrl: https://TOKEN_URL
+          scopes:
+            ioe.ceding-carrier.read: read access to protected resources
+            ioe.ceding-carrier.all: all access to protected resources

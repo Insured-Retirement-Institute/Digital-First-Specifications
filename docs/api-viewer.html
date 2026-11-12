@@ -31,6 +31,8 @@
                         <option value="policyinquiry">Policy Inquiry API</option>
                         <option value="beneficiaryreplacement">Beneficiary Replacement API</option>
                         <option value="documentprocessing">Document Processing API</option>
+                        <option value="cedingcarrier">Ceding Carrier API</option>
+                        <option value="cedingpolicy">Ceding Policy API</option>
                         <!-- Add more options as you add more APIs -->
                     </select>
                 </div>
@@ -208,6 +210,24 @@
                 versions: {
                     "v1": {
                         path: "specs/DocumentProcessing_1.0.0.yaml",
+                        displayName: "v1.0.0"
+                    }
+                }
+            },
+            "cedingcarrier": {
+                name: "Ceding Carrier API",
+                versions: {
+                    "v1": {
+                        path: "specs/cedingcarrier_1.0.0.yml",
+                        displayName: "v1.0.0"
+                    }
+                }
+            },
+            "cedingpolicy": {
+                name: "Ceding Policy API",
+                versions: {
+                    "v1": {
+                        path: "specs/cedingpolicy_1.0.0.yml",
                         displayName: "v1.0.0"
                     }
                 }
