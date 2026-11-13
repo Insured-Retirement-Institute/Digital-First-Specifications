@@ -1,0 +1,12 @@
+# Modified by Cursor: shared UnsupportedMediaTypeError response (v2)
+components:
+  responses:
+    UnsupportedMediaTypeError:
+      description: "Unsupported Media Type — the request Content-Type is not supported."
+      headers:
+        correlationId:
+          $ref: './correlationId_v1.yaml#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: './Error_v2.yaml#/components/schemas/Error'

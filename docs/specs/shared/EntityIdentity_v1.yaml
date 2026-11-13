@@ -1,0 +1,25 @@
+# Modified by Cursor: shared EntityIdentity schema (OTW / OTW quote variant)
+components:
+  schemas:
+    EntityIdentity:
+      description: Schema for entity identity data
+      type: object
+      required:
+        - type
+        - name
+        - taxId
+      properties:
+        type:
+          description: Indicates whether the party is an individual or an entity.
+          type: string
+          const: entity
+        name:
+          description: Name of the entity
+          type: string
+          minLength: 1
+          maxLength: 100
+          pattern: "^[\\w=()*@#\\s.,'\\/~%$!;:&\"®`\\?\\-]{1,100}$"
+        taxId:
+          description: Tax Identification Number for the individual or entity
+          type: string
+          maxLength: 9
