@@ -31,8 +31,7 @@
                         <option value="policyinquiry">Policy Inquiry API</option>
                         <option value="beneficiaryreplacement">Beneficiary Replacement API</option>
                         <option value="documentprocessing">Document Processing API</option>
-                        <option value="cedingcarrier">Ceding Carrier API</option>
-                        <option value="cedingpolicy">Ceding Policy API</option>
+                        <option value="cedingdata">Ceding Data API</option>
                         <!-- Add more options as you add more APIs -->
                     </select>
                 </div>
@@ -53,6 +52,8 @@
     <!-- Swagger UI Bundle -->
     <script src="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui-bundle.js" charset="UTF-8"></script>
     <script src="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui-standalone-preset.js" charset="UTF-8"></script>
+    <!-- Reads YAML files for combined views (see "parts" below) -->
+    <script src="https://unpkg.com/js-yaml@4.1.0/dist/js-yaml.min.js" charset="UTF-8"></script>
     <script>
         // API keys are opaque catalog IDs (not filenames). Spec files are under versions.*.path.
         // Order the specs from oldest to newest as the last version is the default in the dropdown.
@@ -214,21 +215,32 @@
                     }
                 }
             },
-            "cedingcarrier": {
-                name: "Ceding Carrier API",
+            // Combined view: lists several separate spec files on one page.
+            // Each file stays its own API and is shown as a numbered step, in the order listed.
+            // The YAML files themselves are not changed.
+            "cedingdata": {
+                name: "Ceding Data API",
                 versions: {
                     "v1": {
-                        path: "specs/cedingcarrier_1.0.0.yml",
-                        displayName: "v1.0.0"
-                    }
-                }
-            },
-            "cedingpolicy": {
-                name: "Ceding Policy API",
-                versions: {
-                    "v1": {
-                        path: "specs/cedingpolicy_1.0.0.yml",
-                        displayName: "v1.0.0"
+                        displayName: "v1.0.0",
+                        title: "Ceding Data",
+                        description: "Ceding Data is made up of **two separate APIs** that are called in order " +
+                            "when completing a replacement within the order entry process:\n\n" +
+                            "1. **Ceding Carrier Data API** — call this first to verify that the distributor is " +
+                            "affiliated with the ceding policy at the ceding carrier.\n" +
+                            "2. **Ceding Policy Data API** — call this second, after verification succeeds, to " +
+                            "retrieve the ceding policy's details.\n\n" +
+                            "Each API keeps its own specification file:",
+                        parts: [
+                            {
+                                path: "specs/cedingcarrier_1.0.0.yml",
+                                label: "Step 1: Ceding Carrier Data API"
+                            },
+                            {
+                                path: "specs/cedingpolicy_1.0.0.yml",
+                                label: "Step 2: Ceding Policy Data API"
+                            }
+                        ]
                     }
                 }
             }
@@ -239,6 +251,8 @@
         function resolveApiKey(apiParam) {
             if (!apiParam) return null;
             if (apiDefinitions[apiParam]) return apiParam;
+            // Old Ceding Carrier / Ceding Policy links now open the combined Ceding Data page.
+            if (apiParam === 'cedingcarrier' || apiParam === 'cedingpolicy') return 'cedingdata';
             if (apiParam.endsWith('.yaml')) {
                 const withoutSuffix = apiParam.slice(0, -5);
                 if (apiDefinitions[withoutSuffix]) return withoutSuffix;
@@ -284,13 +298,89 @@
             loadSelectedAPI();
         }
 
+        // Loads each spec file listed in "parts" and shows them together on one page.
+        // Every file keeps its own endpoints, models and security settings; only the display is combined.
+        async function buildCombinedSpec(def) {
+            const HTTP_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'];
+            const texts = await Promise.all(def.parts.map(part =>
+                fetch(part.path).then(r => {
+                    if (!r.ok) throw new Error('Could not load ' + part.path);
+                    return r.text();
+                })
+            ));
+            const specs = texts.map(t => jsyaml.load(t));
+
+            const fileLinks = def.parts.map((part, i) =>
+                '- ' + part.label + ' (version ' + specs[i].info.version + '): [' +
+                part.path.split('/').pop() + '](' + part.path + ')').join('\n');
+
+            const combined = {
+                openapi: specs[0].openapi,
+                info: {
+                    title: def.title,
+                    version: def.displayName.replace(/^v/, ''),
+                    description: def.description + '\n\n' + fileLinks,
+                    license: specs[0].info.license
+                },
+                tags: [],
+                paths: {},
+                components: {}
+            };
+
+            specs.forEach((spec, i) => {
+                const part = def.parts[i];
+                combined.tags.push({ name: part.label, description: spec.info.description || '' });
+
+                // Merge components. If two files use the same name for something different,
+                // the later one is renamed (e.g. oauth2_2) so each API keeps its own definition.
+                const renamedSchemes = {};
+                Object.entries(spec.components || {}).forEach(([section, items]) => {
+                    combined.components[section] = combined.components[section] || {};
+                    Object.entries(items).forEach(([name, value]) => {
+                        const existing = combined.components[section][name];
+                        if (existing === undefined) {
+                            combined.components[section][name] = value;
+                        } else if (JSON.stringify(existing) !== JSON.stringify(value)) {
+                            const newName = name + '_' + (i + 1);
+                            if (section !== 'securitySchemes') {
+                                console.warn('Name conflict in ' + section + '.' + name + ' (' + part.path + ')');
+                            }
+                            combined.components[section][newName] = value;
+                            if (section === 'securitySchemes') renamedSchemes[name] = newName;
+                        }
+                    });
+                });
+
+                // Security set at the top of a file is applied to that file's own endpoints only.
+                const renameSecurity = sec => (sec || []).map(req => {
+                    const out = {};
+                    Object.entries(req).forEach(([k, v]) => { out[renamedSchemes[k] || k] = v; });
+                    return out;
+                });
+
+                Object.entries(spec.paths || {}).forEach(([path, item]) => {
+                    if (combined.paths[path]) console.warn('Duplicate path ' + path + ' in ' + part.path);
+                    HTTP_METHODS.forEach(method => {
+                        const op = item[method];
+                        if (!op) return;
+                        op.tags = [part.label];
+                        op.security = renameSecurity(op.security || spec.security);
+                    });
+                    combined.paths[path] = item;
+                });
+            });
+
+            return combined;
+        }
+
         function loadSelectedAPI() {
             const apiSelector = document.getElementById('api-selector');
             const versionSelector = document.getElementById('version-selector');
             const selectedAPI = apiSelector.value;
             const selectedVersion = versionSelector.value;
 
-            const apiPath = apiDefinitions[selectedAPI]?.versions[selectedVersion]?.path || selectedAPI;
+            const versionDef = apiDefinitions[selectedAPI]?.versions[selectedVersion];
+            const apiPath = versionDef?.path || selectedAPI;
 
             // Update URL for bookmarking/sharing
             const url = new URL(window.location);
@@ -298,8 +388,7 @@
             url.searchParams.set('version', selectedVersion);
             window.history.pushState({}, '', url);
 
-            window.ui = SwaggerUIBundle({
-                url: apiPath,
+            const swaggerOptions = {
                 dom_id: '#swagger-ui',
                 deepLinking: true,
                 presets: [
@@ -315,7 +404,18 @@
                 defaultModelRendering: 'example',
                 defaultModelExpandDepth: 10,
                 filter: true
-            });
+            };
+
+            if (versionDef?.parts) {
+                buildCombinedSpec(versionDef)
+                    .then(spec => { window.ui = SwaggerUIBundle({ ...swaggerOptions, spec: spec }); })
+                    .catch(err => {
+                        document.getElementById('swagger-ui').innerHTML =
+                            '<p style="padding:2rem">Unable to load this API: ' + err.message + '</p>';
+                    });
+            } else {
+                window.ui = SwaggerUIBundle({ ...swaggerOptions, url: apiPath });
+            }
         }
 
         // Initial setup
