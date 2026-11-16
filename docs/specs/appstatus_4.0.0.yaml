@@ -67,8 +67,8 @@ paths:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         '400':
           description: Bad Request - malformed or unrecognized search criteria
           content:
@@ -145,8 +145,8 @@ paths:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "400":
           description: Bad Request - malformed or invalid request parameters
           content:
@@ -236,8 +236,8 @@ paths:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "400":
           description: Bad Request - malformed or invalid request parameters
           content:
@@ -300,8 +300,8 @@ paths:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "400":
           description: Bad Request - malformed or invalid request parameters
           content:
@@ -366,8 +366,8 @@ paths:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "400":
           description: Bad Request - malformed or invalid request parameters
           content:
@@ -430,8 +430,8 @@ paths:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "400":
           description: Bad Request - malformed or invalid request parameters
           content:
@@ -491,8 +491,8 @@ paths:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "400":
           description: Bad Request - malformed or invalid request parameters
           content:
@@ -554,8 +554,8 @@ paths:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "400":
           description: Bad Request - malformed or invalid request parameters
           content:
@@ -1581,7 +1581,7 @@ components:
       description: Correlation ID echoed from the request, if supplied
       schema:
         type: string
-    X-Api-Version:
+    Api-Version:
       description: Minor/patch version of the API that served this response
       schema:
         type: string

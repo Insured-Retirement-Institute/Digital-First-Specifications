@@ -1,0 +1,372 @@
+# Modified by Cursor: source spec — bundled to docs/specs/producertraining_1.0.1.yaml
+# TODO: align to shared Error_v1 — see ERROR-SCHEMA-DEBT.md
+openapi: "3.1.0"
+info:
+  title: "Producer Training APIs"
+  description: "APIs enabling training vendors, carriers, and distributors to transmit
+
+    producer training completion information.\n"
+  version: "1.0.1"
+  license:
+    name: "MIT"
+    url: "https://github.com/Insured-Retirement-Institute/Pending-Case/blob/main/LICENSE"
+tags:
+  - name: "Producer Training Update"
+    description: "Endpoints related to real-time updates into training statuses."
+paths:
+  /v1/producer-trainings:
+    post:
+      tags:
+        - "Producer Training Update"
+      summary: "Submit producer training completion information"
+      description: "Creates or updates producer training records."
+      parameters:
+        - name: "correlationId"
+          in: "header"
+          required: false
+          description: "Optional correlation ID for request tracing"
+          schema:
+            type: "string"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProducerTrainingRequest"
+      responses:
+        "201":
+          description: "Training update created successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProducerTrainingResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "413":
+          $ref: "#/components/responses/PayloadTooLarge"
+        "415":
+          $ref: "#/components/responses/UnsupportedMediaType"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+components:
+  schemas:
+    ProducerTrainingRequest:
+      type: "object"
+      description: "Producer training submission payload"
+      required:
+        - "producer"
+        - "courses"
+      properties:
+        producer:
+          $ref: "#/components/schemas/Producer"
+        courses:
+          description: "The number of courses taken"
+          type: "array"
+          minItems: 1
+          maxItems: 12
+          items:
+            $ref: "#/components/schemas/Course"
+    Producer:
+      type: "object"
+      description: "Licensed producer information"
+      required:
+        - "firstName"
+        - "lastName"
+      properties:
+        firstName:
+          description: "First name of the individual"
+          type: "string"
+          minLength: 1
+          maxLength: 105
+          pattern: "^[A-Za-z\\s'\\-]{1,105}$"
+        middleName:
+          description: "Middle name of the individual"
+          type: "string"
+          minLength: 1
+          maxLength: 105
+          pattern: "^[A-Za-z\\s'\\-]{1,105}$"
+        lastName:
+          description: "Last name of the individual"
+          type: "string"
+          minLength: 1
+          maxLength: 105
+          pattern: "^[A-Za-z\\s'\\-]{1,105}$"
+        npn:
+          description: "The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states."
+          type: "string"
+          minLength: 5
+          maxLength: 10
+          pattern: "^\\d+$"
+        crdNumber:
+          description: "The Central Registiration Depository (CRD) number assigned by FINRA to identify the financial professional."
+          type: "string"
+          minLength: 5
+          maxLength: 10
+          pattern: "^\\d+$"
+        taxId:
+          description: "The unique nine-digit identification number assigned by the U.S. government to U.S. citizens, permanent residents, and temporary residents with work authorization, used for tracking earnings, paying taxes, and applying for Social Security benefits."
+          type: "string"
+          minLength: 9
+          maxLength: 9
+          pattern: "^\\d{9}$"
+    Course:
+      type: "object"
+      description: "Training course details"
+      required:
+        - "provider"
+        - "id"
+        - "name"
+        - "type"
+        - "trainingCompletionDate"
+      properties:
+        provider:
+          description: "This is to identify the provider of this particular training."
+          type: "string"
+          enum:
+            - "adBanker"
+            - "kaplan"
+            - "luma"
+            - "pinpoint"
+            - "questCE"
+            - "reged"
+            - "successCE"
+            - "iCapital"
+            - "smartPros"
+            - "webCE"
+        id:
+          description: "Unique identifier for the course"
+          type: "string"
+          minLength: 1
+          maxLength: 20
+        name:
+          description: "Name of Course"
+          type: "string"
+          minLength: 1
+          maxLength: 40
+        method:
+          description: "Method by which training was completed"
+          type: "string"
+          enum:
+            - "online"
+            - "classroom"
+            - "referenceMaterials"
+            - "wholesaler"
+        type:
+          description: "Type of course completed"
+          type: "string"
+          enum:
+            - "state"
+            - "product"
+            - "bestInterest"
+            - "disability"
+            - "longTermCare"
+            - "rider"
+            - "ethics"
+            - "antiMoneyLaundering"
+        originatingJurisdiction:
+          description: "Jurisdiction that completion applies to (for state training)"
+          $ref: "#/components/schemas/Jurisdiction"
+        originatingJurisdictionCreditHours:
+          description: "creditHours - Number of hours of training completed."
+          type: "number"
+          minimum: 1
+          maximum: 999
+        reciprocityJurisdictions:
+          description: "Jurisdictions that allow for reciprocity of the state training for which this message applies"
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ReciprocityJurisdiction"
+        cusips:
+          description: "CUSIP identifier for product that completion applies to (for product training)"
+          type: "array"
+          minItems: 1
+          maxItems: 250
+          items:
+            type: "string"
+            pattern: "^[A-Z0-9]{9}$"
+        productTrainingCategory:
+          description: "Type of product associated with product training"
+          type: "string"
+        trainingCompletionDate:
+          description: "Date on which course was completed/verified"
+          type: "string"
+          format: "date"
+        trainingExpirationDate:
+          description: "Date on which training will expire"
+          type: "string"
+          format: "date"
+      allOf:
+        - if:
+            properties:
+              type:
+                const: "product"
+          then:
+            required:
+              - "cusips"
+        - if:
+            properties:
+              type:
+                enum:
+                  - "state"
+                  - "bestInterest"
+          then:
+            required:
+              - "originatingJurisdiction"
+    ReciprocityJurisdiction:
+      type: "object"
+      required:
+        - "jurisdiction"
+      properties:
+        jurisdiction:
+          description: "Jurisdictions that allow for reciprocity of the state training for which this message applies"
+          $ref: "#/components/schemas/Jurisdiction"
+        creditHours:
+          description: "creditHours - Number of hours of training completed."
+          type: "number"
+          minimum: 1
+          maximum: 999
+    Jurisdiction:
+      type: "string"
+      enum:
+        - "AL"
+        - "AK"
+        - "AZ"
+        - "AR"
+        - "CA"
+        - "CO"
+        - "CT"
+        - "DE"
+        - "DC"
+        - "FL"
+        - "GA"
+        - "GU"
+        - "HI"
+        - "ID"
+        - "IL"
+        - "IN"
+        - "IA"
+        - "KS"
+        - "KY"
+        - "LA"
+        - "ME"
+        - "MD"
+        - "MA"
+        - "MI"
+        - "MN"
+        - "MS"
+        - "MO"
+        - "MT"
+        - "NE"
+        - "NV"
+        - "NH"
+        - "NJ"
+        - "NM"
+        - "NY"
+        - "NC"
+        - "ND"
+        - "OH"
+        - "OK"
+        - "OR"
+        - "PA"
+        - "PR"
+        - "RI"
+        - "SC"
+        - "SD"
+        - "TN"
+        - "TX"
+        - "UT"
+        - "VT"
+        - "VI"
+        - "VA"
+        - "WA"
+        - "WV"
+        - "WI"
+        - "WY"
+    ProducerTrainingResponse:
+      type: "object"
+      required:
+        - "status"
+      properties:
+        correlationId:
+          type: "string"
+          description: "Optional client-supplied identifier to trace the request."
+    Error:
+      type: "object"
+      required:
+        - "errorCode"
+        - "errorMessage"
+      properties:
+        errorCode:
+          description: "The unique code identifying the type of error"
+          type: "string"
+        errorMessage:
+          description: "Human-readable message explaining what went wrong"
+          type: "string"
+        correlationId:
+          type: "string"
+          description: "Optional client-supplied identifier to trace the request."
+  responses:
+    BadRequest:
+      description: "Invalid request"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: "Authentication failed"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Forbidden:
+      description: "Authorization failed"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: "Resource not found"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    PayloadTooLarge:
+      description: "Payload too large"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    UnsupportedMediaType:
+      description: "Unsupported media type"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    TooManyRequests:
+      description: "Rate limit exceeded"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    InternalServerError:
+      description: "Internal server error"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ServiceUnavailable:
+      description: "Service unavailable"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"

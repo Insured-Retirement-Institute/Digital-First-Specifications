@@ -1,0 +1,12 @@
+# Modified by Cursor: shared policyNumber path parameter
+components:
+  parameters:
+    PolicyNumber:
+      name: policyNumber
+      description: Policy number
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 30

@@ -1,0 +1,23 @@
+# Modified by Cursor: shared ProducerExternalIds schema (policy inquiry family)
+components:
+  schemas:
+    ProducerExternalIds:
+      type: object
+      properties:
+        npn:
+          description: National Producer Number.
+          type: string
+          maxLength: 10
+          pattern: '^[0-9]{1,10}$'
+        crdNumber:
+          description: Central Registration Depository number.
+          type: string
+          pattern: '^[0-9]{1,12}$'
+        agencyId:
+          description: Identifier for the agency associated with the producer.
+          type: string
+          pattern: '^[0-9]{1,18}$'
+        firmId:
+          description: Identifier for the broker-dealer or parent firm affiliated with the producer.
+          type: string
+          pattern: '^[0-9]{1,18}$'
