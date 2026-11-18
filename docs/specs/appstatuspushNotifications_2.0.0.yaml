@@ -54,8 +54,8 @@ paths:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
           content:
@@ -170,8 +170,8 @@ paths:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
           content:
@@ -304,8 +304,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
           content:
@@ -367,8 +367,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
           content:
@@ -447,8 +447,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
         "403":
@@ -513,8 +513,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
         "403":
@@ -579,8 +579,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
         "403":
@@ -657,8 +657,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
         "403":
@@ -713,8 +713,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
         "403":
@@ -787,8 +787,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
         "403":
@@ -867,8 +867,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
         "403":
@@ -947,8 +947,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
         "403":
@@ -1015,8 +1015,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
         "403":
@@ -1077,8 +1077,8 @@ webhooks:
           headers:
             correlationId:
               $ref: '#/components/headers/correlationId'
-            X-Api-Version:
-              $ref: '#/components/headers/X-Api-Version'
+            Api-Version:
+              $ref: '#/components/headers/Api-Version'
         "401":
           description: Unauthorized
         "403":
@@ -1091,7 +1091,7 @@ components:
       description: Correlation ID echoed from the request, if supplied
       schema:
         type: string
-    X-Api-Version:
+    Api-Version:
       description: Minor/patch version of the API that served this response
       schema:
         type: string
