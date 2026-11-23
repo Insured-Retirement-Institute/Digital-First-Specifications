@@ -1,3 +1,4 @@
+<!-- Modified by Cursor: shared-components migration conventions (2026-09-24) -->
 # Managing API Documentation with GitHub Pages and Swagger UI
 
 This document explains how to manage multiple API documentation pages using GitHub Pages and Swagger UI.
@@ -7,6 +8,7 @@ This document explains how to manage multiple API documentation pages using GitH
 - [Directory Structure](#directory-structure)
 - [How the Site Works](#how-the-site-works)
 - [Adding New API Documentation](#adding-new-api-documentation)
+- [Shared components and bundling](#shared-components-and-bundling)
 - [Adding Versioned API Documentation](#adding-versioned-api-documentation)
 - [Validating Specifications](#validating-specifications)
 - [Publishing to GitHub Pages](#publishing-to-github-pages)
@@ -29,9 +31,11 @@ docs/
 ├── css/
 │   └── custom.css       # Custom styling
 ├── specs/
-│   ├── appstatusv1.yaml
+│   ├── shared/          # Reusable OpenAPI component fragments ($ref targets)
+│   ├── src/             # Modular source specs (edit these when using shared components)
+│   ├── appstatusv1.yaml # Published specs (Swagger UI loads these paths)
 │   ├── appstatusv2.yaml
-│   └── ...              # All OpenAPI specification files
+│   └── ...              # Bundled or standalone OpenAPI files
 └── favicon.png          # Site favicon
 ```
 
@@ -105,6 +109,168 @@ const apiDefinitions = {
 
 5. Ideally, validate the new spec before opening a pull request — see [Validating Specifications](#validating-specifications).  If this is not possible, verify the validation passes in the pull request (visible at the bottom of the _Conversation_ tab in the pull request)
 
+## Shared components and bundling
+
+Several specs define the same objects (for example the standard `Error` schema, `correlationId` header, and party identity schemas). Maintain those once under `docs/specs/shared/` and reference them from modular sources in `docs/specs/src/`.
+
+### Portable `$ref`s with `SHARED_SPECS_BASE`
+
+Source specs use a **placeholder** so the same file works in this repo and in working-group repos that copy specs in before merge:
+
+```yaml
+components:
+  parameters:
+    PolicyNumber:
+      $ref: '${SHARED_SPECS_BASE}/PolicyNumber_v1.yaml#/components/parameters/PolicyNumber'
+```
+
+### Shared file naming (`{ComponentName}_vN.yaml`)
+
+| Rule | Example |
+|------|---------|
+| One OpenAPI component per file | `Error_v1.yaml`, `PolicyNumber_v1.yaml` |
+| File name = component key + `_vN` | Component `IndividualIdentity` → `IndividualIdentity_v1.yaml`; breaking change → `IndividualIdentity_v2.yaml` |
+| OpenAPI component key unchanged | File is `IndividualIdentity_v2.yaml`; key remains `IndividualIdentity` under `components.schemas` |
+| Child-only objects | Keep inline in the parent file (e.g. `validationErrors.items` inside `Error_v1.yaml`) |
+| Cross-file refs inside `shared/` | Relative paths at the **same version** (e.g. `./Error_v2.yaml` from `BadRequestError_v2.yaml`) |
+
+Specs with non-standard inline error models are tracked in [`specs/ERROR-SCHEMA-DEBT.md`](specs/ERROR-SCHEMA-DEBT.md). During migration those specs **keep inline `Error` / `ErrorResponse`** and do not `$ref` `Error_v1` until upgraded in a separate PR.
+
+### Shared component versioning
+
+Each src spec **pins** the shared file version in its `$ref` path. Bundling does not pick “latest” — it resolves exactly the file named in the ref.
+
+```yaml
+# Older spec stays on v1
+PolicyNumber:
+  $ref: '${SHARED_SPECS_BASE}/PolicyNumber_v1.yaml#/components/parameters/PolicyNumber'
+
+# Newer spec adopts v2 when ready
+PolicyNumber:
+  $ref: '${SHARED_SPECS_BASE}/PolicyNumber_v2.yaml#/components/parameters/PolicyNumber'
+```
+
+Both `{Component}_v1.yaml` and `{Component}_v2.yaml` coexist under `docs/specs/shared/`. Specs upgrade individually; working-group repos can stay on `_v1` via pinned `$ref`s or a pinned `SHARED_SPECS_BASE` URL.
+
+| Change type | What to do |
+|-------------|------------|
+| Non-breaking (optional field, relaxed constraint) | Edit `_v1` in place |
+| Breaking (rename/remove field, tighter rules) | Add `_v2`; migrate specs one PR at a time; **do not** mutate `_v1` |
+
+Automation: [`scripts/shared-component-registry.ts`](../scripts/shared-component-registry.ts) tracks available versions and optional **per-spec version pins** (`SPEC_SHARED_VERSIONS`). `npm run apply:shared` writes `$ref`s from those pins (default **v1**). Hand-edited src refs always win.
+
+Full policy, upgrade checklist, and working-group notes: [`specs/SHARED-COMPONENT-VERSIONING.md`](specs/SHARED-COMPONENT-VERSIONING.md).
+
+```bash
+npm run report:shared-versions   # list _vN usage per src spec
+```
+
+Each API-family migration should be reviewed before the next (shared refs, bundled output, Swagger UI paths unchanged).
+
+| Environment | `SHARED_SPECS_BASE` | Resolves to |
+|-------------|---------------------|-------------|
+| **This repo (default)** | *(unset)* | Local `docs/specs/shared/` |
+| **Working-group repo** | `https://specs.dfa.irionline.org/specs/shared` | Published shared fragments |
+| **Pinned to a branch/tag** | `https://raw.githubusercontent.com/…/main/docs/specs/shared` | Exact Git revision |
+
+Set the variable in your shell, CI, or a local `.env` (not committed):
+
+```bash
+export SHARED_SPECS_BASE=https://specs.dfa.irionline.org/specs/shared
+npm run validate:specs
+```
+
+Bundling and validation expand `${SHARED_SPECS_BASE}` before OpenAPI parsing, apply **`x-df-enumOverrides`** (see below), then write preprocessed copies under `docs/specs/src/.build/` (gitignored). This repo does **not** need the variable in CI — the default local path is used automatically.
+
+### Enum overrides on shared components
+
+Shared files keep the **full canonical** `enum` list. A single API can add or remove values without forking the shared file by adding **`x-df-enumOverrides`** on the same `components` entry as the shared `$ref` (sibling keys — not a wrapper object).
+
+```yaml
+components:
+  schemas:
+    PartyRelationship:
+      $ref: '${SHARED_SPECS_BASE}/PartyRelationship_v1.yaml#/components/schemas/PartyRelationship'
+      x-df-enumOverrides:
+        - pointer: /properties/relationships/items
+          remove: [owner]           # each value must exist in the shared enum
+          add: [TRUSTEE]            # optional; document in the PR
+        # Or replace the list for this spec only:
+        # - pointer: /properties/relationships/items
+        #   set: [OWNER, JOINT_OWNER, ANNUITANT]
+```
+
+| Field | Meaning |
+|-------|---------|
+| `pointer` | JSON Pointer to the schema node that contains `enum` (relative to the resolved shared component) |
+| `remove` | Drop values from the shared enum (`final = shared \ remove`) |
+| `add` | Append values (`final = shared ∪ add`) |
+| `set` | Replace the enum entirely for this spec (ignores `add` / `remove`) |
+
+Preprocess ([`scripts/apply-enum-overrides.ts`](../scripts/apply-enum-overrides.ts)) inlines the merged schema into `.build` output so bundling and validation see the effective enum. Run `npm run audit:enum-overrides` to validate pointers and `remove` values.
+
+Use a new `{Component}_v2.yaml` when **multiple** specs need the same enum change permanently — overrides are for **one-spec** deltas only.
+
+Working-group repos can copy `docs/specs/src/<spec>.yaml` plus the `scripts/` helpers (`shared-ref-base.ts`, `apply-enum-overrides.ts`, `shared-ref-resolve.ts`, `preprocess-source-spec.ts`, `spec-paths.ts`, `bundle-specs.ts`, `validate-specs.ts`) and either:
+
+- **Reference the published URL** (no local `shared/` copy), or
+- **Copy `docs/specs/shared/`** as well and leave `SHARED_SPECS_BASE` unset.
+
+### Authoring workflow
+
+1. Add or update reusable fragments in `docs/specs/shared/` as `{ComponentName}_vN.yaml` (add `_v2+` for breaking changes; do not break `_v1` in place).
+2. Reference them from `docs/specs/src/<spec-name>.yaml` using `${SHARED_SPECS_BASE}/…` (each component entry must be a **direct** `$ref`, not a wrapper object that only points at shared).
+3. To regenerate all modular sources from the top-level published YAML files (structural match to `*_v1.yaml`, **Error_v1 only** for error schemas — Error_v2/v3 shapes stay inline):
+
+```bash
+npm run rebuild:src
+```
+
+4. Bundle into the published single-file spec:
+
+```bash
+npm run bundle:specs
+```
+
+5. Validate and build:
+
+```bash
+npm run validate:specs
+npm run build:dictionary
+```
+
+Specs not yet under `docs/specs/src/` remain standalone YAML files in `docs/specs/` and work unchanged. CI runs `bundle:specs` before validate/build.
+
+Run `npm run inventory:components` to list duplicate component names across published specs and classify them as identical or conflicting (descriptions/examples stripped for comparison).
+
+**Shared fragments currently available**
+
+| File | Contents |
+|------|----------|
+| `shared/Error_v1.yaml` | Canonical README Standard Error Schema |
+| `shared/Error_v2.yaml` | Transaction-style Error (Category A; 11 specs) |
+| `shared/Error_v3.yaml` | App-status-style Error (Category B; 2 specs) |
+| `shared/BadRequestError_v1.yaml` … `GatewayTimeoutError_v1.yaml` | Standard responses referencing `Error_v1` |
+| `shared/BadRequestError_v2.yaml` … `GatewayTimeoutError_v2.yaml` | Standard responses referencing `Error_v2` |
+| `shared/correlationId_v1.yaml` | `correlationId` response header |
+| `shared/CorrelationIdHeader_v1.yaml` | `correlationId` request header parameter |
+| `shared/PolicyNumber_v1.yaml` | `PolicyNumber` path parameter |
+| `shared/AssociatedFirmId_v1.yaml` | `AssociatedFirmId` query parameter |
+| `shared/FundDistribution_v1.yaml` | Fund distribution schema (withdrawal/systematic family) |
+| `shared/PartyRelationship_v1.yaml` | Party relationship enum schema (13-spec variant) |
+| `shared/IndividualIdentity_v1.yaml` | Individual identity schema (OTW / systematic update variant) |
+| `shared/EntityIdentity_v1.yaml` | Entity identity schema (OTW / OTW quote variant) |
+| `shared/PolicyProducer_v1.yaml` … `PolicyProducers_v1.yaml` | Policy inquiry producer schemas |
+| `shared/ProducerCommission_v1.yaml`, `ProducerExternalIds_v1.yaml` | Policy inquiry producer child schemas |
+
+Conflict-resolution choices for deferred components are recorded in [`specs/SHARED-COMPONENT-DECISIONS.md`](specs/SHARED-COMPONENT-DECISIONS.md).
+
+Cross-references **within** `docs/specs/shared/` use relative paths (e.g. `./Error_v1.yaml`). Those resolve correctly when fragments are served from `https://specs.dfa.irionline.org/specs/shared/`.
+
+### Deferred shared extractions (inventory conflicts)
+
+Party/financial schemas not yet extracted (`Producer`, `Party`, `IndividualParty`, `EntityParty`, `RmdInfo`, `TaxWithholdingInstruction`, `Address`, `Bank`, and alternate `PartyRelationship` variants) remain **inline in src specs** — see [`specs/SHARED-COMPONENT-DECISIONS.md`](specs/SHARED-COMPONENT-DECISIONS.md).
+
 ## Adding Versioned API Documentation
 
 To add a new version of an existing API:
@@ -150,9 +316,10 @@ CI runs these on Node.js 20; any recent Node version works locally. Install depe
 
 ```bash
 npm ci
+npm run bundle:specs
 ```
 
-Validate every spec in `docs/specs/` against the OpenAPI 3.1 schema:
+Validate modular sources in `docs/specs/src/` and published specs in `docs/specs/` against the OpenAPI 3.1 schema:
 
 ```bash
 npm run validate:specs
@@ -174,8 +341,8 @@ The **PR Checks** workflow reports two independent checks on every pull request 
 
 | Check | What it does |
 |-------|--------------|
-| `Validate OpenAPI specs` | Runs `npm run validate:specs`. |
-| `Build data dictionary` | Runs `npm run build:dictionary`, then packages `docs/` exactly as the publish workflow does. Attaches the built site to the workflow run as a downloadable `data-dictionary-preview` artifact, so you can inspect the generated dictionary before approving the merge. |
+| `Validate OpenAPI specs` | Runs `npm run bundle:specs`, then `npm run validate:specs`. |
+| `Build data dictionary` | Runs `npm run bundle:specs`, then `npm run build:dictionary`, then packages `docs/` exactly as the publish workflow does. Attaches the built site to the workflow run as a downloadable `data-dictionary-preview` artifact, so you can inspect the generated dictionary before approving the merge. |
 
 The build check shares its Node setup and build command with the publish workflow, so a passing build on the pull request means the same build will behave identically when merged to `main`. Schema validation runs only on pull requests — it is intended to gate merges, not to block publication of specs that are already approved.
 

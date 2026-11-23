@@ -905,7 +905,6 @@ webhooks:
                     isActionNeeded: false
                     status: completed
                     startDate: "2026-06-06"
-                    anticipatedAmount: 250000.00
                     receivedAmount: 240000.00
                     receivedDate: "2026-06-15"
                     sources:
@@ -931,7 +930,6 @@ webhooks:
                     isActionNeeded: false
                     status: completed
                     startDate: "2026-06-06"
-                    anticipatedAmount: 250000.00
                     receivedAmount: 240000.00
                     receivedDate: "2026-06-15"
                     sources:

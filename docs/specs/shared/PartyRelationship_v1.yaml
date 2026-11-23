@@ -1,0 +1,23 @@
+# Modified by Cursor: shared PartyRelationship schema (transaction + app-status variant)
+components:
+  schemas:
+    PartyRelationship:
+      description: Schema for party relationship data
+      type: object
+      required:
+        - relationships
+      properties:
+        relationships:
+          description: An array of strings specifying the relationship(s) of the party to the policy.
+          type: array
+          minItems: 1
+          maxItems: 2
+          items:
+            type: string
+            enum:
+              - owner
+              - jointOwner
+              - annuitant
+              - jointAnnuitant
+              - primaryBeneficiary
+              - contingentBeneficiary
