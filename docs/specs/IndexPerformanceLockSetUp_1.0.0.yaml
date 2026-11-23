@@ -1,0 +1,956 @@
+openapi: 3.1.0
+info:
+  title: Index Performance Lock Service
+  version: 0.1.0
+  description: |
+    API to submit new Index Performance Lock (IPL) arrangements against an identified policy.
+paths:
+  /v2/policies/{policyNumber}/arrangements/index-performance-lock:
+    post:
+      operationId: submitIndexPerformanceLock
+      description: Submit a new index performance lock arrangement against the identified policy.
+      tags:
+        - Index Performance Lock
+      parameters:
+        - $ref: '#/components/parameters/PolicyNumber'
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/AssociatedFirmId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetUpIndexPerformanceLock'
+            examples:
+              upsidePerformanceLock:
+                summary: Submit an upside performance lock arrangement
+                value:
+                  effectiveDate: "2025-06-15"
+                  nsccParticipantId: "1234"
+                  externalArrangementId: "EXT-IPL-2025-000123"
+                  cusip: "037833100"
+                  actionIndicator: "N"
+                  allocationOption: "SPECIFIED_FUNDS"
+                  arrangement:
+                    productCode: "IPL-PROD-001"
+                    arrangementType: "PERFORMANCE_LOCK"
+                    arrangementSubType: "UPSIDE_PERFORMANCE_LOCK"
+                    startDate: "2025-06-16"
+                  thresholdAmount: 105000.00
+                  funds:
+                    transferToFunds:
+                      - fundId: "FND-INDEX-500"
+                        requestedPercentage: 100
+                  auditTransSummation:
+                    auditTotalType: "SUM"
+                    auditTotal: 105000.00
+                    correlationGuid: "a3f4c8d2-1e2b-4c7a-9f5e-8b6d4a2c1e0f"
+                    correlationIdState: "INITIAL_USAGE"
+                  parties:
+                    - type: "INDIVIDUAL"
+                      firstName: "Jane"
+                      middleName: "Q"
+                      lastName: "Doe"
+                      taxId: "123456789"
+                      relationships:
+                        - "OWNER"
+                  producer:
+                    producerNumber: "PROD-0099"
+                    npn: "8765432"
+                    crdNumber: "1122334"
+                  forms:
+                    - documentControlNumber: "10001"
+                      name: "Original Application"
+                      number: "APP-2025-01"
+      responses:
+        '201':
+          description: Created — arrangement request accepted for processing.
+          headers:
+            Location:
+              description: >
+                URL of the arrangement-request status resource. 
+                Format: /v2/policies/{policyNumber}/arrangement-requests/{requestId}
+              schema:
+                type: string
+                format: uri
+            correlationId:
+              $ref: '#/components/headers/correlationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndexPerformanceLockResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowedError'
+        '406':
+          $ref: '#/components/responses/NotAcceptableError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '413':
+          $ref: '#/components/responses/PayloadTooLargeError'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaTypeError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailableError'
+        '504':
+          $ref: '#/components/responses/GatewayTimeoutError'
+  /v2/policies/{policyNumber}/arrangement-requests/{requestId}:
+    get:
+      operationId: getArrangementRequestStatus
+      description: >
+        Retrieve the current processing status of a previously submitted arrangement request. This endpoint allows clients to poll for status updates until the transaction reaches a final outcome.
+      tags:
+        - Arrangement Request Lifecycle
+      parameters:
+        - $ref: '#/components/parameters/PolicyNumber'
+        - name: requestId
+          in: path
+          required: true
+          description: >
+            Server-assigned identifier for the arrangement request. Used to correlate the Day-1 request with the Day-2 confirmation.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Arrangement request resource.
+          headers:
+            correlationId:
+              $ref: '#/components/headers/correlationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetArrangementRequestStatus'
+        '400': { $ref: '#/components/responses/BadRequestError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '429': { $ref: '#/components/responses/TooManyRequestsError' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+components:
+  headers:
+    correlationId:
+      description: Correlates this response to requests and downstream logs.
+      required: true
+      schema:
+        type: string
+        maxLength: 100
+  responses:
+    BadRequestError:
+      description: Bad Request
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnauthorizedError:
+      description: Unauthorized
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ForbiddenError:
+      description: Forbidden
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFoundError:
+      description: Not Found
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    MethodNotAllowedError:
+      description: Method Not Allowed
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotAcceptableError:
+      description: Not Acceptable
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ConflictError:
+      description: Conflict
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    PayloadTooLargeError:
+      description: Payload Too Large
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnsupportedMediaTypeError:
+      description: Unsupported Media Type
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnprocessableEntityError:
+      description: Unprocessable Entity
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TooManyRequestsError:
+      description: Too Many Requests
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description: Internal Server Error
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadGatewayError:
+      description: Bad Gateway
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ServiceUnavailableError:
+      description: Service Unavailable
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GatewayTimeoutError:
+      description: Gateway Timeout
+      headers:
+        correlationId:
+          $ref: '#/components/headers/correlationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    PolicyNumber:
+      name: policyNumber
+      in: path
+      required: true
+      description: Unique policy number.
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 30
+    CorrelationId:
+      name: correlationId
+      in: header
+      required: true
+      description: Unique identifier to trace the request.
+      schema:
+        type: string
+        maxLength: 100
+    AssociatedFirmId:
+      name: associatedFirmId
+      in: query
+      required: true
+      description: >
+        Query parameter for the associated firm ID (implementation-defined value) used to further identify a firm that is doing business on behalf of multiple distribution firms.
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 65
+  schemas:
+    SetUpIndexPerformanceLock:
+      type: object
+      description: >
+        Represents a request to establish a new Index Performance Lock (IPL) arrangement on a policy.
+      required:
+        - effectiveDate
+        - nsccParticipantId
+        - externalArrangementId
+        - actionIndicator
+        - arrangement
+        - funds
+        - producer
+        - allocationOption
+      properties:
+        effectiveDate:
+          type: string
+          format: date
+          description: >
+            When the transaction was originally scheduled or expected to happen, can be a non-business day.
+        nsccParticipantId:
+          type: string
+          maxLength: 100
+          description: >
+            Unique identifier assigned to the submitting firm or participant within the NSCC network for transaction routing and processing.
+        externalArrangementId:
+          type: string
+          description: >
+            Identifier (defined by the source system) used enables the system to determine whether an arrangement already exists and supports subsequent updates, modifications, or termination of that arrangement.
+          maxLength: 100
+        allocationOption:
+          type: string
+          description: >
+            Defines how funds are selected and allocated for the transfer.
+          const: SPECIFIED_FUNDS
+        thresholdAmount:
+          type: number
+          minimum: 0
+          maximum: 9999999999.99
+          description: >
+            The target threshold amount for the upside or downside lock. Not used for arrangementSubType = ON_DEMAND_LOCK. Required when arrangementSubType is UPSIDE_PERFORMANCE_LOCK or DOWNSIDE_PERFORMANCE_LOCK.
+        cusip:
+          type: string
+          description: >
+            Unique identification code. Optional; REQUIRED only when policyNumber is not globally unique.
+          minLength: 9
+          maxLength: 9
+          pattern: '^[A-Z0-9]{1,9}$'
+        actionIndicator:
+          type: string
+          const: N
+          description: >
+              Action to perform on the arrangement.
+              N = New arrangement submission.
+        arrangement:
+          description: >
+            Defines the transaction configuration for the Index Performance Lock arrangement, including arrangement type subtype, and timing information.
+          allOf:
+            - $ref: '#/components/schemas/Arrangement'
+        funds:
+          description: >
+            Defines the destination fund allocation used by the Index Performance Lock arrangement.
+          allOf:
+            - $ref: '#/components/schemas/Funds'
+        auditTransSummation:
+          description: >
+            Summary information used to audit one or more transactions.
+          allOf:
+            - $ref: '#/components/schemas/AuditTransSummation'
+        parties:
+          type: array
+          description: >
+            Schema for parties data.
+          items:
+            $ref: '#/components/schemas/Party'
+        producer:
+          description: >
+            Information about the producer submitting the request.
+          allOf:
+            - $ref: '#/components/schemas/Producer'
+        forms:
+          type: array
+          description: Form instances attached to the message.
+          minItems: 1
+          maxItems: 20
+          items:
+            $ref: "#/components/schemas/FormItem"
+      allOf:
+        - if:
+            properties:
+              arrangement:
+                properties:
+                  arrangementSubType:
+                    enum: 
+                      - UPSIDE_PERFORMANCE_LOCK
+                      - DOWNSIDE_PERFORMANCE_LOCK
+          then:
+            required:
+              - thresholdAmount
+        - if:
+            properties:
+              arrangement:
+                properties:
+                  arrangementSubType:
+                    const: ON_DEMAND_LOCK
+          then:
+            not:
+              required:
+                - thresholdAmount
+    Arrangement:
+      type: object
+      description: >
+        Defines the transaction configuration.
+      required:
+        - productCode
+        - arrangementType
+        - arrangementSubType
+      properties:
+        productCode:
+          type: string
+          maxLength: 100
+          description: >
+            Product code identifying the underlying product for this arrangement.
+        arrangementType:
+          type: string
+          description: >
+            Specifies the arrangement type. Only PERFORMANCE_LOCK is supported.
+          const: PERFORMANCE_LOCK
+        arrangementSubType:
+          type: string
+          description: >
+            Specifies the subtype of the Index Performance Lock arrangement.
+          enum:
+            - UPSIDE_PERFORMANCE_LOCK
+            - DOWNSIDE_PERFORMANCE_LOCK
+            - ON_DEMAND_LOCK
+        startDate:
+          type: string
+          description: >
+            The date the arrangement should start.
+          format: date
+    Funds:
+      type: object
+      description: >
+        Defines the destination fund allocation used by the Index Performance Lock arrangement.
+      required:
+        - transferToFunds
+      properties:
+        transferToFunds:
+          type: array
+          description: >
+            List of destination funds receiving the performance lock allocation.
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/FundItem'
+    FundItem:
+      type: object
+      description: >
+        Represents a single destination fund participating in the arrangement.
+      required:
+        - fundId
+        - requestedPercentage
+      properties:
+        fundId:
+          type: string
+          maxLength: 100
+          description: >
+            Unique identifier of the fund associated with the transaction.
+        requestedPercentage:
+          type: number
+          description: >
+            Specified percentage associated with the fund allocation.
+          minimum: 0
+          maximum: 100
+    AuditTransSummation:
+      type: object
+      description: >
+        Summary information used to audit one or more transactions.
+      properties:
+        auditTotalType:
+          type: string
+          description: >
+            Method which multiple data may be summarized into a total.
+          enum: [COUNT, SUM, MEAN]
+        auditTotal:
+          type: number
+          description: >
+            The numeric value for the total.
+          format: double
+          minimum: 0
+        correlationGuid:
+          type: string
+          description: >
+            GUID used for reconciliation of this transaction within the submitting firm's audit pipeline. Distinct from the transport-level correlationId header.
+          format: uuid
+          pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+        correlationIdState:
+          type: string
+          description: >
+            Indicates if the correlation GUID is the initial response, ongoing response or last series of responses.
+          enum: [INITIAL_USAGE, ONGOING_USAGE, FINAL_USAGE]
+
+    Producer:
+      type: object
+      description: >
+        Identifies the advisor or producer associated with the transaction.
+        Producer information is used for audit, regulatory, and reporting purposes.
+      required:
+        - npn
+      properties:
+        producerNumber:
+          type: string
+          description: >
+            Carrier-assigned unique identifier for the producer.
+          maxLength: 100
+        npn:
+          type: string
+          description: >
+            The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
+          maxLength: 100
+        crdNumber:
+          type: string
+          description: >
+            The Central Registration Depository (CRD) number assigned by FINRA to identify the financial professional.
+          maxLength: 100
+
+    Party:
+      type: object
+      description: |
+        The parties object represents the policy parties relevant to the arrangement (owners, annuitants, beneficiaries, etc.), along with their identity, relationship.
+      anyOf:
+        - $ref: '#/components/schemas/IndividualParty'
+        - $ref: '#/components/schemas/EntityParty'
+
+    IndividualParty:
+      description: Schema for individual party data.
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/IndividualIdentity'
+        - $ref: '#/components/schemas/PartyRelationship'
+
+    EntityParty:
+      description: Schema for entity party data.
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/EntityIdentity'
+        - $ref: '#/components/schemas/PartyRelationship'
+
+    IndividualIdentity:
+      description: Schema for individual identity data.
+      required: [firstName, lastName, taxId, type]
+      type: object
+      properties:
+        type:
+          type: string
+          description: >
+            Indicates whether the party is an individual or an entity.
+          const: INDIVIDUAL
+        firstName:
+          type: string
+          description: >
+            First name of the individual.
+          minLength: 1
+          maxLength: 105
+          pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
+        middleName:
+          type: string
+          description: >
+            The middle name of the individual.
+          minLength: 1
+          maxLength: 105
+          pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
+        lastName:
+          type: string
+          description: >
+            The last name of the individual.
+          minLength: 1
+          maxLength: 105
+          pattern: '^[a-zA-Z0-9=()*@#\s.,''_/~%$!();:&"®`\\?\-]{1,105}$'
+        taxId:
+          type: string
+          description: >
+            Party's tax identification number.
+          maxLength: 9
+
+    EntityIdentity:
+      description: Schema for entity identity data.
+      type: object
+      required: [type, name, taxId]
+      properties:
+        type:
+          type: string
+          description: >
+            Indicates whether the party is an individual or an entity.
+          const: ENTITY
+        name:
+          type: string
+          description: >
+            Entity name of the party.
+          minLength: 1
+          maxLength: 180
+          pattern: '^[\w=()*@#\s.,''\/~%$!;:&"®`\\?\-]{1,180}$'
+        taxId:
+          type: string
+          description: >
+            Party's tax identification number.
+          maxLength: 9
+
+    PartyRelationship:
+      description: Schema for party relationship data.
+      type: object
+      required: [relationships]
+      properties:
+        relationships:
+          type: array
+          description: >
+            Relationship(s) this party has to the policy.
+          minItems: 1
+          maxItems: 2
+          items:
+            type: string
+            enum: [OWNER, JOINT_OWNER, ANNUITANT, JOINT_ANNUITANT, PRIMARY_BENEFICIARY, CONTINGENT_BENEFICIARY]
+
+    IndexPerformanceLockResponse:
+      type: object
+      description: >
+        Synchronous Day-1 response to a index performance lock submission.
+      required:
+        - requestId
+        - status
+      properties:
+        requestId:
+          description: >
+           Server-assigned identifier for the arrangement request. Used to correlate the Day-1 request with the Day-2 confirmation.
+          type: string
+        status:
+          description: Synchronous-tier outcome.
+          type: string
+          const: CREATED
+        message:
+          description: Optional informational message related to request submission.
+          type: string
+        effectiveDate:
+          type: string
+          description: >
+              When the transaction was originally scheduled or expected to happen, can be a non-business day.
+          format: date
+
+    GetArrangementRequestStatus:
+      type: object
+      description: >
+          Current processing status of a previously submitted arrangement request.
+      required:
+        - requestId
+        - status
+      properties:
+        requestId:
+          type: string
+          description: >
+            Server-assigned identifier for the arrangement request. Used to correlate the Day-1 request with the Day-2 confirmation.
+        status:
+          type: string
+          description: >
+            Current status of the arrangement request.
+            This is the mapping status description-A Day-1 response of CREATED is reflected as IN_PROGRESS until processing completes. Upon completion, Day-2 statuses SUCCESS and SUCCESS_WITH_INFO are represented as polling status SUCCESS, while Day-2 status FAILURE is represented as polling status REJECTED.
+          enum: [IN_PROGRESS, SUCCESS, REJECTED]
+        effectiveDate:
+          type: string
+          description: >
+            When the transaction was originally scheduled or expected to happen, can be a non-business day.
+          format: date
+        message:
+          type: string
+          description: >
+            Optional informational or error message explaining the processing result.
+    Error:
+      type: object
+      description: |
+        Clients decide how to react from the HTTP status (or, for an
+        embedded error, from `isRetryable`), and use `code` for specific
+        handling. Clients MUST ignore properties they do not recognize.
+
+        `message`, `userMessage`, and `validationErrors` MUST NOT contain
+        stack traces, credentials, or the values of sensitive fields such
+        as tax IDs or dates of birth; identify the field by `path` instead.
+      required:
+        - code
+        - message
+        - timestamp
+      properties:
+        code:
+          type: string
+          pattern: '^[a-z][a-z0-9_-]*\.[a-z][a-z0-9_-]*\.[a-z][a-z0-9_-]*$'
+          maxLength: 100
+          description: |
+            Machine-readable error identifier, `domain.category.subcategory`,
+            for example `fundtransfer.business.insufficient-funds`. Lowercase
+            letters, digits, hyphens, and underscores. Each specification
+            documents the codes it returns. A published code keeps its
+            meaning, so clients may switch on it; they must still handle
+            codes they do not know by HTTP status.
+          examples:
+            - fundtransfer.validation.invalid-request
+        message:
+          type: string
+          minLength: 1
+          description: |
+            Developer-facing explanation of what went wrong and, when known,
+            what to change. For logs and support, not for display to end
+            users, and not for program logic.
+          examples:
+            - transferAmount is required.
+        userMessage:
+          type: string
+          minLength: 1
+          description: |
+            Optional. Plain-language text a portal or app may show its end
+            user. No codes, field names, or internal details. Generic text
+            ("We could not complete your request. Please try again later.")
+            is fine when the problem is not the end user's to fix. If absent,
+            clients should show their own generic message.
+          examples:
+            - Some of the information you entered needs to be corrected.
+        correlationId:
+          type: string
+          description: |
+            The value of the request's correlation header, or a value the
+            server generated if the caller sent none. Required in HTTP error
+            responses. In an embedded error, the correlation ID of the
+            request that started the work, if there was one.
+          examples:
+            - 3f2c9a1e-5b7d-4e8f-9a0b-1c2d3e4f5a6b
+        timestamp:
+          type: string
+          format: date-time
+          description: When the error was detected, in UTC (RFC 3339, ending in `Z`).
+          examples:
+            - '2026-10-07T14:32:05Z'
+        httpStatus:
+          type: integer
+          minimum: 400
+          maximum: 599
+          description: |
+            Optional copy of the HTTP response status, for logs and for
+            systems that forward the body without the status line. If
+            present it MUST equal the response status, and the response
+            status wins if they differ. Omit it in embedded errors, which
+            have no HTTP status.
+          examples:
+            - 400
+        isRetryable:
+          type: boolean
+          description: |
+            Whether sending the identical request again may succeed. If
+            absent, follow HTTP conventions: retry 429 and 503 after
+            `Retry-After`, and do not retry other 4xx. A 5xx on a request
+            that is not idempotent (such as a POST that moves money) may
+            have taken effect, so check the resource's status before
+            resubmitting.
+        validationErrors:
+          type: array
+          minItems: 1
+          description: |
+            The individual problems behind this error, such as each invalid
+            field or failed business rule. Omit when there is only the
+            top-level error. Entries do not nest, and they never change the
+            HTTP status: the top-level `code` describes the failure as a
+            whole.
+          items:
+            $ref: '#/components/schemas/ValidationError'
+
+    ValidationError:
+      type: object
+      description: One specific problem within an `Error`.
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          pattern: '^[a-z][a-z0-9_-]*\.[a-z][a-z0-9_-]*\.[a-z][a-z0-9_-]*$'
+          maxLength: 100
+          description: Machine-readable identifier for this problem, in the same format as `Error.code`.
+          examples:
+            - fundtransfer.validation.required
+        message:
+          type: string
+          minLength: 1
+          description: Developer-facing explanation of this problem.
+          examples:
+            - transferAmount is required.
+        userMessage:
+          type: string
+          minLength: 1
+          description: Optional end-user text for this problem, suitable for showing next to the related input.
+          examples:
+            - Enter an amount to transfer.
+        path:
+          type: string
+          description: |
+            JSON Pointer (RFC 6901) to the field in the request body, such as
+            `/owners/0/taxId`. Omit when the problem is not tied to one
+            field.
+          examples:
+            - /transferAmount
+    Day2ArrangementConfirmationEvent:
+      x-event-mesh:
+        broker: Advanced Event Mesh
+        topicPattern: "{root}/ift/v1/{eventType}/{status}/{transactionType}/{firm}"
+        deliveryModel: topic-subscription
+        note: >
+          Delivered over a message broker via topic subscription, not an HTTP
+          callback.
+      type: object
+      description: >
+          Canonical Day-2 arrangement confirmation event published to the enterprise event mesh after an arrangement transaction completes processing.
+      required:
+        - eventType
+        - eventId
+        - eventTimestamp
+        - associatedFirmId
+        - requestId
+        - policyNumber
+        - transactionType
+        - status
+        - transExeDate
+        - transExeTime
+        - nsccParticipantId
+        - npn
+        - correlationId
+      properties:
+        # Event-level metadata
+        eventType:
+          type: string
+          description: >
+            Identifies the type of Day-2 confirmation event published to the event mesh.
+          enum:
+            - DAY2_CONFIRM
+        eventId:
+          type: string
+          format: uuid
+          maxLength: 36
+          description: >
+            Globally unique identifier for this event. Used by consuming systems for idempotent processing and duplicate detection.
+        eventTimestamp:
+          type: string
+          format: date-time
+          description: >
+            Date and time when the event was published to the event mesh.
+        associatedFirmId:
+          type: string
+          maxLength: 65
+          description: >
+            Query parameter for the associated firm ID (implementation-defined value) used to further identify a firm that is doing business on behalf of multiple distribution firms.
+        # Day-2 business outcome data
+        requestId:
+          type: string
+          description: >
+            Server-assigned identifier for the arrangement request. Used to correlate the Day-1 request with the Day-2 confirmation.
+        correlationId:
+          type: string
+          maxLength: 100
+          description: >
+            Correlation identifier supplied with the original request and propagated to the Day-2 confirmation for end-to-end traceability.
+        policyNumber:
+          type: string
+          minLength: 1
+          maxLength: 30
+          description: >
+            Unique policy number.
+        transactionType:
+          type: string
+          description: >
+            High-level classification of the transaction that completed processing. For example, SUBMIT_* indicates creation of a new arrangement and UPDATE_* indicates modification of an existing arrangement. CANCEL_* indicates cancellation of an existing arrangement.
+          enum:
+            - UPDATE_INDEX_PERFORMANCE_LOCK
+            - SUBMIT_INDEX_PERFORMANCE_LOCK
+            - CANCEL_INDEX_PERFORMANCE_LOCK
+        status:
+          type: string
+          description: >
+            Final processing outcome of the arrangement request.
+          enum:
+            - SUCCESS
+            - SUCCESS_WITH_INFO
+            - FAILURE
+        message:
+          type: string
+          description: >
+            Human-readable explanation of the outcome. Populated when the transaction fails or additional explanation is required.
+        effectiveDate:
+          type: string
+          format: date
+          description: >
+              When the transaction was originally scheduled or expected to happen, can be a non-business day.
+        npn:
+          type: string
+          maxLength: 100
+          description: >
+            The unique National Producer Number that is assigned to an individual producer at the NAIC level that is used as the standard global identifier across all states.
+        nsccParticipantId:
+          type: string
+          maxLength: 100
+          description: >
+            Unique identifier assigned to the submitting firm or participant within the NSCC network for transaction routing and processing.
+        transExeDate:
+          type: string
+          format: date
+          description: >
+            Date on which the Day‑2 confirmation was produced by the transaction processing system.
+        transExeTime:
+          type: string
+          pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$'
+          description: >
+            Time on which the Day-2 confirmation was produced by the transaction processing system.
+    FormItem:
+      type: object
+      description: >
+        Form information associated with the request.
+      required:
+        - documentControlNumber
+      properties:
+        documentControlNumber:
+          type: string
+          description: Unique identifier for the form instance.
+          minLength: 1
+          maxLength: 256
+          pattern: "^(?=.*\\S)[0-9A-Za-z*@# .,'_/~%$!();:+&\"®`\\-?]{1,256}$"
+        name:
+          type: string
+          description: Form name.
+          minLength: 1
+          maxLength: 256
+          pattern: "^(?=.*\\S)[0-9A-Za-z*@# .,'_/~%$!();:+&\"®`\\-?]{1,256}$"
+        number:
+          type: string
+          description: Provider form number (version).
+          minLength: 1
+          maxLength: 256
+          pattern: "^(?=.*\\S)[0-9A-Za-z*@# .,'_/~%$!();:+&\"®`\\-?]{1,256}$"
