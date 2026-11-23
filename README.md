@@ -249,6 +249,22 @@ A request whose items succeed or fail independently is **not** an error: respond
 | `userMessage` | string | No | End-user text for this problem, suitable for showing next to the related input. |
 | `path` | string | No | JSON Pointer (RFC 6901) to the field in the request body, such as `/owners/0/taxId`. Omit when the problem is not tied to one field. |
 
+#### HTTP Status Codes and User Messages
+
+Each working group decides which HTTP status codes its specification returns and which of those codes need a `userMessage`. The codes below usually mean a technical or infrastructure problem that an end user can't fix. A `userMessage` is **not required** for them. The required fields (`code`, `message`, `timestamp`, and `correlationId`) still apply.
+
+| Status | Name | When it happens |
+|--------|------|-----------------|
+| 405 | Method Not Allowed | The endpoint does not support the HTTP method used (for example, a `DELETE` sent to a read-only endpoint). |
+| 407 | Proxy Authentication Required | A proxy between the client and the server needs authentication first. |
+| 408 | Request Timeout | The server did not receive the complete request in time. |
+| 414 | URI Too Long | The request URL is longer than the server will accept. |
+| 415 | Unsupported Media Type | The request body is in a format the endpoint does not accept. |
+| 429 | Too Many Requests | The client has sent too many requests in a given time. Retry after the `Retry-After` period. |
+| 5XX | Server Errors | The server is down or has another technical problem. |
+
+These are suggestions, not requirements. A working group may still include a `userMessage` for any of these codes if it helps its users.
+
 **Example:**
 
 ```json
