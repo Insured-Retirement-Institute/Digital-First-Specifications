@@ -728,7 +728,8 @@ components:
       type: string
       minLength: 9
       maxLength: 9
-      pattern: ^[0-9]{3}[A-Z0-9]{5}[0-9]$
+      pattern: ^[A-Z0-9]{1,9}$
+      examples: ["401B23458"]
     IndividualIdentity:
       description: Schema for individual identity data
       required:
