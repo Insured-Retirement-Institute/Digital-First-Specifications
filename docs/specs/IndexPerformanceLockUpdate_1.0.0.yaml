@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: Index Performance Lock Update Service
+  title: Index Performance Lock Service
   version: 0.1.0
   description: |
     API to update an existing Index Performance Lock arrangement against a policy.
