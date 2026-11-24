@@ -32,6 +32,11 @@
                         <option value="beneficiaryreplacement">Beneficiary Replacement API</option>
                         <option value="documentprocessing">Document Processing API</option>
                         <option value="cedingdata">Ceding Data API</option>
+                        <option value="allocations">Allocations API</option>
+                        <option value="dollarcostaveraging">Dollar Cost Averaging API</option>
+                        <option value="indexperformancelock">Index Performance Lock API</option>
+                        <option value="rebalance">Rebalance API</option>
+                        <option value="systematicinvestment">Systematic Investment API</option>
                         <!-- Add more options as you add more APIs -->
                     </select>
                 </div>
@@ -215,6 +220,146 @@
                     }
                 }
             },
+            // Combined view: Allocations Setup + Update on one page.
+            "allocations": {
+                name: "Allocations API",
+                versions: {
+                    "v1": {
+                        displayName: "v1.0.0",
+                        title: "Allocations",
+                        description: "Allocation Instructions define how future premiums and transfers are directed across a policy's investment options. " +
+                            "Allocations is made up of **two separate APIs**:\n\n" +
+                            "1. **Allocations Setup API** — create a new Allocation Instructions arrangement on a policy.\n" +
+                            "2. **Allocations Update API** — update or cancel an existing Allocation Instructions arrangement.\n\n" +
+                            "Both are processed asynchronously: the Day-1 response returns a requestId, the outcome can be " +
+                            "polled with the shared arrangement-request status endpoint, and a Day-2 confirmation event " +
+                            "is published to the event mesh when processing completes.\n\n" +
+                            "Each API keeps its own specification file:",
+                        parts: [
+                            {
+                                path: "specs/AllocationsSetUp_1.0.0.yaml",
+                                label: "Step 1: Allocations Setup API"
+                            },
+                            {
+                                path: "specs/AllocationsUpdate_1.0.0.yaml",
+                                label: "Step 2: Allocations Update API"
+                            }
+                        ]
+                    }
+                }
+            },
+            // Combined view: Dollar Cost Averaging Setup + Update on one page.
+            "dollarcostaveraging": {
+                name: "Dollar Cost Averaging API",
+                versions: {
+                    "v1": {
+                        displayName: "v1.0.0",
+                        title: "Dollar Cost Averaging",
+                        description: "Dollar Cost Averaging (DCA) moves a fixed amount or percentage from source funds to destination funds at regular intervals, regardless of market conditions. " +
+                            "Dollar Cost Averaging is made up of **two separate APIs**:\n\n" +
+                            "1. **Dollar Cost Averaging Setup API** — create a new DCA arrangement on a policy.\n" +
+                            "2. **Dollar Cost Averaging Update API** — update or cancel an existing DCA arrangement.\n\n" +
+                            "Both are processed asynchronously: the Day-1 response returns a requestId, the outcome can be " +
+                            "polled with the shared arrangement-request status endpoint, and a Day-2 confirmation event " +
+                            "is published to the event mesh when processing completes.\n\n" +
+                            "Each API keeps its own specification file:",
+                        parts: [
+                            {
+                                path: "specs/DollarCostAverageSetUp_1.0.0.yaml",
+                                label: "Step 1: Dollar Cost Averaging Setup API"
+                            },
+                            {
+                                path: "specs/DollarCostAverageUpdate_1.0.0.yaml",
+                                label: "Step 2: Dollar Cost Averaging Update API"
+                            }
+                        ]
+                    }
+                }
+            },
+            // Combined view: Index Performance Lock Setup + Update on one page.
+            "indexperformancelock": {
+                name: "Index Performance Lock API",
+                versions: {
+                    "v1": {
+                        displayName: "v1.0.0",
+                        title: "Index Performance Lock",
+                        description: "Index Performance Lock arrangements let policy owners lock indexed account performance using upside or downside threshold values, or on demand. " +
+                            "Index Performance Lock is made up of **two separate APIs**:\n\n" +
+                            "1. **Index Performance Lock Setup API** — create a new Index Performance Lock arrangement on a policy.\n" +
+                            "2. **Index Performance Lock Update API** — update or cancel an existing Index Performance Lock arrangement.\n\n" +
+                            "Both are processed asynchronously: the Day-1 response returns a requestId, the outcome can be " +
+                            "polled with the shared arrangement-request status endpoint, and a Day-2 confirmation event " +
+                            "is published to the event mesh when processing completes.\n\n" +
+                            "Each API keeps its own specification file:",
+                        parts: [
+                            {
+                                path: "specs/IndexPerformanceLockSetUp_1.0.0.yaml",
+                                label: "Step 1: Index Performance Lock Setup API"
+                            },
+                            {
+                                path: "specs/IndexPerformanceLockUpdate_1.0.0.yaml",
+                                label: "Step 2: Index Performance Lock Update API"
+                            }
+                        ]
+                    }
+                }
+            },
+            // Combined view: Rebalance Setup + Update on one page.
+            "rebalance": {
+                name: "Rebalance API",
+                versions: {
+                    "v1": {
+                        displayName: "v1.0.0",
+                        title: "Rebalance",
+                        description: "Auto Rebalance periodically realigns a policy's allocations to a predefined target allocation by transferring value among investment options. " +
+                            "Rebalance is made up of **two separate APIs**:\n\n" +
+                            "1. **Rebalance Setup API** — create a new Auto Rebalance arrangement on a policy.\n" +
+                            "2. **Rebalance Update API** — update or cancel an existing Auto Rebalance arrangement.\n\n" +
+                            "Both are processed asynchronously: the Day-1 response returns a requestId, the outcome can be " +
+                            "polled with the shared arrangement-request status endpoint, and a Day-2 confirmation event " +
+                            "is published to the event mesh when processing completes.\n\n" +
+                            "Each API keeps its own specification file:",
+                        parts: [
+                            {
+                                path: "specs/RebalanceSetup_1.0.0.yaml",
+                                label: "Step 1: Rebalance Setup API"
+                            },
+                            {
+                                path: "specs/RebalanceUpdate_1.0.0.yaml",
+                                label: "Step 2: Rebalance Update API"
+                            }
+                        ]
+                    }
+                }
+            },
+            // Combined view: Systematic Investment Setup + Update on one page.
+            "systematicinvestment": {
+                name: "Systematic Investment API",
+                versions: {
+                    "v1": {
+                        displayName: "v1.0.0",
+                        title: "Systematic Investment",
+                        description: "Systematic Investment automatically directs recurring premiums or contributions into investment options according to predefined allocation instructions. " +
+                            "Systematic Investment is made up of **two separate APIs**:\n\n" +
+                            "1. **Systematic Investment Setup API** — create a new Systematic Investment arrangement on a policy.\n" +
+                            "2. **Systematic Investment Update API** — update or cancel an existing Systematic Investment arrangement.\n\n" +
+                            "Both are processed asynchronously: the Day-1 response returns a requestId, the outcome can be " +
+                            "polled with the shared arrangement-request status endpoint, and a Day-2 confirmation event " +
+                            "is published to the event mesh when processing completes.\n\n" +
+                            "Each API keeps its own specification file:",
+                        parts: [
+                            {
+                                path: "specs/SystematicInvestmentSetup_1.0.0.yaml",
+                                label: "Step 1: Systematic Investment Setup API"
+                            },
+                            {
+                                path: "specs/SystematicInvestmentUpdate_1.0.0.yaml",
+                                label: "Step 2: Systematic Investment Update API"
+                            }
+                        ]
+                    }
+                }
+            },
             // Combined view: lists several separate spec files on one page.
             // Each file stays its own API and is shown as a numbered step, in the order listed.
             // The YAML files themselves are not changed.
@@ -332,25 +477,40 @@
                 combined.tags.push({ name: part.label, description: spec.info.description || '' });
 
                 // Merge components. If two files use the same name for something different,
-                // the later one is renamed (e.g. oauth2_2) so each API keeps its own definition.
+                // the later one is renamed (e.g. Arrangement_2) and every reference to it inside
+                // that file is updated, so each API keeps showing its own definition.
                 const renamedSchemes = {};
+                const renamedRefs = {};
                 Object.entries(spec.components || {}).forEach(([section, items]) => {
                     combined.components[section] = combined.components[section] || {};
+                    Object.entries(items).forEach(([name, value]) => {
+                        const existing = combined.components[section][name];
+                        if (existing !== undefined && JSON.stringify(existing) !== JSON.stringify(value)) {
+                            const newName = name + '_' + (i + 1);
+                            if (section === 'securitySchemes') renamedSchemes[name] = newName;
+                            else renamedRefs['#/components/' + section + '/' + name] = '#/components/' + section + '/' + newName;
+                        }
+                    });
+                });
+                const fixRefs = node => {
+                    if (Array.isArray(node)) return node.forEach(fixRefs);
+                    if (!node || typeof node !== 'object') return;
+                    if (typeof node.$ref === 'string' && renamedRefs[node.$ref]) node.$ref = renamedRefs[node.$ref];
+                    Object.values(node).forEach(fixRefs);
+                };
+                fixRefs(spec.paths);
+                fixRefs(spec.components);
+                Object.entries(spec.components || {}).forEach(([section, items]) => {
                     Object.entries(items).forEach(([name, value]) => {
                         const existing = combined.components[section][name];
                         if (existing === undefined) {
                             combined.components[section][name] = value;
                         } else if (JSON.stringify(existing) !== JSON.stringify(value)) {
-                            const newName = name + '_' + (i + 1);
-                            if (section !== 'securitySchemes') {
-                                console.warn('Name conflict in ' + section + '.' + name + ' (' + part.path + ')');
-                            }
-                            combined.components[section][newName] = value;
-                            if (section === 'securitySchemes') renamedSchemes[name] = newName;
+                            combined.components[section][name + '_' + (i + 1)] = value;
                         }
                     });
                 });
-
+                
                 // Security set at the top of a file is applied to that file's own endpoints only.
                 const renameSecurity = sec => (sec || []).map(req => {
                     const out = {};
@@ -359,7 +519,20 @@
                 });
 
                 Object.entries(spec.paths || {}).forEach(([path, item]) => {
-                    if (combined.paths[path]) console.warn('Duplicate path ' + path + ' in ' + part.path);
+                    // An endpoint that appears in more than one file (e.g. a shared status-polling
+                    // endpoint) is shown once, listed under every step that uses it.
+                    if (combined.paths[path]) {
+                        HTTP_METHODS.forEach(method => {
+                            const existingOp = combined.paths[path][method];
+                            if (existingOp && item[method]) existingOp.tags.push(part.label);
+                            else if (item[method]) {
+                                item[method].tags = [part.label];
+                                item[method].security = renameSecurity(item[method].security || spec.security);
+                                combined.paths[path][method] = item[method];
+                            }
+                        });
+                        return;
+                    }
                     HTTP_METHODS.forEach(method => {
                         const op = item[method];
                         if (!op) return;
