@@ -710,44 +710,86 @@ async function generateDataDictionary(): Promise<void> {
 
   const manifest: Array<{ key: string; title: string; version: string }> = [];
 
+  // Parse every spec file first, then group files that share the same
+  // info.title AND info.version. Each group becomes ONE data dictionary, so a
+  // specification split across several YAML files (e.g. a "SetUp" file and an
+  // "Update" file) appears once on the Data Dictionary page with all of its
+  // fields together. To combine files, give them the same title and version.
+  const groups = new Map<string, Array<{ specFile: string; specPath: string; api: OpenAPISpec }>>();
   for (const specFile of specFiles) {
     const specPath = path.join(specsDir, specFile);
-    const key = path.basename(specFile, path.extname(specFile));
-
-    console.log(`\nProcessing: ${specFile}`);
-
+    console.log(`\nParsing: ${specFile}`);
     const api = await SwaggerParser.dereference(specPath) as OpenAPISpec;
     console.log(`Parsed: ${api.info.title} v${api.info.version}`);
+    const groupId = `${api.info.title}\u0000${api.info.version}`;
+    if (!groups.has(groupId)) groups.set(groupId, []);
+    groups.get(groupId)!.push({ specFile, specPath, api });
+  }
+
+  for (const members of groups.values()) {
+    const api = members[0].api;
+    const fileKeys = members.map(m => path.basename(m.specFile, path.extname(m.specFile)));
+    // A single file keeps its existing key so current links (?spec=...) still work.
+    // A combined group gets a key built from its title and version.
+    const key = members.length === 1
+      ? fileKeys[0]
+      : `${api.info.title.replace(/[^a-zA-Z0-9]+/g, '')}_${api.info.version}`;
+    const specPath = members.map(m => m.specPath).join(', ');
+
+    console.log(`\nProcessing: ${api.info.title} v${api.info.version} (${members.map(m => m.specFile).join(' + ')})`);
 
     const fieldInstances: FieldInstance[] = [];
     const endpoints: EndpointSummary[] = [];
     const schemas: SchemaSummary[] = [];
+    const seenOperations = new Set<string>(); // "METHOD path" already added from an earlier file
+    const seenSchemas = new Set<string>();
 
-    // Process REST paths
-    if (api.paths) {
-      for (const [pathUrl, pathItem] of Object.entries(api.paths)) {
-        processPathItem(pathUrl, pathItem, endpoints, fieldInstances);
+    // Only keep operations this group has not already processed (files in a
+    // group often repeat a shared endpoint, such as a request-status GET).
+    const unseenOperations = (pathUrl: string, pathItem: PathItem): PathItem => {
+      const filtered: PathItem = { ...pathItem };
+      for (const method of HTTP_METHODS) {
+        if (!pathItem[method]) continue;
+        const opKey = `${method.toUpperCase()} ${pathUrl}`;
+        if (seenOperations.has(opKey)) {
+          delete filtered[method];
+        } else {
+          seenOperations.add(opKey);
+        }
       }
-    }
+      return filtered;
+    };
 
-    // Process OpenAPI 3.1 webhooks (same Path Item structure as paths)
-    if (api.webhooks) {
-      for (const [webhookName, pathItem] of Object.entries(api.webhooks)) {
-        processPathItem(`webhook:${webhookName}`, pathItem, endpoints, fieldInstances);
+    for (const { api: memberApi } of members) {
+      // Process REST paths
+      if (memberApi.paths) {
+        for (const [pathUrl, pathItem] of Object.entries(memberApi.paths)) {
+          processPathItem(pathUrl, unseenOperations(pathUrl, pathItem), endpoints, fieldInstances);
+        }
       }
-    }
 
-    // Process component schemas for summary
-    if (api.components?.schemas) {
-      for (const [name, schema] of Object.entries(api.components.schemas)) {
-        const propCount = schema.properties ? Object.keys(schema.properties).length : 0;
-        schemas.push({
-          name,
-          type: schema.type || (schema.allOf ? 'allOf' : schema.oneOf ? 'oneOf' : schema.anyOf ? 'anyOf' : 'unknown'),
-          description: schema.description || '',
-          propertyCount: propCount,
-          required: (schema.required || []).join(', ')
-        });
+      // Process OpenAPI 3.1 webhooks (same Path Item structure as paths)
+      if (memberApi.webhooks) {
+        for (const [webhookName, pathItem] of Object.entries(memberApi.webhooks)) {
+          const webhookPath = `webhook:${webhookName}`;
+          processPathItem(webhookPath, unseenOperations(webhookPath, pathItem), endpoints, fieldInstances);
+        }
+      }
+
+      // Process component schemas for summary (each schema name listed once)
+      if (memberApi.components?.schemas) {
+        for (const [name, schema] of Object.entries(memberApi.components.schemas)) {
+          if (seenSchemas.has(name)) continue;
+          seenSchemas.add(name);
+          const propCount = schema.properties ? Object.keys(schema.properties).length : 0;
+          schemas.push({
+            name,
+            type: schema.type || (schema.allOf ? 'allOf' : schema.oneOf ? 'oneOf' : schema.anyOf ? 'anyOf' : 'unknown'),
+            description: schema.description || '',
+            propertyCount: propCount,
+            required: (schema.required || []).join(', ')
+          });
+        }
       }
     }
 
@@ -783,6 +825,7 @@ async function generateDataDictionary(): Promise<void> {
     const jsonOutput = {
       generatedAt: new Date().toISOString(),
       source: specPath,
+      sourceFiles: members.map(m => m.specFile),
       apiInfo: {
         title: api.info.title,
         version: api.info.version,
